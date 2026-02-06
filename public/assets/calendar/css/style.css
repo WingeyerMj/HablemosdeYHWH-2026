@@ -5,11 +5,20 @@
   box-sizing: border-box;
 }
 
-body.calendar-page.dark-background,
-.calendar-page .section.dark-background {
+body.calendar-page,
+.calendar-page .section {
   background: #060606 url('/assets/img/hero-bg.png') repeat !important;
   background-size: auto !important;
+  font-family: system-ui, sans-serif;
+  transition: background 0.3s, color 0.3s;
   color: #ffffff !important;
+  /* Texto global siempre blanco sobre fondo oscuro */
+}
+
+/* Solo las celdas y el contenedor del calendario deben reaccionar al color de texto del tema */
+.calendar-container {
+  color: var(--text);
+  position: relative;
 }
 
 /* ----------------------------------------------------------
@@ -49,6 +58,7 @@ body.calendar-page.dark-background,
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
+  position: relative;
 }
 
 /* ----------------------------------------------------------
@@ -127,6 +137,8 @@ body.calendar-page.dark-background,
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  color: var(--text);
+  /* Asegura que el texto use el color del tema dentro de la celda */
 }
 
 .calendar-cell.empty {
@@ -344,7 +356,7 @@ body.calendar-page.dark-background,
   padding: 10px 0;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #444;
+  color: var(--text);
   border-radius: 6px;
   transition: background 0.2s ease, color 0.2s ease;
 }
@@ -355,9 +367,9 @@ body.calendar-page.dark-background,
 
 
 .theme-toggle {
-  position: fixed;
-  top: 16px;
-  right: 16px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 
   width: 46px;
   height: 46px;
