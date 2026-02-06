@@ -11,7 +11,8 @@ body.calendar-page,
   background-size: auto !important;
   font-family: system-ui, sans-serif;
   transition: background 0.3s, color 0.3s;
-  color: var(--text); /* Eliminado !important y color fijo blanco */
+  color: var(--text);
+  /* Eliminado !important y color fijo blanco */
 }
 
 /* Solo las celdas y el contenedor del calendario deben reaccionar al color de texto del tema */
@@ -20,12 +21,18 @@ body.calendar-page,
   position: relative;
 }
 
+:root {
+  --text: #ffffff;
+  /* Blanco por defecto para fondo oscuro */
+}
+
 /* ----------------------------------------------------------
    TEMAS
 ---------------------------------------------------------- */
 :root[data-theme="light"] {
   --bg: #CCCCCC;
-  --text: #000000; /* Texto negro puro */
+  --text: #000000;
+  /* Texto negro puro */
   --cell-bg: #ffffff;
   --cell-border: #d0d0d0;
   --today-bg: #dff0ff;
