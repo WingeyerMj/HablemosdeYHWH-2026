@@ -10,6 +10,9 @@ const homeController = {
     },
     calendar: (req, res) => {
         res.render('calendar', { title: 'Calendario - Hablemos de YHWH', page: 'calendar' });
+    },
+    parashot: (req, res) => {
+        res.render('parashot', { title: 'Parashot - Hablemos de YHWH', page: 'parashot' });
     }
 };
 
