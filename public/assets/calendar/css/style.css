@@ -11,8 +11,7 @@ body.calendar-page,
   background-size: auto !important;
   font-family: system-ui, sans-serif;
   transition: background 0.3s, color 0.3s;
-  color: #ffffff !important;
-  /* Texto global siempre blanco sobre fondo oscuro */
+  color: var(--text); /* Eliminado !important y color fijo blanco */
 }
 
 /* Solo las celdas y el contenedor del calendario deben reaccionar al color de texto del tema */
@@ -26,7 +25,7 @@ body.calendar-page,
 ---------------------------------------------------------- */
 :root[data-theme="light"] {
   --bg: #CCCCCC;
-  --text: #222;
+  --text: #000000; /* Texto negro puro */
   --cell-bg: #ffffff;
   --cell-border: #d0d0d0;
   --today-bg: #dff0ff;
