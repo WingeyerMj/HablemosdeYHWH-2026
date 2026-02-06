@@ -7,12 +7,13 @@
 
 body.calendar-page,
 .calendar-page .section {
-  background: #060606 url('/assets/img/hero-bg.png') repeat !important;
-  background-size: auto !important;
+  background-color: var(--bg-global, #060606);
+  background-image: url('/assets/img/hero-bg.png');
+  background-repeat: repeat;
+  background-size: auto;
   font-family: system-ui, sans-serif;
   transition: background 0.3s, color 0.3s;
   color: var(--text);
-  /* Eliminado !important y color fijo blanco */
 }
 
 /* Solo las celdas y el contenedor del calendario deben reaccionar al color de texto del tema */
@@ -23,13 +24,15 @@ body.calendar-page,
 
 :root {
   --text: #ffffff;
-  /* Blanco por defecto para fondo oscuro */
+  --bg-global: #060606;
 }
 
 /* ----------------------------------------------------------
    TEMAS
 ---------------------------------------------------------- */
 :root[data-theme="light"] {
+  --bg-global: #f7f7f7;
+  /* Gris muy claro para modo luz */
   --bg: #CCCCCC;
   --text: #000000;
   /* Texto negro puro */
@@ -44,6 +47,7 @@ body.calendar-page,
 }
 
 :root[data-theme="dark"] {
+  --bg-global: #060606;
   --bg: #1a1a1a;
   --text: #e6e6e6;
   --cell-bg: rgba(42, 42, 42, 0.85);
