@@ -607,3 +607,55 @@ body.calendar-page,
   position: absolute;
   right: -70px;
 }
+
+/* ----------------------------------------------------------
+   RESPONSIVE
+---------------------------------------------------------- */
+@media (max-width: 768px) {
+
+  /* Ocultar información de la luna y porcentaje */
+  .moon-info {
+    display: none;
+  }
+
+  /* Reducir altura mínima de las celdas */
+  .calendar-cell {
+    min-height: 60px;
+    padding: 4px;
+  }
+
+  /* Ajustar tamaño de fuente de los días */
+  .lunisolar-day {
+    font-size: 1rem;
+  }
+
+  .gregorian-day {
+    font-size: 0.8rem;
+  }
+
+  /* Ajustar flechas de navegación para que no se salgan de la pantalla */
+  .nav-arrow {
+    width: 40px;
+    height: 40px;
+  }
+
+  .nav-arrow::before {
+    width: 12px;
+    height: 12px;
+  }
+
+  .nav-arrow.left {
+    left: -15px;
+    z-index: 20;
+  }
+
+  .nav-arrow.right {
+    right: -15px;
+    z-index: 20;
+  }
+
+  /* Reducir el gap del grid si es necesario */
+  .calendar-grid {
+    gap: 5px;
+  }
+}
