@@ -256,8 +256,9 @@ body.calendar-page,
 }
 
 .sukkot-label {
-  background: #795548;
-  /* Marrón tierra */
+  background: #00E676;
+  /* Verde llamativo */
+  color: #000;
 }
 
 .shemini-label {
@@ -290,7 +291,7 @@ body.calendar-page,
 }
 
 .sukkot {
-  border: 2px solid #795548;
+  border: 2px dashed #00E676;
 }
 
 .sheminiatzeret {
