@@ -150,9 +150,13 @@ function getHolidaysForYear(year) {
   const yomKippurDate = new Date(month7.days[rj7Idx + 9]);
   const sukkotDate = new Date(month7.days[rj7Idx + 14]);
 
+  // Shemini Atzeret is the 8th day (7 days after Sukkot starts)
+  const sheminiAtzeretDate = new Date(sukkotDate);
+  sheminiAtzeretDate.setUTCDate(sheminiAtzeretDate.getUTCDate() + 7);
+
   return {
     pesajDate, hamatzoDate, bikurimDate, shavuotDate,
-    yomTeruahDate, yomKippurDate, sukkotDate
+    yomTeruahDate, yomKippurDate, sukkotDate, sheminiAtzeretDate
   };
 }
 
@@ -224,7 +228,7 @@ function renderCalendar() {
 
   const {
     pesajDate, hamatzoDate, bikurimDate, shavuotDate,
-    yomTeruahDate, yomKippurDate, sukkotDate
+    yomTeruahDate, yomKippurDate, sukkotDate, sheminiAtzeretDate
   } = getHolidaysForYear(yearData.year);
 
   // ------------------------------------------------------------
@@ -341,42 +345,77 @@ function renderCalendar() {
     cell.appendChild(moonContainer);
 
     // 9.3 Inyectar Etiquetas de Festividades
+
+    // Cálculos de rango (diferencia en días)
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const hamatzoDiff = Math.round((gregDate - hamatzoDate) / msPerDay);
+    const sukkotDiff = Math.round((gregDate - sukkotDate) / msPerDay);
+
+    // Pesaj
     if (isSameDay(gregDate, pesajDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label pesaj-label";
       label.textContent = "Pesaj";
       cell.appendChild(label);
       cell.classList.add("pesaj");
-    } else if (isSameDay(gregDate, hamatzoDate)) {
-      const label = document.createElement("div");
-      label.className = "holiday-label hamatzo-label";
-      label.textContent = "Hamatzo";
-      cell.appendChild(label);
+    }
+
+    // Hamatzo (7 días)
+    if (hamatzoDiff >= 0 && hamatzoDiff < 7) {
       cell.classList.add("hamatzo");
-    } else if (isSameDay(gregDate, bikurimDate)) {
+      if (hamatzoDiff === 0) {
+        const label = document.createElement("div");
+        label.className = "holiday-label hamatzo-label";
+        label.textContent = "Hamatzo";
+        cell.appendChild(label);
+      }
+    }
+
+    // Bikurim (puede coincidir con Hamatzo)
+    if (isSameDay(gregDate, bikurimDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label bikurim-label";
       label.textContent = "Bikurim";
       cell.appendChild(label);
       cell.classList.add("bikurim");
-    } else if (isSameDay(gregDate, yomTeruahDate)) {
+    }
+
+    // Yom Teruah
+    if (isSameDay(gregDate, yomTeruahDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label yomteruah-label";
       label.textContent = "Yom Teruah";
       cell.appendChild(label);
       cell.classList.add("yomteruah");
-    } else if (isSameDay(gregDate, yomKippurDate)) {
+    }
+
+    // Yom Kippur
+    if (isSameDay(gregDate, yomKippurDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label yomkippur-label";
       label.textContent = "Yom Kippur";
       cell.appendChild(label);
       cell.classList.add("yomkippur");
-    } else if (isSameDay(gregDate, sukkotDate)) {
-      const label = document.createElement("div");
-      label.className = "holiday-label sukkot-label";
-      label.textContent = "Sukkot";
-      cell.appendChild(label);
+    }
+
+    // Sukkot (7 días)
+    if (sukkotDiff >= 0 && sukkotDiff < 7) {
       cell.classList.add("sukkot");
+      if (sukkotDiff === 0) {
+        const label = document.createElement("div");
+        label.className = "holiday-label sukkot-label";
+        label.textContent = "Sukkot";
+        cell.appendChild(label);
+      }
+    }
+
+    // Shemini Atzeret
+    if (isSameDay(gregDate, sheminiAtzeretDate)) {
+      const label = document.createElement("div");
+      label.className = "holiday-label shemini-label";
+      label.textContent = "Shemini Atzeret";
+      cell.appendChild(label);
+      cell.classList.add("sheminiatzeret");
     }
 
     // Shavuot (Detección por fecha)

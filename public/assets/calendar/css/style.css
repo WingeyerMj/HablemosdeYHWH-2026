@@ -260,6 +260,11 @@ body.calendar-page,
   /* Marrón tierra */
 }
 
+.shemini-label {
+  background: #009688;
+  /* Teal */
+}
+
 .pesaj {
   border: 2px solid #c0392b;
 }
@@ -286,6 +291,10 @@ body.calendar-page,
 
 .sukkot {
   border: 2px solid #795548;
+}
+
+.sheminiatzeret {
+  border: 2px solid #009688;
 }
 
 /* Cuenta del Omer */
