@@ -1,16 +1,37 @@
 <nav class="col-md-2 d-md-block sidebar">
-    <h4>Hablemos de YHWH</h4>
-    <hr>
-    <a href="/admin/dashboard">🏠 Dashboard</a>
+    <div class="text-center mb-4">
+        <img src="/assets/img/pagina/logo.svg" alt="Logo" class="img-fluid"
+            style="max-height: 60px; border-radius: 50%;">
+        <h5 class="mt-2 fw-bold" style="color: var(--primary-color);">Admin Panel</h5>
+    </div>
+    <hr style="border-color: rgba(255,255,255,0.1);">
+
+    <a href="/" target="_blank">
+        <i class="bi bi-globe"></i> Ver mi Web
+    </a>
+
+    <a href="/admin/dashboard">
+        <i class="bi bi-speedometer2"></i> Dashboard
+    </a>
+
     <% if (role==='admin' ) { %>
-        <a href="/admin/users">👥 Usuarios</a>
+        <a href="/admin/users" class="active">
+            <i class="bi bi-people"></i> Usuarios
+        </a>
         <% } %>
-            <a href="/admin/logout">🚪 Cerrar Sesión</a>
-            <div class="mt-5 small text-muted p-2">
-                Identificado como: <br>
-                <strong>
-                    <%= username %>
-                </strong> (<%= role %>)
+
+            <div class="mt-auto">
+                <hr style="border-color: rgba(255,255,255,0.1);">
+                <a href="/admin/logout" class="text-danger">
+                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                </a>
+                <div class="mt-3 small text-white-50 p-2">
+                    <i class="bi bi-person-circle"></i>
+                    <%= username %> <br>
+                        <span class="badge bg-secondary mt-1">
+                            <%= role %>
+                        </span>
+                </div>
             </div>
 </nav>
 
