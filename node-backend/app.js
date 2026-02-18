@@ -8,9 +8,6 @@ const initDB = require('./src/config/init-db');
 
 const app = express();
 
-// Inicializar base de datos
-initDB(db);
-
 // Settings
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'ejs');
@@ -34,6 +31,8 @@ app.use((req, res, next) => {
     res.locals.user = req.session.userId || null;
     res.locals.username = req.session.username || null;
     res.locals.role = req.session.role || null;
+    // Hacemos req disponible en res.locals para usarlo en las vistas (dashboard)
+    res.locals.req = req;
     next();
 });
 
@@ -51,6 +50,10 @@ app.use((req, res, next) => {
         page: '404',
         sections: {},
         services: [],
+        portfolio: [],
+        team: [],
+        testimonials: [],
+        pricing: [],
         layout: false
     });
 });
@@ -63,6 +66,17 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(app.get('port'), () => {
-    console.log(`Server on port ${app.get('port')}`);
-});
+async function startServer() {
+    try {
+        // Inicializar base de datos primero (esperar a que se creen las tablas)
+        await initDB(db);
+
+        app.listen(app.get('port'), () => {
+            console.log(`Server on port ${app.get('port')}`);
+        });
+    } catch (error) {
+        console.error('Error al iniciar el servidor:', error);
+    }
+}
+
+startServer();
