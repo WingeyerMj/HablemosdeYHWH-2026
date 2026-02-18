@@ -1,20 +1,37 @@
-const { Pool } = require('pg');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL || `postgres://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}`,
-    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
-});
+let pool;
 
-// Helper to maintain MySQL-like syntax as much as possible
-module.exports = {
-    query: async (text, params) => {
-        // Simple conversion from ? to $1, $2, etc.
-        let count = 1;
-        const pgText = text.replace(/\?/g, () => `$${count++}`);
-        const res = await pool.query(pgText, params);
-        return [res.rows, res.fields];
-    },
-    end: () => pool.end()
-};
+if (process.env.DATABASE_URL) {
+    // Modo PostgreSQL (Para Render)
+    const { Pool } = require('pg');
+    const pgPool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false }
+    });
+
+    pool = {
+        query: async (text, params) => {
+            let count = 1;
+            const pgText = text.replace(/\?/g, () => `$${count++}`);
+            const res = await pgPool.query(pgText, params);
+            return [res.rows, res.fields];
+        },
+        end: () => pgPool.end()
+    };
+} else {
+    // Modo MySQL (Para Local)
+    const mysql = require('mysql2/promise');
+    pool = mysql.createPool({
+        host: process.env.DB_HOST || 'localhost',
+        user: process.env.DB_USER || 'root',
+        password: process.env.DB_PASS || '',
+        database: process.env.DB_NAME || 'hablemos_yhwh',
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0
+    });
+}
+
+module.exports = pool;
