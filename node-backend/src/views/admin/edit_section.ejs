@@ -1,0 +1,43 @@
+<nav class="col-md-2 d-md-block sidebar">
+    <h4>Hablemos de YHWH</h4>
+    <hr>
+    <a href="/admin/dashboard">⬅️ Volver</a>
+    <a href="/admin/logout">🚪 Cerrar Sesión</a>
+</nav>
+
+<main class="col-md-10 p-4">
+    <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Editando: <%= section.section_name %>
+        </h1>
+    </div>
+
+    <form action="/admin/edit" method="POST" class="card p-4 shadow-sm">
+        <input type="hidden" name="id" value="<%= section.id %>">
+
+        <div class="mb-3">
+            <label class="form-label">Título de la Sección</label>
+            <input type="text" name="title" class="form-control" value="<%= section.title %>">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Subtítulo / Descripción Corta</label>
+            <textarea name="subtitle" class="form-control" rows="2"><%= section.subtitle %></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Contenido Principal</label>
+            <textarea name="content" class="form-control" rows="10"><%= section.content %></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">URL de Imagen (Opcional)</label>
+            <input type="text" name="image_url" class="form-control" value="<%= section.image_url %>">
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-success px-5">Guardar Cambios</button>
+            <a href="/admin/dashboard" class="btn btn-secondary ms-2">Cancelar</a>
+        </div>
+    </form>
+</main>

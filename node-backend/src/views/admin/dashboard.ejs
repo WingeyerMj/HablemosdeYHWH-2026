@@ -1,0 +1,94 @@
+<nav class="col-md-2 d-md-block sidebar">
+    <h4>Hablemos de YHWH</h4>
+    <hr>
+    <a href="/admin/dashboard">🏠 Dashboard</a>
+    <% if (role==='admin' ) { %>
+        <a href="/admin/users">👥 Usuarios</a>
+        <% } %>
+            <a href="/admin/logout">🚪 Cerrar Sesión</a>
+            <div class="mt-5 small text-muted p-2">
+                Identificado como: <br>
+                <strong>
+                    <%= username %>
+                </strong> (<%= role %>)
+            </div>
+</nav>
+
+<main class="col-md-10 p-4">
+    <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Gestionar Secciones</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Añadir Nueva Parasha (Porción Semanal)</h5>
+                </div>
+                <div class="card-body">
+                    <form action="/admin/parashot/create" method="POST" class="row g-3">
+                        <div class="col-md-4">
+                            <input type="text" name="title" class="form-control" placeholder="Título (ej: Bereshit)"
+                                required>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="text" name="description" class="form-control" placeholder="Descripción breve"
+                                required>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-success w-100">+ Añadir Parasha</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="mt-4">Secciones de la Página</h3>
+        <% sections.forEach(section=> { %>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <%= section.section_name %>
+                        </h5>
+                        <p class="card-text text-muted">
+                            <%= section.title %>
+                        </p>
+                        <a href="/admin/edit/<%= section.section_name %>" class="btn btn-sm btn-outline-primary">Editar
+                            Sección</a>
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+    </div>
+
+    <h3 class="mt-5">Últimas Parashot Cargadas</h3>
+    <div class="table-responsive bg-white shadow-sm p-3 rounded">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Título</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% parashot.forEach(p=> { %>
+                    <tr>
+                        <td><strong>
+                                <%= p.title %>
+                            </strong></td>
+                        <td>
+                            <%= p.description %>
+                        </td>
+                        <td>
+                            <a href="/admin/parashot/delete/<%= p.id %>" class="btn btn-sm btn-danger"
+                                onclick="return confirm('¿Eliminar esta parasha?')">Eliminar</a>
+                        </td>
+                    </tr>
+                    <% }) %>
+            </tbody>
+        </table>
+    </div>
+</main>

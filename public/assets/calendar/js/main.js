@@ -440,7 +440,7 @@ function renderCalendar() {
       if (diffDays >= 0 && diffDays < 49) {
         const omerTag = document.createElement("div");
         omerTag.className = "omer-row";
-        omerTag.textContent = `Omer Día ${diffDays + 1}`;
+        omerTag.textContent = `Omer ${diffDays + 1}`;
         // Insertar antes del contenedor de luna
         cell.insertBefore(omerTag, cell.querySelector('.moon-info'));
       }

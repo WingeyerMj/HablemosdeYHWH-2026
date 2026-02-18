@@ -1,0 +1,88 @@
+<nav class="col-md-2 d-md-block sidebar">
+    <h4>Hablemos de YHWH</h4>
+    <hr>
+    <a href="/admin/dashboard">🏠 Dashboard</a>
+    <% if (role==='admin' ) { %>
+        <a href="/admin/users">👥 Usuarios</a>
+        <% } %>
+            <a href="/admin/logout">🚪 Cerrar Sesión</a>
+            <div class="mt-5 small text-muted p-2">
+                Identificado como: <br>
+                <strong>
+                    <%= username %>
+                </strong> (<%= role %>)
+            </div>
+</nav>
+
+<main class="col-md-10 p-4">
+    <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Gestión de Usuarios</h1>
+    </div>
+
+    <!-- Formulario para Administradores -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Crear Nuevo Usuario</h5>
+        </div>
+        <div class="card-body">
+            <form action="/admin/users/create" method="POST" class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" name="username" class="form-control" placeholder="Usuario" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="email" name="email" class="form-control" placeholder="Email (opcional)">
+                </div>
+                <div class="col-md-2">
+                    <select name="role" class="form-select">
+                        <option value="editor">Editor</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary w-100">Crear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de Usuarios -->
+    <div class="table-responsive bg-white shadow-sm p-3 rounded">
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach(u=> { %>
+                    <tr>
+                        <td><strong>
+                                <%= u.username %>
+                            </strong></td>
+                        <td>
+                            <%= u.email || '-' %>
+                        </td>
+                        <td>
+                            <span class="badge <%= u.role === 'admin' ? 'bg-danger' : 'bg-info' %>">
+                                <%= u.role.toUpperCase() %>
+                            </span>
+                        </td>
+                        <td>
+                            <% if (u.username !=='admin' ) { %>
+                                <a href="/admin/users/delete/<%= u.id %>" class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('¿Eliminar usuario?')">Eliminar</a>
+                                <% } %>
+                        </td>
+                    </tr>
+                    <% }) %>
+            </tbody>
+        </table>
+    </div>
+</main>

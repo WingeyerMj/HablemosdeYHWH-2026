@@ -381,6 +381,11 @@ body.calendar-page,
   transition: background 0.2s ease, color 0.2s ease;
 }
 
+/* Forzar color negro en modo oscuro para los días de la semana según pedido del usuario */
+:root[data-theme="dark"] .weekdays-row>div {
+  color: #000000 !important;
+}
+
 .weekdays-row>div:hover {
   background: rgba(0, 0, 0, 0.05);
 }
@@ -628,15 +633,20 @@ body.calendar-page,
     display: none;
   }
 
-  /* Reducir altura mínima de las celdas */
+  /* Reducir padding del contenedor principal */
+  .calendar-container {
+    padding: 8px;
+  }
+
+  /* Reducir altura mínima y padding de las celdas */
   .calendar-cell {
-    min-height: 60px;
-    padding: 4px;
+    min-height: 55px;
+    padding: 2px;
   }
 
   /* Ajustar tamaño de fuente de los días */
   .lunisolar-day {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 
   .gregorian-day {
@@ -666,6 +676,135 @@ body.calendar-page,
 
   /* Reducir el gap del grid si es necesario */
   .calendar-grid {
-    gap: 5px;
+    gap: 2px;
+    /* Gap mínimo */
+  }
+
+  /* Ajustar fila de días de la semana */
+  .weekdays-row {
+    padding: 2px;
+    gap: 1px;
+  }
+
+  .weekdays-row>div {
+    font-size: 0.65rem;
+    padding: 4px 0;
+  }
+
+  /* Ajustar etiquetas de festividades */
+  .holiday-label,
+  .rosh-label,
+  .roshhashana-label {
+    font-size: 0.55rem;
+    padding: 1px 2px;
+    width: 95%;
+  }
+
+  /* Ajustar cuenta del Omer para que sea ultra-compacta */
+  .omer-row {
+    font-size: 0.55rem !important;
+    padding: 0px 2px;
+    border-left-width: 2px;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 480px) {
+
+  /* Ocultar información de la luna y porcentaje */
+  .moon-info {
+    display: none;
+  }
+
+  /* Reducir padding del contenedor principal al mínimo */
+  .calendar-container {
+    padding: 4px;
+    overflow-x: hidden;
+    /* Evitar scroll horizontal si algo se sale */
+  }
+
+  /* Reducir altura mínima y padding de las celdas */
+  .calendar-cell {
+    min-height: 50px;
+    padding: 1px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+  }
+
+  /* Ajustar tamaño de fuente de los días */
+  .lunisolar-day {
+    font-size: 0.8rem;
+    line-height: 1;
+  }
+
+  .gregorian-day {
+    font-size: 0.7rem;
+    opacity: 0.7;
+  }
+
+  /* Reducir el gap del grid */
+  .calendar-grid {
+    gap: 1px;
+  }
+
+  /* Ajustar fila de días de la semana */
+  .weekdays-row {
+    padding: 2px 0;
+    gap: 1px;
+    border-radius: 4px;
+  }
+
+  .weekdays-row>div {
+    font-size: 0.6rem;
+    padding: 4px 0;
+  }
+
+  /* Etiquetas de festividades ultra pequeñas */
+  .holiday-label,
+  .rosh-label,
+  .roshhashana-label {
+    font-size: 0.5rem;
+    padding: 0px 1px;
+    width: 98%;
+    top: 2px;
+    line-height: 1;
+  }
+
+  /* Ajustar cuenta del Omer */
+  .omer-row {
+    font-size: 0.5rem !important;
+    padding: 0px 1px;
+    border-left-width: 1px;
+    margin-top: 1px;
+    white-space: nowrap;
+  }
+
+  /* Ocultar flechas de navegación si siguen molestando, o hacerlas más sutiles */
+  .nav-arrow {
+    width: 32px;
+    height: 32px;
+    background: rgba(0, 50, 100, 0.8);
+  }
+
+  .nav-arrow.left {
+    left: 0px;
+  }
+
+  .nav-arrow.right {
+    right: 0px;
+  }
+
+  .calendar-header h1 {
+    font-size: 1.2rem;
+  }
+
+  .calendar-header h2 {
+    font-size: 0.8rem;
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
   }
 }
