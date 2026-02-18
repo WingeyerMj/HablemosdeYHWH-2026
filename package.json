@@ -3,7 +3,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
+        "build": "vite build && cd node-backend && npm install",
+        "start": "node node-backend/app.js",
         "dev": "vite"
     },
     "devDependencies": {
