@@ -1,5 +1,9 @@
 const Section = require('../models/Section');
 const Parasha = require('../models/Parasha');
+const Portfolio = require('../models/Portfolio');
+const Team = require('../models/Team');
+const Testimonial = require('../models/Testimonial');
+const Pricing = require('../models/Pricing');
 const bcrypt = require('bcryptjs');
 const db = require('../config/db');
 
@@ -31,23 +35,81 @@ const adminController = {
         try {
             const sections = await Section.getAll();
             const parashot = await Parasha.getLatest(10);
-            res.render('admin/dashboard', { layout: 'admin/layout', sections, parashot });
+            const portfolio = await Portfolio.getAll();
+            const team = await Team.getAll();
+            const testimonials = await Testimonial.getAll();
+            const pricing = await Pricing.getAll();
+
+            res.render('admin/dashboard', {
+                layout: 'admin/layout',
+                sections,
+                parashot,
+                portfolio,
+                team,
+                testimonials,
+                pricing
+            });
         } catch (error) {
             next(error);
         }
     },
 
+    // Parashot
     createParasha: async (req, res) => {
         const { title, description, icon, link } = req.body;
         await Parasha.create({ title, description, icon, link });
-        res.redirect('/admin/dashboard');
+        res.redirect('/admin/dashboard#services');
     },
 
     deleteParasha: async (req, res) => {
         await Parasha.delete(req.params.id);
-        res.redirect('/admin/dashboard');
+        res.redirect('/admin/dashboard#services');
     },
 
+    // Portfolio
+    createPortfolio: async (req, res) => {
+        const { title, category, img, description } = req.body;
+        await Portfolio.create({ title, category, img, description });
+        res.redirect('/admin/dashboard#portfolio');
+    },
+
+    deletePortfolio: async (req, res) => {
+        await Portfolio.delete(req.params.id);
+        res.redirect('/admin/dashboard#portfolio');
+    },
+
+    // Team
+    createTeamMember: async (req, res) => {
+        const { name, role, description, img } = req.body;
+        await Team.create({ name, role, description, img });
+        res.redirect('/admin/dashboard#team');
+    },
+
+    deleteTeamMember: async (req, res) => {
+        await Team.delete(req.params.id);
+        res.redirect('/admin/dashboard#team');
+    },
+
+    // Testimonials
+    createTestimonial: async (req, res) => {
+        const { name, role, text, img } = req.body;
+        await Testimonial.create({ name, role, text, img });
+        res.redirect('/admin/dashboard#testimonials');
+    },
+
+    deleteTestimonial: async (req, res) => {
+        await Testimonial.delete(req.params.id);
+        res.redirect('/admin/dashboard#testimonials');
+    },
+
+    // Pricing
+    updatePricing: async (req, res) => {
+        const { id, name, price, featured, features, na_features } = req.body;
+        await Pricing.update(id, { name, price, featured: featured === 'on', features, na_features });
+        res.redirect('/admin/dashboard#pricing');
+    },
+
+    // Sections (Hero, About)
     editSection: async (req, res) => {
         const section = await Section.getByName(req.params.name);
         res.render('admin/edit_section', { layout: 'admin/layout', section });

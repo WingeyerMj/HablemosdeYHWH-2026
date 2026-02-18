@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS sections (
     id INT AUTO_INCREMENT PRIMARY KEY,
     page VARCHAR(50) DEFAULT 'home',
-    section_name VARCHAR(100) NOT NULL,
+    section_name VARCHAR(100) NOT NULL UNIQUE,
     title VARCHAR(255),
     subtitle TEXT,
     content TEXT,
@@ -24,12 +24,12 @@ CREATE TABLE IF NOT EXISTS sections (
 );
 
 -- Usuarios iniciales (Password hash for 'admin123')
-INSERT INTO users (username, password, role) VALUES 
+INSERT IGNORE INTO users (username, password, role) VALUES 
 ('admin', '$2a$10$r.v8z6K8X9hHqB6W1i7kUeA4eF.W5.E6B1D0C4C8A9A9A9A9A9A9', 'admin'),
 ('editor', '$2a$10$r.v8z6K8X9hHqB6W1i7kUeA4eF.W5.E6B1D0C4C8A9A9A9A9A9A9', 'editor');
 
 -- Ejemplos de secciones iniciales
-INSERT INTO sections (section_name, title, subtitle, content) VALUES 
+INSERT IGNORE INTO sections (section_name, title, subtitle, content) VALUES 
 ('Hero', 'Hablemos de YHWH', 'Descubre las raíces hebreas de tu fe', 'Contenido descriptivo aquí...'),
 ('Calendario', 'Calendario Lunisolar', 'Sigue los tiempos señalados', 'Información sobre el calendario...'),
 ('About', 'Sobre Nosotros', 'Nuestra historia y valores', 'Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.');
@@ -44,11 +44,71 @@ CREATE TABLE IF NOT EXISTS parashot (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Tabla para Portfolio (Eventos)
+CREATE TABLE IF NOT EXISTS portfolio (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    category VARCHAR(100),
+    img VARCHAR(255),
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla para Testimonials
+CREATE TABLE IF NOT EXISTS testimonials (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    role VARCHAR(100),
+    text TEXT,
+    img VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla para Team
+CREATE TABLE IF NOT EXISTS team (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    role VARCHAR(100),
+    description TEXT,
+    img VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla para Pricing
+CREATE TABLE IF NOT EXISTS pricing (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    price VARCHAR(50),
+    featured BOOLEAN DEFAULT FALSE,
+    features TEXT, -- Comma separated
+    na_features TEXT, -- Comma separated
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Datos iniciales solo si las tablas están vacías se manejarían mejor con lógica o INSERT IGNORE
+-- Para simplificar el script de auto-init, usamos INSERT IGNORE en todo lo que tenga UNIQUE
+
 -- Ejemplos de Parashot
-INSERT INTO parashot (title, description) VALUES 
-('Bereshit', 'En el principio...'),
-('Noaj', 'Noé y el diluvio...'),
-('Lej Leja', 'Vete de tu tierra...'),
-('Vayerá', 'Y se le apareció...'),
-('Jayei Sarah', 'La vida de Sara...'),
-('Toldot', 'Generaciones...');
+INSERT INTO parashot (title, description)
+SELECT * FROM (SELECT 'Bereshit', 'En el principio...') AS tmp
+WHERE NOT EXISTS (SELECT title FROM parashot WHERE title = 'Bereshit') LIMIT 1;
+
+-- Datos de ejemplo para Portfolio
+INSERT INTO portfolio (title, category, img, description)
+SELECT * FROM (SELECT 'App 1', 'filter-app', '/assets/img/masonry-portfolio/masonry-portfolio-1.jpg', 'Lorem ipsum, dolor sit') AS tmp
+WHERE NOT EXISTS (SELECT title FROM portfolio WHERE title = 'App 1') LIMIT 1;
+
+-- Datos de ejemplo para Testimonials
+INSERT INTO testimonials (name, role, text, img)
+SELECT * FROM (SELECT 'Saul Goodman', 'Ceo & Founder', 'Proin iaculis purus consequat sem cure digni ssim.', '/assets/img/testimonials/testimonials-1.jpg') AS tmp
+WHERE NOT EXISTS (SELECT name FROM testimonials WHERE name = 'Saul Goodman') LIMIT 1;
+
+-- Datos de ejemplo para Team
+INSERT INTO team (name, role, description, img)
+SELECT * FROM (SELECT 'Jeremy Walker', 'CEO, Founder, Atty.', 'Separated they live in. Separated they live in Bookmarksgrove.', '/assets/img/team/team-1.jpg') AS tmp
+WHERE NOT EXISTS (SELECT name FROM team WHERE name = 'Jeremy Walker') LIMIT 1;
+
+-- Datos de ejemplo para Pricing
+INSERT INTO pricing (name, price, featured, features, na_features)
+SELECT * FROM (SELECT 'Free Plan', '0', FALSE, 'Feature 1,Feature 2', 'Feature 3') AS tmp
+WHERE NOT EXISTS (SELECT name FROM pricing WHERE name = 'Free Plan') LIMIT 1;

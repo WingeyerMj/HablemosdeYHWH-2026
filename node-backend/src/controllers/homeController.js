@@ -1,13 +1,26 @@
-const dataModel = require('../models/dataModel');
 const Section = require('../models/Section');
 const Parasha = require('../models/Parasha');
+const Portfolio = require('../models/Portfolio');
+const Team = require('../models/Team');
+const Testimonial = require('../models/Testimonial');
+const Pricing = require('../models/Pricing');
 
 const homeController = {
     index: async (req, res, next) => {
         try {
-            const data = dataModel.getHomeData();
             const sections = await Section.getAll();
             const latestParashot = await Parasha.getLatest(6);
+            const portfolio = await Portfolio.getAll();
+            const team = await Team.getAll();
+            const testimonials = await Testimonial.getAll();
+            const pricingRaw = await Pricing.getAll();
+
+            // Transform pricing data
+            const pricing = pricingRaw.map(p => ({
+                ...p,
+                features: p.features ? p.features.split(',').map(f => f.trim()) : [],
+                na_features: p.na_features ? p.na_features.split(',').map(f => f.trim()) : []
+            }));
 
             // Convertimos el array de secciones en un objeto para fácil acceso: sectionsObj.Hero.title
             const sectionsObj = {};
@@ -16,12 +29,15 @@ const homeController = {
             });
 
             res.render('index', {
-                ...data,
                 sections: sectionsObj,
-                services: latestParashot, // Sobrescribimos los servicios con las parashot de la DB
+                services: latestParashot,
+                portfolio: portfolio,
+                team: team,
+                testimonials: testimonials,
+                pricing: pricing,
                 title: 'Hablemos de YHWH',
                 page: 'home',
-                layout: false // Desactivamos layout global para no romper las vistas actuales
+                layout: false
             });
         } catch (error) {
             next(error);

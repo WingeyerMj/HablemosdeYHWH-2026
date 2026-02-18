@@ -28,6 +28,21 @@ router.post('/edit', isAuthenticated, adminController.updateSection);
 router.post('/parashot/create', isAuthenticated, adminController.createParasha);
 router.get('/parashot/delete/:id', isAuthenticated, adminController.deleteParasha);
 
+// Portfolio
+router.post('/portfolio/create', isAuthenticated, adminController.createPortfolio);
+router.get('/portfolio/delete/:id', isAuthenticated, adminController.deletePortfolio);
+
+// Team
+router.post('/team/create', isAuthenticated, adminController.createTeamMember);
+router.get('/team/delete/:id', isAuthenticated, adminController.deleteTeamMember);
+
+// Testimonials
+router.post('/testimonials/create', isAuthenticated, adminController.createTestimonial);
+router.get('/testimonials/delete/:id', isAuthenticated, adminController.deleteTestimonial);
+
+// Pricing
+router.post('/pricing/update', isAuthenticated, adminController.updatePricing);
+
 // Gestión de Usuarios (Solo Admins)
 router.get('/users', isAuthenticated, isAdmin, adminController.usersPage);
 router.post('/users/create', isAuthenticated, isAdmin, adminController.createUser);
