@@ -36,7 +36,7 @@ ON CONFLICT (section_name) DO NOTHING;
 -- Tabla para las Parashot
 CREATE TABLE IF NOT EXISTS parashot (
     id SERIAL PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
+    title VARCHAR(255) NOT NULL UNIQUE,
     description TEXT,
     icon VARCHAR(100) DEFAULT 'bi-journal-text',
     link VARCHAR(255),
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS parashot (
 -- Tabla para Portfolio (Eventos)
 CREATE TABLE IF NOT EXISTS portfolio (
     id SERIAL PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
+    title VARCHAR(255) NOT NULL UNIQUE,
     category VARCHAR(100),
     img VARCHAR(255),
     description TEXT,
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS portfolio (
 -- Tabla para Testimonials
 CREATE TABLE IF NOT EXISTS testimonials (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL UNIQUE,
     role VARCHAR(100),
     text TEXT,
     img VARCHAR(255),
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS testimonials (
 -- Tabla para Team
 CREATE TABLE IF NOT EXISTS team (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL UNIQUE,
     role VARCHAR(100),
     description TEXT,
     img VARCHAR(255),
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS team (
 -- Tabla para Pricing
 CREATE TABLE IF NOT EXISTS pricing (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL UNIQUE,
     price VARCHAR(50),
     featured BOOLEAN DEFAULT FALSE,
     features TEXT, -- Comma separated
@@ -88,24 +88,24 @@ CREATE TABLE IF NOT EXISTS pricing (
 INSERT INTO parashot (title, description) VALUES 
 ('Bereshit', 'En el principio...'),
 ('Noaj', 'Noé y el diluvio...')
-ON CONFLICT DO NOTHING;
+ON CONFLICT (title) DO NOTHING;
 
 -- Datos de ejemplo para Portfolio
 INSERT INTO portfolio (title, category, img, description) VALUES 
 ('App 1', 'filter-app', '/assets/img/masonry-portfolio/masonry-portfolio-1.jpg', 'Lorem ipsum, dolor sit')
-ON CONFLICT DO NOTHING;
+ON CONFLICT (title) DO NOTHING;
 
 -- Datos de ejemplo para Testimonials
 INSERT INTO testimonials (name, role, text, img) VALUES 
-('Saul Goodman', 'Ceo & Founder', 'Proin iaculis purus consequat sem cure digni ssim.', '/assets/img/testimonials/testimonials-1.jpg')
-ON CONFLICT DO NOTHING;
+('Saul Goodman', 'Ceo & Founder', 'Proin iaculis purus consequat sem cure dignity sim.', '/assets/img/testimonials/testimonials-1.jpg')
+ON CONFLICT (name) DO NOTHING;
 
 -- Datos de ejemplo para Team
 INSERT INTO team (name, role, description, img) VALUES 
 ('Jeremy Walker', 'CEO, Founder, Atty.', 'Separated they live in. Separated they live in Bookmarksgrove.', '/assets/img/team/team-1.jpg')
-ON CONFLICT DO NOTHING;
+ON CONFLICT (name) DO NOTHING;
 
 -- Datos de ejemplo para Pricing
 INSERT INTO pricing (name, price, featured, features, na_features) VALUES 
 ('Free Plan', '0', FALSE, 'Feature 1,Feature 2', 'Feature 3')
-ON CONFLICT DO NOTHING;
+ON CONFLICT (name) DO NOTHING;
