@@ -3,7 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "npx vite build && cd node-backend && npm install",
+        "build": "cd node-backend && npm install",
         "start": "node node-backend/app.js",
         "dev": "vite"
     },
