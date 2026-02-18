@@ -3,8 +3,13 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const session = require('express-session');
 const expressLayouts = require('express-ejs-layouts');
+const db = require('./src/config/db');
+const initDB = require('./src/config/init-db');
 
 const app = express();
+
+// Inicializar base de datos
+initDB(db);
 
 // Settings
 app.set('port', process.env.PORT || 3000);
