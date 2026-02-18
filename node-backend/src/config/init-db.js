@@ -14,17 +14,23 @@ async function initDB(db) {
         await db.query(sql);
         console.log(`--- Esquema de base de datos verificado/actualizado (${sqlFile}) ---`);
 
+        // Verificar si las tablas existen ahora (especialmente portfolio)
+        const [tables] = await db.query(process.env.DATABASE_URL ?
+            "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'" :
+            "SHOW TABLES");
+        console.log('--- Tablas detectadas en la DB:', tables.map(t => t.table_name || Object.values(t)[0]).join(', '));
 
-        // Asegurar que las contraseñas estén correctamente hasheadas para PostgreSQL
+
+        // Asegurar que las contraseñas estén correctamente hasheadas (opcional si ya están en SQL)
         const bcrypt = require('bcryptjs');
         const hashedPassword = await bcrypt.hash('admin123', 10);
 
-        console.log('--- Actualizando credenciales de acceso... ---');
+        console.log('--- Verificando credenciales... ---');
         await db.query('UPDATE users SET password = ? WHERE username IN (?, ?)', [hashedPassword, 'admin', 'editor']);
-        console.log('--- Credenciales listas: Usuario "admin" / Pass "admin123" ---');
+        console.log('--- Credenciales actualizadas exitosamente ---');
     } catch (error) {
-        console.error('--- Error al inicializar la base de datos ---');
-        console.error(error);
+        console.error('--- ERROR CRÍTICO AL INICIALIZAR LA BASE DE DATOS ---');
+        throw error; // Re-lanzar para que app.js lo capture
     }
 }
 

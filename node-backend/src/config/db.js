@@ -12,10 +12,20 @@ if (process.env.DATABASE_URL) {
     });
 
     pool = {
-        query: async (text, params) => {
-            let count = 1;
-            const pgText = text.replace(/\?/g, () => `$${count++}`);
+        query: async (text, params = []) => {
+            let pgText = text;
+            if (params && params.length > 0) {
+                let count = 1;
+                pgText = text.replace(/\?/g, () => `$${count++}`);
+            }
             const res = await pgPool.query(pgText, params);
+
+            // Si hay múltiples statements, res es un array de resultados
+            if (Array.isArray(res)) {
+                const lastRes = res[res.length - 1];
+                return [lastRes.rows, lastRes.fields];
+            }
+
             return [res.rows, res.fields];
         },
         end: () => pgPool.end()
