@@ -116,3 +116,29 @@ BEGIN
         INSERT INTO pricing (name, price, featured, features, na_features) VALUES ('Free Plan', '0', FALSE, 'Feature 1,Feature 2', 'Feature 3');
     END IF;
 END $$;
+
+-- Tabla para secciones dinámicas
+CREATE TABLE IF NOT EXISTS dynamic_sections (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL UNIQUE,
+    section_type VARCHAR(20) NOT NULL DEFAULT 'inline',
+    summary TEXT,
+    content TEXT,
+    icon VARCHAR(100) DEFAULT 'bi-file-text',
+    image_url VARCHAR(500),
+    nav_order INT DEFAULT 0,
+    is_active BOOLEAN DEFAULT TRUE,
+    show_in_navbar BOOLEAN DEFAULT TRUE,
+    data_table VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Migración para soporte de tablas dinámicas
+DO $$ 
+BEGIN 
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='dynamic_sections' AND column_name='data_table') THEN
+        ALTER TABLE dynamic_sections ADD COLUMN data_table VARCHAR(100);
+    END IF;
+END $$;

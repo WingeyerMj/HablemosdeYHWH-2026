@@ -10,8 +10,10 @@
         <i class="bi bi-globe"></i> Ver mi Web
     </a>
 
-    <a href="/admin/dashboard" class="active">
-        <i class="bi bi-speedometer2"></i> Dashboard
+
+
+    <a href="/admin/dynamic-sections">
+        <i class="bi bi-puzzle"></i> Mis Secciones
     </a>
 
     <% if (role==='admin' ) { %>
@@ -43,12 +45,8 @@
     <!-- Tabs for Sections -->
     <ul class="nav nav-pills mb-4" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="pills-sections-tab" data-bs-toggle="pill"
-                data-bs-target="#pills-sections" type="button" role="tab">📜 Secciones</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="pills-services-tab" data-bs-toggle="pill" data-bs-target="#pills-services"
-                type="button" role="tab">📖 Parashot</button>
+            <button class="nav-link active" id="pills-services-tab" data-bs-toggle="pill"
+                data-bs-target="#pills-services" type="button" role="tab">📖 Parashot</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="pills-portfolio-tab" data-bs-toggle="pill" data-bs-target="#pills-portfolio"
@@ -62,38 +60,12 @@
             <button class="nav-link" id="pills-testimonials-tab" data-bs-toggle="pill"
                 data-bs-target="#pills-testimonials" type="button" role="tab">⭐ Testimonios</button>
         </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="pills-pricing-tab" data-bs-toggle="pill" data-bs-target="#pills-pricing"
-                type="button" role="tab">💳 Precios</button>
-        </li>
+
     </ul>
 
     <div class="tab-content" id="pills-tabContent">
-        <!-- SECCIONES PRINCIPALES -->
-        <div class="tab-pane fade show active" id="pills-sections" role="tabpanel">
-            <div class="row">
-                <% sections.forEach(section=> { %>
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100 shadow-sm border-0"
-                            style="background: rgba(255,255,255,0.05); color: white;">
-                            <div class="card-body">
-                                <h5 class="card-title fw-bold text-primary">
-                                    <%= section.section_name %>
-                                </h5>
-                                <p class="card-text small text-white-50">
-                                    <%= section.title %>
-                                </p>
-                                <a href="/admin/edit/<%= section.section_name %>"
-                                    class="btn btn-sm btn-primary w-100">Editar Sección</a>
-                            </div>
-                        </div>
-                    </div>
-                    <% }) %>
-            </div>
-        </div>
-
         <!-- PARASHOT -->
-        <div class="tab-pane fade" id="pills-services" role="tabpanel">
+        <div class="tab-pane fade show active" id="pills-services" role="tabpanel">
             <div class="card bg-dark text-white border-secondary mb-4">
                 <div class="card-header border-secondary">Añadir Nueva Parasha</div>
                 <div class="card-body">
@@ -269,46 +241,6 @@
             </div>
         </div>
 
-        <!-- PRICING -->
-        <div class="tab-pane fade" id="pills-pricing" role="tabpanel">
-            <div class="row">
-                <% pricing.forEach(plan=> { %>
-                    <div class="col-md-6 mb-4">
-                        <form action="/admin/pricing/update" method="POST"
-                            class="card bg-dark text-white border-secondary p-4 h-100">
-                            <input type="hidden" name="id" value="<%= plan.id %>">
-                            <h5 class="mb-3 text-primary">Editar Plan: <%= plan.name %>
-                            </h5>
-                            <div class="mb-3">
-                                <label class="form-label">Nombre del Plan</label>
-                                <input type="text" name="name" class="form-control bg-secondary text-white border-0"
-                                    value="<%= plan.name %>">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Precio ($)</label>
-                                <input type="text" name="price" class="form-control bg-secondary text-white border-0"
-                                    value="<%= plan.price %>">
-                            </div>
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" name="featured" class="form-check-input" <%=plan.featured
-                                    ? 'checked' : '' %>>
-                                <label class="form-check-label">Destacar este plan</label>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Características Incluidas (separadas por coma)</label>
-                                <textarea name="features" class="form-control bg-secondary text-white border-0"
-                                    rows="2"><%= plan.features %></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Características NO Incluidas (separadas por coma)</label>
-                                <textarea name="na_features" class="form-control bg-secondary text-white border-0"
-                                    rows="2"><%= plan.na_features %></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary mt-auto">Actualizar Plan</button>
-                        </form>
-                    </div>
-                    <% }) %>
-            </div>
-        </div>
+
     </div>
 </main>

@@ -1,0 +1,204 @@
+<nav class="col-md-2 d-md-block sidebar">
+    <div class="text-center mb-4">
+        <img src="/assets/img/pagina/logo.svg" alt="Logo" class="img-fluid"
+            style="max-height: 60px; border-radius: 50%;">
+        <h5 class="mt-2 fw-bold" style="color: var(--primary-color);">Admin Panel</h5>
+    </div>
+    <hr style="border-color: rgba(255,255,255,0.1);">
+
+    <a href="/" target="_blank">
+        <i class="bi bi-globe"></i> Ver mi Web
+    </a>
+
+
+
+    <a href="/admin/dynamic-sections" class="active">
+        <i class="bi bi-puzzle"></i> Mis Secciones
+    </a>
+
+    <% if (role==='admin' ) { %>
+        <a href="/admin/users">
+            <i class="bi bi-people"></i> Usuarios
+        </a>
+        <% } %>
+
+            <div class="mt-auto">
+                <hr style="border-color: rgba(255,255,255,0.1);">
+                <a href="/admin/logout" class="text-danger">
+                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                </a>
+            </div>
+</nav>
+
+<main class="col-md-10 p-4">
+    <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-4 border-bottom">
+        <h1 class="h2"><i class="bi bi-pencil-square"></i> Editar Sección: <%= section.title %>
+        </h1>
+        <a href="/admin/dashboard#pills-dynamic" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+
+    <form action="/admin/dynamic-sections/update" method="POST">
+        <input type="hidden" name="id" value="<%= section.id %>">
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card bg-dark text-white border-secondary h-100">
+                    <div class="card-header border-secondary">
+                        <i class="bi bi-gear"></i> Configuración General
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Título</label>
+                            <input type="text" name="title" class="form-control bg-secondary text-white border-0"
+                                value="<%= section.title %>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Sección</label>
+                            <select name="section_type" class="form-select bg-secondary text-white border-0">
+                                <option value="inline" <%=section.section_type==='inline' ? 'selected' : '' %>>📄 Inline
+                                    (resumen en la Home)</option>
+                                <option value="page" <%=section.section_type==='page' ? 'selected' : '' %>>📑 Página
+                                    Completa</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ícono (Bootstrap Icons)</label>
+                            <input type="text" name="icon" class="form-control bg-secondary text-white border-0"
+                                value="<%= section.icon || 'bi-file-text' %>">
+                            <small class="text-white-50">Ej: bi-book, bi-star, bi-heart. Ver <a
+                                    href="https://icons.getbootstrap.com/" target="_blank" class="text-info">Bootstrap
+                                    Icons</a></small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">URL de Imagen (opcional)</label>
+                            <input type="text" name="image_url" class="form-control bg-secondary text-white border-0"
+                                value="<%= section.image_url || '' %>">
+                        </div>
+                        <% if (section.image_url) { %>
+                            <div class="mb-3">
+                                <img src="<%= section.image_url %>" class="img-fluid rounded"
+                                    style="max-height: 150px;">
+                            </div>
+                            <% } %>
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <label class="form-label">Orden en Menú</label>
+                                        <input type="number" name="nav_order"
+                                            class="form-control bg-secondary text-white border-0"
+                                            value="<%= section.nav_order || 0 %>" min="0">
+                                    </div>
+                                    <div class="col-6 d-flex flex-column justify-content-end">
+                                        <div class="form-check form-switch mb-2">
+                                            <input class="form-check-input" type="checkbox" name="is_active"
+                                                id="isActive" <%=section.is_active ? 'checked' : '' %>>
+                                            <label class="form-check-label" for="isActive">Sección Activa</label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" name="show_in_navbar"
+                                                id="showNav" <%=section.show_in_navbar ? 'checked' : '' %>>
+                                            <label class="form-check-label" for="showNav">Mostrar en Menú</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <% if (role==='admin' && typeof editors !=='undefined' && editors.length> 0) { %>
+                                    <hr class="border-secondary my-4">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold text-primary"><i class="bi bi-shield-lock"></i>
+                                            Permisos de Edición</label>
+                                        <p class="small text-white-50">Seleccioná qué editores pueden gestionar esta
+                                            sección:</p>
+                                        <div class="bg-secondary bg-opacity-25 p-3 rounded">
+                                            <% editors.forEach(editor=> { %>
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        name="allowed_editors" value="<%= editor.id %>"
+                                                        id="editor<%= editor.id %>" <%=(typeof sectionEditors
+                                                        !=='undefined' && sectionEditors.includes(editor.id))
+                                                        ? 'checked' : '' %>>
+                                                    <label class="form-check-label" for="editor<%= editor.id %>">
+                                                        <%= editor.username %> (Editor)
+                                                    </label>
+                                                </div>
+                                                <% }) %>
+                                        </div>
+                                    </div>
+                                    <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card bg-dark text-white border-secondary h-100">
+                    <div class="card-header border-secondary">
+                        <i class="bi bi-eye"></i> Vista Previa del Slug
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3 p-3 rounded" style="background: rgba(255,255,255,0.05);">
+                            <p class="mb-1 small text-white-50">URL de la sección:</p>
+                            <% if (section.section_type==='inline' ) { %>
+                                <code class="text-info">tudominio.com/#section-<%= section.slug %></code>
+                                <% } else { %>
+                                    <code class="text-info">tudominio.com/s/<%= section.slug %></code>
+                                    <% } %>
+                        </div>
+                        <div class="mb-3 p-3 rounded" style="background: rgba(255,255,255,0.05);">
+                            <p class="mb-1 small text-white-50">Tipo actual:</p>
+                            <% if (section.section_type==='inline' ) { %>
+                                <span class="badge bg-primary fs-6">📄 Inline</span>
+                                <p class="small mt-2 text-white-50">Muestra un resumen en la página principal con un
+                                    botón "Leer más" que lleva a la página completa.</p>
+                                <% } else { %>
+                                    <span class="badge bg-warning text-dark fs-6">📑 Página</span>
+                                    <p class="small mt-2 text-white-50">Página interna independiente. Se accede desde el
+                                        menú de navegación.</p>
+                                    <% } %>
+                        </div>
+                        <div class="mb-3 p-3 rounded" style="background: rgba(255,255,255,0.05);">
+                            <p class="mb-1 small text-white-50">Estado:</p>
+                            <% if (section.is_active) { %>
+                                <span class="badge bg-success">Activa</span>
+                                <% } else { %>
+                                    <span class="badge bg-danger">Inactiva</span>
+                                    <% } %>
+                                        <% if (section.show_in_navbar) { %>
+                                            <span class="badge bg-info ms-1">En menú</span>
+                                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card bg-dark text-white border-secondary">
+                    <div class="card-header border-secondary">
+                        <i class="bi bi-text-paragraph"></i> Contenido
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Resumen <small class="text-white-50">(se muestra en la Home para
+                                    secciones inline)</small></label>
+                            <textarea name="summary" class="form-control bg-secondary text-white border-0"
+                                rows="3"><%= section.summary || '' %></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contenido Completo <small class="text-white-50">(HTML permitido -
+                                    se muestra en la página interna)</small></label>
+                            <textarea name="content" class="form-control bg-secondary text-white border-0" rows="12"
+                                style="font-family: monospace;"><%= section.content || '' %></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 d-flex gap-3">
+                <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                    <i class="bi bi-check-lg"></i> Guardar Cambios
+                </button>
+                <a href="/admin/dashboard#pills-dynamic" class="btn btn-outline-secondary btn-lg">Cancelar</a>
+            </div>
+        </div>
+    </form>
+</main>

@@ -1,14 +1,15 @@
-const Section = require('../models/Section');
 const Parasha = require('../models/Parasha');
 const Portfolio = require('../models/Portfolio');
 const Team = require('../models/Team');
 const Testimonial = require('../models/Testimonial');
 const Pricing = require('../models/Pricing');
+const DynamicSection = require('../models/DynamicSection');
+const EntityModel = require('../models/EntityModel');
 
 const homeController = {
     index: async (req, res, next) => {
         try {
-            const sections = await Section.getAll();
+            const allDynamicSections = await DynamicSection.getAll();
             const latestParashot = await Parasha.getLatest(6);
             const portfolio = await Portfolio.getAll();
             const team = await Team.getAll();
@@ -22,10 +23,25 @@ const homeController = {
                 na_features: p.na_features ? p.na_features.split(',').map(f => f.trim()) : []
             }));
 
-            // Convertimos el array de secciones en un objeto para fácil acceso: sectionsObj.Hero.title
+            // Convertimos el array de secciones dinámicas en un objeto para fácil acceso: sectionsObj.hero.title
+            // Usamos el slug como llave (hero, about, calendario, etc.)
             const sectionsObj = {};
-            sections.forEach(s => {
-                sectionsObj[s.section_name] = s;
+            const dynamicInline = [];
+
+            allDynamicSections.forEach(ds => {
+                if (ds.is_active) {
+                    // Para compatibilidad con la vista index.ejs que busca 'sections.Hero' o 'sections.About'
+                    // Mapeamos slugs conocidos a llaves con Capitalize para no romper la vista
+                    const key = ds.slug.charAt(0).toUpperCase() + ds.slug.slice(1);
+                    sectionsObj[key] = ds;
+
+                    if (ds.section_type === 'inline') {
+                        // Evitamos duplicar en el scroll de la home si son las secciones "base" ya renderizadas explícitamente
+                        if (!['hero', 'about', 'calendario'].includes(ds.slug)) {
+                            dynamicInline.push(ds);
+                        }
+                    }
+                }
             });
 
             res.render('index', {
@@ -35,6 +51,7 @@ const homeController = {
                 team: team,
                 testimonials: testimonials,
                 pricing: pricing,
+                dynamicInline: dynamicInline,
                 title: 'Hablemos de YHWH',
                 page: 'home',
                 layout: false
@@ -51,6 +68,30 @@ const homeController = {
     },
     parashot: (req, res) => {
         res.render('parashot', { title: 'Parashot - Hablemos de YHWH', page: 'parashot', layout: false });
+    },
+    dynamicPage: async (req, res, next) => {
+        try {
+            const section = await DynamicSection.getBySlug(req.params.slug);
+            if (!section) return next();
+
+            let tableData = null;
+            let tableColumns = null;
+            if (section.data_table) {
+                tableData = await EntityModel.getAll(section.data_table);
+                tableColumns = await EntityModel.getColumns(section.data_table);
+            }
+
+            res.render('dynamic_page', {
+                title: section.title + ' - Hablemos de YHWH',
+                page: 'dynamic',
+                section,
+                tableData,
+                tableColumns,
+                layout: false
+            });
+        } catch (error) {
+            next(error);
+        }
     }
 };
 

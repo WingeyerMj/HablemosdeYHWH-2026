@@ -116,3 +116,24 @@ WHERE NOT EXISTS (SELECT name FROM team WHERE name = 'Jeremy Walker') LIMIT 1;
 INSERT INTO pricing (name, price, featured, features, na_features)
 SELECT * FROM (SELECT 'Free Plan', '0', FALSE, 'Feature 1,Feature 2', 'Feature 3') AS tmp
 WHERE NOT EXISTS (SELECT name FROM pricing WHERE name = 'Free Plan') LIMIT 1;
+
+-- Tabla para secciones dinámicas (administrables desde el backend)
+CREATE TABLE IF NOT EXISTS dynamic_sections (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL UNIQUE,
+    section_type ENUM('inline', 'page') NOT NULL DEFAULT 'inline',
+    summary TEXT,
+    content LONGTEXT,
+    icon VARCHAR(100) DEFAULT 'bi-file-text',
+    image_url VARCHAR(500),
+    nav_order INT DEFAULT 0,
+    is_active BOOLEAN DEFAULT TRUE,
+    show_in_navbar BOOLEAN DEFAULT TRUE,
+    data_table VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Migración para soporte de tablas dinámicas
+ALTER TABLE dynamic_sections ADD COLUMN data_table VARCHAR(100) AFTER show_in_navbar;

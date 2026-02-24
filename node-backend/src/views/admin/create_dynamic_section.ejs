@@ -1,0 +1,216 @@
+<nav class="col-md-2 d-md-block sidebar">
+    <div class="text-center mb-4">
+        <img src="/assets/img/pagina/logo.svg" alt="Logo" class="img-fluid"
+            style="max-height: 60px; border-radius: 50%;">
+        <h5 class="mt-2 fw-bold" style="color: var(--primary-color);">Admin Panel</h5>
+    </div>
+    <hr style="border-color: rgba(255,255,255,0.1);">
+
+    <a href="/" target="_blank">
+        <i class="bi bi-globe"></i> Ver mi Web
+    </a>
+
+    <a href="/admin/dynamic-sections" class="active">
+        <i class="bi bi-puzzle"></i> Mis Secciones
+    </a>
+
+    <% if (role==='admin' ) { %>
+        <a href="/admin/users">
+            <i class="bi bi-people"></i> Usuarios
+        </a>
+        <% } %>
+
+            <div class="mt-auto">
+                <hr style="border-color: rgba(255,255,255,0.1);">
+                <a href="/admin/logout" class="text-danger">
+                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                </a>
+            </div>
+</nav>
+
+<main class="col-md-10 p-4">
+    <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-4 border-bottom">
+        <h1 class="h2"><i class="bi bi-plus-circle"></i> Crear Nueva Sección</h1>
+        <a href="/admin/dynamic-sections" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+
+    <form action="/admin/dynamic-sections/create" method="POST" id="createSectionForm">
+        <div class="row g-4">
+            <!-- Configuración Básica -->
+            <div class="col-md-7">
+                <div class="card bg-dark text-white border-secondary mb-4">
+                    <div class="card-header border-secondary">
+                        <i class="bi bi-gear"></i> Información de la Sección
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Título de la Sección</label>
+                            <input type="text" name="title" class="form-control bg-secondary text-white border-0"
+                                placeholder="Ej: Estudios Especiales" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Tipo</label>
+                                <select name="section_type" class="form-select bg-secondary text-white border-0">
+                                    <option value="inline">📄 Inline (Home + Página)</option>
+                                    <option value="page">📑 Página (Solo página)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Ícono (Bootstrap Icon)</label>
+                                <input type="text" name="icon" class="form-control bg-secondary text-white border-0"
+                                    value="bi-file-text">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Resumen / Introducción</label>
+                            <textarea name="summary" class="form-control bg-secondary text-white border-0"
+                                rows="2"></textarea>
+                        </div>
+                        <div class="mb-0">
+                            <label class="form-label">Contenido Base (Opcional)</label>
+                            <textarea name="content" class="form-control bg-secondary text-white border-0"
+                                rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ESTRUCTURA DE TABLA (LO QUE PIDIÓ EL USUARIO) -->
+                <div class="card bg-dark text-white border-secondary">
+                    <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-table"></i> Estructura de Datos (Tabla Dinámica)</span>
+                        <div class="form-check form-switch m-0">
+                            <input class="form-check-input" type="checkbox" name="has_table" id="hasTableSwitch">
+                            <label class="form-check-label" for="hasTableSwitch">Activar Tabla</label>
+                        </div>
+                    </div>
+                    <div class="card-body" id="tableConfigArea"
+                        style="display: none; opacity: 0.5; pointer-events: none;">
+                        <p class="small text-white-50 mb-3">Define los campos que tendrá la tabla para esta sección.
+                            Cada registro que agregues después tendrá estos campos.</p>
+
+                        <div id="fieldsContainer">
+                            <div class="row g-2 mb-2 field-row">
+                                <div class="col-md-6">
+                                    <input type="text" name="field_names"
+                                        class="form-control form-control-sm bg-secondary text-white border-0"
+                                        placeholder="Nombre del campo (ej: Autor)">
+                                </div>
+                                <div class="col-md-4">
+                                    <select name="field_types"
+                                        class="form-select form-select-sm bg-secondary text-white border-0">
+                                        <option value="string">Texto corto</option>
+                                        <option value="text">Texto largo (área)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-sm btn-outline-danger w-100 remove-field"><i
+                                            class="bi bi-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="addFieldBtn">
+                            <i class="bi bi-plus-circle"></i> Añadir otro campo
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Opciones Laterales -->
+            <div class="col-md-5">
+                <div class="card bg-dark text-white border-secondary mb-4">
+                    <div class="card-header border-secondary">
+                        <i class="bi bi-image"></i> Visualización
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Imagen de Cabecera (URL)</label>
+                            <input type="text" name="image_url" class="form-control bg-secondary text-white border-0"
+                                placeholder="/assets/img/hero.jpg">
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" name="show_in_navbar" id="showNav" checked>
+                            <label class="form-check-label" for="showNav">Mostrar en Menú de Navegación</label>
+                        </div>
+                        <div class="mb-0">
+                            <label class="form-label">Orden</label>
+                            <input type="number" name="nav_order" class="form-control bg-secondary text-white border-0"
+                                value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <% if (role==='admin' && typeof editors !=='undefined' && editors.length> 0) { %>
+                    <div class="card bg-dark text-white border-secondary">
+                        <div class="card-header border-secondary">
+                            <i class="bi bi-shield-lock"></i> Permisos
+                        </div>
+                        <div class="card-body">
+                            <p class="small text-white-50">Seleccioná qué editores pueden gestionar esta sección:</p>
+                            <% editors.forEach(editor=> { %>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="allowed_editors"
+                                        value="<%= editor.id %>" id="ed<%= editor.id %>">
+                                    <label class="form-check-label" for="ed<%= editor.id %>">
+                                        <%= editor.username %>
+                                    </label>
+                                </div>
+                                <% }) %>
+                        </div>
+                    </div>
+                    <% } %>
+            </div>
+
+            <div class="col-12 mt-4">
+                <button type="submit" class="btn btn-success btn-lg w-100 shadow">
+                    <i class="bi bi-save"></i> CREAR SECCIÓN Y TABLA
+                </button>
+            </div>
+        </div>
+    </form>
+</main>
+
+<script>
+    // Lógica para activar/desactivar el área de tabla
+    const switchEl = document.getElementById('hasTableSwitch');
+    const areaEl = document.getElementById('tableConfigArea');
+
+    switchEl.addEventListener('change', () => {
+        if (switchEl.checked) {
+            areaEl.style.display = 'block';
+            setTimeout(() => {
+                areaEl.style.opacity = '1';
+                areaEl.style.pointerEvents = 'auto';
+            }, 10);
+        } else {
+            areaEl.style.opacity = '0.5';
+            areaEl.style.pointerEvents = 'none';
+        }
+    });
+
+    // Añadir campos dinámicamente
+    document.getElementById('addFieldBtn').addEventListener('click', () => {
+        const container = document.getElementById('fieldsContainer');
+        const newRow = document.querySelector('.field-row').cloneNode(true);
+        newRow.querySelector('input').value = '';
+        container.appendChild(newRow);
+
+        // Agregar evento al nuevo botón de eliminar
+        newRow.querySelector('.remove-field').addEventListener('click', function () {
+            if (document.querySelectorAll('.field-row').length > 1) {
+                this.closest('.field-row').remove();
+            }
+        });
+    });
+
+    // Evento para los botones de eliminar iniciales
+    document.querySelectorAll('.remove-field').forEach(btn => {
+        btn.addEventListener('click', function () {
+            if (document.querySelectorAll('.field-row').length > 1) {
+                this.closest('.field-row').remove();
+            }
+        });
+    });
+</script>

@@ -173,41 +173,7 @@
                     </div>
                 </section>
 
-                <section id="pricing" class="pricing section">
-                    <div class="container section-title" data-aos="fade-up">
-                        <h2>Precios</h2>
-                        <p>Nuestros planes</p>
-                    </div>
-                    <div class="container">
-                        <div class="row gy-4">
-                            <% pricing.forEach((plan, index)=> { %>
-                                <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="<%= (index + 1) * 100 %>">
-                                    <div class="pricing-item <%= plan.featured ? 'featured' : '' %>">
-                                        <h3>
-                                            <%= plan.name %>
-                                        </h3>
-                                        <h4><sup>$</sup>
-                                            <%= plan.price %><span> / month</span>
-                                        </h4>
-                                        <ul>
-                                            <% plan.features.forEach(feature=> { %>
-                                                <li><i class="bi bi-check"></i> <span>
-                                                        <%= feature %>
-                                                    </span></li>
-                                                <% }) %>
-                                                    <% plan.na_features.forEach(feature=> { %>
-                                                        <li class="na"><i class="bi bi-x"></i> <span>
-                                                                <%= feature %>
-                                                            </span></li>
-                                                        <% }) %>
-                                        </ul>
-                                        <a href="#" class="buy-btn">Buy Now</a>
-                                    </div>
-                                </div>
-                                <% }) %>
-                        </div>
-                    </div>
-                </section>
+
 
                 <section id="team" class="team section">
                     <div class="container section-title" data-aos="fade-up">
@@ -262,68 +228,107 @@
                     </div>
                 </section>
 
-                <section id="contact" class="contact section">
-                    <div class="container section-title" data-aos="fade-up">
-                        <h2>Contacto</h2>
-                        <p>Mantente en comunicación con nosotros</p>
-                    </div>
-                    <div class="container" data-aos="fade-up" data-aos-delay="100">
-                        <div class="row gy-4">
-                            <div class="col-lg-4">
-                                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
-                                    <i class="bi bi-geo-alt flex-shrink-0"></i>
-                                    <div>
-                                        <h3>Address</h3>
-                                        <p>A108 Adam Street, New York, NY 535022</p>
-                                    </div>
-                                </div>
-                                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
-                                    <i class="bi bi-telephone flex-shrink-0"></i>
-                                    <div>
-                                        <h3>Call Us</h3>
-                                        <p>+1 5589 55488 55</p>
-                                    </div>
-                                </div>
-                                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
-                                    <i class="bi bi-envelope flex-shrink-0"></i>
-                                    <div>
-                                        <h3>Email Us</h3>
-                                        <p>info@example.com</p>
-                                    </div>
-                                </div>
+                <!-- Secciones Dinámicas Inline -->
+                <% if (typeof dynamicInline !=='undefined' && dynamicInline.length> 0) { %>
+                    <% dynamicInline.forEach((ds, idx)=> { %>
+                        <section id="section-<%= ds.slug %>"
+                            class="section <%= idx % 2 === 0 ? '' : 'dark-background' %>">
+                            <div class="container section-title" data-aos="fade-up">
+                                <h2><i class="bi <%= ds.icon %>"></i>
+                                    <%= ds.title %>
+                                </h2>
                             </div>
-                            <div class="col-lg-8">
-                                <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up"
-                                    data-aos-delay="200">
-                                    <div class="row gy-4">
-                                        <div class="col-md-6">
-                                            <input type="text" name="name" class="form-control" placeholder="Your Name"
-                                                required="">
+                            <div class="container" data-aos="fade-up" data-aos-delay="100">
+                                <div class="row gy-4 align-items-center">
+                                    <% if (ds.image_url) { %>
+                                        <div class="col-lg-5">
+                                            <img src="<%= ds.image_url %>" class="img-fluid rounded shadow"
+                                                alt="<%= ds.title %>"
+                                                style="max-height: 350px; object-fit: cover; width: 100%;">
                                         </div>
-                                        <div class="col-md-6">
-                                            <input type="email" class="form-control" name="email"
-                                                placeholder="Your Email" required="">
+                                        <div class="col-lg-7">
+                                            <% } else { %>
+                                                <div class="col-lg-12">
+                                                    <% } %>
+                                                        <div class="content">
+                                                            <p style="font-size: 1.1rem; line-height: 1.8;">
+                                                                <%= ds.summary || '' %>
+                                                            </p>
+                                                            <a href="/s/<%= ds.slug %>" class="btn-get-started"
+                                                                style="background-color: #d4b895; color: #fff; padding: 10px 30px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600; margin-top: 15px;">
+                                                                Leer más <i class="bi bi-arrow-right"></i>
+                                                            </a>
+                                                        </div>
+                                                </div>
                                         </div>
-                                        <div class="col-md-12">
-                                            <input type="text" class="form-control" name="subject" placeholder="Subject"
-                                                required="">
-                                        </div>
-                                        <div class="col-md-12">
-                                            <textarea class="form-control" name="message" rows="6" placeholder="Message"
-                                                required=""></textarea>
-                                        </div>
-                                        <div class="col-md-12 text-center">
-                                            <div class="loading">Loading</div>
-                                            <div class="error-message"></div>
-                                            <div class="sent-message">Your message has been sent. Thank you!</div>
-                                            <button type="submit">Send Message</button>
+                                </div>
+                        </section>
+                        <% }) %>
+                            <% } %>
+
+                                <section id="contact" class="contact section">
+                                    <div class="container section-title" data-aos="fade-up">
+                                        <h2>Contacto</h2>
+                                        <p>Mantente en comunicación con nosotros</p>
+                                    </div>
+                                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                                        <div class="row gy-4">
+                                            <div class="col-lg-4">
+                                                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
+                                                    <i class="bi bi-geo-alt flex-shrink-0"></i>
+                                                    <div>
+                                                        <h3>Address</h3>
+                                                        <p>A108 Adam Street, New York, NY 535022</p>
+                                                    </div>
+                                                </div>
+                                                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+                                                    <i class="bi bi-telephone flex-shrink-0"></i>
+                                                    <div>
+                                                        <h3>Call Us</h3>
+                                                        <p>+1 5589 55488 55</p>
+                                                    </div>
+                                                </div>
+                                                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
+                                                    <i class="bi bi-envelope flex-shrink-0"></i>
+                                                    <div>
+                                                        <h3>Email Us</h3>
+                                                        <p>info@example.com</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <form action="forms/contact.php" method="post" class="php-email-form"
+                                                    data-aos="fade-up" data-aos-delay="200">
+                                                    <div class="row gy-4">
+                                                        <div class="col-md-6">
+                                                            <input type="text" name="name" class="form-control"
+                                                                placeholder="Your Name" required="">
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input type="email" class="form-control" name="email"
+                                                                placeholder="Your Email" required="">
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <input type="text" class="form-control" name="subject"
+                                                                placeholder="Subject" required="">
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <textarea class="form-control" name="message" rows="6"
+                                                                placeholder="Message" required=""></textarea>
+                                                        </div>
+                                                        <div class="col-md-12 text-center">
+                                                            <div class="loading">Loading</div>
+                                                            <div class="error-message"></div>
+                                                            <div class="sent-message">Your message has been sent. Thank
+                                                                you!</div>
+                                                            <button type="submit">Send Message</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                                </section>
 
             </main>
 

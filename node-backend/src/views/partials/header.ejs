@@ -9,39 +9,40 @@
 
         <nav id="navmenu" class="navmenu">
             <ul>
-                <li><a href="/" class="<%= page === 'home' ? 'active' : '' %>">Inicio</a></li>
-                <li><a href="/#about">Sobre Nosotros</a></li>
-                <li><a href="/#services">Parashot</a></li>
-                <li><a href="/#portfolio">Eventos</a></li>
-                <li><a href="/#team">Equipo</a></li>
-                <li><a href="/#pricing">Precios</a></li>
-                <li><a href="/blog" class="<%= page === 'blog' ? 'active' : '' %>">Blog</a></li>
-                <li><a href="/calendar" class="<%= page === 'calendar' ? 'active' : '' %>">Calendario</a></li>
-                <li class="dropdown"><a href="#"><span>Opciones</span> <i
-                            class="bi bi-chevron-down toggle-dropdown"></i></a>
-                    <ul>
-                        <li><a href="#">Opción 1</a></li>
-                        <li class="dropdown"><a href="#"><span>Submenú</span> <i
-                                    class="bi bi-chevron-down toggle-dropdown"></i></a>
-                            <ul>
-                                <li><a href="#">Submenú 1</a></li>
-                                <li><a href="#">Submenú 2</a></li>
-                                <li><a href="#">Submenú 3</a></li>
-                                <li><a href="#">Submenú 4</a></li>
-                                <li><a href="#">Submenú 5</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#">Opción 2</a></li>
-                        <li><a href="#">Opción 3</a></li>
-                        <li><a href="#">Opción 4</a></li>
-                    </ul>
-                </li>
-                <li><a href="/#contact">Contacto</a></li>
-                <% if (user) { %>
-                    <li><a href="/admin/dashboard" class="btn-admin-access" style="background: #d4b895; color: white; border-radius: 5px; padding: 5px 15px; margin-left: 10px;">Admin</a></li>
-                <% } else { %>
-                    <li><a href="/admin/login" class="btn-admin-access" style="border: 1px solid #d4b895; border-radius: 5px; padding: 5px 15px; margin-left: 10px;">Ingresar</a></li>
-                <% } %>
+                <li><a href="/" class="<%= page === 'home' ? 'active' : '' %>"><i class="bi bi-house-door"></i>
+                        Inicio</a></li>
+                <li><a href="/#services"><i class="bi bi-book"></i> Parashot</a></li>
+                <li><a href="/#portfolio"><i class="bi bi-camera"></i> Eventos</a></li>
+                <li><a href="/#team"><i class="bi bi-people"></i> Equipo</a></li>
+                <li><a href="/blog" class="<%= page === 'blog' ? 'active' : '' %>"><i class="bi bi-newspaper"></i>
+                        Blog</a></li>
+
+                <% if (typeof navbarDynamicSections !=='undefined' && navbarDynamicSections.length> 0) { %>
+                    <% navbarDynamicSections.forEach(ds=> { %>
+                        <% if (ds.slug==='hero' ) return; let href=ds.section_type==='inline' ? `/#section-${ds.slug}` :
+                            `/s/${ds.slug}`; if (ds.slug==='about' ) href='/#about' ; if (ds.slug==='calendario' )
+                            href='/calendar' ; %>
+                            <li>
+                                <a href="<%= href %>"
+                                    class="<%= (typeof section !== 'undefined' && section && section.slug === ds.slug) ? 'active' : '' %>">
+                                    <i class="bi <%= ds.icon %>"></i>
+                                    <%= ds.title %>
+                                </a>
+                            </li>
+                            <% }) %>
+                                <% } %>
+
+                                    <li><a href="/#contact"><i class="bi bi-envelope"></i> Contacto</a></li>
+
+                                    <% if (user) { %>
+                                        <li><a href="/admin/dashboard" class="btn-admin-access"
+                                                style="background: #d4b895; color: white; border-radius: 5px; padding: 5px 15px; margin-left: 10px;">Admin</a>
+                                        </li>
+                                        <% } else { %>
+                                            <li><a href="/admin/login" class="btn-admin-access"
+                                                    style="border: 1px solid #d4b895; border-radius: 5px; padding: 5px 15px; margin-left: 10px;">Ingresar</a>
+                                            </li>
+                                            <% } %>
             </ul>
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
