@@ -10,7 +10,7 @@
                     <p class="text-white-50">Panel de Administración</p>
                 </div>
 
-                <% if (error) { %>
+                <% if (typeof error !=='undefined' && error) { %>
                     <div class="alert alert-danger b-0"
                         style="background: rgba(220, 53, 69, 0.2); color: #ff8d97; border: 1px solid rgba(220, 53, 69, 0.3);">
                         <%= error %>
