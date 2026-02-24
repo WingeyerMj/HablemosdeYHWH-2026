@@ -57,22 +57,30 @@ class DynamicSection {
     // Crear nueva sección
     static async create(data) {
         const { title, slug, section_type, summary, content, icon, image_url, nav_order, is_active, show_in_navbar, data_table } = data;
-        const result = await db.query(
-            `INSERT INTO dynamic_sections (title, slug, section_type, summary, content, icon, image_url, nav_order, is_active, show_in_navbar, data_table)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [title, slug, section_type, summary || '', content || '', icon || 'bi-file-text', image_url || '', nav_order || 0, is_active !== false ? 1 : 0, show_in_navbar !== false ? 1 : 0, data_table || null]
-        );
-        return result;
+        const isPostgres = !!process.env.DATABASE_URL;
+
+        const sql = `INSERT INTO dynamic_sections (title, slug, section_type, summary, content, icon, image_url, nav_order, is_active, show_in_navbar, data_table)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ${isPostgres ? 'RETURNING id' : ''}`;
+
+        const [result] = await db.query(sql, [title, slug, section_type, summary || '', content || '', icon || 'bi-file-text', image_url || '', nav_order || 0, is_active !== false, show_in_navbar !== false, data_table || null]);
+
+        if (isPostgres) {
+            return { insertId: result[0].id };
+        }
+        return result; // MySQL result (ResultSetHeader)
     }
+
+
 
     // Actualizar sección
     static async update(id, data) {
         const { title, slug, section_type, summary, content, icon, image_url, nav_order, is_active, show_in_navbar, data_table } = data;
         return await db.query(
             `UPDATE dynamic_sections SET title = ?, slug = ?, section_type = ?, summary = ?, content = ?, icon = ?, image_url = ?, nav_order = ?, is_active = ?, show_in_navbar = ?, data_table = ? WHERE id = ?`,
-            [title, slug, section_type, summary || '', content || '', icon || 'bi-file-text', image_url || '', nav_order || 0, is_active ? 1 : 0, show_in_navbar ? 1 : 0, data_table || null, id]
+            [title, slug, section_type, summary || '', content || '', icon || 'bi-file-text', image_url || '', nav_order || 0, !!is_active, !!show_in_navbar, data_table || null, id]
         );
     }
+
 
     // Eliminar sección
     static async delete(id) {
@@ -98,12 +106,25 @@ class DynamicSection {
     static async setPermissions(sectionId, userIds) {
         // Eliminar permisos previos
         await db.query('DELETE FROM section_permissions WHERE section_id = ?', [sectionId]);
+
         // Insertar nuevos permisos
         if (userIds && userIds.length > 0) {
-            const values = userIds.map(uid => [sectionId, uid]);
-            await db.query('INSERT INTO section_permissions (section_id, user_id) VALUES ?', [values]);
+            const isPostgres = !!process.env.DATABASE_URL;
+            if (isPostgres) {
+                // PostgreSQL: Build bulk insert manually or do it one by one
+                // For simplicity and to avoid placeholder complexity, we'll do it one by one 
+                // as there are usually very few editors per section.
+                for (const uid of userIds) {
+                    await db.query('INSERT INTO section_permissions (section_id, user_id) VALUES (?, ?)', [sectionId, uid]);
+                }
+            } else {
+                // MySQL: supports array of arrays
+                const values = userIds.map(uid => [sectionId, uid]);
+                await db.query('INSERT INTO section_permissions (section_id, user_id) VALUES ?', [values]);
+            }
         }
     }
+
 
     static async hasPermission(sectionId, userId) {
         const [rows] = await db.query('SELECT 1 FROM section_permissions WHERE section_id = ? AND user_id = ?', [sectionId, userId]);

@@ -155,9 +155,10 @@ const adminController = {
     },
 
     createDynamicSectionPage: async (req, res) => {
-        const [editors] = await db.query('SELECT id, username FROM users WHERE role = "editor"');
+        const [editors] = await db.query("SELECT id, username FROM users WHERE role = 'editor'");
         res.render('admin/create_dynamic_section', { layout: 'admin/layout', editors });
     },
+
 
     createDynamicSection: async (req, res) => {
         try {
@@ -181,7 +182,7 @@ const adminController = {
                 }
             }
 
-            const [result] = await DynamicSection.create({
+            const result = await DynamicSection.create({
                 title,
                 slug,
                 section_type: section_type || 'inline',
@@ -203,6 +204,7 @@ const adminController = {
                 await DynamicSection.setPermissions(result.insertId, editorIds);
             }
 
+
             res.redirect('/admin/dynamic-sections');
         } catch (error) {
             console.error('Error creating dynamic section:', error);
@@ -221,7 +223,8 @@ const adminController = {
             const section = await DynamicSection.getById(sectionId);
             if (!section) return res.redirect('/admin/dynamic-sections');
 
-            const [editors] = await db.query('SELECT id, username FROM users WHERE role = "editor"');
+            const [editors] = await db.query("SELECT id, username FROM users WHERE role = 'editor'");
+
             const sectionEditors = await DynamicSection.getPermissions(sectionId);
 
             res.render('admin/edit_dynamic_section', {
