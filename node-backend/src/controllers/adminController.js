@@ -6,7 +6,7 @@ const db = require('../config/db');
 const adminController = {
     loginPage: (req, res) => {
         if (req.session.userId) return res.redirect('/admin/dashboard');
-        res.render('admin/login', { layout: false });
+        res.render('admin/login', { layout: false, error: null });
     },
 
     login: async (req, res) => {
