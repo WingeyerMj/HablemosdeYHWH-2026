@@ -6,6 +6,14 @@ const expressLayouts = require('express-ejs-layouts');
 const db = require('./src/config/db');
 const initDB = require('./src/config/init-db');
 
+// Prevenir que el proceso muera por errores no manejados (ej: MySQL no disponible)
+process.on('unhandledRejection', (reason, promise) => {
+    console.warn('⚠️ Unhandled Rejection (ignorado):', reason?.code || reason?.message || reason);
+});
+process.on('uncaughtException', (err) => {
+    console.warn('⚠️ Uncaught Exception (ignorado):', err?.code || err?.message || err);
+});
+
 const app = express();
 
 // Settings
@@ -70,13 +78,14 @@ async function startServer() {
     try {
         // Inicializar base de datos primero (esperar a que se creen las tablas)
         await initDB(db);
-
-        app.listen(app.get('port'), () => {
-            console.log(`Server on port ${app.get('port')}`);
-        });
     } catch (error) {
-        console.error('Error al iniciar el servidor:', error);
+        console.warn('⚠️ No se pudo inicializar la base de datos:', error.message || error);
+        console.warn('⚠️ El servidor continuará sin base de datos.');
     }
+
+    app.listen(app.get('port'), () => {
+        console.log(`Server on port ${app.get('port')}`);
+    });
 }
 
 startServer();

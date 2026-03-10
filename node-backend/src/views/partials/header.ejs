@@ -16,10 +16,12 @@
                 <li><a href="/#team"><i class="bi bi-people"></i> Equipo</a></li>
                 <li><a href="/blog" class="<%= page === 'blog' ? 'active' : '' %>"><i class="bi bi-newspaper"></i>
                         Blog</a></li>
+                <li><a href="/calendar" class="<%= page === 'calendar' ? 'active' : '' %>"><i class="bi bi-calendar"></i>
+                        Calendario</a></li>
 
                 <% if (typeof navbarDynamicSections !=='undefined' && navbarDynamicSections.length> 0) { %>
                     <% navbarDynamicSections.forEach(ds=> { %>
-                        <% if (ds.slug==='hero' ) return; let href=ds.section_type==='inline' ? `/#section-${ds.slug}` :
+                        <% if (ds.slug==='hero' || ds.slug==='calendario') return; let href=ds.section_type==='inline' ? `/#section-${ds.slug}` :
                             `/s/${ds.slug}`; if (ds.slug==='about' ) href='/#about' ; if (ds.slug==='calendario' )
                             href='/calendar' ; %>
                             <li>

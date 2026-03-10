@@ -43,6 +43,10 @@ if (process.env.DATABASE_URL) {
         queueLimit: 0,
         multipleStatements: true
     });
+    // Prevenir que errores de conexión no manejados maten el proceso
+    pool.pool && pool.pool.on && pool.pool.on('error', (err) => {
+        console.warn('⚠️ Error en pool MySQL (ignorado):', err.code || err.message);
+    });
 }
 
 module.exports = pool;

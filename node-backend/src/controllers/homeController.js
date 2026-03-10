@@ -9,12 +9,17 @@ const EntityModel = require('../models/EntityModel');
 const homeController = {
     index: async (req, res, next) => {
         try {
-            const allDynamicSections = await DynamicSection.getAll();
-            const latestParashot = await Parasha.getLatest(6);
-            const portfolio = await Portfolio.getAll();
-            const team = await Team.getAll();
-            const testimonials = await Testimonial.getAll();
-            const pricingRaw = await Pricing.getAll();
+            let allDynamicSections = [], latestParashot = [], portfolio = [], team = [], testimonials = [], pricingRaw = [];
+            try {
+                allDynamicSections = await DynamicSection.getAll();
+                latestParashot = await Parasha.getLatest(6);
+                portfolio = await Portfolio.getAll();
+                team = await Team.getAll();
+                testimonials = await Testimonial.getAll();
+                pricingRaw = await Pricing.getAll();
+            } catch (dbErr) {
+                console.warn('⚠️ No se pudieron cargar datos de la DB:', dbErr.message || dbErr);
+            }
 
             // Transform pricing data
             const pricing = pricingRaw.map(p => ({
