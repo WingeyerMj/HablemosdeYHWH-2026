@@ -24,6 +24,7 @@ app.set('views', path.join(__dirname, 'src/views'));
 // Middlewares
 app.use(expressLayouts);
 app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 

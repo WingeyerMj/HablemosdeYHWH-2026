@@ -66,16 +66,40 @@
                         <div class="row gy-4">
                             <% services.forEach((service, index)=> { %>
                                 <div class="col-lg-6 " data-aos="fade-up" data-aos-delay="<%= (index + 1) * 100 %>">
-                                    <div class="service-item d-flex">
-                                        <div class="icon flex-shrink-0"><i class="bi <%= service.icon %>"></i></div>
-                                        <div>
-                                            <h4 class="title"><a href="<%= service.link || '#' %>"
-                                                    class="stretched-link">
-                                                    <%= service.title %>
-                                                </a></h4>
-                                            <p class="description">
-                                                <%= service.description %>
-                                            </p>
+                                    <div class="service-item d-flex align-items-center justify-content-center py-2 px-3 shadow-sm" style="background: #ffffff; border-radius: 15px; border: 1px solid #f0f0f0;">
+                                        <div class="row g-2 align-items-center w-100 flex-nowrap">
+                                            <!-- Columna 1: Icono -->
+                                            <div class="col-auto">
+                                                <div class="icon flex-shrink-0" style="width: 50px; height: 50px; background: #f8f9fa; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #eee;">
+                                                    <i class="bi <%= service.icon || 'bi-journal-text' %>" style="font-size: 1.2rem;"></i>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Columna 2: Texto (Título + Subtítulo + Descripción) -->
+                                            <div class="col text-start ps-2 overflow-hidden">
+                                                <h4 class="title mb-0" style="font-size: 1.2rem; font-weight: 700; white-space: nowrap;">
+                                                    <a href="/parashot/<%= service.id %>" class="stretched-link" style="color: #222;">
+                                                        <%= service.title %>
+                                                    </a>
+                                                </h4>
+                                                <% if (service.subtitle) { %>
+                                                    <div class="subtitle mb-0" style="color: var(--primary-color); font-size: 0.85rem; font-weight: 600; line-height: 1.2;">
+                                                        <%= service.subtitle %>
+                                                    </div>
+                                                <% } %>
+                                                <p class="description mb-0 text-truncate" style="color: #666; font-size: 0.8rem; opacity: 0.8;">
+                                                    <%= service.description %>
+                                                </p>
+                                            </div>
+
+                                            <!-- Columna 3: Imagen -->
+                                            <div class="col-auto">
+                                                <% if (service.image_url) { %>
+                                                    <div class="parasha-cover-mini" style="width: 160px; height: 100px; border-radius: 8px; overflow: hidden; background: #f8f9fa; display: flex; align-items: center; justify-content: center; border: 1px solid #eee;">
+                                                        <img src="<%= service.image_url %>" alt="<%= service.title %>" class="img-fluid" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                                    </div>
+                                                <% } %>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

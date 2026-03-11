@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS parashot (
     description TEXT,
     icon VARCHAR(100) DEFAULT 'bi-journal-text',
     link VARCHAR(255),
+    youtube_link VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

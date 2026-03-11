@@ -71,8 +71,40 @@ const homeController = {
     calendar: (req, res) => {
         res.render('calendar', { title: 'Calendario - Hablemos de YHWH', page: 'calendar', layout: false });
     },
-    parashot: (req, res) => {
-        res.render('parashot', { title: 'Parashot - Hablemos de YHWH', page: 'parashot', layout: false });
+    parashot: async (req, res, next) => {
+        try {
+            const allParashot = await Parasha.getAll();
+            res.render('parashot', { 
+                title: 'Parashot - Hablemos de YHWH', 
+                page: 'parashot', 
+                parashot: allParashot,
+                layout: false 
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+    debug: async (req, res, next) => {
+        try {
+            const allParashot = await Parasha.getAll();
+            const latest = await Parasha.getLatest(6);
+            res.render('debug', { 
+                parashot: allParashot,
+                services: latest,
+                layout: false 
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+    parashaDetail: async (req, res, next) => {
+        try {
+            const parasha = await Parasha.getById(req.params.id);
+            if (!parasha) return next();
+            res.render('parasha_detail', { title: parasha.title + ' - Hablemos de YHWH', page: 'parashot', parasha, layout: false });
+        } catch (error) {
+            next(error);
+        }
     },
     dynamicPage: async (req, res, next) => {
         try {

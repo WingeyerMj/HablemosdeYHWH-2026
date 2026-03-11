@@ -17,6 +17,8 @@ router.get('/', homeController.index);
 router.get('/blog', homeController.blog);
 router.get('/calendar', homeController.calendar);
 router.get('/parashot', homeController.parashot);
+router.get('/parashot/:id', homeController.parashaDetail);
+router.get('/debug', homeController.debug);
 
 // Ruta para páginas dinámicas
 router.get('/s/:slug', homeController.dynamicPage);

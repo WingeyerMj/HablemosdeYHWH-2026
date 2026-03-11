@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
+const upload = require('../config/multer');
 
 // Middleware para proteger rutas
 const isAuthenticated = (req, res, next) => {
@@ -24,7 +25,9 @@ router.get('/logout', adminController.logout);
 router.get('/dashboard', isAuthenticated, adminController.dashboard);
 
 
-router.post('/parashot/create', isAuthenticated, adminController.createParasha);
+router.post('/parashot/create', isAuthenticated, upload.single('image_file'), adminController.createParasha);
+router.get('/parashot/edit/:id', isAuthenticated, adminController.editParashaPage);
+router.post('/parashot/update', isAuthenticated, upload.single('image_file'), adminController.updateParasha);
 router.get('/parashot/delete/:id', isAuthenticated, adminController.deleteParasha);
 
 // Portfolio

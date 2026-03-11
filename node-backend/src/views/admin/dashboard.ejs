@@ -69,17 +69,38 @@
             <div class="card bg-dark text-white border-secondary mb-4">
                 <div class="card-header border-secondary">Añadir Nueva Parasha</div>
                 <div class="card-body">
-                    <form action="/admin/parashot/create" method="POST" class="row g-3">
-                        <div class="col-md-4">
+                    <form action="/admin/parashot/create" method="POST" enctype="multipart/form-data" class="row g-3">
+                        <div class="col-md-3">
                             <input type="text" name="title" class="form-control bg-secondary text-white border-0"
-                                placeholder="Título (ej: Bereshit)">
+                                required placeholder="Título (ej: Bereshit)">
                         </div>
-                        <div class="col-md-6">
-                            <input type="text" name="description" class="form-control bg-secondary text-white border-0"
-                                placeholder="Descripción breve">
+                        <div class="col-md-3">
+                            <input type="text" name="subtitle" class="form-control bg-secondary text-white border-0"
+                                placeholder="Subtítulo / Versículo">
                         </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-success w-100">Añadir</button>
+                        <div class="col-md-3">
+                            <label class="small text-white-50">Subir Imagen</label>
+                            <input type="file" name="image_file" class="form-control bg-secondary text-white border-0">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="small text-white-50">O URL de Imagen</label>
+                            <input type="text" name="image_url" class="form-control bg-secondary text-white border-0"
+                                placeholder="https://...">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="small text-white-50">Link de YouTube (Video de la enseñanza)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-secondary text-white border-0"><i class="bi bi-youtube"></i></span>
+                                <input type="text" name="youtube_link" class="form-control bg-secondary text-white border-0"
+                                    placeholder="https://www.youtube.com/watch?v=...">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <textarea name="description" class="form-control bg-secondary text-white border-0"
+                                placeholder="Descripción breve" rows="2"></textarea>
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-success px-4">Añadir Parasha</button>
                         </div>
                     </form>
                 </div>
@@ -102,8 +123,11 @@
                                 <td>
                                     <%= p.description %>
                                 </td>
-                                <td><a href="/admin/parashot/delete/<%= p.id %>" class="btn btn-sm btn-danger"
-                                        onclick="return confirm('¿Eliminar?')">Eliminar</a></td>
+                                <td>
+                                    <a href="/admin/parashot/edit/<%= p.id %>" class="btn btn-sm btn-primary me-2">Editar</a>
+                                    <a href="/admin/parashot/delete/<%= p.id %>" class="btn btn-sm btn-danger"
+                                        onclick="return confirm('¿Eliminar?')">Eliminar</a>
+                                </td>
                             </tr>
                             <% }) %>
                     </tbody>
