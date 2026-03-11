@@ -1,0 +1,136 @@
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-white">Editar Evento: <%= evento.title %></h1>
+        <a href="/admin/dashboard#portfolio" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+
+    <div class="card bg-dark text-white border-secondary shadow-sm">
+        <div class="card-body">
+            <form action="/admin/portfolio/update" method="POST" id="eventoForm" enctype="multipart/form-data">
+                <input type="hidden" name="id" value="<%= evento.id %>">
+                
+                <div class="row g-4">
+                    <!-- Título y Subtítulo -->
+                    <div class="col-md-4">
+                        <label class="form-label">Título del Evento</label>
+                        <input type="text" name="title" class="form-control bg-secondary text-white border-0" 
+                               value="<%= evento.title %>" required placeholder="Pesaj 2026...">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Subtítulo</label>
+                        <input type="text" name="subtitle" class="form-control bg-secondary text-white border-0" 
+                               value="<%= evento.subtitle || '' %>" placeholder="Fiesta de los Panes sin Levadura...">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Fecha del Evento</label>
+                        <% 
+                            let dateVal = ''; 
+                            if (evento.event_date) { 
+                                const d = new Date(evento.event_date); 
+                                dateVal = d.toISOString().split('T')[0]; 
+                            } 
+                        %>
+                        <input type="date" name="event_date" class="form-control bg-secondary text-white border-0" 
+                               value="<%= dateVal %>">
+                    </div>
+
+                    <!-- Descripción breve -->
+                    <div class="col-md-12">
+                        <label class="form-label">Descripción Breve</label>
+                        <textarea name="description" class="form-control bg-secondary text-white border-0" 
+                               placeholder="Breve descripción del evento..." rows="2"><%= evento.description || '' %></textarea>
+                    </div>
+
+                    <!-- Imagen de Carátula -->
+                    <div class="col-md-4">
+                        <label class="form-label">Subir nueva carátula (PC)</label>
+                        <input type="file" name="image_file" class="form-control bg-secondary text-white border-0">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">O cambiar URL de Imagen</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-secondary text-white border-0"><i class="bi bi-link"></i></span>
+                            <input type="text" name="image_url" id="image_url" class="form-control bg-secondary text-white border-0" 
+                                   value="<%= evento.image_url || '' %>" placeholder="https://ejemplo.com/imagen.jpg">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Previsualización Actual</label>
+                        <div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height: 150px; background: rgba(0,0,0,0.2);">
+                            <img id="imgPreview" src="<%= evento.image_url || '/assets/img/blog/blog-1.jpg' %>" 
+                                 style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        </div>
+                    </div>
+
+                    <!-- Editor de Texto Enriquecido -->
+                    <div class="col-12">
+                        <label class="form-label">Artículo Detallado del Evento</label>
+                        <div id="editor-container" style="height: 400px; background: white; color: black; border-radius: 0 0 5px 5px;">
+                            <%- evento.content || '' %>
+                        </div>
+                        <input type="hidden" name="content" id="contentInput">
+                    </div>
+
+                    <div class="col-12 text-end mt-4">
+                        <button type="submit" class="btn btn-primary px-5 py-2">
+                             <i class="bi bi-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Incluir Quill CSS y JS -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<script>
+    // Inicializar el editor Quill
+    const quill = new Quill('#editor-container', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'color': [] }, { 'background': [] }],
+                ['link', 'blockquote', 'code-block', 'image'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'align': [] }],
+                ['clean']
+            ]
+        }
+    });
+
+    // Sincronizar previsualización de imagen desde URL
+    const imageInput = document.getElementById('image_url');
+    const fileInput = document.querySelector('input[name="image_file"]');
+    const imgPreview = document.getElementById('imgPreview');
+
+    imageInput.addEventListener('input', (e) => {
+        if (e.target.value) imgPreview.src = e.target.value;
+    });
+
+    // Sincronizar previsualización desde archivo local
+    fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imgPreview.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Antes de enviar el formulario, pasar el HTML del editor al input hidden
+    const form = document.getElementById('eventoForm');
+    form.onsubmit = function() {
+        const contentInput = document.getElementById('contentInput');
+        contentInput.value = quill.root.innerHTML;
+        return true;
+    };
+</script>
