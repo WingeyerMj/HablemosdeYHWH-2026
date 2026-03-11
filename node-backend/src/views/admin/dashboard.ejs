@@ -70,19 +70,23 @@
                 <div class="card-header border-secondary">Añadir Nueva Parasha</div>
                 <div class="card-body">
                     <form action="/admin/parashot/create" method="POST" enctype="multipart/form-data" class="row g-3">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
+                            <input type="number" name="parasha_number" class="form-control bg-secondary text-white border-0"
+                                placeholder="#" min="1">
+                        </div>
+                        <div class="col-md-4">
                             <input type="text" name="title" class="form-control bg-secondary text-white border-0"
                                 required placeholder="Título (ej: Bereshit)">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <input type="text" name="subtitle" class="form-control bg-secondary text-white border-0"
                                 placeholder="Subtítulo / Versículo">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <label class="small text-white-50">Subir Imagen</label>
                             <input type="file" name="image_file" class="form-control bg-secondary text-white border-0">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <label class="small text-white-50">O URL de Imagen</label>
                             <input type="text" name="image_url" class="form-control bg-secondary text-white border-0"
                                 placeholder="https://...">
@@ -109,6 +113,7 @@
                 <table class="table table-dark table-hover">
                     <thead>
                         <tr>
+                            <th>Nº</th>
                             <th>Título</th>
                             <th>Descripción</th>
                             <th>Acciones</th>
@@ -117,6 +122,9 @@
                     <tbody>
                         <% parashot.forEach(p=> { %>
                             <tr>
+                                <td>
+                                    <%= p.parasha_number || '-' %>
+                                </td>
                                 <td>
                                     <%= p.title %>
                                 </td>

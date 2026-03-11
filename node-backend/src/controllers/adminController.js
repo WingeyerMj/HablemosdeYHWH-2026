@@ -77,7 +77,7 @@ const adminController = {
     // Parashot
     createParasha: async (req, res) => {
         try {
-            let { title, description, subtitle, content, image_url, icon, link, youtube_link } = req.body;
+            let { parasha_number, title, description, subtitle, content, image_url, icon, link, youtube_link } = req.body;
             
             // Si hay un archivo subido, usamos su ruta
             if (req.file) {
@@ -85,7 +85,7 @@ const adminController = {
             }
 
             const Parasha = require('../models/Parasha');
-            await Parasha.create({ title, description, subtitle, content, image_url, icon, link, youtube_link });
+            await Parasha.create({ parasha_number, title, description, subtitle, content, image_url, icon, link, youtube_link });
             res.redirect('/admin/dashboard');
         } catch (error) {
             console.error(error);
@@ -106,7 +106,7 @@ const adminController = {
 
     updateParasha: async (req, res) => {
         try {
-            let { id, title, description, subtitle, content, image_url, icon, link, youtube_link } = req.body;
+            let { id, parasha_number, title, description, subtitle, content, image_url, icon, link, youtube_link } = req.body;
             
             // Si hay un archivo subido, usamos su ruta
             if (req.file) {
@@ -114,7 +114,7 @@ const adminController = {
             }
 
             const Parasha = require('../models/Parasha');
-            await Parasha.update(id, { title, description, subtitle, content, image_url, icon, link, youtube_link });
+            await Parasha.update(id, { parasha_number, title, description, subtitle, content, image_url, icon, link, youtube_link });
             res.redirect('/admin/dashboard');
         } catch (error) {
             res.redirect('/admin/dashboard');

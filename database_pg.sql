@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS sections (
 -- Tabla para las Parashot
 CREATE TABLE IF NOT EXISTS parashot (
     id SERIAL PRIMARY KEY,
+    parasha_number INT,
     title VARCHAR(255) NOT NULL,
     description TEXT,
     icon VARCHAR(100) DEFAULT 'bi-journal-text',
@@ -30,6 +31,8 @@ CREATE TABLE IF NOT EXISTS parashot (
     youtube_link VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE parashot ADD COLUMN IF NOT EXISTS parasha_number INT;
 
 -- Tabla para Portfolio (Eventos)
 CREATE TABLE IF NOT EXISTS portfolio (

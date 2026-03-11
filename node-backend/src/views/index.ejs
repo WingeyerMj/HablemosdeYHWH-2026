@@ -79,7 +79,7 @@
                                             <div class="col text-start ps-2 overflow-hidden">
                                                 <h4 class="title mb-0" style="font-size: 1.2rem; font-weight: 700; white-space: nowrap;">
                                                     <a href="/parashot/<%= service.id %>" class="stretched-link" style="color: #222;">
-                                                        <%= service.title %>
+                                                        <%= service.parasha_number ? service.parasha_number + '. ' : '' %><%= service.title %>
                                                     </a>
                                                 </h4>
                                                 <% if (service.subtitle) { %>

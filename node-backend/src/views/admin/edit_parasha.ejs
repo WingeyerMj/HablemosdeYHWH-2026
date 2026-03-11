@@ -13,7 +13,12 @@
                 
                 <div class="row g-4">
                     <!-- Título y Subtítulo -->
-                    <div class="col-md-6">
+                    <div class="col-md-2">
+                        <label class="form-label">Nº</label>
+                        <input type="number" name="parasha_number" class="form-control bg-secondary text-white border-0" 
+                               value="<%= parasha.parasha_number || '' %>" placeholder="#" min="1">
+                    </div>
+                    <div class="col-md-4">
                         <label class="form-label">Título de la Parasha</label>
                         <input type="text" name="title" class="form-control bg-secondary text-white border-0" 
                                value="<%= parasha.title %>" required placeholder="Bereshit, Noaj...">
