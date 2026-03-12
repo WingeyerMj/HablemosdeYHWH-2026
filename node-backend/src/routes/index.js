@@ -6,8 +6,11 @@ const DynamicSection = require('../models/DynamicSection');
 // Middleware: cargar secciones dinámicas para el navbar en todas las rutas
 router.use(async (req, res, next) => {
     try {
-        res.locals.navbarDynamicSections = await DynamicSection.getNavbarSections();
+        const sections = await DynamicSection.getNavbarSections();
+        console.log('--- Navbar Sections Loaded:', sections.length, 'items ---');
+        res.locals.navbarDynamicSections = sections;
     } catch (e) {
+        console.error('--- Error loading navbar sections:', e.message);
         res.locals.navbarDynamicSections = [];
     }
     next();
