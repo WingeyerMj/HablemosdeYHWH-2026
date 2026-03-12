@@ -35,14 +35,14 @@ const homeController = {
 
             allDynamicSections.forEach(ds => {
                 if (ds.is_active) {
-                    // Para compatibilidad con la vista index.ejs que busca 'sections.Hero' o 'sections.About'
-                    // Mapeamos slugs conocidos a llaves con Capitalize para no romper la vista
-                    const key = ds.slug.charAt(0).toUpperCase() + ds.slug.slice(1);
+                    const slug = ds.slug.toLowerCase().trim();
+                    const key = slug.charAt(0).toUpperCase() + slug.slice(1);
                     sectionsObj[key] = ds;
 
                     if (ds.section_type === 'inline') {
-                        // Evitamos duplicar en el scroll de la home si son las secciones "base" ya renderizadas explícitamente
-                        if (!['hero', 'about', 'calendario'].includes(ds.slug)) {
+                        // Exclude sections that are explicitly rendered in the EJS template
+                        const excludedSlugs = ['hero', 'about', 'calendario', 'parashot', 'eventos', 'equipo'];
+                        if (!excludedSlugs.includes(slug)) {
                             dynamicInline.push(ds);
                         }
                     }

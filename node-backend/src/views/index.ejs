@@ -16,9 +16,9 @@
                             <div class="col-lg-8">
                                 <img src="/assets/img/pagina/logo.svg" alt="YHWH Hero Logo" class="img-fluid mb-3"
                                     style="max-height: 350px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;">
-                                <h2>
+                                <!-- <h2>
                                     <%= (sections.Hero && sections.Hero.title) || 'Hablemos de YHWH' %>
-                                </h2>
+                                </h2> -->
                                 <p>
                                     <%= (sections.Hero && sections.Hero.subtitle)
                                         || 'Somos un grupo de personas dedicados al estudio de las Sagradas escrituras, desde una perspectiva Hebrea'
@@ -59,8 +59,8 @@
 
                 <section id="services" class="services section">
                     <div class="container section-title" data-aos="fade-up">
-                        <h2>Parashot</h2>
-                        <p>Lo que ofrecemos</p>
+                        <h2><%= (sections.Parashot && sections.Parashot.title) || 'Parashot' %></h2>
+                        <p><%= (sections.Parashot && sections.Parashot.subtitle) || 'Lo que ofrecemos' %></p>
                     </div>
                     <div class="container">
                         <div class="row gy-4">
@@ -115,8 +115,8 @@
 
                 <section id="portfolio" class="portfolio section">
                     <div class="container section-title" data-aos="fade-up">
-                        <h2>Eventos</h2>
-                        <p>Nuestro trabajo</p>
+                        <h2><%= (sections.Eventos && sections.Eventos.title) || 'Eventos' %></h2>
+                        <p><%= (sections.Eventos && sections.Eventos.subtitle) || 'Nuestro trabajo' %></p>
                     </div>
                     <div class="container">
                         <div class="isotope-layout" data-default-filter="*" data-layout="masonry"
@@ -201,8 +201,8 @@
 
                 <section id="team" class="team section">
                     <div class="container section-title" data-aos="fade-up">
-                        <h2>Equipo</h2>
-                        <p>Conoce a los encargados</p>
+                        <h2><%= (sections.Equipo && sections.Equipo.title) || 'Equipo' %></h2>
+                        <p><%= (sections.Equipo && sections.Equipo.subtitle) || 'Conoce a los encargados' %></p>
                     </div>
                     <div class="site-section slider-team-wrap">
                         <div class="container">

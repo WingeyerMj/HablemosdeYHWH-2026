@@ -129,9 +129,39 @@ const adminController = {
 
     // Portfolio
     createPortfolio: async (req, res) => {
-        const { title, category, img } = req.body;
-        await db.query('INSERT INTO portfolio (title, category, img) VALUES (?, ?, ?)', [title, category, img]);
-        res.redirect('/admin/dashboard#portfolio');
+        try {
+            let { title, category, subtitle, description, event_date, content, image_url } = req.body;
+            if (req.file) {
+                image_url = '/uploads/portfolio/' + req.file.filename;
+            }
+            // Fallback forimg field if image_url is provided
+            const img = image_url; 
+            
+            await db.query(
+                'INSERT INTO portfolio (title, category, subtitle, description, event_date, content, image_url, img) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                [title, category, subtitle || '', description || '', event_date || null, content || '', image_url || '', img || '']
+            );
+            res.redirect('/admin/dashboard#portfolio');
+        } catch (error) {
+            console.error(error);
+            res.redirect('/admin/dashboard#portfolio');
+        }
+    },
+
+    updatePortfolio: async (req, res) => {
+        try {
+            let { id, title, category, subtitle, description, event_date, content, image_url } = req.body;
+            if (req.file) {
+                image_url = '/uploads/portfolio/' + req.file.filename;
+            }
+            await db.query(
+                'UPDATE portfolio SET title = ?, category = ?, subtitle = ?, description = ?, event_date = ?, content = ?, image_url = ?, img = ? WHERE id = ?',
+                [title, category, subtitle, description, event_date, content, image_url, image_url, id]
+            );
+            res.redirect('/admin/dashboard#portfolio');
+        } catch (error) {
+            res.redirect('/admin/dashboard#portfolio');
+        }
     },
 
     deletePortfolio: async (req, res) => {
@@ -141,9 +171,16 @@ const adminController = {
 
     // Team
     createTeamMember: async (req, res) => {
-        const { name, role, img } = req.body;
-        await db.query('INSERT INTO team (name, role, img) VALUES (?, ?, ?)', [name, role, img]);
-        res.redirect('/admin/dashboard#team');
+        try {
+            let { name, role, description, img } = req.body;
+            if (req.file) {
+                img = '/uploads/team/' + req.file.filename;
+            }
+            await db.query('INSERT INTO team (name, role, description, img) VALUES (?, ?, ?, ?)', [name, role, description || '', img || '']);
+            res.redirect('/admin/dashboard#team');
+        } catch (error) {
+            res.redirect('/admin/dashboard#team');
+        }
     },
 
     deleteTeamMember: async (req, res) => {

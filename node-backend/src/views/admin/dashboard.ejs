@@ -66,49 +66,13 @@
     <div class="tab-content" id="pills-tabContent">
         <!-- PARASHOT -->
         <div class="tab-pane fade show active" id="pills-services" role="tabpanel">
-            <div class="card bg-dark text-white border-secondary mb-4">
-                <div class="card-header border-secondary">Añadir Nueva Parasha</div>
-                <div class="card-body">
-                    <form action="/admin/parashot/create" method="POST" enctype="multipart/form-data" class="row g-3">
-                        <div class="col-md-2">
-                            <input type="number" name="parasha_number" class="form-control bg-secondary text-white border-0"
-                                placeholder="#" min="1">
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text" name="title" class="form-control bg-secondary text-white border-0"
-                                required placeholder="Título (ej: Bereshit)">
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" name="subtitle" class="form-control bg-secondary text-white border-0"
-                                placeholder="Subtítulo / Versículo">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="small text-white-50">Subir Imagen</label>
-                            <input type="file" name="image_file" class="form-control bg-secondary text-white border-0">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="small text-white-50">O URL de Imagen</label>
-                            <input type="text" name="image_url" class="form-control bg-secondary text-white border-0"
-                                placeholder="https://...">
-                        </div>
-                        <div class="col-md-12">
-                            <label class="small text-white-50">Link de YouTube (Video de la enseñanza)</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-secondary text-white border-0"><i class="bi bi-youtube"></i></span>
-                                <input type="text" name="youtube_link" class="form-control bg-secondary text-white border-0"
-                                    placeholder="https://www.youtube.com/watch?v=...">
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <textarea name="description" class="form-control bg-secondary text-white border-0"
-                                placeholder="Descripción breve" rows="2"></textarea>
-                        </div>
-                        <div class="col-12 text-end">
-                            <button type="submit" class="btn btn-success px-4">Añadir Parasha</button>
-                        </div>
-                    </form>
-                </div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0">Gestión de Parashot</h4>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createParashaModal">
+                    <i class="bi bi-plus-circle"></i> Nueva Parasha
+                </button>
             </div>
+
             <div class="table-responsive">
                 <table class="table table-dark table-hover">
                     <thead>
@@ -143,86 +107,70 @@
             </div>
         </div>
 
-        <!-- PORTFOLIO -->
+        <!-- PORTFOLIO (EVENTOS) -->
         <div class="tab-pane fade" id="pills-portfolio" role="tabpanel">
-            <div class="card bg-dark text-white border-secondary mb-4">
-                <div class="card-header border-secondary">Añadir Nuevo Evento</div>
-                <div class="card-body">
-                    <form action="/admin/portfolio/create" method="POST" class="row g-3">
-                        <div class="col-md-3"><input type="text" name="title" class="form-control" placeholder="Título"
-                                required></div>
-                        <div class="col-md-3">
-                            <select name="category" class="form-select">
-                                <option value="filter-app">App</option>
-                                <option value="filter-product">Producto</option>
-                                <option value="filter-branding">Marca</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3"><input type="text" name="img" class="form-control"
-                                placeholder="URL Imagen" required></div>
-                        <div class="col-md-3"><button type="submit" class="btn btn-success w-100">Añadir Evento</button>
-                        </div>
-                    </form>
-                </div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0">Gestión de Eventos</h4>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createPortfolioModal">
+                    <i class="bi bi-plus-circle"></i> Nuevo Evento
+                </button>
             </div>
-            <div class="row">
-                <% portfolio.forEach(item=> { %>
-                    <div class="col-md-3 mb-3">
-                        <div class="card bg-dark text-white border-secondary h-100">
-                            <img src="<%= item.img %>" class="card-img-top" alt="..."
-                                style="height: 150px; object-fit: cover;">
-                            <div class="card-body p-2 d-flex flex-column">
-                                <p class="mb-1 small">
-                                    <%= item.title %>
-                                </p>
-                                <a href="/admin/portfolio/delete/<%= item.id %>"
-                                    class="btn btn-sm btn-outline-danger mt-auto">Eliminar</a>
-                            </div>
-                        </div>
-                    </div>
-                    <% }) %>
+
+            <div class="table-responsive">
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Categoría</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% portfolio.forEach(item=> { %>
+                            <tr>
+                                <td><%= item.title %></td>
+                                <td><%= item.category %></td>
+                                <td><%= item.event_date ? new Date(item.event_date).toLocaleDateString() : '-' %></td>
+                                <td>
+                                    <a href="/admin/portfolio/edit/<%= item.id %>" class="btn btn-sm btn-primary me-2">Editar</a>
+                                    <a href="/admin/portfolio/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar?')">Eliminar</a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- TEAM -->
+        <!-- TEAM (EQUIPO) -->
         <div class="tab-pane fade" id="pills-team" role="tabpanel">
-            <div class="card bg-dark text-white border-secondary mb-4">
-                <div class="card-header border-secondary">Añadir Miembro del Equipo</div>
-                <div class="card-body">
-                    <form action="/admin/team/create" method="POST" class="row g-3">
-                        <div class="col-md-3"><input type="text" name="name" class="form-control" placeholder="Nombre"
-                                required></div>
-                        <div class="col-md-3"><input type="text" name="role" class="form-control" placeholder="Rol"
-                                required></div>
-                        <div class="col-md-3"><input type="text" name="img" class="form-control" placeholder="URL Foto"
-                                required></div>
-                        <div class="col-md-3"><button type="submit" class="btn btn-success w-100">Añadir
-                                Miembro</button></div>
-                    </form>
-                </div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0">Gestión de Equipo</h4>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createTeamModal">
+                    <i class="bi bi-plus-circle"></i> Nuevo Miembro
+                </button>
             </div>
+
             <div class="table-responsive">
                 <table class="table table-dark table-hover">
                     <thead>
                         <tr>
                             <th>Nombre</th>
-                            <th>Rol</th>
+                            <th>Rol / Cargo</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% team.forEach(member=> { %>
                             <tr>
+                                <td><%= member.name %></td>
+                                <td><%= member.role %></td>
                                 <td>
-                                    <%= member.name %>
+                                    <a href="/admin/team/delete/<%= member.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar?')">Eliminar</a>
                                 </td>
-                                <td>
-                                    <%= member.role %>
-                                </td>
-                                <td><a href="/admin/team/delete/<%= member.id %>"
-                                        class="btn btn-sm btn-danger">Eliminar</a></td>
                             </tr>
-                            <% }) %>
+                        <% }) %>
                     </tbody>
                 </table>
             </div>
@@ -230,49 +178,341 @@
 
         <!-- TESTIMONIALS -->
         <div class="tab-pane fade" id="pills-testimonials" role="tabpanel">
-            <div class="card bg-dark text-white border-secondary mb-4">
-                <div class="card-header border-secondary">Añadir Testimonio</div>
-                <div class="card-body">
-                    <form action="/admin/testimonials/create" method="POST" class="row g-3">
-                        <div class="col-md-4"><input type="text" name="name" class="form-control" placeholder="Nombre"
-                                required></div>
-                        <div class="col-md-4"><input type="text" name="role" class="form-control" placeholder="Rol"
-                                required></div>
-                        <div class="col-md-4"><input type="text" name="img" class="form-control"
-                                placeholder="URL Avatar" required></div>
-                        <div class="col-md-10"><textarea name="text" class="form-control" placeholder="Testimonio"
-                                rows="2" required></textarea></div>
-                        <div class="col-md-2"><button type="submit" class="btn btn-success w-100 h-100">Añadir</button>
-                        </div>
-                    </form>
-                </div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0">Gestión de Testimonios</h4>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createTestimonialModal">
+                    <i class="bi bi-plus-circle"></i> Nuevo Testimonio
+                </button>
             </div>
-            <div class="row">
-                <% testimonials.forEach(t=> { %>
-                    <div class="col-md-4 mb-3">
-                        <div class="card bg-dark text-white border-primary p-3 h-100">
-                            <div class="d-flex align-items-center mb-2">
-                                <img src="<%= t.img %>" style="width: 40px; height: 40px; border-radius: 50%;"
-                                    class="me-2">
-                                <div>
-                                    <h6 class="mb-0">
+
+            <div class="table-responsive">
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Rol</th>
+                            <th>Testimonio</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% testimonials.forEach(t=> { %>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="<%= t.img %>" style="width: 30px; height: 30px; border-radius: 50%;" class="me-2">
                                         <%= t.name %>
-                                    </h6><small>
-                                        <%= t.role %>
-                                    </small>
-                                </div>
-                            </div>
-                            <p class="small text-white-50 flex-grow-1">
-                                <%= t.text %>
-                            </p>
-                            <a href="/admin/testimonials/delete/<%= t.id %>"
-                                class="btn btn-sm btn-danger mt-2">Eliminar</a>
-                        </div>
-                    </div>
-                    <% }) %>
+                                    </div>
+                                </td>
+                                <td><%= t.role %></td>
+                                <td><span class="text-truncate d-inline-block" style="max-width: 300px;"><%= t.text %></span></td>
+                                <td>
+                                    <a href="/admin/testimonials/delete/<%= t.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar?')">Eliminar</a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
             </div>
         </div>
-
-
     </div>
 </main>
+
+<!-- MODAL: NUEVA PARASHA -->
+<div class="modal fade" id="createParashaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Añadir Nueva Parasha</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/admin/parashot/create" method="POST" enctype="multipart/form-data" id="createParashaForm">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-2">
+                            <label class="form-label small text-white-50">Nº</label>
+                            <input type="number" name="parasha_number" class="form-control bg-secondary text-white border-0" placeholder="#" min="1">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Título</label>
+                            <input type="text" name="title" class="form-control bg-secondary text-white border-0" required placeholder="Ej: Bereshit">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subtítulo / Versículo</label>
+                            <input type="text" name="subtitle" class="form-control bg-secondary text-white border-0" placeholder="Ej: Génesis 1:1">
+                        </div>
+                        
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">Resumen Breve</label>
+                            <input type="text" name="description" class="form-control bg-secondary text-white border-0" placeholder="Introducción corta...">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">Link de YouTube</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-secondary text-white border-0"><i class="bi bi-youtube"></i></span>
+                                <input type="text" name="youtube_link" class="form-control bg-secondary text-white border-0" placeholder="https://www.youtube.com/watch?v=...">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Subir Imagen</label>
+                            <input type="file" id="create_image_file" name="image_file" class="form-control bg-secondary text-white border-0">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">O URL de Imagen</label>
+                            <input type="text" id="create_image_url" name="image_url" class="form-control bg-secondary text-white border-0" placeholder="https://...">
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height: 100px; background: rgba(0,0,0,0.2);">
+                                <img id="createImgPreview" src="/assets/img/blog/blog-1.jpg" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Contenido Completo (Enseñanza)</label>
+                            <div id="create-editor-container" style="height: 300px; background: white; color: black; border-radius: 5px;"></div>
+                            <input type="hidden" name="content" id="createContentInput">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success px-4">Crear Parasha</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createPortfolioModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Añadir Nuevo Evento</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/admin/portfolio/create" method="POST" enctype="multipart/form-data" id="createPortfolioForm">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Título</label>
+                            <input type="text" name="title" class="form-control bg-secondary text-white border-0" required placeholder="Ej: Pesaj 2026">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Categoría</label>
+                            <select name="category" class="form-select bg-secondary text-white border-0">
+                                <option value="filter-app">App</option>
+                                <option value="filter-product">Producto</option>
+                                <option value="filter-branding">Marca</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Fecha</label>
+                            <input type="date" name="event_date" class="form-control bg-secondary text-white border-0">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subtítulo</label>
+                            <input type="text" name="subtitle" class="form-control bg-secondary text-white border-0" placeholder="Ej: Celebración anual">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Descripción Breve</label>
+                            <input type="text" name="description" class="form-control bg-secondary text-white border-0" placeholder="Resumen para la lista">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Subir Imagen</label>
+                            <input type="file" id="port_image_file" name="image_file" class="form-control bg-secondary text-white border-0">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">O URL de Imagen</label>
+                            <input type="text" id="port_image_url" name="image_url" class="form-control bg-secondary text-white border-0" placeholder="https://...">
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height: 100px; background: rgba(0,0,0,0.2);">
+                                <img id="portImgPreview" src="/assets/img/blog/blog-1.jpg" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Detalle del Evento (Contenido)</label>
+                            <div id="port-editor-container" style="height: 300px; background: white; color: black; border-radius: 5px;"></div>
+                            <input type="hidden" name="content" id="portContentInput">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success px-4">Crear Evento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: NUEVO MIEMBRO -->
+<div class="modal fade" id="createTeamModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Añadir Miembro del Equipo</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/admin/team/create" method="POST" enctype="multipart/form-data" id="createTeamForm">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Nombre</label>
+                            <input type="text" name="name" class="form-control bg-secondary text-white border-0" required placeholder="Nombre completo">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Rol / Cargo</label>
+                            <input type="text" name="role" class="form-control bg-secondary text-white border-0" required placeholder="Director, Maestro, etc.">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">Descripción / Bio</label>
+                            <textarea name="description" class="form-control bg-secondary text-white border-0" rows="3" placeholder="Breve biografía..."></textarea>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Subir Foto</label>
+                            <input type="file" id="team_image_file" name="image_file" class="form-control bg-secondary text-white border-0">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">O URL de Foto</label>
+                            <input type="text" id="team_image_url" name="img" class="form-control bg-secondary text-white border-0" placeholder="https://...">
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height: 120px; width: 120px; border-radius: 50%; margin: 0 auto; background: rgba(0,0,0,0.2);">
+                                <img id="teamImgPreview" src="/assets/img/team/team-1.jpg" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success px-4">Añadir Miembro</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- MODAL: NUEVO TESTIMONIO -->
+<div class="modal fade" id="createTestimonialModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Añadir Testimonio</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/admin/testimonials/create" method="POST">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Nombre</label>
+                            <input type="text" name="name" class="form-control bg-secondary text-white border-0" required placeholder="Ej: Juan Pérez">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Rol / Cargo</label>
+                            <input type="text" name="role" class="form-control bg-secondary text-white border-0" required placeholder="Ej: Estudiante">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">URL de Imagen (Avatar)</label>
+                            <input type="text" name="img" class="form-control bg-secondary text-white border-0" required placeholder="https://...">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">Testimonio</label>
+                            <textarea name="text" class="form-control bg-secondary text-white border-0" rows="3" required placeholder="Escribe el testimonio aquí..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success px-4">Añadir Testimonio</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Quill -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- QUILL EDITORS ---
+        const quillConfig = {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    ['link', 'blockquote', 'code-block', 'image'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['clean']
+                ]
+            }
+        };
+
+        const quillParasha = new Quill('#create-editor-container', quillConfig);
+        const quillPortfolio = new Quill('#port-editor-container', quillConfig);
+
+        // --- IMAGE PREVIEWS ---
+        function setupPreview(inputId, fileId, previewId, defaultImg) {
+            const textInput = document.getElementById(inputId);
+            const fileInput = document.getElementById(fileId);
+            const preview = document.getElementById(previewId);
+
+            if (textInput) {
+                textInput.addEventListener('input', (e) => {
+                    if (e.target.value) preview.src = e.target.value;
+                    else preview.src = defaultImg;
+                });
+            }
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) { preview.src = e.target.result; }
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        }
+
+        setupPreview('create_image_url', 'create_image_file', 'createImgPreview', '/assets/img/blog/blog-1.jpg');
+        setupPreview('port_image_url', 'port_image_file', 'portImgPreview', '/assets/img/blog/blog-1.jpg');
+        setupPreview('team_image_url', 'team_image_file', 'teamImgPreview', '/assets/img/team/team-1.jpg');
+
+        // --- FORM SUBMISSIONS ---
+        document.getElementById('createParashaForm').onsubmit = function() {
+            document.getElementById('createContentInput').value = quillParasha.root.innerHTML;
+            return true;
+        };
+
+        document.getElementById('createPortfolioForm').onsubmit = function() {
+            document.getElementById('portContentInput').value = quillPortfolio.root.innerHTML;
+            return true;
+        };
+
+        // --- TABS & HASH ---
+        const hash = window.location.hash;
+        if (hash) {
+            const triggerEl = document.querySelector(`.nav-pills button[data-bs-target="${hash}"]`);
+            if (triggerEl) bootstrap.Tab.getOrCreateInstance(triggerEl).show();
+        }
+        
+        document.querySelectorAll('.nav-pills button').forEach(button => {
+            button.addEventListener('shown.bs.tab', (e) => {
+                window.location.hash = e.target.getAttribute('data-bs-target');
+            });
+        });
+    });
+</script>

@@ -31,11 +31,12 @@ router.post('/parashot/update', isAuthenticated, upload.single('image_file'), ad
 router.get('/parashot/delete/:id', isAuthenticated, adminController.deleteParasha);
 
 // Portfolio
-router.post('/portfolio/create', isAuthenticated, adminController.createPortfolio);
+router.post('/portfolio/create', isAuthenticated, upload.single('image_file'), adminController.createPortfolio);
+router.post('/portfolio/update', isAuthenticated, upload.single('image_file'), adminController.updatePortfolio);
 router.get('/portfolio/delete/:id', isAuthenticated, adminController.deletePortfolio);
 
 // Team
-router.post('/team/create', isAuthenticated, adminController.createTeamMember);
+router.post('/team/create', isAuthenticated, upload.single('image_file'), adminController.createTeamMember);
 router.get('/team/delete/:id', isAuthenticated, adminController.deleteTeamMember);
 
 // Testimonials
