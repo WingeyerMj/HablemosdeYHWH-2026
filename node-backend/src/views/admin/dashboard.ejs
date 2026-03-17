@@ -98,7 +98,7 @@
                                 <td>
                                     <a href="/admin/parashot/edit/<%= p.id %>" class="btn btn-sm btn-primary me-2">Editar</a>
                                     <a href="/admin/parashot/delete/<%= p.id %>" class="btn btn-sm btn-danger"
-                                        onclick="return confirm('¿Eliminar?')">Eliminar</a>
+                                        onclick="return confirm('¿Estás seguro de que deseas eliminar definitivamente esta Parashá de la base de datos?')">Eliminar</a>
                                 </td>
                             </tr>
                             <% }) %>
@@ -133,8 +133,18 @@
                                 <td><%= item.category %></td>
                                 <td><%= item.event_date ? new Date(item.event_date).toLocaleDateString() : '-' %></td>
                                 <td>
-                                    <a href="/admin/portfolio/edit/<%= item.id %>" class="btn btn-sm btn-primary me-2">Editar</a>
-                                    <a href="/admin/portfolio/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar?')">Eliminar</a>
+                                    <button type="button" class="btn btn-sm btn-primary me-2 edit-portfolio-btn" 
+                                        data-id="<%= item.id %>"
+                                        data-title="<%= item.title %>"
+                                        data-category="<%= item.category %>"
+                                        data-date="<%= item.event_date ? new Date(item.event_date).toISOString().split('T')[0] : '' %>"
+                                        data-subtitle="<%= item.subtitle %>"
+                                        data-description="<%= item.description %>"
+                                        data-image="<%= item.image_url || item.img %>"
+                                        data-content='<%= item.content ? item.content.replace(/'/g, "&#39;") : "" %>'>
+                                        Editar
+                                    </button>
+                                    <a href="/admin/portfolio/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar definitivamente este Evento de la base de datos?')">Eliminar</a>
                                 </td>
                             </tr>
                         <% }) %>
@@ -167,7 +177,15 @@
                                 <td><%= member.name %></td>
                                 <td><%= member.role %></td>
                                 <td>
-                                    <a href="/admin/team/delete/<%= member.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar?')">Eliminar</a>
+                                    <button type="button" class="btn btn-sm btn-primary me-2 edit-team-btn"
+                                        data-id="<%= member.id %>"
+                                        data-name="<%= member.name %>"
+                                        data-role="<%= member.role %>"
+                                        data-description="<%= member.description %>"
+                                        data-img="<%= member.img %>">
+                                        Editar
+                                    </button>
+                                    <a href="/admin/team/delete/<%= member.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar definitivamente este Miembro del equipo de la base de datos?')">Eliminar</a>
                                 </td>
                             </tr>
                         <% }) %>
@@ -207,7 +225,15 @@
                                 <td><%= t.role %></td>
                                 <td><span class="text-truncate d-inline-block" style="max-width: 300px;"><%= t.text %></span></td>
                                 <td>
-                                    <a href="/admin/testimonials/delete/<%= t.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar?')">Eliminar</a>
+                                    <button type="button" class="btn btn-sm btn-primary me-2 edit-testimonial-btn"
+                                        data-id="<%= t.id %>"
+                                        data-name="<%= t.name %>"
+                                        data-role="<%= t.role %>"
+                                        data-text="<%= t.text %>"
+                                        data-img="<%= t.img %>">
+                                        Editar
+                                    </button>
+                                    <a href="/admin/testimonials/delete/<%= t.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar definitivamente este Testimonio de la base de datos?')">Eliminar</a>
                                 </td>
                             </tr>
                         <% }) %>
@@ -302,9 +328,8 @@
                         <div class="col-md-4">
                             <label class="form-label small text-white-50">Categoría</label>
                             <select name="category" class="form-select bg-secondary text-white border-0">
-                                <option value="filter-app">App</option>
-                                <option value="filter-product">Producto</option>
-                                <option value="filter-branding">Marca</option>
+                                <option value="filter-app">Moedin</option>
+                                <option value="filter-product">Especiales</option>
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -399,7 +424,71 @@
 </div>
 
 
-<!-- MODAL: NUEVO TESTIMONIO -->
+<!-- MODAL: EDITAR EVENTO -->
+<div class="modal fade" id="editPortfolioModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Editar Evento</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/admin/portfolio/update" method="POST" enctype="multipart/form-data" id="editPortfolioForm">
+                <input type="hidden" name="id" id="edit_port_id">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Título</label>
+                            <input type="text" name="title" id="edit_port_title" class="form-control bg-secondary text-white border-0" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Categoría</label>
+                            <select name="category" id="edit_port_category" class="form-select bg-secondary text-white border-0">
+                                <option value="filter-app">Moedin</option>
+                                <option value="filter-product">Especiales</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Fecha</label>
+                            <input type="date" name="event_date" id="edit_port_date" class="form-control bg-secondary text-white border-0">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subtítulo</label>
+                            <input type="text" name="subtitle" id="edit_port_subtitle" class="form-control bg-secondary text-white border-0">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Descripción Breve</label>
+                            <input type="text" name="description" id="edit_port_description" class="form-control bg-secondary text-white border-0">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Subir Nueva Imagen</label>
+                            <input type="file" id="edit_port_image_file" name="image_file" class="form-control bg-secondary text-white border-0">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">O URL de Imagen</label>
+                            <input type="text" id="edit_port_image_url" name="image_url" class="form-control bg-secondary text-white border-0">
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height: 100px; background: rgba(0,0,0,0.2);">
+                                <img id="editPortImgPreview" src="" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Detalle del Evento (Contenido)</label>
+                            <div id="edit-port-editor-container" style="height: 300px; background: white; color: black; border-radius: 5px;"></div>
+                            <input type="hidden" name="content" id="editPortContentInput">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary px-4">Actualizar Evento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <div class="modal fade" id="createTestimonialModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark text-white border-secondary">
@@ -461,6 +550,7 @@
 
         const quillParasha = new Quill('#create-editor-container', quillConfig);
         const quillPortfolio = new Quill('#port-editor-container', quillConfig);
+        const quillEditPortfolio = new Quill('#edit-port-editor-container', quillConfig);
 
         // --- IMAGE PREVIEWS ---
         function setupPreview(inputId, fileId, previewId, defaultImg) {
@@ -489,7 +579,54 @@
 
         setupPreview('create_image_url', 'create_image_file', 'createImgPreview', '/assets/img/blog/blog-1.jpg');
         setupPreview('port_image_url', 'port_image_file', 'portImgPreview', '/assets/img/blog/blog-1.jpg');
+        setupPreview('edit_port_image_url', 'edit_port_image_file', 'editPortImgPreview', '/assets/img/blog/blog-1.jpg');
         setupPreview('team_image_url', 'team_image_file', 'teamImgPreview', '/assets/img/team/team-1.jpg');
+        setupPreview('edit_team_image_url', 'edit_team_image_file', 'editTeamImgPreview', '/assets/img/team/team-1.jpg');
+
+        // --- EDIT MODAL LOGIC ---
+        const editPortfolioModal = new bootstrap.Modal(document.getElementById('editPortfolioModal'));
+        document.querySelectorAll('.edit-portfolio-btn').forEach(btn => {
+            btn.onclick = function() {
+                const data = this.dataset;
+                document.getElementById('edit_port_id').value = data.id;
+                document.getElementById('edit_port_title').value = data.title;
+                document.getElementById('edit_port_category').value = data.category;
+                document.getElementById('edit_port_date').value = data.date;
+                document.getElementById('edit_port_subtitle').value = data.subtitle;
+                document.getElementById('edit_port_description').value = data.description;
+                document.getElementById('edit_port_image_url').value = data.image;
+                document.getElementById('editPortImgPreview').src = data.image || '/assets/img/blog/blog-1.jpg';
+                quillEditPortfolio.root.innerHTML = data.content;
+                editPortfolioModal.show();
+            };
+        });
+
+        const editTeamModal = new bootstrap.Modal(document.getElementById('editTeamModal'));
+        document.querySelectorAll('.edit-team-btn').forEach(btn => {
+            btn.onclick = function() {
+                const data = this.dataset;
+                document.getElementById('edit_team_id').value = data.id;
+                document.getElementById('edit_team_name').value = data.name;
+                document.getElementById('edit_team_role').value = data.role;
+                document.getElementById('edit_team_description').value = data.description;
+                document.getElementById('edit_team_image_url').value = data.img;
+                document.getElementById('editTeamImgPreview').src = data.img || '/assets/img/team/team-1.jpg';
+                editTeamModal.show();
+            };
+        });
+
+        const editTestimonialModal = new bootstrap.Modal(document.getElementById('editTestimonialModal'));
+        document.querySelectorAll('.edit-testimonial-btn').forEach(btn => {
+            btn.onclick = function() {
+                const data = this.dataset;
+                document.getElementById('edit_test_id').value = data.id;
+                document.getElementById('edit_test_name').value = data.name;
+                document.getElementById('edit_test_role').value = data.role;
+                document.getElementById('edit_test_img').value = data.img;
+                document.getElementById('edit_test_text').value = data.text;
+                editTestimonialModal.show();
+            };
+        });
 
         // --- FORM SUBMISSIONS ---
         document.getElementById('createParashaForm').onsubmit = function() {
@@ -502,16 +639,35 @@
             return true;
         };
 
-        // --- TABS & HASH ---
-        const hash = window.location.hash;
-        if (hash) {
-            const triggerEl = document.querySelector(`.nav-pills button[data-bs-target="${hash}"]`);
-            if (triggerEl) bootstrap.Tab.getOrCreateInstance(triggerEl).show();
+        document.getElementById('editPortfolioForm').onsubmit = function() {
+            document.getElementById('editPortContentInput').value = quillEditPortfolio.root.innerHTML;
+            return true;
+        };
+
+        // --- TABS & HASH (MEJORADO) ---
+        function activateTabFromHash() {
+            const hash = window.location.hash;
+            if (hash) {
+                const triggerEl = document.querySelector(`.nav-pills button[data-bs-target="${hash}"]`);
+                if (triggerEl) {
+                    const tab = bootstrap.Tab.getOrCreateInstance(triggerEl);
+                    tab.show();
+                }
+            }
         }
+
+        // Ejecutar al cargar
+        activateTabFromHash();
+
+        // Escuchar cambios de hash (por si acaso)
+        window.addEventListener('hashchange', activateTabFromHash);
         
         document.querySelectorAll('.nav-pills button').forEach(button => {
             button.addEventListener('shown.bs.tab', (e) => {
-                window.location.hash = e.target.getAttribute('data-bs-target');
+                const targetHash = e.target.getAttribute('data-bs-target');
+                if (window.location.hash !== targetHash) {
+                    history.replaceState(null, null, targetHash);
+                }
             });
         });
     });

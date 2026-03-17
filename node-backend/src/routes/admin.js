@@ -37,10 +37,12 @@ router.get('/portfolio/delete/:id', isAuthenticated, adminController.deletePortf
 
 // Team
 router.post('/team/create', isAuthenticated, upload.single('image_file'), adminController.createTeamMember);
+router.post('/team/update', isAuthenticated, upload.single('image_file'), adminController.updateTeamMember);
 router.get('/team/delete/:id', isAuthenticated, adminController.deleteTeamMember);
 
 // Testimonials
 router.post('/testimonials/create', isAuthenticated, adminController.createTestimonial);
+router.post('/testimonials/update', isAuthenticated, adminController.updateTestimonial);
 router.get('/testimonials/delete/:id', isAuthenticated, adminController.deleteTestimonial);
 
 // Pricing

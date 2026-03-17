@@ -115,16 +115,16 @@ const adminController = {
 
             const Parasha = require('../models/Parasha');
             await Parasha.update(id, { parasha_number, title, description, subtitle, content, image_url, icon, link, youtube_link });
-            res.redirect('/admin/dashboard');
+            res.redirect('/admin/dashboard#pills-services');
         } catch (error) {
-            res.redirect('/admin/dashboard');
+            res.redirect('/admin/dashboard#pills-services');
         }
     },
 
     deleteParasha: async (req, res) => {
         const Parasha = require('../models/Parasha');
         await Parasha.delete(req.params.id);
-        res.redirect('/admin/dashboard');
+        res.redirect('/admin/dashboard#pills-services');
     },
 
     // Portfolio
@@ -141,10 +141,10 @@ const adminController = {
                 'INSERT INTO portfolio (title, category, subtitle, description, event_date, content, image_url, img) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
                 [title, category, subtitle || '', description || '', event_date || null, content || '', image_url || '', img || '']
             );
-            res.redirect('/admin/dashboard#portfolio');
+            res.redirect('/admin/dashboard#pills-portfolio');
         } catch (error) {
-            console.error(error);
-            res.redirect('/admin/dashboard#portfolio');
+            console.error('Error createPortfolio:', error);
+            res.redirect('/admin/dashboard#pills-portfolio');
         }
     },
 
@@ -154,19 +154,29 @@ const adminController = {
             if (req.file) {
                 image_url = '/uploads/portfolio/' + req.file.filename;
             }
+            
+            // Fix: handle empty date string
+            const formattedDate = event_date === '' ? null : event_date;
+
             await db.query(
                 'UPDATE portfolio SET title = ?, category = ?, subtitle = ?, description = ?, event_date = ?, content = ?, image_url = ?, img = ? WHERE id = ?',
-                [title, category, subtitle, description, event_date, content, image_url, image_url, id]
+                [title, category, subtitle, description, formattedDate, content, image_url, image_url, id]
             );
-            res.redirect('/admin/dashboard#portfolio');
+            res.redirect('/admin/dashboard#pills-portfolio');
         } catch (error) {
-            res.redirect('/admin/dashboard#portfolio');
+            console.error('Error updatePortfolio:', error);
+            res.redirect('/admin/dashboard#pills-portfolio');
         }
     },
 
     deletePortfolio: async (req, res) => {
-        await db.query('DELETE FROM portfolio WHERE id = ?', [req.params.id]);
-        res.redirect('/admin/dashboard#portfolio');
+        try {
+            await db.query('DELETE FROM portfolio WHERE id = ?', [req.params.id]);
+            res.redirect('/admin/dashboard#pills-portfolio');
+        } catch (error) {
+            console.error('Error deletePortfolio:', error);
+            res.redirect('/admin/dashboard#pills-portfolio');
+        }
     },
 
     // Team
@@ -177,27 +187,51 @@ const adminController = {
                 img = '/uploads/team/' + req.file.filename;
             }
             await db.query('INSERT INTO team (name, role, description, img) VALUES (?, ?, ?, ?)', [name, role, description || '', img || '']);
-            res.redirect('/admin/dashboard#team');
+            res.redirect('/admin/dashboard#pills-team');
         } catch (error) {
-            res.redirect('/admin/dashboard#team');
+            console.error('Error createTeamMember:', error);
+            res.redirect('/admin/dashboard#pills-team');
         }
     },
 
+    updateTeamMember: async (req, res) => {
+        try {
+            let { id, name, role, description, img } = req.body;
+            if (req.file) {
+                img = '/uploads/team/' + req.file.filename;
+            }
+            await db.query('UPDATE team SET name = ?, role = ?, description = ?, img = ? WHERE id = ?', [name, role, description, img, id]);
+            res.redirect('/admin/dashboard#pills-team');
+        } catch (error) {
+            console.error('Error updateTeamMember:', error);
+            res.redirect('/admin/dashboard#pills-team');
+        }
+    },
     deleteTeamMember: async (req, res) => {
-        await db.query('DELETE FROM team WHERE id = ?', [req.params.id]);
-        res.redirect('/admin/dashboard#team');
+        try {
+            await db.query('DELETE FROM team WHERE id = ?', [req.params.id]);
+            res.redirect('/admin/dashboard#pills-team');
+        } catch (error) {
+            console.error('Error deleteTeamMember:', error);
+            res.redirect('/admin/dashboard#pills-team');
+        }
     },
 
     // Testimonials
     createTestimonial: async (req, res) => {
         const { name, role, text } = req.body;
         await db.query('INSERT INTO testimonials (name, role, text) VALUES (?, ?, ?)', [name, role, text]);
-        res.redirect('/admin/dashboard#testimonials');
+        res.redirect('/admin/dashboard#pills-testimonials');
     },
 
+    updateTestimonial: async (req, res) => {
+        const { id, name, role, text, img } = req.body;
+        await db.query('UPDATE testimonials SET name = ?, role = ?, text = ?, img = ? WHERE id = ?', [name, role, text, img, id]);
+        res.redirect('/admin/dashboard#pills-testimonials');
+    },
     deleteTestimonial: async (req, res) => {
         await db.query('DELETE FROM testimonials WHERE id = ?', [req.params.id]);
-        res.redirect('/admin/dashboard#testimonials');
+        res.redirect('/admin/dashboard#pills-testimonials');
     },
 
     // Pricing

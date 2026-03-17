@@ -17,6 +17,11 @@ class Portfolio {
     static async delete(id) {
         return await db.query('DELETE FROM portfolio WHERE id = ?', [id]);
     }
+
+    static async getById(id) {
+        const [rows] = await db.query('SELECT * FROM portfolio WHERE id = ?', [id]);
+        return rows[0];
+    }
 }
 
 module.exports = Portfolio;

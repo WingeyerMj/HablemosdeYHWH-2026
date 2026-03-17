@@ -129,6 +129,20 @@ const homeController = {
         } catch (error) {
             next(error);
         }
+    },
+    eventDetail: async (req, res, next) => {
+        try {
+            const event = await Portfolio.getById(req.params.id);
+            if (!event) return next();
+            res.render('evento_detail', { 
+                title: event.title + ' - Hablemos de YHWH', 
+                page: 'portfolio', 
+                evento: event,
+                layout: false 
+            });
+        } catch (error) {
+            next(error);
+        }
     }
 };
 

@@ -126,14 +126,17 @@ function getHolidaysForYear(year) {
     }
   });
 
-  const pesajDate = new Date(abibMonth.days[rjAbibIdx + 13]);
-  const hamatzoDate = new Date(abibMonth.days[rjAbibIdx + 14]);
+  // REGLA GENERAL: El día de Rosh Jodesh (0% visibilidad) es la declaración.
+  // El conteo de días comienza al día siguiente. 
+  // Día 14 de la cuenta = rjIdx + 14 (porque rjIdx + 1 es el Día 1)
+  const pesajDate = new Date(abibMonth.days[rjAbibIdx + 14]);
+  const hamatzoDate = new Date(abibMonth.days[rjAbibIdx + 15]);
 
   let bikurimDate = null;
   for (let i = 1; i <= 7; i++) {
     const d = new Date(pesajDate);
     d.setUTCDate(d.getUTCDate() + i);
-    if (d.getUTCDay() === 0) {
+    if (d.getUTCDay() === 0) { // Domingo es el día de Bikurim
       bikurimDate = d;
       break;
     }
@@ -146,9 +149,10 @@ function getHolidaysForYear(year) {
   )) : null;
 
   // Festividades Mes 7
-  const yomTeruahDate = new Date(month7.days[rj7Idx]);
-  const yomKippurDate = new Date(month7.days[rj7Idx + 9]);
-  const sukkotDate = new Date(month7.days[rj7Idx + 14]);
+  // Día 1 de la cuenta = rj7Idx + 1
+  const yomTeruahDate = new Date(month7.days[rj7Idx + 1]); 
+  const yomKippurDate = new Date(month7.days[rj7Idx + 10]);
+  const sukkotDate = new Date(month7.days[rj7Idx + 15]);
 
   // Shemini Atzeret is the 8th day (7 days after Sukkot starts)
   const sheminiAtzeretDate = new Date(sukkotDate);
@@ -249,11 +253,20 @@ function renderCalendar() {
     }
 
     const moonInfo = monthMoonData[index];
+    const illum = typeof moonInfo.illumination === "string" ? parseFloat(moonInfo.illumination) : moonInfo.illumination;
+
+    // Detectar si este día es UN Rosh Jodesh
+    const prevDay = monthMoonData[index - 1];
+    const prevIllum = prevDay ? (typeof prevDay.illumination === "string" ? parseFloat(prevDay.illumination) : prevDay.illumination) : 100;
+    const nextDay = monthMoonData[index + 1];
+    const nextIllum = nextDay ? (typeof nextDay.illumination === "string" ? parseFloat(nextDay.illumination) : nextDay.illumination) : 100;
+
+    const isActuallyRoshJodesh = (illum <= prevIllum && illum <= nextIllum && illum < 2);
+
 
     // ------------------------------------------------------------
     // 9.1 Detección de Rosh Hashaná (PRIORIDAD MÁXIMA)
     // ------------------------------------------------------------
-
     const gYear = gregDate.getUTCFullYear();
     const gMonth = String(gregDate.getUTCMonth() + 1).padStart(2, "0");
     const gDay = String(gregDate.getUTCDate()).padStart(2, "0");
@@ -268,17 +281,17 @@ function renderCalendar() {
 
     const isRoshHashana = (gregKey === roshKey);
 
-    if (isRoshHashana) {
-      cell.classList.add("roshhashana");
+    if (isRoshHashana || (isActuallyRoshJodesh && index === firstRoshIndex)) {
+      cell.classList.add(isRoshHashana ? "roshhashana" : "roshjodesh");
 
-      const rhLabel = document.createElement("div");
-      rhLabel.className = "roshhashana-label";
-      rhLabel.textContent = "Rosh Hashaná";
-      cell.appendChild(rhLabel);
+      const label = document.createElement("div");
+      label.className = isRoshHashana ? "roshhashana-label" : "rosh-label";
+      label.textContent = isRoshHashana ? "Rosh Hashaná" : "Rosh Jodesh";
+      cell.appendChild(label);
 
       const lunisolarDayEl = document.createElement("div");
       lunisolarDayEl.className = "lunisolar-day";
-      lunisolarDayEl.textContent = "1";
+      lunisolarDayEl.textContent = ""; // No lleva número el día 0%
 
       const gregorianDayEl = document.createElement("div");
       gregorianDayEl.className = "gregorian-day";
@@ -286,9 +299,20 @@ function renderCalendar() {
 
       cell.appendChild(lunisolarDayEl);
       cell.appendChild(gregorianDayEl);
+      
+      const moonContainer = document.createElement("div");
+      moonContainer.className = "moon-info";
+      const moonIcon = document.createElement("div");
+      moonIcon.className = "moon-icon";
+      moonIcon.textContent = getMoonIcon(moonInfo.illumination);
+      const moonText = document.createElement("span");
+      moonText.textContent = `${illum}%`;
+      moonContainer.appendChild(moonIcon);
+      moonContainer.appendChild(moonText);
+      cell.appendChild(moonContainer);
 
       gridEl.appendChild(cell);
-      return; // NO seguir procesando este día
+      return; 
     }
 
     // ------------------------------------------------------------
@@ -300,7 +324,7 @@ function renderCalendar() {
     let lunisolarDay;
 
     if (isRoshJodesh) {
-      lunisolarDay = 1;
+      lunisolarDay = ""; // El día del 0% es Rosh Jodesh (declaración), no lleva número
       cell.classList.add("roshjodesh");
 
       const label = document.createElement("div");
@@ -309,8 +333,12 @@ function renderCalendar() {
       cell.appendChild(label);
 
     } else {
-      lunisolarDay = index - firstRoshIndex + 1;
-      if (lunisolarDay < 1) lunisolarDay = 1;
+      // El conteo comienza al día siguiente de Rosh Jodesh
+      lunisolarDay = index - firstRoshIndex;
+      
+      if (lunisolarDay < 1) {
+          lunisolarDay = ""; // Días previos a la declaración en el mismo mes gregoriano
+      }
     }
 
     // Día lunisolar

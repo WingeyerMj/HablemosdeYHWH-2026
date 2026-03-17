@@ -122,10 +122,9 @@
                         <div class="isotope-layout" data-default-filter="*" data-layout="masonry"
                             data-sort="original-order">
                             <ul class="portfolio-filters isotope-filters" data-aos="fade-up" data-aos-delay="100">
-                                <li data-filter="*" class="filter-active">All</li>
-                                <li data-filter=".filter-app">App</li>
-                                <li data-filter=".filter-product">Card</li>
-                                <li data-filter=".filter-branding">Web</li>
+                                <li data-filter="*" class="filter-active">Todos</li>
+                                <li data-filter=".filter-app">Moedin</li>
+                                <li data-filter=".filter-product">Especiales</li>
                             </ul>
                             <div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200">
                                 <% portfolio.forEach(item=> { %>
@@ -133,15 +132,15 @@
                                         <img src="<%= item.img %>" class="img-fluid" alt="">
                                         <div class="portfolio-info">
                                             <h4>
-                                                <%= item.title %>
+                                                Próximo: <%= item.event_date ? new Date(item.event_date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Sin fecha' %>
                                             </h4>
                                             <p>
-                                                <%= item.desc %>
+                                                <%= item.title %>
                                             </p>
                                             <a href="<%= item.img %>" title="<%= item.title %>"
                                                 data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i
                                                     class="bi bi-zoom-in"></i></a>
-                                            <a href="#" title="More Details" class="details-link"><i
+                                            <a href="/eventos/<%= item.id %>" title="Más Detalles" class="details-link"><i
                                                     class="bi bi-link-45deg"></i></a>
                                         </div>
                                     </div>
