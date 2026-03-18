@@ -506,7 +506,154 @@ function cambiarMesConTransicion(delta) {
 if (sidePrev) sidePrev.addEventListener('click', () => cambiarMesConTransicion(-1));
 if (sideNext) sideNext.addEventListener('click', () => cambiarMesConTransicion(1));
 
+// ------------------------------------------------------------
+// 16. Descarga como PNG / PDF
+// ------------------------------------------------------------
 
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) {
+      resolve();
+      return;
+    }
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
 
+const HTML2CANVAS_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+const JSPDF_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
 
+async function captureCalendar() {
+  await loadScript(HTML2CANVAS_CDN);
+  const container = document.querySelector('.calendar-container');
+  const body = document.body;
 
+  // Guardar y quitar background-image para evitar tainted canvas
+  const savedBodyBg = body.style.backgroundImage;
+  body.style.backgroundImage = 'none';
+
+  const hideEls = container.querySelectorAll('.nav-arrow, .download-bar, .theme-toggle');
+  hideEls.forEach(el => el.style.visibility = 'hidden');
+
+  const canvas = await html2canvas(container, {
+    backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#1a1a1a',
+    scale: 2,
+    useCORS: true,
+    allowTaint: false,
+    logging: false
+  });
+
+  hideEls.forEach(el => el.style.visibility = '');
+  body.style.backgroundImage = savedBodyBg;
+  return canvas;
+}
+
+function downloadCanvasAsFile(canvas, filename) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        reject(new Error('No se pudo generar el blob'));
+        return;
+      }
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      resolve();
+    }, 'image/png');
+  });
+}
+
+async function downloadPNG() {
+  const btn = document.getElementById('btn-download-png');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '⏳ Generando…';
+  btn.disabled = true;
+
+  try {
+    const canvas = await captureCalendar();
+    const monthName = titleEl.textContent || 'calendario';
+    const filename = `Calendario_Lunisolar_${monthName.replace(/\s/g, '_')}.png`;
+    await downloadCanvasAsFile(canvas, filename);
+  } catch (err) {
+    console.error('Error generando PNG:', err);
+    alert('No se pudo generar la imagen. Intenta de nuevo.');
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+}
+
+async function downloadPDF() {
+  const btn = document.getElementById('btn-download-pdf');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '⏳ Generando…';
+  btn.disabled = true;
+
+  try {
+    await loadScript(JSPDF_CDN);
+    const canvas = await captureCalendar();
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const imgRatio = canvas.width / canvas.height;
+    let imgW = pageWidth - 20;
+    let imgH = imgW / imgRatio;
+    if (imgH > pageHeight - 20) {
+      imgH = pageHeight - 20;
+      imgW = imgH * imgRatio;
+    }
+    const x = (pageWidth - imgW) / 2;
+    const y = (pageHeight - imgH) / 2;
+    pdf.addImage(imgData, 'PNG', x, y, imgW, imgH);
+    const monthName = titleEl.textContent || 'calendario';
+    pdf.save(`Calendario_Lunisolar_${monthName.replace(/\s/g, '_')}.pdf`);
+  } catch (err) {
+    console.error('Error generando PDF:', err);
+    alert('No se pudo generar el PDF. Intenta de nuevo.');
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+}
+
+function createDownloadBar() {
+  const container = document.querySelector('.calendar-container');
+  const bar = document.createElement('div');
+  bar.className = 'download-bar';
+  bar.innerHTML = `
+    <button id="btn-download-png" class="download-btn" title="Descargar como imagen PNG">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+        <circle cx="8.5" cy="8.5" r="1.5"/>
+        <polyline points="21 15 16 10 5 21"/>
+      </svg>
+      <span>PNG</span>
+    </button>
+    <button id="btn-download-pdf" class="download-btn" title="Descargar como PDF">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="12" y1="18" x2="12" y2="12"/>
+        <polyline points="8 15 12 18 16 15"/>
+      </svg>
+      <span>PDF</span>
+    </button>
+  `;
+  const wrapper = container.querySelector('.calendar-wrapper');
+  container.insertBefore(bar, wrapper);
+  document.getElementById('btn-download-png').addEventListener('click', downloadPNG);
+  document.getElementById('btn-download-pdf').addEventListener('click', downloadPDF);
+}
+
+createDownloadBar();
