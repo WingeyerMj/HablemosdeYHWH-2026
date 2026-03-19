@@ -476,6 +476,14 @@ function renderCalendar() {
 
     gridEl.appendChild(cell);
   });
+
+  // 10.1 Scrolear al día actual si existe en este mes
+  setTimeout(() => {
+    const todayCell = document.querySelector('.calendar-cell.today');
+    if (todayCell) {
+      todayCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 300);
 }
 
 // ------------------------------------------------------------

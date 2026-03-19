@@ -14,6 +14,6 @@ export const lunisolar2025 = {
     { index: 8, name: "Mes 9", roshJodes: "2025-11-20T18:00:00Z", next: "2025-12-19T18:00:00Z" },
     { index: 9, name: "Mes 10", roshJodes: "2025-12-20T18:00:00Z", next: "2026-01-18T18:00:00Z" },
     { index: 10, name: "Mes 11", roshJodes: "2026-01-18T18:00:00Z", next: "2026-02-16T18:00:00Z" },
-    { index: 11, name: "Mes 12", roshJodes: "2026-02-17T18:00:00Z", next: "2026-03-19T18:00:00Z" }
+    { index: 11, name: "Mes 12", roshJodes: "2026-02-17T18:00:00Z", next: "2026-03-18T18:00:00Z" }
   ]
 };

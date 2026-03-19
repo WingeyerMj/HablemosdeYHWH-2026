@@ -158,7 +158,16 @@ body.calendar-page,
 
 .today {
   background: var(--today-bg);
-  border: 2px solid #66bfff;
+  border: 3px solid #00f2fe;
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+  animation: pulse-today 2s infinite ease-in-out;
+  z-index: 1;
+}
+
+@keyframes pulse-today {
+  0% { box-shadow: 0 0 5px rgba(0, 242, 254, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(0, 242, 254, 0.7); }
+  100% { box-shadow: 0 0 5px rgba(0, 242, 254, 0.4); }
 }
 
 /* ----------------------------------------------------------
