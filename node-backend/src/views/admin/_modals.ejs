@@ -1,0 +1,326 @@
+<!-- MODAL: NUEVA PARASHA -->
+<div class="modal fade" id="createParashaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Añadir Nueva Parasha</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/parashot/create" method="POST" enctype="multipart/form-data" id="createParashaForm">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-2">
+                            <label class="form-label small text-white-50">Nº</label>
+                            <input type="number" name="parasha_number" class="form-control" placeholder="#" min="1">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Título</label>
+                            <input type="text" name="title" class="form-control" required placeholder="Ej: Bereshit">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subtítulo / Versículo</label>
+                            <input type="text" name="subtitle" class="form-control" placeholder="Ej: Génesis 1:1">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">Resumen Breve</label>
+                            <input type="text" name="description" class="form-control" placeholder="Introducción corta...">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Link de YouTube</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-youtube"></i></span>
+                                <input type="text" name="youtube_link" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subir PDF (descargable)</label>
+                            <input type="file" name="pdf_upload" class="form-control" accept=".pdf">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Subir Imagen</label>
+                            <input type="file" id="create_image_file" name="image_file" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">O URL de Imagen</label>
+                            <input type="text" id="create_image_url" name="image_url" class="form-control" placeholder="https://...">
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height:100px;background:rgba(0,0,0,0.2);">
+                                <img id="createImgPreview" src="/assets/img/blog/blog-1.jpg" style="max-width:100%;max-height:100%;object-fit:contain;">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Contenido Completo (Enseñanza)</label>
+                            <div id="create-editor-container" style="height:300px;background:white;color:black;border-radius:5px;"></div>
+                            <input type="hidden" name="content" id="createContentInput">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success px-4">Crear Parasha</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: NUEVO EVENTO -->
+<div class="modal fade" id="createPortfolioModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Añadir Nuevo Evento</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/portfolio/create" method="POST" enctype="multipart/form-data" id="createPortfolioForm">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Título</label>
+                            <input type="text" name="title" class="form-control" required placeholder="Ej: Pesaj 2026">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Categoría</label>
+                            <select name="category" class="form-select">
+                                <option value="filter-app">Moedin</option>
+                                <option value="filter-product">Especiales</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Fecha del Evento</label>
+                            <input type="date" name="event_date" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subtítulo</label>
+                            <input type="text" name="subtitle" class="form-control" placeholder="Ej: Celebración anual">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Descripción Breve</label>
+                            <input type="text" name="description" class="form-control" placeholder="Resumen para la lista">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Subir Imagen</label>
+                            <input type="file" id="port_image_file" name="image_file" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">O URL de Imagen</label>
+                            <input type="text" id="port_image_url" name="image_url" class="form-control" placeholder="https://...">
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height:100px;background:rgba(0,0,0,0.2);">
+                                <img id="portImgPreview" src="/assets/img/blog/blog-1.jpg" style="max-width:100%;max-height:100%;object-fit:contain;">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Detalle del Evento</label>
+                            <div id="port-editor-container" style="height:300px;background:white;color:black;border-radius:5px;"></div>
+                            <input type="hidden" name="content" id="portContentInput">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success px-4">Crear Evento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: EDITAR EVENTO -->
+<div class="modal fade" id="editPortfolioModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Editar Evento</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/portfolio/update" method="POST" enctype="multipart/form-data" id="editPortfolioForm">
+                <input type="hidden" name="id" id="edit_port_id">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-4"><label class="form-label small text-white-50">Título</label><input type="text" name="title" id="edit_port_title" class="form-control" required></div>
+                        <div class="col-md-4"><label class="form-label small text-white-50">Categoría</label><select name="category" id="edit_port_category" class="form-select"><option value="filter-app">Moedin</option><option value="filter-product">Especiales</option></select></div>
+                        <div class="col-md-4"><label class="form-label small text-white-50">Fecha</label><input type="date" name="event_date" id="edit_port_date" class="form-control"></div>
+                        <div class="col-md-6"><label class="form-label small text-white-50">Subtítulo</label><input type="text" name="subtitle" id="edit_port_subtitle" class="form-control"></div>
+                        <div class="col-md-6"><label class="form-label small text-white-50">Descripción</label><input type="text" name="description" id="edit_port_description" class="form-control"></div>
+                        <div class="col-md-4"><label class="form-label small text-white-50">Subir Imagen</label><input type="file" id="edit_port_image_file" name="image_file" class="form-control" accept="image/*"></div>
+                        <div class="col-md-4"><label class="form-label small text-white-50">URL Imagen</label><input type="text" id="edit_port_image_url" name="image_url" class="form-control"></div>
+                        <div class="col-md-4 text-center"><div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height:100px;background:rgba(0,0,0,0.2);"><img id="editPortImgPreview" src="" style="max-width:100%;max-height:100%;object-fit:contain;"></div></div>
+                        <div class="col-12"><label class="form-label small text-white-50">Contenido</label><div id="edit-port-editor-container" style="height:300px;background:white;color:black;border-radius:5px;"></div><input type="hidden" name="content" id="editPortContentInput"></div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary px-4">Actualizar Evento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: NUEVO MIEMBRO -->
+<div class="modal fade" id="createTeamModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary"><h5 class="modal-title">Añadir Miembro</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <form action="/admin/team/create" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label small text-white-50">Nombre</label><input type="text" name="name" class="form-control" required></div>
+                        <div class="col-md-6"><label class="form-label small text-white-50">Rol / Cargo</label><input type="text" name="role" class="form-control" required></div>
+                        <div class="col-12"><label class="form-label small text-white-50">Descripción</label><textarea name="description" class="form-control" rows="3"></textarea></div>
+                        <div class="col-md-6"><label class="form-label small text-white-50">Subir Foto</label><input type="file" name="image_file" class="form-control" accept="image/*"></div>
+                        <div class="col-md-6"><label class="form-label small text-white-50">O URL de Foto</label><input type="text" name="img" class="form-control" placeholder="https://..."></div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-success px-4">Añadir</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: EDITAR MIEMBRO -->
+<div class="modal fade" id="editTeamModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary"><h5 class="modal-title">Editar Miembro</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <form action="/admin/team/update" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="id" id="edit_team_id">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label small text-white-50">Nombre</label><input type="text" name="name" id="edit_team_name" class="form-control" required></div>
+                        <div class="col-md-6"><label class="form-label small text-white-50">Rol</label><input type="text" name="role" id="edit_team_role" class="form-control" required></div>
+                        <div class="col-12"><label class="form-label small text-white-50">Descripción</label><textarea name="description" id="edit_team_description" class="form-control" rows="3"></textarea></div>
+                        <div class="col-md-6"><label class="form-label small text-white-50">Subir Foto</label><input type="file" id="edit_team_image_file" name="image_file" class="form-control" accept="image/*"></div>
+                        <div class="col-md-6"><label class="form-label small text-white-50">URL Foto</label><input type="text" id="edit_team_image_url" name="img" class="form-control"></div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary px-4">Actualizar</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: NUEVO TESTIMONIO -->
+<div class="modal fade" id="createTestimonialModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary"><h5 class="modal-title">Añadir Testimonio</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <form action="/admin/testimonials/create" method="POST">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label small text-white-50">Nombre</label><input type="text" name="name" class="form-control" required></div>
+                        <div class="col-md-6"><label class="form-label small text-white-50">Rol</label><input type="text" name="role" class="form-control" required></div>
+                        <div class="col-12"><label class="form-label small text-white-50">URL Avatar</label><input type="text" name="img" class="form-control" placeholder="https://..."></div>
+                        <div class="col-12"><label class="form-label small text-white-50">Testimonio</label><textarea name="text" class="form-control" rows="3" required></textarea></div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-success px-4">Añadir</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: EDITAR TESTIMONIO -->
+<div class="modal fade" id="editTestimonialModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary"><h5 class="modal-title">Editar Testimonio</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <form action="/admin/testimonials/update" method="POST">
+                <input type="hidden" name="id" id="edit_test_id">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label small text-white-50">Nombre</label><input type="text" name="name" id="edit_test_name" class="form-control" required></div>
+                        <div class="col-md-6"><label class="form-label small text-white-50">Rol</label><input type="text" name="role" id="edit_test_role" class="form-control" required></div>
+                        <div class="col-12"><label class="form-label small text-white-50">URL Avatar</label><input type="text" name="img" id="edit_test_img" class="form-control"></div>
+                        <div class="col-12"><label class="form-label small text-white-50">Testimonio</label><textarea name="text" id="edit_test_text" class="form-control" rows="3" required></textarea></div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary px-4">Actualizar</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Quill Editor -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const qCfg = { theme:'snow', modules:{ toolbar:[[{'header':[1,2,3,false]}],['bold','italic','underline','strike'],[{'color':[]},{'background':[]}],['link','blockquote','code-block','image'],[{'list':'ordered'},{'list':'bullet'}],[{'align':[]}],['clean']] }};
+
+    const qCreate = new Quill('#create-editor-container', qCfg);
+    const qPort = new Quill('#port-editor-container', qCfg);
+    const qEditPort = new Quill('#edit-port-editor-container', qCfg);
+
+    // Image previews
+    function setupPreview(urlId, fileId, prevId) {
+        const u=document.getElementById(urlId), f=document.getElementById(fileId), p=document.getElementById(prevId);
+        if(u) u.addEventListener('input',e=>{if(e.target.value)p.src=e.target.value;});
+        if(f) f.addEventListener('change',function(){const file=this.files[0];if(file){const r=new FileReader();r.onload=e=>{p.src=e.target.result;};r.readAsDataURL(file);}});
+    }
+    setupPreview('create_image_url','create_image_file','createImgPreview');
+    setupPreview('port_image_url','port_image_file','portImgPreview');
+    setupPreview('edit_port_image_url','edit_port_image_file','editPortImgPreview');
+
+    // Edit Portfolio modal
+    const editPortModal = new bootstrap.Modal(document.getElementById('editPortfolioModal'));
+    document.querySelectorAll('.edit-portfolio-btn').forEach(btn=>{
+        btn.onclick=function(){
+            const d=this.dataset;
+            document.getElementById('edit_port_id').value=d.id;
+            document.getElementById('edit_port_title').value=d.title;
+            document.getElementById('edit_port_category').value=d.category;
+            document.getElementById('edit_port_date').value=d.date;
+            document.getElementById('edit_port_subtitle').value=d.subtitle;
+            document.getElementById('edit_port_description').value=d.description;
+            document.getElementById('edit_port_image_url').value=d.image;
+            document.getElementById('editPortImgPreview').src=d.image||'/assets/img/blog/blog-1.jpg';
+            qEditPort.root.innerHTML=d.content;
+            editPortModal.show();
+        };
+    });
+
+    // Edit Team modal
+    const editTeamModal = new bootstrap.Modal(document.getElementById('editTeamModal'));
+    document.querySelectorAll('.edit-team-btn').forEach(btn=>{
+        btn.onclick=function(){
+            const d=this.dataset;
+            document.getElementById('edit_team_id').value=d.id;
+            document.getElementById('edit_team_name').value=d.name;
+            document.getElementById('edit_team_role').value=d.role;
+            document.getElementById('edit_team_description').value=d.description;
+            document.getElementById('edit_team_image_url').value=d.img;
+            editTeamModal.show();
+        };
+    });
+
+    // Edit Testimonial modal
+    const editTestModal = new bootstrap.Modal(document.getElementById('editTestimonialModal'));
+    document.querySelectorAll('.edit-testimonial-btn').forEach(btn=>{
+        btn.onclick=function(){
+            const d=this.dataset;
+            document.getElementById('edit_test_id').value=d.id;
+            document.getElementById('edit_test_name').value=d.name;
+            document.getElementById('edit_test_role').value=d.role;
+            document.getElementById('edit_test_img').value=d.img;
+            document.getElementById('edit_test_text').value=d.text;
+            editTestModal.show();
+        };
+    });
+
+    // Form submissions with Quill content
+    document.getElementById('createParashaForm').onsubmit=function(){document.getElementById('createContentInput').value=qCreate.root.innerHTML;return true;};
+    document.getElementById('createPortfolioForm').onsubmit=function(){document.getElementById('portContentInput').value=qPort.root.innerHTML;return true;};
+    document.getElementById('editPortfolioForm').onsubmit=function(){document.getElementById('editPortContentInput').value=qEditPort.root.innerHTML;return true;};
+
+    // Tab hash management
+    function activateTab(){const h=window.location.hash;if(h){const t=document.querySelector(`.nav-pills button[data-bs-target="${h}"]`);if(t)bootstrap.Tab.getOrCreateInstance(t).show();}}
+    activateTab();
+    window.addEventListener('hashchange',activateTab);
+    document.querySelectorAll('.nav-pills button').forEach(b=>{b.addEventListener('shown.bs.tab',e=>{const h=e.target.getAttribute('data-bs-target');if(window.location.hash!==h)history.replaceState(null,null,h);});});
+});
+</script>

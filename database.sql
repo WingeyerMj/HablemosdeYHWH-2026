@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla para las secciones de la web
+-- Tabla para las secciones de la web (Hero, About, Calendario, etc.)
 CREATE TABLE IF NOT EXISTS sections (
     id INT AUTO_INCREMENT PRIMARY KEY,
     page VARCHAR(50) DEFAULT 'home',
@@ -24,50 +24,73 @@ CREATE TABLE IF NOT EXISTS sections (
 );
 
 -- Usuarios iniciales
-INSERT INTO users (username, password, role)
-SELECT * FROM (SELECT 'admin', '$2a$10$r.v8z6K8X9hHqB6W1i7kUeA4eF.W5.E6B1D0C4C8A9A9A9A9A9A9', 'admin') AS tmp
-WHERE NOT EXISTS (SELECT username FROM users WHERE username = 'admin') LIMIT 1;
+INSERT IGNORE INTO users (username, password, role)
+VALUES ('admin', '$2a$10$r.v8z6K8X9hHqB6W1i7kUeA4eF.W5.E6B1D0C4C8A9A9A9A9A9A9', 'admin');
 
-INSERT INTO users (username, password, role)
-SELECT * FROM (SELECT 'editor', '$2a$10$r.v8z6K8X9hHqB6W1i7kUeA4eF.W5.E6B1D0C4C8A9A9A9A9A9A9', 'editor') AS tmp
-WHERE NOT EXISTS (SELECT username FROM users WHERE username = 'editor') LIMIT 1;
+INSERT IGNORE INTO users (username, password, role)
+VALUES ('editor', '$2a$10$r.v8z6K8X9hHqB6W1i7kUeA4eF.W5.E6B1D0C4C8A9A9A9A9A9A9', 'editor');
 
 -- Ejemplos de secciones iniciales
-INSERT INTO sections (section_name, title, subtitle, content)
-SELECT * FROM (SELECT 'Hero', 'Hablemos de YHWH', 'Descubre las raíces hebreas de tu fe', 'Contenido descriptivo aquí...') AS tmp
-WHERE NOT EXISTS (SELECT section_name FROM sections WHERE section_name = 'Hero') LIMIT 1;
+INSERT IGNORE INTO sections (section_name, title, subtitle, content)
+VALUES ('Hero', 'Hablemos de YHWH', 'Descubre las raíces hebreas de tu fe', 'Contenido descriptivo aquí...');
 
-INSERT INTO sections (section_name, title, subtitle, content)
-SELECT * FROM (SELECT 'Calendario', 'Calendario Lunisolar', 'Sigue los tiempos señalados', 'Información sobre el calendario...') AS tmp
-WHERE NOT EXISTS (SELECT section_name FROM sections WHERE section_name = 'Calendario') LIMIT 1;
+INSERT IGNORE INTO sections (section_name, title, subtitle, content)
+VALUES ('Calendario', 'Calendario Lunisolar', 'Sigue los tiempos señalados', 'Información sobre el calendario...');
 
-INSERT INTO sections (section_name, title, subtitle, content)
-SELECT * FROM (SELECT 'About', 'Sobre Nosotros', 'Nuestra historia y valores', 'Ullamco laboris nisi ut...') AS tmp
-WHERE NOT EXISTS (SELECT section_name FROM sections WHERE section_name = 'About') LIMIT 1;
+INSERT IGNORE INTO sections (section_name, title, subtitle, content)
+VALUES ('About', 'Sobre Nosotros', 'Nuestra historia y valores', 'Ullamco laboris nisi ut...');
 
 -- Tabla para las Parashot (Porciones Semanales)
 CREATE TABLE IF NOT EXISTS parashot (
     id INT AUTO_INCREMENT PRIMARY KEY,
     parasha_number INT,
     title VARCHAR(255) NOT NULL,
+    subtitle VARCHAR(255),
     description TEXT,
+    content LONGTEXT,
+    image_url VARCHAR(500),
+    pdf_file VARCHAR(500),
     icon VARCHAR(100) DEFAULT 'bi-journal-text',
     link VARCHAR(255),
     youtube_link VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    is_published BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- Migraciones seguras para agregar columnas si no existen
 ALTER TABLE parashot ADD COLUMN IF NOT EXISTS parasha_number INT AFTER id;
+ALTER TABLE parashot ADD COLUMN IF NOT EXISTS subtitle VARCHAR(255) AFTER title;
+ALTER TABLE parashot ADD COLUMN IF NOT EXISTS content LONGTEXT AFTER description;
+ALTER TABLE parashot ADD COLUMN IF NOT EXISTS image_url VARCHAR(500) AFTER content;
+ALTER TABLE parashot ADD COLUMN IF NOT EXISTS pdf_file VARCHAR(500) AFTER image_url;
+ALTER TABLE parashot ADD COLUMN IF NOT EXISTS youtube_link VARCHAR(255) AFTER link;
+ALTER TABLE parashot ADD COLUMN IF NOT EXISTS is_published BOOLEAN DEFAULT TRUE AFTER youtube_link;
+ALTER TABLE parashot ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER created_at;
 
--- Tabla para Portfolio (Eventos)
+-- Tabla para Eventos (antes Portfolio)
 CREATE TABLE IF NOT EXISTS portfolio (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
+    subtitle VARCHAR(255),
     category VARCHAR(100),
-    img VARCHAR(255),
     description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    content LONGTEXT,
+    event_date DATE,
+    image_url VARCHAR(500),
+    img VARCHAR(255),
+    is_published BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+-- Migraciones seguras para portfolio
+ALTER TABLE portfolio ADD COLUMN IF NOT EXISTS subtitle VARCHAR(255) AFTER title;
+ALTER TABLE portfolio ADD COLUMN IF NOT EXISTS content LONGTEXT AFTER description;
+ALTER TABLE portfolio ADD COLUMN IF NOT EXISTS event_date DATE AFTER content;
+ALTER TABLE portfolio ADD COLUMN IF NOT EXISTS image_url VARCHAR(500) AFTER event_date;
+ALTER TABLE portfolio ADD COLUMN IF NOT EXISTS is_published BOOLEAN DEFAULT TRUE AFTER img;
+ALTER TABLE portfolio ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER created_at;
 
 -- Tabla para Testimonials
 CREATE TABLE IF NOT EXISTS testimonials (
@@ -95,31 +118,50 @@ CREATE TABLE IF NOT EXISTS pricing (
     name VARCHAR(100) NOT NULL,
     price VARCHAR(50),
     featured BOOLEAN DEFAULT FALSE,
-    features TEXT, -- Comma separated
-    na_features TEXT, -- Comma separated
+    features TEXT,
+    na_features TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Datos iniciales condicionales (MySQL)
-INSERT INTO parashot (title, description)
-SELECT * FROM (SELECT 'Bereshit', 'En el principio...') AS tmp
-WHERE NOT EXISTS (SELECT title FROM parashot WHERE title = 'Bereshit') LIMIT 1;
+-- Tabla para configuración del sitio (editable desde backend)
+CREATE TABLE IF NOT EXISTS site_settings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    setting_key VARCHAR(100) NOT NULL UNIQUE,
+    setting_value TEXT,
+    setting_type ENUM('text', 'textarea', 'email', 'url', 'image') DEFAULT 'text',
+    setting_group VARCHAR(50) DEFAULT 'general',
+    label VARCHAR(255),
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 
-INSERT INTO portfolio (title, category, img, description)
-SELECT * FROM (SELECT 'App 1', 'filter-app', '/assets/img/masonry-portfolio/masonry-portfolio-1.jpg', 'Lorem ipsum') AS tmp
-WHERE NOT EXISTS (SELECT title FROM portfolio WHERE title = 'App 1') LIMIT 1;
+-- Datos iniciales de configuración del sitio
+INSERT IGNORE INTO site_settings (setting_key, setting_value, setting_type, setting_group, label)
+VALUES ('site_name', 'Hablemos de YHWH', 'text', 'general', 'Nombre del Sitio');
 
-INSERT INTO testimonials (name, role, text, img)
-SELECT * FROM (SELECT 'Saul Goodman', 'Ceo & Founder', 'Proin iaculis purus.', '/assets/img/testimonials/testimonials-1.jpg') AS tmp
-WHERE NOT EXISTS (SELECT name FROM testimonials WHERE name = 'Saul Goodman') LIMIT 1;
+INSERT IGNORE INTO site_settings (setting_key, setting_value, setting_type, setting_group, label)
+VALUES ('contact_address', 'Misiones, Argentina', 'text', 'contact', 'Dirección');
 
-INSERT INTO team (name, role, description, img)
-SELECT * FROM (SELECT 'Jeremy Walker', 'CEO, Founder, Atty.', 'Separated they live.', '/assets/img/team/team-1.jpg') AS tmp
-WHERE NOT EXISTS (SELECT name FROM team WHERE name = 'Jeremy Walker') LIMIT 1;
+INSERT IGNORE INTO site_settings (setting_key, setting_value, setting_type, setting_group, label)
+VALUES ('contact_phone', '+54 9 XXX XXX XXXX', 'text', 'contact', 'Teléfono');
 
-INSERT INTO pricing (name, price, featured, features, na_features)
-SELECT * FROM (SELECT 'Free Plan', '0', FALSE, 'Feature 1,Feature 2', 'Feature 3') AS tmp
-WHERE NOT EXISTS (SELECT name FROM pricing WHERE name = 'Free Plan') LIMIT 1;
+INSERT IGNORE INTO site_settings (setting_key, setting_value, setting_type, setting_group, label)
+VALUES ('contact_email', 'info@hablemosdeyhwh.com', 'email', 'contact', 'Email');
+
+INSERT IGNORE INTO site_settings (setting_key, setting_value, setting_type, setting_group, label)
+VALUES ('social_youtube', '', 'url', 'social', 'Canal de YouTube');
+
+INSERT IGNORE INTO site_settings (setting_key, setting_value, setting_type, setting_group, label)
+VALUES ('social_facebook', '', 'url', 'social', 'Facebook');
+
+INSERT IGNORE INTO site_settings (setting_key, setting_value, setting_type, setting_group, label)
+VALUES ('social_instagram', '', 'url', 'social', 'Instagram');
+
+INSERT IGNORE INTO site_settings (setting_key, setting_value, setting_type, setting_group, label)
+VALUES ('social_whatsapp', '', 'url', 'social', 'WhatsApp');
+
+-- Datos iniciales condicionales
+INSERT IGNORE INTO parashot (title, description)
+VALUES ('Bereshit', 'En el principio...');
 
 -- Tabla para secciones dinámicas (administrables desde el backend)
 CREATE TABLE IF NOT EXISTS dynamic_sections (
@@ -139,5 +181,45 @@ CREATE TABLE IF NOT EXISTS dynamic_sections (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Migración para soporte de tablas dinámicas
-ALTER TABLE dynamic_sections ADD COLUMN data_table VARCHAR(100) AFTER show_in_navbar;
+-- Tabla para permisos de secciones por editor
+CREATE TABLE IF NOT EXISTS section_permissions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    section_id INT NOT NULL,
+    user_id INT NOT NULL,
+    UNIQUE KEY unique_perm (section_id, user_id),
+    FOREIGN KEY (section_id) REFERENCES dynamic_sections(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Tabla para enlaces del footer (administrables desde el backend)
+CREATE TABLE IF NOT EXISTS footer_links (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category VARCHAR(100) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    url VARCHAR(500) NOT NULL DEFAULT '#',
+    order_index INT DEFAULT 0,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Sección Footer inicial
+INSERT IGNORE INTO sections (section_name, title, subtitle, content)
+VALUES ('Footer', 'Hablemos de YHWH', 'Estudio bíblico desde la perspectiva hebrea', '');
+
+-- Enlaces de footer iniciales
+INSERT IGNORE INTO footer_links (category, title, url, order_index)
+VALUES ('Enlaces Útiles', 'Inicio', '/', 1);
+
+INSERT IGNORE INTO footer_links (category, title, url, order_index)
+VALUES ('Enlaces Útiles', 'Sobre Nosotros', '/#about', 2);
+
+INSERT IGNORE INTO footer_links (category, title, url, order_index)
+VALUES ('Enlaces Útiles', 'Parashot', '/parashot', 3);
+
+INSERT IGNORE INTO footer_links (category, title, url, order_index)
+VALUES ('Recursos', 'Calendario', '/calendar', 1);
+
+INSERT IGNORE INTO footer_links (category, title, url, order_index)
+VALUES ('Recursos', 'Eventos', '/#portfolio', 2);
+

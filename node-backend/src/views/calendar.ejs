@@ -2,8 +2,52 @@
 <html lang="es" data-theme="dark">
 
 <%- include('partials/head') %>
+<style>
+    .btn-back-home {
+        position: fixed;
+        top: 100px; /* Debajo del header */
+        left: 20px;
+        z-index: 9999;
+        background: rgba(212, 184, 149, 0.9);
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .btn-back-home i {
+        font-size: 1.2rem;
+    }
+    .btn-back-home:hover {
+        background: #d4b895;
+        color: #fff;
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(212, 184, 149, 0.5);
+    }
+    @media (max-width: 768px) {
+        .btn-back-home {
+            top: auto;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: auto;
+            white-space: nowrap;
+        }
+        .btn-back-home:hover {
+            transform: translateX(-50%) scale(1.05);
+        }
+    }
+</style>
 
     <body class="calendar-page dark-background">
+        <a href="/" class="btn-back-home">
+            <i class="bi bi-arrow-left-circle me-2"></i> Volver al Inicio
+        </a>
 
         <%- include('partials/header') %>
 

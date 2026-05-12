@@ -1,5 +1,6 @@
 const DynamicSection = require('../models/DynamicSection');
 const EntityModel = require('../models/EntityModel');
+const SiteSettings = require('../models/SiteSettings');
 const bcrypt = require('bcryptjs');
 const db = require('../config/db');
 
@@ -11,17 +12,6 @@ const adminController = {
 
     login: async (req, res) => {
         const { username, password } = req.body;
-        
-        // --- BYPASS TEMPORAL PARA DEPuración (Base de datos desconectada) ---
-        if (username === 'admin' && password === 'admin123') {
-            console.warn('⚠️ Inicio de sesión mediante bypass (base de datos desconectada)');
-            req.session.userId = 999;
-            req.session.username = 'admin';
-            req.session.role = 'admin';
-            return res.redirect('/admin/dynamic-sections');
-        }
-        // -------------------------------------------------------------------
-
         try {
             const [rows] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
             if (rows.length === 0) return res.render('admin/login', { error: 'Usuario no encontrado', layout: false });
@@ -34,22 +24,22 @@ const adminController = {
             req.session.username = user.username;
             req.session.role = user.role;
 
-            res.redirect('/admin/dynamic-sections');
+            res.redirect('/admin/dashboard');
         } catch (error) {
-            res.render('admin/login', { error: 'Error del servidor', layout: false });
+            console.error('Error de login:', error);
+            res.render('admin/login', { error: 'Error del servidor: ' + error.message, layout: false });
         }
     },
 
     dashboard: async (req, res, next) => {
         try {
-            // Re-importar modelos para el dashboard (compatibilidad con lógica anterior)
             const Parasha = require('../models/Parasha');
             const Portfolio = require('../models/Portfolio');
             const Team = require('../models/Team');
             const Testimonial = require('../models/Testimonial');
             const Pricing = require('../models/Pricing');
 
-            let parashot = [], portfolio = [], team = [], testimonials = [], pricing = [];
+            let parashot = [], portfolio = [], team = [], testimonials = [], pricing = [], sections = [];
             
             try {
                 parashot = await Parasha.getAll();
@@ -57,8 +47,10 @@ const adminController = {
                 team = await Team.getAll();
                 testimonials = await Testimonial.getAll();
                 pricing = await Pricing.getAll();
+                const [sectionRows] = await db.query('SELECT * FROM sections ORDER BY id ASC');
+                sections = sectionRows;
             } catch (dbErr) {
-                console.warn('⚠️ No se pudieron cargar datos del dashboard (DB desconectada)');
+                console.warn('⚠️ No se pudieron cargar datos del dashboard:', dbErr.message);
             }
 
             res.render('admin/dashboard', {
@@ -67,29 +59,35 @@ const adminController = {
                 portfolio,
                 team,
                 testimonials,
-                pricing
+                pricing,
+                sections
             });
         } catch (error) {
             next(error);
         }
     },
 
-    // Parashot
+    // ==================== PARASHOT ====================
     createParasha: async (req, res) => {
         try {
-            let { parasha_number, title, description, subtitle, content, image_url, icon, link, youtube_link } = req.body;
+            let { parasha_number, title, description, subtitle, content, image_url, pdf_file, icon, link, youtube_link } = req.body;
             
-            // Si hay un archivo subido, usamos su ruta
-            if (req.file) {
-                image_url = '/uploads/parashot/' + req.file.filename;
+            if (req.files) {
+                if (req.files['image_file'] && req.files['image_file'][0]) {
+                    image_url = '/assets/parashot/' + req.files['image_file'][0].filename;
+                }
+                if (req.files['pdf_upload'] && req.files['pdf_upload'][0]) {
+                    pdf_file = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
+                }
             }
 
+            console.log('--- Saving Parasha with image_url:', image_url);
             const Parasha = require('../models/Parasha');
-            await Parasha.create({ parasha_number, title, description, subtitle, content, image_url, icon, link, youtube_link });
-            res.redirect('/admin/dashboard');
+            await Parasha.create({ parasha_number, title, description, subtitle, content, image_url, pdf_file, icon, link, youtube_link });
+            res.redirect('/admin/dashboard#pills-services');
         } catch (error) {
-            console.error(error);
-            res.redirect('/admin/dashboard');
+            console.error('Error createParasha:', error);
+            res.redirect('/admin/dashboard#pills-services');
         }
     },
 
@@ -106,17 +104,23 @@ const adminController = {
 
     updateParasha: async (req, res) => {
         try {
-            let { id, parasha_number, title, description, subtitle, content, image_url, icon, link, youtube_link } = req.body;
+            let { id, parasha_number, title, description, subtitle, content, image_url, pdf_file, icon, link, youtube_link } = req.body;
             
-            // Si hay un archivo subido, usamos su ruta
-            if (req.file) {
-                image_url = '/uploads/parashot/' + req.file.filename;
+            if (req.files) {
+                if (req.files['image_file'] && req.files['image_file'][0]) {
+                    image_url = '/assets/parashot/' + req.files['image_file'][0].filename;
+                }
+                if (req.files['pdf_upload'] && req.files['pdf_upload'][0]) {
+                    pdf_file = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
+                }
             }
 
+            console.log('--- Updating Parasha ID:', id, 'with image_url:', image_url);
             const Parasha = require('../models/Parasha');
-            await Parasha.update(id, { parasha_number, title, description, subtitle, content, image_url, icon, link, youtube_link });
+            await Parasha.update(id, { parasha_number, title, description, subtitle, content, image_url, pdf_file, icon, link, youtube_link });
             res.redirect('/admin/dashboard#pills-services');
         } catch (error) {
+            console.error('Error updateParasha:', error);
             res.redirect('/admin/dashboard#pills-services');
         }
     },
@@ -127,23 +131,30 @@ const adminController = {
         res.redirect('/admin/dashboard#pills-services');
     },
 
-    // Portfolio
+    // ==================== EVENTOS (PORTFOLIO) ====================
     createPortfolio: async (req, res) => {
         try {
             let { title, category, subtitle, description, event_date, content, image_url } = req.body;
             if (req.file) {
                 image_url = '/uploads/portfolio/' + req.file.filename;
             }
-            // Fallback forimg field if image_url is provided
-            const img = image_url; 
             
-            await db.query(
-                'INSERT INTO portfolio (title, category, subtitle, description, event_date, content, image_url, img) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                [title, category, subtitle || '', description || '', event_date || null, content || '', image_url || '', img || '']
-            );
+            const Portfolio = require('../models/Portfolio');
+            await Portfolio.create({ title, subtitle, category, description, content, event_date: event_date || null, image_url });
             res.redirect('/admin/dashboard#pills-portfolio');
         } catch (error) {
             console.error('Error createPortfolio:', error);
+            res.redirect('/admin/dashboard#pills-portfolio');
+        }
+    },
+
+    editPortfolioPage: async (req, res) => {
+        try {
+            const Portfolio = require('../models/Portfolio');
+            const evento = await Portfolio.getById(req.params.id);
+            if (!evento) return res.redirect('/admin/dashboard#pills-portfolio');
+            res.render('admin/edit_portfolio', { layout: 'admin/layout', evento });
+        } catch (error) {
             res.redirect('/admin/dashboard#pills-portfolio');
         }
     },
@@ -155,13 +166,10 @@ const adminController = {
                 image_url = '/uploads/portfolio/' + req.file.filename;
             }
             
-            // Fix: handle empty date string
             const formattedDate = event_date === '' ? null : event_date;
 
-            await db.query(
-                'UPDATE portfolio SET title = ?, category = ?, subtitle = ?, description = ?, event_date = ?, content = ?, image_url = ?, img = ? WHERE id = ?',
-                [title, category, subtitle, description, formattedDate, content, image_url, image_url, id]
-            );
+            const Portfolio = require('../models/Portfolio');
+            await Portfolio.update(id, { title, subtitle, category, description, content, event_date: formattedDate, image_url });
             res.redirect('/admin/dashboard#pills-portfolio');
         } catch (error) {
             console.error('Error updatePortfolio:', error);
@@ -179,7 +187,7 @@ const adminController = {
         }
     },
 
-    // Team
+    // ==================== EQUIPO ====================
     createTeamMember: async (req, res) => {
         try {
             let { name, role, description, img } = req.body;
@@ -207,6 +215,7 @@ const adminController = {
             res.redirect('/admin/dashboard#pills-team');
         }
     },
+
     deleteTeamMember: async (req, res) => {
         try {
             await db.query('DELETE FROM team WHERE id = ?', [req.params.id]);
@@ -217,54 +226,138 @@ const adminController = {
         }
     },
 
-    // Testimonials
+    // ==================== TESTIMONIOS ====================
     createTestimonial: async (req, res) => {
-        const { name, role, text } = req.body;
-        await db.query('INSERT INTO testimonials (name, role, text) VALUES (?, ?, ?)', [name, role, text]);
-        res.redirect('/admin/dashboard#pills-testimonials');
+        try {
+            const { name, role, text, img } = req.body;
+            await db.query('INSERT INTO testimonials (name, role, text, img) VALUES (?, ?, ?, ?)', [name, role, text, img || '']);
+            res.redirect('/admin/dashboard#pills-testimonials');
+        } catch (error) {
+            console.error('Error createTestimonial:', error);
+            res.redirect('/admin/dashboard#pills-testimonials');
+        }
     },
 
     updateTestimonial: async (req, res) => {
-        const { id, name, role, text, img } = req.body;
-        await db.query('UPDATE testimonials SET name = ?, role = ?, text = ?, img = ? WHERE id = ?', [name, role, text, img, id]);
-        res.redirect('/admin/dashboard#pills-testimonials');
-    },
-    deleteTestimonial: async (req, res) => {
-        await db.query('DELETE FROM testimonials WHERE id = ?', [req.params.id]);
-        res.redirect('/admin/dashboard#pills-testimonials');
+        try {
+            const { id, name, role, text, img } = req.body;
+            await db.query('UPDATE testimonials SET name = ?, role = ?, text = ?, img = ? WHERE id = ?', [name, role, text, img, id]);
+            res.redirect('/admin/dashboard#pills-testimonials');
+        } catch (error) {
+            console.error('Error updateTestimonial:', error);
+            res.redirect('/admin/dashboard#pills-testimonials');
+        }
     },
 
-    // Pricing
+    deleteTestimonial: async (req, res) => {
+        try {
+            await db.query('DELETE FROM testimonials WHERE id = ?', [req.params.id]);
+            res.redirect('/admin/dashboard#pills-testimonials');
+        } catch (error) {
+            console.error('Error deleteTestimonial:', error);
+            res.redirect('/admin/dashboard#pills-testimonials');
+        }
+    },
+
+    // ==================== PRICING ====================
     updatePricing: async (req, res) => {
         const { id, name, price, features } = req.body;
         await db.query('UPDATE pricing SET name = ?, price = ?, features = ? WHERE id = ?', [name, price, features, id]);
         res.redirect('/admin/dashboard#pricing');
     },
 
+    // ==================== SECCIONES DEL HOME (Hero, About, etc.) ====================
+    sectionsPage: async (req, res) => {
+        try {
+            const [sections] = await db.query('SELECT * FROM sections ORDER BY id ASC');
+            res.render('admin/sections', { layout: 'admin/layout', sections });
+        } catch (error) {
+            console.error('Error sectionsPage:', error);
+            res.redirect('/admin/dashboard');
+        }
+    },
+
+    updateSection: async (req, res) => {
+        try {
+            const { id, title, subtitle, content, image_url } = req.body;
+            let finalImageUrl = image_url;
+            if (req.file) {
+                finalImageUrl = '/uploads/general/' + req.file.filename;
+            }
+            await db.query(
+                'UPDATE sections SET title = ?, subtitle = ?, content = ?, image_url = ? WHERE id = ?',
+                [title, subtitle, content, finalImageUrl, id]
+            );
+            res.redirect('/admin/sections');
+        } catch (error) {
+            console.error('Error updateSection:', error);
+            res.redirect('/admin/sections');
+        }
+    },
+
+    // ==================== CONFIGURACIÓN DEL SITIO ====================
+    settingsPage: async (req, res) => {
+        try {
+            const settingsGrouped = await SiteSettings.getAllGrouped();
+            res.render('admin/settings', { layout: 'admin/layout', settingsGrouped });
+        } catch (error) {
+            console.error('Error settingsPage:', error);
+            res.redirect('/admin/dashboard');
+        }
+    },
+
+    updateSettings: async (req, res) => {
+        try {
+            const data = req.body;
+            // data viene como { setting_key: value, ... }
+            await SiteSettings.setMultiple(data);
+            res.redirect('/admin/settings');
+        } catch (error) {
+            console.error('Error updateSettings:', error);
+            res.redirect('/admin/settings');
+        }
+    },
+
+    // ==================== SESIÓN ====================
     logout: (req, res) => {
         req.session.destroy();
         res.redirect('/admin/login');
     },
 
-    // Gestión de Usuarios (Solo Admins)
+    // ==================== USUARIOS (Solo Admins) ====================
     usersPage: async (req, res) => {
-        const [users] = await db.query('SELECT id, username, email, role FROM users');
-        res.render('admin/users', { layout: 'admin/layout', users });
+        try {
+            const [users] = await db.query('SELECT id, username, email, role FROM users');
+            res.render('admin/users', { layout: 'admin/layout', users });
+        } catch (error) {
+            console.error('Error usersPage:', error);
+            res.redirect('/admin/dashboard');
+        }
     },
 
     createUser: async (req, res) => {
-        const { username, password, role, email } = req.body;
-        const hashedP = await bcrypt.hash(password, 10);
-        await db.query('INSERT INTO users (username, password, role, email) VALUES (?, ?, ?, ?)', [username, hashedP, role, email]);
-        res.redirect('/admin/users');
+        try {
+            const { username, password, role, email } = req.body;
+            const hashedP = await bcrypt.hash(password, 10);
+            await db.query('INSERT INTO users (username, password, role, email) VALUES (?, ?, ?, ?)', [username, hashedP, role, email]);
+            res.redirect('/admin/users');
+        } catch (error) {
+            console.error('Error createUser:', error);
+            res.redirect('/admin/users');
+        }
     },
 
     deleteUser: async (req, res) => {
-        await db.query('DELETE FROM users WHERE id = ?', [req.params.id]);
-        res.redirect('/admin/users');
+        try {
+            await db.query('DELETE FROM users WHERE id = ?', [req.params.id]);
+            res.redirect('/admin/users');
+        } catch (error) {
+            console.error('Error deleteUser:', error);
+            res.redirect('/admin/users');
+        }
     },
 
-    // === Secciones Dinámicas ===
+    // ==================== SECCIONES DINÁMICAS ====================
     listDynamicSections: async (req, res, next) => {
         try {
             let dynamicSections = [];
@@ -288,8 +381,13 @@ const adminController = {
     },
 
     createDynamicSectionPage: async (req, res) => {
-        const [editors] = await db.query("SELECT id, username FROM users WHERE role = 'editor'");
-        res.render('admin/create_dynamic_section', { layout: 'admin/layout', editors });
+        try {
+            const [editors] = await db.query("SELECT id, username FROM users WHERE role = 'editor'");
+            res.render('admin/create_dynamic_section', { layout: 'admin/layout', editors });
+        } catch (error) {
+            console.error('Error createDynamicSectionPage:', error);
+            res.redirect('/admin/dynamic-sections');
+        }
     },
 
 
