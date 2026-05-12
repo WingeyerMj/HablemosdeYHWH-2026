@@ -25,6 +25,7 @@ app.set('views', path.join(__dirname, 'src/views'));
 app.use(expressLayouts);
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/calendar', express.static(path.join(__dirname, '../Calendar')));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
