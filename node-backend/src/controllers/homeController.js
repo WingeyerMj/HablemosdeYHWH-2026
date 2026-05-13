@@ -5,42 +5,52 @@ const Testimonial = require('../models/Testimonial');
 const Pricing = require('../models/Pricing');
 const DynamicSection = require('../models/DynamicSection');
 const EntityModel = require('../models/EntityModel');
+const SiteSettings = require('../models/SiteSettings');
+const db = require('../config/db');
 
 const homeController = {
     index: async (req, res, next) => {
         try {
-            let allDynamicSections = [], latestParashot = [], portfolio = [], team = [], testimonials = [], pricingRaw = [];
+            let allDynamicSections = [], latestParashot = [], portfolio = [], team = [], testimonials = [], pricingRaw = [], siteSettings = {};
+            const sectionsObj = {};
+
             try {
+                // 1. Cargar Secciones Base desde tablas individuales
+                const sectionNames = ['hero', 'calendario', 'about', 'parashot', 'eventos', 'equipo', 'footer'];
+                for (const name of sectionNames) {
+                    try {
+                        const [rows] = await db.query(`SELECT * FROM home_section_${name} LIMIT 1`);
+                        if (rows.length > 0) {
+                            const key = name.charAt(0).toUpperCase() + name.slice(1);
+                            sectionsObj[key] = rows[0];
+                        }
+                    } catch (e) {
+                        console.warn(`⚠️ No se pudo cargar la tabla home_section_${name}:`, e.message);
+                    }
+                }
+
+                // 2. Cargar otros datos dinámicos
                 allDynamicSections = await DynamicSection.getAll();
                 latestParashot = await Parasha.getLatest(6);
-                portfolio = await Portfolio.getAll();
+                portfolio = await Portfolio.getPublished();
                 team = await Team.getAll();
                 testimonials = await Testimonial.getAll();
                 pricingRaw = await Pricing.getAll();
+                siteSettings = await SiteSettings.getMap();
             } catch (dbErr) {
                 console.warn('⚠️ No se pudieron cargar datos de la DB:', dbErr.message || dbErr);
             }
 
-            // Transform pricing data
-            const pricing = pricingRaw.map(p => ({
-                ...p,
-                features: p.features ? p.features.split(',').map(f => f.trim()) : [],
-                na_features: p.na_features ? p.na_features.split(',').map(f => f.trim()) : []
-            }));
-
-            // Convertimos el array de secciones dinámicas en un objeto para fácil acceso: sectionsObj.hero.title
-            // Usamos el slug como llave (hero, about, calendario, etc.)
-            const sectionsObj = {};
+            // 3. Procesar secciones dinámicas
             const dynamicInline = [];
-
             allDynamicSections.forEach(ds => {
                 if (ds.is_active) {
                     const slug = ds.slug.toLowerCase().trim();
                     const key = slug.charAt(0).toUpperCase() + slug.slice(1);
+                    // Las dinámicas pueden sobrescribir las base si tienen el mismo slug/nombre
                     sectionsObj[key] = ds;
 
                     if (ds.section_type === 'inline') {
-                        // Exclude sections that are explicitly rendered in the EJS template
                         const excludedSlugs = ['hero', 'about', 'calendario', 'parashot', 'eventos', 'equipo'];
                         if (!excludedSlugs.includes(slug)) {
                             dynamicInline.push(ds);
@@ -48,6 +58,13 @@ const homeController = {
                     }
                 }
             });
+
+            // Transform pricing data
+            const pricing = pricingRaw.map(p => ({
+                ...p,
+                features: p.features ? p.features.split(',').map(f => f.trim()) : [],
+                na_features: p.na_features ? p.na_features.split(',').map(f => f.trim()) : []
+            }));
 
             res.render('index', {
                 sections: sectionsObj,
@@ -57,6 +74,7 @@ const homeController = {
                 testimonials: testimonials,
                 pricing: pricing,
                 dynamicInline: dynamicInline,
+                siteSettings: siteSettings,
                 title: 'Hablemos de YHWH',
                 page: 'home',
                 layout: false
@@ -65,12 +83,15 @@ const homeController = {
             next(error);
         }
     },
+
     blog: (req, res) => {
         res.render('blog', { title: 'Blog - Hablemos de YHWH', page: 'blog', layout: false });
     },
+
     calendar: (req, res) => {
         res.render('calendar', { title: 'Calendario - Hablemos de YHWH', page: 'calendar', layout: false });
     },
+
     parashot: async (req, res, next) => {
         try {
             const allParashot = await Parasha.getAll();
@@ -84,6 +105,7 @@ const homeController = {
             next(error);
         }
     },
+
     debug: async (req, res, next) => {
         try {
             const allParashot = await Parasha.getAll();
@@ -97,6 +119,7 @@ const homeController = {
             next(error);
         }
     },
+
     parashaDetail: async (req, res, next) => {
         try {
             const parasha = await Parasha.getById(req.params.id);
@@ -106,6 +129,7 @@ const homeController = {
             next(error);
         }
     },
+
     dynamicPage: async (req, res, next) => {
         try {
             const section = await DynamicSection.getBySlug(req.params.slug);
@@ -130,6 +154,7 @@ const homeController = {
             next(error);
         }
     },
+
     eventDetail: async (req, res, next) => {
         try {
             const event = await Portfolio.getById(req.params.id);
