@@ -1,5 +1,5 @@
 -- Hablemos de YHWH - Database Dump
--- Generado: 2026-05-13T14:32:59.881Z
+-- Generado: 2026-05-13T14:39:35.915Z
 
 CREATE DATABASE IF NOT EXISTS hablemos_yhwh;
 USE hablemos_yhwh;
