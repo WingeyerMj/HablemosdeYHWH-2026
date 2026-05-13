@@ -341,24 +341,53 @@ function renderCalendar() {
     cell.appendChild(moonContainer);
 
     // 9.3 Inyectar Etiquetas de Festividades
+    // --- Festividades del Mes 1 (Abib) ---
+    if (month.index === 0) {
+      if (lunisolarDay >= 15 && lunisolarDay <= 21) {
+        const label = document.createElement("div");
+        label.className = "holiday-label hamatzo-label";
+        label.textContent = lunisolarDay === 15 ? "Hamatzo" : `Hamatzo Día ${lunisolarDay - 14}`;
+        cell.appendChild(label);
+        cell.classList.add("hamatzo");
+      }
+    }
+
+    // --- Festividades del Mes 7 ---
+    if (month.index === 6) {
+      if (lunisolarDay >= 15 && lunisolarDay <= 21) {
+        const label = document.createElement("div");
+        label.className = "holiday-label sukkot-label";
+        label.textContent = lunisolarDay === 15 ? "Sukkot" : `Sukkot Día ${lunisolarDay - 14}`;
+        cell.appendChild(label);
+        cell.classList.add("sukkot");
+      } else if (lunisolarDay === 22) {
+        const label = document.createElement("div");
+        label.className = "holiday-label shemini-label";
+        label.textContent = "Shemini Atzeret";
+        cell.appendChild(label);
+        cell.classList.add("shemini-atzeret");
+      }
+    }
+
+    // Otras Festividades (Bikurim, Pesaj, etc.)
+    if (isSameDay(gregDate, bikurimDate)) {
+      const label = document.createElement("div");
+      label.className = "holiday-label bikurim-label";
+      label.textContent = "Bikurim";
+      // Si ya hay una etiqueta (ej: Hamatzo), posicionar esta debajo
+      if (cell.querySelector('.holiday-label')) {
+        label.style.top = "28px"; 
+      }
+      cell.appendChild(label);
+      cell.classList.add("bikurim");
+    }
+
     if (isSameDay(gregDate, pesajDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label pesaj-label";
       label.textContent = "Pesaj";
       cell.appendChild(label);
       cell.classList.add("pesaj");
-    } else if (isSameDay(gregDate, hamatzoDate)) {
-      const label = document.createElement("div");
-      label.className = "holiday-label hamatzo-label";
-      label.textContent = "Hamatzo";
-      cell.appendChild(label);
-      cell.classList.add("hamatzo");
-    } else if (isSameDay(gregDate, bikurimDate)) {
-      const label = document.createElement("div");
-      label.className = "holiday-label bikurim-label";
-      label.textContent = "Bikurim";
-      cell.appendChild(label);
-      cell.classList.add("bikurim");
     } else if (isSameDay(gregDate, yomTeruahDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label yomteruah-label";
@@ -371,12 +400,6 @@ function renderCalendar() {
       label.textContent = "Yom Kippur";
       cell.appendChild(label);
       cell.classList.add("yomkippur");
-    } else if (isSameDay(gregDate, sukkotDate)) {
-      const label = document.createElement("div");
-      label.className = "holiday-label sukkot-label";
-      label.textContent = "Sukkot";
-      cell.appendChild(label);
-      cell.classList.add("sukkot");
     }
 
     // Shavuot (Detección por fecha)
@@ -632,6 +655,14 @@ function createDownloadBar() {
   const bar = document.createElement('div');
   bar.className = 'download-bar';
   bar.innerHTML = `
+    <a href="/" class="download-btn" title="Volver a la página principal" style="text-decoration: none;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span>Inicio</span>
+    </a>
+    <div style="flex-grow: 1;"></div>
     <button id="btn-download-png" class="download-btn" title="Descargar como imagen PNG">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>

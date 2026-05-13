@@ -1,5 +1,14 @@
 <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid position-relative d-flex align-items-center justify-content-between">
+        
+        <% if (typeof page !== 'undefined' && page !== 'home') { %>
+            <a href="/" class="btn-back-header" title="Volver al Inicio" style="margin-right: 15px; font-size: 1.5rem; color: #d4b895; transition: transform 0.3s ease; display: flex; align-items: center;">
+                <i class="bi bi-arrow-left-circle"></i>
+            </a>
+            <style>
+                .btn-back-header:hover { transform: scale(1.1); color: #fff !important; }
+            </style>
+        <% } %>
 
         <a href="/" class="logo d-flex align-items-center me-auto me-xl-0">
             <img src="/assets/img/pagina/logo.svg" alt="YHWH Logo"
@@ -13,12 +22,13 @@
                         Inicio</a></li>
                 <li><a href="/calendar" class="<%= page === 'calendar' ? 'active' : '' %>"><i class="bi bi-calendar3"></i>
                         Calendario</a></li>
+                <li><a href="/#services" class="<%= page === 'parashot' ? 'active' : '' %>"><i class="bi bi-journal-text"></i>
+                        Parashot</a></li>
 
-                <!-- Debug Navbar: <%= typeof navbarDynamicSections !== 'undefined' ? navbarDynamicSections.length : 'UNDEFINED' %> items -->
                 <% if (typeof navbarDynamicSections !=='undefined' && navbarDynamicSections.length> 0) { %>
                     <% navbarDynamicSections.forEach(ds=> { %>
                         <% 
-                            if (ds.slug === 'hero') return; 
+                            if (ds.slug === 'hero' || ds.slug === 'calendario') return; 
                             
                             let href = ds.section_type === 'inline' ? `/#section-${ds.slug}` : `/s/${ds.slug}`; 
                             
@@ -59,10 +69,19 @@
         </nav>
 
         <div class="header-social-links">
-            <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
-            <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-            <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-            <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+            <% const ss = typeof siteSettings !== 'undefined' ? siteSettings : {}; %>
+            <% if (ss.social_youtube) { %>
+                <a href="<%= ss.social_youtube %>" target="_blank" rel="noopener noreferrer" title="YouTube"><i class="bi bi-youtube"></i></a>
+            <% } %>
+            <% if (ss.social_facebook) { %>
+                <a href="<%= ss.social_facebook %>" target="_blank" rel="noopener noreferrer" title="Facebook"><i class="bi bi-facebook"></i></a>
+            <% } %>
+            <% if (ss.social_instagram) { %>
+                <a href="<%= ss.social_instagram %>" target="_blank" rel="noopener noreferrer" title="Instagram"><i class="bi bi-instagram"></i></a>
+            <% } %>
+            <% if (ss.social_whatsapp) { %>
+                <a href="<%= ss.social_whatsapp %>" target="_blank" rel="noopener noreferrer" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+            <% } %>
         </div>
 
     </div>

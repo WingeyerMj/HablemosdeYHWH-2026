@@ -5,6 +5,9 @@ const session = require('express-session');
 const expressLayouts = require('express-ejs-layouts');
 const db = require('./src/config/db');
 const initDB = require('./src/config/init-db');
+const DynamicSection = require('./src/models/DynamicSection');
+const FooterModel = require('./src/models/FooterModel');
+const SiteSettings = require('./src/models/SiteSettings');
 
 // Prevenir que el proceso muera por errores no manejados (ej: MySQL no disponible)
 process.on('unhandledRejection', (reason, promise) => {
@@ -37,12 +40,32 @@ app.use(session({
 }));
 
 // Global variables (access session in all views)
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
+    // Inicializar SIEMPRE para evitar ReferenceError en EJS
     res.locals.user = req.session.userId || null;
     res.locals.username = req.session.username || null;
     res.locals.role = req.session.role || null;
-    // Hacemos req disponible en res.locals para usarlo en las vistas (dashboard)
     res.locals.req = req;
+    res.locals.navbarDynamicSections = [];
+    res.locals.footerConfig = {};
+    res.locals.footerLinks = {};
+    res.locals.siteSettings = {};
+
+    try {
+        // Cargar datos globales de forma asíncrona
+        const navSections = await DynamicSection.getNavbarSections().catch(() => []);
+        const footerConfig = await FooterModel.getFooterConfig().catch(() => ({}));
+        const footerLinks = await FooterModel.getFooterLinks().catch(() => ({}));
+        const siteSettings = await SiteSettings.getMap().catch(() => ({}));
+        
+        res.locals.navbarDynamicSections = navSections;
+        res.locals.footerConfig = footerConfig;
+        res.locals.footerLinks = footerLinks;
+        res.locals.siteSettings = siteSettings;
+    } catch (e) {
+        console.warn('--- Error loading global data:', e.message);
+    }
+
     next();
 });
 
@@ -64,6 +87,10 @@ app.use((req, res, next) => {
         team: [],
         testimonials: [],
         pricing: [],
+        dynamicInline: [],
+        siteSettings: {},
+        footerConfig: {},
+        footerLinks: {},
         layout: false
     });
 });

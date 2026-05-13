@@ -18,35 +18,69 @@ const isAdmin = (req, res, next) => {
     res.status(403).send('Acceso denegado: Se requieren permisos de Administrador.');
 };
 
+// Middleware para pasar datos del usuario y página activa a todas las vistas
+router.use((req, res, next) => {
+    res.locals.activePage = ''; // Inicializar siempre
+    if (req.session.userId) {
+        res.locals.username = req.session.username;
+        res.locals.role = req.session.role;
+        
+        // Determinar activePage basado en la URL
+        const path = req.path;
+        if (path === '/dashboard') res.locals.activePage = 'dashboard';
+        else if (path.includes('/dynamic-sections')) res.locals.activePage = 'dynamic-sections';
+        else if (path.includes('/sections')) res.locals.activePage = 'sections';
+        else if (path.includes('/entity/footer_links')) res.locals.activePage = 'footer';
+        else if (path.includes('/settings')) res.locals.activePage = 'settings';
+        else if (path.includes('/users')) res.locals.activePage = 'users';
+    }
+    next();
+});
+
 router.get('/login', adminController.loginPage);
 router.post('/login', adminController.login);
 router.get('/logout', adminController.logout);
 
 router.get('/dashboard', isAuthenticated, adminController.dashboard);
 
-
-router.post('/parashot/create', isAuthenticated, upload.single('image_file'), adminController.createParasha);
+// Parashot (soporta imagen + PDF)
+router.post('/parashot/create', isAuthenticated, upload.fields([
+    { name: 'image_file', maxCount: 1 },
+    { name: 'pdf_upload', maxCount: 1 }
+]), adminController.createParasha);
 router.get('/parashot/edit/:id', isAuthenticated, adminController.editParashaPage);
-router.post('/parashot/update', isAuthenticated, upload.single('image_file'), adminController.updateParasha);
+router.post('/parashot/update', isAuthenticated, upload.fields([
+    { name: 'image_file', maxCount: 1 },
+    { name: 'pdf_upload', maxCount: 1 }
+]), adminController.updateParasha);
 router.get('/parashot/delete/:id', isAuthenticated, adminController.deleteParasha);
 
-// Portfolio
+// Eventos (Portfolio)
 router.post('/portfolio/create', isAuthenticated, upload.single('image_file'), adminController.createPortfolio);
+router.get('/portfolio/edit/:id', isAuthenticated, adminController.editPortfolioPage);
 router.post('/portfolio/update', isAuthenticated, upload.single('image_file'), adminController.updatePortfolio);
 router.get('/portfolio/delete/:id', isAuthenticated, adminController.deletePortfolio);
 
-// Team
+// Equipo
 router.post('/team/create', isAuthenticated, upload.single('image_file'), adminController.createTeamMember);
 router.post('/team/update', isAuthenticated, upload.single('image_file'), adminController.updateTeamMember);
 router.get('/team/delete/:id', isAuthenticated, adminController.deleteTeamMember);
 
-// Testimonials
+// Testimonios
 router.post('/testimonials/create', isAuthenticated, adminController.createTestimonial);
 router.post('/testimonials/update', isAuthenticated, adminController.updateTestimonial);
 router.get('/testimonials/delete/:id', isAuthenticated, adminController.deleteTestimonial);
 
 // Pricing
 router.post('/pricing/update', isAuthenticated, adminController.updatePricing);
+
+// Secciones del Home (Hero, About, etc.)
+router.get('/sections', isAuthenticated, isAdmin, adminController.sectionsPage);
+router.post('/sections/update', isAuthenticated, isAdmin, upload.single('image_file'), adminController.updateSection);
+
+// Configuración del Sitio
+router.get('/settings', isAuthenticated, isAdmin, adminController.settingsPage);
+router.post('/settings/update', isAuthenticated, isAdmin, adminController.updateSettings);
 
 // Gestión de Usuarios (Solo Admins)
 router.get('/users', isAuthenticated, isAdmin, adminController.usersPage);
