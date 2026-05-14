@@ -20,7 +20,7 @@ process.on('uncaughtException', (err) => {
 const app = express();
 
 // Settings
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 3001);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 
