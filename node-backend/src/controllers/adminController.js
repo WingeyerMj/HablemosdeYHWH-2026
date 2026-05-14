@@ -47,8 +47,6 @@ const adminController = {
                 team = await Team.getAll();
                 testimonials = await Testimonial.getAll();
                 pricing = await Pricing.getAll();
-                const [sectionRows] = await db.query('SELECT * FROM sections ORDER BY id ASC');
-                sections = sectionRows;
             } catch (dbErr) {
                 console.warn('⚠️ No se pudieron cargar datos del dashboard:', dbErr.message);
             }
@@ -266,59 +264,6 @@ const adminController = {
         res.redirect('/admin/dashboard#pricing');
     },
 
-    // ==================== SECCIONES DEL HOME (Hero, About, etc.) ====================
-    sectionsPage: async (req, res) => {
-        try {
-            const [sections] = await db.query('SELECT * FROM sections ORDER BY id ASC');
-            res.render('admin/sections', { layout: 'admin/layout', sections });
-        } catch (error) {
-            console.error('Error sectionsPage:', error);
-            res.redirect('/admin/dashboard');
-        }
-    },
-
-    updateSection: async (req, res) => {
-        try {
-            const { id, title, subtitle, content, image_url } = req.body;
-            let finalImageUrl = image_url;
-            if (req.file) {
-                finalImageUrl = '/uploads/general/' + req.file.filename;
-            }
-            await db.query(
-                'UPDATE sections SET title = ?, subtitle = ?, content = ?, image_url = ? WHERE id = ?',
-                [title, subtitle, content, finalImageUrl, id]
-            );
-            res.redirect('/admin/sections');
-        } catch (error) {
-            console.error('Error updateSection:', error);
-            res.redirect('/admin/sections');
-        }
-    },
-
-    // ==================== CONFIGURACIÓN DEL SITIO ====================
-    settingsPage: async (req, res) => {
-        try {
-            const settingsGrouped = await SiteSettings.getAllGrouped();
-            res.render('admin/settings', { layout: 'admin/layout', settingsGrouped });
-        } catch (error) {
-            console.error('Error settingsPage:', error);
-            res.redirect('/admin/dashboard');
-        }
-    },
-
-    updateSettings: async (req, res) => {
-        try {
-            const data = req.body;
-            // data viene como { setting_key: value, ... }
-            await SiteSettings.setMultiple(data);
-            res.redirect('/admin/settings');
-        } catch (error) {
-            console.error('Error updateSettings:', error);
-            res.redirect('/admin/settings');
-        }
-    },
-
-    // ==================== SESIÓN ====================
     logout: (req, res) => {
         req.session.destroy();
         res.redirect('/admin/login');

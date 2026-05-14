@@ -75,12 +75,12 @@ router.get('/testimonials/delete/:id', isAuthenticated, adminController.deleteTe
 router.post('/pricing/update', isAuthenticated, adminController.updatePricing);
 
 // Secciones del Home (Hero, About, etc.)
-router.get('/sections', isAuthenticated, isAdmin, adminController.sectionsPage);
-router.post('/sections/update', isAuthenticated, isAdmin, upload.single('image_file'), adminController.updateSection);
+// router.get('/sections', isAuthenticated, isAdmin, adminController.sectionsPage);
+// router.post('/sections/update', isAuthenticated, isAdmin, upload.single('image_file'), adminController.updateSection);
 
 // Configuración del Sitio
-router.get('/settings', isAuthenticated, isAdmin, adminController.settingsPage);
-router.post('/settings/update', isAuthenticated, isAdmin, adminController.updateSettings);
+// router.get('/settings', isAuthenticated, isAdmin, adminController.settingsPage);
+// router.post('/settings/update', isAuthenticated, isAdmin, adminController.updateSettings);
 
 // Gestión de Usuarios (Solo Admins)
 router.get('/users', isAuthenticated, isAdmin, adminController.usersPage);

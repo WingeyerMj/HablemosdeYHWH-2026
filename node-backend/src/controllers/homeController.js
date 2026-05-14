@@ -11,18 +11,8 @@ const db = require('../config/db');
 const homeController = {
     index: async (req, res, next) => {
         try {
-            let allDynamicSections = [], latestParashot = [], portfolio = [], team = [], testimonials = [], pricingRaw = [], siteSettings = {};
-            const sectionsObj = {};
-
+            let allDynamicSections = [], latestParashot = [], portfolio = [], team = [], testimonials = [], pricingRaw = [];
             try {
-                // 1. Cargar secciones base (Hero, About, etc.)
-                const [baseSections] = await db.query('SELECT * FROM sections');
-                baseSections.forEach(s => {
-                    const key = s.section_name.charAt(0).toUpperCase() + s.section_name.slice(1);
-                    sectionsObj[key] = s;
-                });
-
-                // 2. Cargar datos dinámicos
                 allDynamicSections = await DynamicSection.getAll();
                 latestParashot = await Parasha.getLatest(6);
                 portfolio = await Portfolio.getPublished();
@@ -36,10 +26,23 @@ const homeController = {
 
             // 3. Procesar secciones dinámicas
             const dynamicInline = [];
-            allDynamicSections.forEach(ds => {
+            const sectionsObj = {};
+            for (const ds of allDynamicSections) {
                 if (ds.is_active) {
                     const slug = ds.slug.toLowerCase().trim();
                     const key = slug.charAt(0).toUpperCase() + slug.slice(1);
+                    
+                    if (ds.data_table) {
+                        try {
+                            const tableData = await EntityModel.getAll(ds.data_table);
+                            if (tableData && tableData.length > 0) {
+                                Object.assign(ds, tableData[0]);
+                            }
+                        } catch (err) {
+                            console.warn(`Error al cargar datos de ${ds.data_table}:`, err.message);
+                        }
+                    }
+
                     // Las dinámicas pueden sobrescribir las base si tienen el mismo slug/nombre
                     sectionsObj[key] = ds;
 
@@ -50,7 +53,7 @@ const homeController = {
                         }
                     }
                 }
-            });
+            }
 
             // Transform pricing data
             const pricing = pricingRaw.map(p => ({
