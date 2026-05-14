@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('partials/head') %>
+
+    <body class="index-page">
+
+        <%- include('partials/header') %>
+
+            <main class="main">
+
+                <!-- Breadcrumbs -->
+                <section class="section" style="padding-top: 120px; padding-bottom: 0;">
+                    <div class="container">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb" style="background: transparent; padding: 0;">
+                                <li class="breadcrumb-item"><a href="/" style="color: #d4b895;">Inicio</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">
+                                    <%= section.title %>
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                </section>
+
+                <!-- Hero de la sección -->
+                <section class="section dark-background" style="padding-top: 40px;">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <% if (section.image_url) { %>
+                                <div class="col-lg-5 mb-4 mb-lg-0" data-aos="fade-right">
+                                    <img src="<%= section.image_url %>" class="img-fluid rounded shadow-lg"
+                                        alt="<%= section.title %>"
+                                        style="max-height: 400px; object-fit: cover; width: 100%;">
+                                </div>
+                                <div class="col-lg-7" data-aos="fade-left">
+                                    <% } else { %>
+                                        <div class="col-lg-12" data-aos="fade-up">
+                                            <% } %>
+                                                <h1 style="font-size: 2.5rem; font-weight: 700; color: #d4b895;">
+                                                    <i class="bi <%= section.icon %>"></i>
+                                                    <%= section.title %>
+                                                </h1>
+                                                <% if (section.summary) { %>
+                                                    <p class="lead mt-3" style="font-size: 1.2rem; opacity: 0.9;">
+                                                        <%= section.summary %>
+                                                    </p>
+                                                    <% } %>
+                                        </div>
+                                </div>
+                        </div>
+                </section>
+
+                <!-- Contenido completo -->
+                <section class="section">
+                    <div class="container" data-aos="fade-up">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-10">
+                                <div class="dynamic-content" style="font-size: 1.1rem; line-height: 1.9; color: #444;">
+                                    <%- section.content || '<p class="text-muted">No hay contenido disponible aún.</p>'
+                                        %>
+                                </div>
+
+                                <% if (typeof tableData !=='undefined' && tableData && tableData.length> 0) { %>
+                                    <div class="table-responsive mt-5" data-aos="fade-up">
+                                        <table class="table table-hover border">
+                                            <thead class="bg-light">
+                                                <tr>
+                                                    <% tableColumns.forEach(col=> { %>
+                                                        <th class="py-3 text-uppercase small fw-bold"
+                                                            style="color: #d4b895;">
+                                                            <%= col.Field.replace(/_/g, ' ' ) %>
+                                                        </th>
+                                                        <% }) %>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% tableData.forEach(row=> { %>
+                                                    <tr>
+                                                        <% tableColumns.forEach(col=> { %>
+                                                            <td class="py-3">
+                                                                <%= row[col.Field] %>
+                                                            </td>
+                                                            <% }) %>
+                                                    </tr>
+                                                    <% }) %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <% } %>
+                                        <div class="text-center mt-5">
+                                            <a href="/"
+                                                style="background-color: #d4b895; color: #fff; padding: 12px 40px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600;">
+                                                <i class="bi bi-arrow-left"></i> Volver al Inicio
+                                            </a>
+                                        </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+
+            <%- include('partials/footer') %>
+
+    </body>
+
+</html>
