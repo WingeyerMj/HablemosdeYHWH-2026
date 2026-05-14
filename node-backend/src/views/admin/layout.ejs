@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Hablemos de YHWH</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        :root {
+            --primary-color: #d4b895;
+            --primary-hover: #c4a47a;
+            --dark-bg: #060606;
+            --card-bg: #111111;
+            --sidebar-width: 240px;
+        }
+
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(212, 184, 149, 0.3) transparent;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: #ffffff;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Background Effect */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 20%, rgba(212, 184, 149, 0.04) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(212, 184, 149, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .sidebar {
+            background: var(--card-bg);
+            min-height: 100vh;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px 15px;
+            position: sticky;
+            top: 0;
+            max-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar .brand {
+            text-align: center;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar .brand img {
+            max-height: 50px;
+            border-radius: 50%;
+            margin-bottom: 8px;
+        }
+
+        .sidebar .brand h5 {
+            color: var(--primary-color);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        .sidebar .nav-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.3);
+            padding: 15px 15px 5px;
+            font-weight: 600;
+        }
+
+        .sidebar a {
+            color: rgba(255, 255, 255, 0.55);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            margin-bottom: 2px;
+            border-radius: 8px;
+            transition: all 0.25s ease;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: rgba(212, 184, 149, 0.1);
+            color: var(--primary-color);
+            transform: translateX(3px);
+        }
+
+        .sidebar a.text-danger:hover {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .main-content {
+            padding: 25px 30px;
+            min-height: 100vh;
+        }
+
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #fff !important;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(255, 255, 255, 0.12) !important;
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 0.2rem rgba(212, 184, 149, 0.2) !important;
+            color: white !important;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: #111;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            border-color: var(--primary-hover);
+            color: #111;
+        }
+
+        .table-dark {
+            --bs-table-bg: rgba(255, 255, 255, 0.03);
+            --bs-table-border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .table-dark thead th {
+            background: rgba(212, 184, 149, 0.08);
+            color: var(--primary-color);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(212, 184, 149, 0.15);
+        }
+
+        .modal-content.bg-dark {
+            background: #1a1a1a !important;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .card-stat {
+            background: linear-gradient(135deg, rgba(212, 184, 149, 0.08), rgba(212, 184, 149, 0.02));
+            border: 1px solid rgba(212, 184, 149, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        .card-stat:hover {
+            transform: translateY(-3px);
+        }
+        .card-stat .stat-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(212, 184, 149, 0.15);
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .page-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-pills .nav-link {
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+        }
+        .nav-pills .nav-link.active {
+            background: var(--primary-color);
+            color: #111;
+        }
+        .nav-pills .nav-link:hover:not(.active) {
+            color: var(--primary-color);
+            background: rgba(212, 184, 149, 0.08);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <%- body %>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('partials/head') %>
+
+    <body class="blog-page">
+
+        <%- include('partials/header') %>
+
+            <main class="main">
+                <div class="page-title dark-background">
+                    <div class="container">
+                        <h1>Blog</h1>
+                        <nav class="breadcrumbs">
+                            <ol>
+                                <li><a href="/">Home</a></li>
+                                <li class="current">Blog</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+
+                <section id="blog-posts" class="blog-posts section">
+                    <div class="container">
+                        <div class="row gy-4">
+                            <p>Blog content goes here...</p>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <%- include('partials/footer') %>
+
+    </body>
+
+</html>

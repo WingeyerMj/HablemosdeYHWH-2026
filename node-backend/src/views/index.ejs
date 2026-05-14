@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('partials/head') %>
+
+    <body class="index-page">
+
+        <%- include('partials/header') %>
+
+            <main class="main">
+
+                <!-- Hero Section -->
+                <section id="hero" class="hero section dark-background" style="<%= (sections.Hero && sections.Hero.image_url) ? `background-image: url('${sections.Hero.image_url}') !important; background-size: cover !important; background-position: center !important;` : '' %>">
+                    <div class="container text-center">
+                        <div class="row justify-content-center" data-aos="zoom-out">
+                            <div class="col-lg-8">
+                                <img src="/assets/img/pagina/logo.svg" alt="YHWH Hero Logo" class="img-fluid mb-3"
+                                    style="max-height: 350px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;">
+                                <h2>
+                                    <%= (sections.Hero && sections.Hero.title) || 'Hablemos de YHWH' %>
+                                </h2>
+                                <p>
+                                    <%= (sections.Hero && sections.Hero.subtitle)
+                                        || 'Somos un grupo de personas dedicados al estudio de las Sagradas escrituras, desde una perspectiva Hebrea'
+                                        %>
+                                </p>
+                                <a href="#about" class="btn-get-started">Comencemos!!!</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="about" class="about section">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2>
+                            <%= siteSettings.site_name || 'Hablemos de YHWH' %>
+                        </h2>
+                        <p>
+                            <%= (sections.About && sections.About.subtitle) || 'Nuestra historia y valores' %>
+                        </p>
+                    </div>
+                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                        <div class="row gy-4">
+                            <div class="col-lg-6">
+                                <img src="<%= (sections.About && sections.About.image_url) || '/assets/img/about.png' %>"
+                                    class="img-fluid" alt="">
+                            </div>
+                            <div class="col-lg-6 content">
+                                <h3><%= (sections.About && sections.About.title) || 'Sobre Nosotros' %></h3>
+                                <p>
+                                    <%= (sections.About && sections.About.content)
+                                        || 'Somos un grupo de personas dedicados al estudio de las Sagradas escrituras, desde una perspectiva Hebrea'
+                                        %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="services" class="services section">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2><%= (sections.Parashot && sections.Parashot.title) || 'Parashot' %></h2>
+                        <p><%= (sections.Parashot && sections.Parashot.subtitle) || 'Lo que ofrecemos' %></p>
+                    </div>
+                    <div class="container">
+                        <div class="row gy-4">
+                            <% services.forEach((service, index)=> { %>
+                                <div class="col-lg-6 " data-aos="fade-up" data-aos-delay="<%= (index + 1) * 100 %>">
+                                    <div class="service-item d-flex align-items-center justify-content-center py-2 px-3 shadow-sm" style="background: #ffffff; border-radius: 15px; border: 1px solid #f0f0f0;">
+                                        <div class="row g-2 align-items-center w-100 flex-nowrap">
+                                            <!-- Columna 1: Icono -->
+                                            <div class="col-auto">
+                                                <div class="icon flex-shrink-0" style="width: 50px; height: 50px; background: #f8f9fa; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #eee;">
+                                                    <i class="bi <%= service.icon || 'bi-journal-text' %>" style="font-size: 1.2rem;"></i>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Columna 2: Texto (Título + Subtítulo + Descripción) -->
+                                            <div class="col text-start ps-2 overflow-hidden">
+                                                <h4 class="title mb-0" style="font-size: 1.2rem; font-weight: 700; white-space: nowrap;">
+                                                    <a href="/parashot/<%= service.id %>" class="stretched-link" style="color: #222;">
+                                                        <%= service.parasha_number ? service.parasha_number + '. ' : '' %><%= service.title %>
+                                                    </a>
+                                                </h4>
+                                                <% if (service.subtitle) { %>
+                                                    <div class="subtitle mb-0" style="color: var(--primary-color); font-size: 0.85rem; font-weight: 600; line-height: 1.2;">
+                                                        <%= service.subtitle %>
+                                                    </div>
+                                                <% } %>
+                                                <p class="description mb-0 text-truncate" style="color: #666; font-size: 0.8rem; opacity: 0.8;">
+                                                    <%= service.description %>
+                                                </p>
+                                            </div>
+
+                                            <!-- Columna 3: Imagen -->
+                                            <div class="col-auto">
+                                                <% if (service.image_url && service.image_url.trim() !== '') { %>
+                                                    <div class="parasha-cover-mini" style="width: 150px; height: 100px; border-radius: 10px; overflow: hidden; background: #1a1a1a; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center;">
+                                                        <img src="<%= service.image_url %>" alt="<%= service.title %>" style="width: 100%; height: 100%; object-fit: contain;">
+                                                    </div>
+                                                <% } else { %>
+                                                    <div class="parasha-cover-placeholder" style="width: 150px; height: 100px; border-radius: 10px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center;">
+                                                        <i class="bi bi-image text-muted" style="font-size: 1.5rem;"></i>
+                                                    </div>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                        </div>
+                        <div class="text-center mt-4" data-aos="fade-up">
+                            <a href="/parashot"
+                                style="background-color: #d4b895; color: #fff; padding: 12px 40px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600;">Ver
+                                todas</a>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="portfolio" class="portfolio section">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2><%= (sections.Eventos && sections.Eventos.title) || 'Eventos' %></h2>
+                        <p><%= (sections.Eventos && sections.Eventos.subtitle) || 'Nuestro trabajo' %></p>
+                    </div>
+                    <div class="container">
+                        <div class="isotope-layout" data-default-filter="*" data-layout="masonry"
+                            data-sort="original-order">
+                            <ul class="portfolio-filters isotope-filters" data-aos="fade-up" data-aos-delay="100">
+                                <li data-filter="*" class="filter-active">Todos</li>
+                                <li data-filter=".filter-app">Moedin</li>
+                                <li data-filter=".filter-product">Especiales</li>
+                            </ul>
+                            <div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200">
+                                <% portfolio.forEach(item=> { %>
+                                    <div class="col-lg-4 col-md-6 portfolio-item isotope-item <%= item.category %>">
+                                        <img src="<%= item.img %>" class="img-fluid" alt="">
+                                        <div class="portfolio-info">
+                                            <h4>
+                                                Próximo: <%= item.event_date ? new Date(item.event_date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Sin fecha' %>
+                                            </h4>
+                                            <p>
+                                                <%= item.title %>
+                                            </p>
+                                            <a href="<%= item.img %>" title="<%= item.title %>"
+                                                data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i
+                                                    class="bi bi-zoom-in"></i></a>
+                                            <a href="/eventos/<%= item.id %>" title="Más Detalles" class="details-link"><i
+                                                    class="bi bi-link-45deg"></i></a>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Testimonials Section -->
+                <section id="testimonials" class="testimonials section dark-background">
+                    <img src="/assets/img/testimonials-bg.jpg" class="testimonials-bg" alt="">
+                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                        <div class="swiper init-swiper">
+                            <script type="application/json" class="swiper-config">
+            {
+              "loop": true,
+              "speed": 600,
+              "autoplay": { "delay": 5000 },
+              "slidesPerView": "auto",
+              "pagination": { "el": ".swiper-pagination", "type": "bullets", "clickable": true }
+            }
+          </script>
+                            <div class="swiper-wrapper">
+                                <% testimonials.forEach(t=> { %>
+                                    <div class="swiper-slide">
+                                        <div class="testimonial-item">
+                                            <img src="<%= t.img %>" class="testimonial-img" alt="">
+                                            <h3>
+                                                <%= t.name %>
+                                            </h3>
+                                            <h4>
+                                                <%= t.role %>
+                                            </h4>
+                                            <div class="stars">
+                                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                    class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                    class="bi bi-star-fill"></i>
+                                            </div>
+                                            <p>
+                                                <i class="bi bi-quote quote-icon-left"></i>
+                                                <span>
+                                                    <%= t.text %>
+                                                </span>
+                                                <i class="bi bi-quote quote-icon-right"></i>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                            </div>
+                            <div class="swiper-pagination"></div>
+                        </div>
+                    </div>
+                </section>
+
+
+
+                <section id="team" class="team section">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2><%= (sections.Equipo && sections.Equipo.title) || 'Equipo' %></h2>
+                        <p><%= (sections.Equipo && sections.Equipo.subtitle) || 'Conoce a los encargados' %></p>
+                    </div>
+                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                        <div class="row gy-4 justify-content-center">
+                            <% team.forEach(member => { %>
+                                <div class="col-6 col-md-4 col-lg-3 col-xl-2 text-center">
+                                    <div class="team-member-card" style="padding: 15px;">
+                                        <div style="width: 180px; height: 180px; margin: 0 auto 12px; border-radius: 50%; overflow: hidden; border: 3px solid #d4b895; box-shadow: 0 4px 15px rgba(212,184,149,0.3);">
+                                            <img src="<%= member.img || '/assets/img/team/default.png' %>" alt="<%= member.name %>"
+                                                style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
+                                        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; color: #222;"><%= member.name %></h4>
+                                        <span style="font-size: 0.8rem; color: #d4b895; font-weight: 600;"><%= member.role %></span>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Secciones Dinámicas Inline -->
+                <% if (typeof dynamicInline !=='undefined' && dynamicInline.length> 0) { %>
+                    <% dynamicInline.forEach((ds, idx)=> { %>
+                        <section id="section-<%= ds.slug %>"
+                            class="section <%= idx % 2 === 0 ? '' : 'dark-background' %>">
+                            <div class="container section-title" data-aos="fade-up">
+                                <h2><i class="bi <%= ds.icon %>"></i>
+                                    <%= ds.title %>
+                                </h2>
+                            </div>
+                            <div class="container" data-aos="fade-up" data-aos-delay="100">
+                                <div class="row gy-4 align-items-center">
+                                    <% if (ds.image_url) { %>
+                                        <div class="col-lg-5">
+                                            <img src="<%= ds.image_url %>" class="img-fluid rounded shadow"
+                                                alt="<%= ds.title %>"
+                                                style="max-height: 350px; object-fit: cover; width: 100%;">
+                                        </div>
+                                        <div class="col-lg-7">
+                                            <% } else { %>
+                                                <div class="col-lg-12">
+                                                    <% } %>
+                                                        <div class="content">
+                                                            <p style="font-size: 1.1rem; line-height: 1.8;">
+                                                                <%= ds.summary || '' %>
+                                                            </p>
+                                                            <a href="/s/<%= ds.slug %>" class="btn-get-started"
+                                                                style="background-color: #d4b895; color: #fff; padding: 10px 30px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600; margin-top: 15px;">
+                                                                Leer más <i class="bi bi-arrow-right"></i>
+                                                            </a>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </div>
+                        </section>
+                        <% }) %>
+                            <% } %>
+
+                                <section id="contact" class="contact section">
+                                    <div class="container section-title" data-aos="fade-up">
+                                        <h2>Contacto</h2>
+                                        <p>Mantente en comunicación con nosotros</p>
+                                    </div>
+                                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                                        <div class="row gy-4">
+                                            <div class="col-lg-4">
+                                                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
+                                                    <i class="bi bi-geo-alt flex-shrink-0"></i>
+                                                    <div>
+                                                        <h3>Dirección</h3>
+                                                        <p><%= siteSettings.contact_address || 'Misiones, Argentina' %></p>
+                                                    </div>
+                                                </div>
+                                                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+                                                    <i class="bi bi-telephone flex-shrink-0"></i>
+                                                    <div>
+                                                        <h3>Llámanos</h3>
+                                                        <p><%= siteSettings.contact_phone || '+54 9 XXX XXX XXXX' %></p>
+                                                    </div>
+                                                </div>
+                                                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
+                                                    <i class="bi bi-envelope flex-shrink-0"></i>
+                                                    <div>
+                                                        <h3>Email</h3>
+                                                        <p><%= siteSettings.contact_email || 'info@hablemosdeyhwh.com' %></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <form action="forms/contact.php" method="post" class="php-email-form"
+                                                    data-aos="fade-up" data-aos-delay="200">
+                                                    <div class="row gy-4">
+                                                        <div class="col-md-6">
+                                                            <input type="text" name="name" class="form-control"
+                                                                placeholder="Your Name" required="">
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input type="email" class="form-control" name="email"
+                                                                placeholder="Your Email" required="">
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <input type="text" class="form-control" name="subject"
+                                                                placeholder="Subject" required="">
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <textarea class="form-control" name="message" rows="6"
+                                                                placeholder="Message" required=""></textarea>
+                                                        </div>
+                                                        <div class="col-md-12 text-center">
+                                                            <div class="loading">Loading</div>
+                                                            <div class="error-message"></div>
+                                                            <div class="sent-message">Your message has been sent. Thank
+                                                                you!</div>
+                                                            <button type="submit">Send Message</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+            </main>
+
+            <%- include('partials/footer') %>
+
+    </body>
+
+</html>

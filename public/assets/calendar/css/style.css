@@ -1,0 +1,902 @@
+/* ----------------------------------------------------------
+   RESET BÁSICO (SCOPED)
+---------------------------------------------------------- */
+.calendar-container * {
+  box-sizing: border-box;
+}
+
+body.calendar-page,
+.calendar-page .section {
+  background-color: var(--bg-global, #060606);
+  background-image: url('/assets/img/hero-bg.png');
+  background-repeat: repeat;
+  background-size: auto;
+  font-family: system-ui, sans-serif;
+  transition: background 0.3s, color 0.3s;
+  color: var(--text);
+}
+
+/* Solo las celdas y el contenedor del calendario deben reaccionar al color de texto del tema */
+.calendar-container {
+  color: var(--text);
+  position: relative;
+}
+
+:root {
+  --text: #ffffff;
+  --bg-global: #060606;
+}
+
+/* ----------------------------------------------------------
+   TEMAS
+---------------------------------------------------------- */
+:root[data-theme="light"] {
+  --bg-global: #f7f7f7;
+  /* Gris muy claro para modo luz */
+  --bg: #CCCCCC;
+  --text: #000000;
+  /* Texto negro puro */
+  --cell-bg: #ffffff;
+  --cell-border: #d0d0d0;
+  --today-bg: #dff0ff;
+  --rosh-bg: #fff3cd;
+  --rosh-border: #ffcc00;
+  --surface-1: #ffffff;
+  --surface-2: #e9ecef;
+  --card-bg: #ffffff;
+}
+
+:root[data-theme="dark"] {
+  --bg-global: #060606;
+  --bg: #1a1a1a;
+  --text: #e6e6e6;
+  --cell-bg: rgba(42, 42, 42, 0.85);
+  --cell-border: #444;
+  --today-bg: rgba(0, 51, 77, 0.9);
+  --rosh-bg: rgba(77, 59, 0, 0.9);
+  --rosh-border: #ffcc00;
+}
+
+/* ----------------------------------------------------------
+   CONTENEDOR PRINCIPAL
+---------------------------------------------------------- */
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+}
+
+/* ----------------------------------------------------------
+   HEADER
+---------------------------------------------------------- */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.calendar-header h1 {
+  font-size: 1.6rem;
+  margin-bottom: 4px;
+}
+
+.calendar-header h2 {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+.calendar-container button {
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+/* ----------------------------------------------------------
+   SLIDER
+---------------------------------------------------------- */
+.month-slider {
+  display: none;
+  width: 100%;
+  margin: 10px 0 20px 0;
+  text-align: center;
+}
+
+#month-slider {
+  width: 60%;
+}
+
+/* ----------------------------------------------------------
+   FILA DE DÍAS DE LA SEMANA
+---------------------------------------------------------- */
+.weekdays-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  width: 100%;
+  text-align: center;
+  margin-bottom: 10px;
+  font-weight: bold;
+  opacity: 0.8;
+}
+
+/* ----------------------------------------------------------
+   GRILLA DEL CALENDARIO
+---------------------------------------------------------- */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+
+/* ----------------------------------------------------------
+   CELDAS
+---------------------------------------------------------- */
+.calendar-cell {
+  background: var(--cell-bg);
+  border: 1px solid var(--cell-border);
+  padding: 6px;
+  border-radius: 6px;
+  min-height: 90px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  color: var(--text);
+  /* Asegura que el texto use el color del tema dentro de la celda */
+}
+
+.calendar-cell.empty {
+  background: transparent;
+  border: none;
+}
+
+.today {
+  background: var(--today-bg);
+  border: 3px solid #00f2fe;
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+  animation: pulse-today 2s infinite ease-in-out;
+  z-index: 1;
+}
+
+@keyframes pulse-today {
+  0% { box-shadow: 0 0 5px rgba(0, 242, 254, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(0, 242, 254, 0.7); }
+  100% { box-shadow: 0 0 5px rgba(0, 242, 254, 0.4); }
+}
+
+/* ----------------------------------------------------------
+   DÍAS
+---------------------------------------------------------- */
+.lunisolar-day {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.gregorian-day {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* ----------------------------------------------------------
+   FASE LUNAR
+---------------------------------------------------------- */
+.moon-info {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.moon-icon {
+  font-size: 1.2rem;
+}
+
+/* ----------------------------------------------------------
+   ROSH JODESH
+---------------------------------------------------------- */
+.roshjodesh {
+  background: var(--rosh-bg);
+  border: 2px solid var(--rosh-border);
+}
+
+.rosh-label {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--rosh-border);
+  color: #000;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Estilos para Etiquetas de Festividades */
+.holiday-label {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+}
+
+.pesaj-label {
+  background: #c0392b;
+  /* Rojo sangre suave */
+}
+
+.hamatzo-label {
+  background: #d35400;
+  /* Naranja/Pan */
+}
+
+.bikurim-label {
+  background: #27ae60;
+  /* Verde primavera */
+}
+
+.shavuot-label {
+  background: #2980b9;
+  /* Azul Shavuot */
+}
+
+.yomteruah-label {
+  background: #8e44ad;
+  /* Púrpura */
+}
+
+.yomkippur-label {
+  background: #f1c40f;
+  /* Amarillo/Oro */
+  color: #000 !important;
+}
+
+.sukkot-label {
+  background: #00E676;
+  /* Verde llamativo */
+  color: #000;
+}
+
+.shemini-label {
+  background: #009688;
+  /* Teal */
+}
+
+.pesaj {
+  border: 2px solid #c0392b;
+}
+
+.hamatzo {
+  border: 2px dashed #d35400;
+}
+
+.bikurim {
+  border: 2px solid #27ae60;
+}
+
+.shavuot {
+  border: 2px solid #2980b9;
+}
+
+.yomteruah {
+  border: 2px solid #8e44ad;
+}
+
+.yomkippur {
+  border: 2px solid #f1c40f;
+}
+
+.sukkot {
+  border: 2px dashed #00E676;
+}
+
+.sheminiatzeret {
+  border: 2px solid #009688;
+}
+
+/* Cuenta del Omer */
+:root[data-theme="light"] .omer-row {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #000;
+  /* Negro en modo claro */
+  background: rgba(41, 128, 185, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-align: center;
+  border-left: 3px solid #000;
+}
+
+:root[data-theme="dark"] .omer-row {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #87CEEB;
+  /* Celeste claro en modo oscuro */
+  background: rgba(135, 206, 235, 0.15);
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-align: center;
+  border-left: 3px solid #87CEEB;
+}
+
+/* ----------------------------------------------------------
+   ROSH HASHANÁ (EVENTO MAYOR)
+---------------------------------------------------------- */
+.roshhashana {
+  background: linear-gradient(135deg, #8b0000, #b30000);
+  color: #fff;
+  border: 2px solid #ffcc00;
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.6);
+  padding-top: 28px;
+}
+
+.roshhashana-label {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffcc00;
+  color: #000;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+}
+
+.roshhashana .lunisolar-day {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.roshhashana .gregorian-day {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+
+.weekdays-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: var(--surface-1, #f7f7f7);
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+.weekdays-row>div {
+  text-align: center;
+  padding: 10px 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  border-radius: 6px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Forzar color negro en modo oscuro para los días de la semana según pedido del usuario */
+:root[data-theme="dark"] .weekdays-row>div {
+  color: #000000 !important;
+}
+
+.weekdays-row>div:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+
+.theme-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+
+  background: #001f3f;
+  /* Azul Marino */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: background 0.4s ease, box-shadow 0.4s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 31, 63, 0.4);
+  z-index: 999;
+}
+
+.theme-toggle:hover {
+  background: var(--surface-hover, #dcdcdc);
+}
+
+.theme-toggle .icon {
+  width: 28px;
+  height: 28px;
+  position: absolute;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Modo claro → mostrar luna */
+.theme-toggle .moon {
+  opacity: 1;
+}
+
+.theme-toggle .sun {
+  opacity: 0;
+}
+
+/* Modo oscuro → mostrar sol y fondo celeste */
+.dark .theme-toggle {
+  background: #87CEEB;
+  /* Celeste Claro */
+  box-shadow: 0 4px 15px rgba(135, 206, 235, 0.6);
+}
+
+.dark .theme-toggle .moon {
+  opacity: 0;
+  transform: rotate(-45deg) scale(0.5);
+}
+
+.dark .theme-toggle .sun {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* Transiciones de iconos */
+.theme-toggle .moon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.theme-toggle .sun {
+  opacity: 0;
+  transform: rotate(45deg) scale(0.5);
+}
+
+.calendar-nav {
+  display: none;
+}
+
+.calendar-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 22px;
+  font-weight: bold;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.nav-arrow:hover {
+  background: rgba(0, 0, 0, 0.15);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.prev-month {
+  left: -45px;
+  /* ajustá según tu layout */
+}
+
+.next-month {
+  right: -45px;
+}
+
+/* Contenedor lateral */
+.calendar-grid-wrapper {
+  display: grid;
+  grid-template-columns: 50px 1fr 50px;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+/* Botones laterales */
+.side-arrow {
+  background: var(--card-bg);
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Icono */
+.arrow-icon {
+  font-size: 1.8rem;
+  font-weight: 300;
+  transition: transform 0.25s ease;
+}
+
+/* Hover */
+.side-arrow:hover {
+  transform: scale(1.15);
+  background: var(--accent-color);
+  color: var(--bg-color);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.35);
+}
+
+.side-arrow:hover .arrow-icon {
+  transform: translateX(-2px);
+}
+
+#side-next:hover .arrow-icon {
+  transform: translateX(2px);
+}
+
+/* Transición del calendario */
+.calendar-grid {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.calendar-grid.fade-out {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.calendar-grid.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.calendar-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Flechas */
+.nav-arrow {
+  width: 55px;
+  height: 55px;
+  border: none;
+  background: linear-gradient(145deg, #0a2a4f, #0d3b7a);
+  box-shadow: 0 0 12px rgba(0, 150, 255, 0.7), inset 0 0 8px rgba(0, 150, 255, 0.4);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* Icono interno */
+.nav-arrow::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  border-right: 4px solid #4fc3ff;
+  border-top: 4px solid #4fc3ff;
+  transform: rotate(45deg);
+  display: block;
+}
+
+/* Flecha izquierda */
+.nav-arrow.left::before {
+  transform: rotate(-135deg);
+}
+
+/* Flecha derecha */
+.nav-arrow.right::before {
+  transform: rotate(45deg);
+}
+
+/* Hover */
+.nav-arrow:hover {
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 0 18px rgba(0, 180, 255, 1), inset 0 0 10px rgba(0, 180, 255, 0.6);
+}
+
+/* Posición fuera del grid */
+.nav-arrow.left {
+  position: absolute;
+  left: -70px;
+}
+
+.nav-arrow.right {
+  position: absolute;
+  right: -70px;
+}
+
+/* ----------------------------------------------------------
+   RESPONSIVE
+---------------------------------------------------------- */
+@media (max-width: 768px) {
+
+  /* Ocultar información de la luna y porcentaje */
+  .moon-info {
+    display: none;
+  }
+
+  /* Reducir padding del contenedor principal */
+  .calendar-container {
+    padding: 8px;
+  }
+
+  /* Reducir altura mínima y padding de las celdas */
+  .calendar-cell {
+    min-height: 55px;
+    padding: 2px;
+  }
+
+  /* Ajustar tamaño de fuente de los días */
+  .lunisolar-day {
+    font-size: 0.9rem;
+  }
+
+  .gregorian-day {
+    font-size: 0.8rem;
+  }
+
+  /* Ajustar flechas de navegación para que no se salgan de la pantalla */
+  .nav-arrow {
+    width: 40px;
+    height: 40px;
+  }
+
+  .nav-arrow::before {
+    width: 12px;
+    height: 12px;
+  }
+
+  .nav-arrow.left {
+    left: -15px;
+    z-index: 20;
+  }
+
+  .nav-arrow.right {
+    right: -15px;
+    z-index: 20;
+  }
+
+  /* Reducir el gap del grid si es necesario */
+  .calendar-grid {
+    gap: 2px;
+    /* Gap mínimo */
+  }
+
+  /* Ajustar fila de días de la semana */
+  .weekdays-row {
+    padding: 2px;
+    gap: 1px;
+  }
+
+  .weekdays-row>div {
+    font-size: 0.65rem;
+    padding: 4px 0;
+  }
+
+  /* Ajustar etiquetas de festividades */
+  .holiday-label,
+  .rosh-label,
+  .roshhashana-label {
+    font-size: 0.55rem;
+    padding: 1px 2px;
+    width: 95%;
+  }
+
+  /* Ajustar cuenta del Omer para que sea ultra-compacta */
+  .omer-row {
+    font-size: 0.55rem !important;
+    padding: 0px 2px;
+    border-left-width: 2px;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 480px) {
+
+  /* Ocultar información de la luna y porcentaje */
+  .moon-info {
+    display: none;
+  }
+
+  /* Reducir padding del contenedor principal al mínimo */
+  .calendar-container {
+    padding: 4px;
+    overflow-x: hidden;
+    /* Evitar scroll horizontal si algo se sale */
+  }
+
+  /* Reducir altura mínima y padding de las celdas */
+  .calendar-cell {
+    min-height: 50px;
+    padding: 1px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+  }
+
+  /* Ajustar tamaño de fuente de los días */
+  .lunisolar-day {
+    font-size: 0.8rem;
+    line-height: 1;
+  }
+
+  .gregorian-day {
+    font-size: 0.7rem;
+    opacity: 0.7;
+  }
+
+  /* Reducir el gap del grid */
+  .calendar-grid {
+    gap: 1px;
+  }
+
+  /* Ajustar fila de días de la semana */
+  .weekdays-row {
+    padding: 2px 0;
+    gap: 1px;
+    border-radius: 4px;
+  }
+
+  .weekdays-row>div {
+    font-size: 0.6rem;
+    padding: 4px 0;
+  }
+
+  /* Etiquetas de festividades ultra pequeñas */
+  .holiday-label,
+  .rosh-label,
+  .roshhashana-label {
+    font-size: 0.5rem;
+    padding: 0px 1px;
+    width: 98%;
+    top: 2px;
+    line-height: 1;
+  }
+
+  /* Ajustar cuenta del Omer */
+  .omer-row {
+    font-size: 0.5rem !important;
+    padding: 0px 1px;
+    border-left-width: 1px;
+    margin-top: 1px;
+    white-space: nowrap;
+  }
+
+  /* Ocultar flechas de navegación si siguen molestando, o hacerlas más sutiles */
+  .nav-arrow {
+    width: 32px;
+    height: 32px;
+    background: rgba(0, 50, 100, 0.8);
+  }
+
+  .nav-arrow.left {
+    left: 0px;
+  }
+
+  .nav-arrow.right {
+    right: 0px;
+  }
+
+  .calendar-header h1 {
+    font-size: 1.2rem;
+  }
+
+  .calendar-header h2 {
+    font-size: 0.8rem;
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+
+  .download-bar {
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .download-btn {
+    padding: 5px 10px;
+    font-size: 0.7rem;
+  }
+
+  .download-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* ----------------------------------------------------------
+   BARRA DE DESCARGA
+---------------------------------------------------------- */
+.download-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid rgba(79, 195, 255, 0.4);
+  border-radius: 8px;
+  background: linear-gradient(145deg, rgba(10, 42, 79, 0.8), rgba(13, 59, 122, 0.8));
+  color: #4fc3ff;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0, 120, 200, 0.2);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.download-btn:hover {
+  background: linear-gradient(145deg, rgba(13, 59, 122, 0.95), rgba(20, 80, 160, 0.95));
+  box-shadow: 0 0 14px rgba(0, 150, 255, 0.6), inset 0 0 6px rgba(0, 150, 255, 0.2);
+  border-color: rgba(79, 195, 255, 0.7);
+  transform: translateY(-1px);
+  color: #fff;
+}
+
+.download-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0, 120, 200, 0.3);
+}
+
+.download-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+  transform: none;
+}
+
+.download-btn svg {
+  flex-shrink: 0;
+}
+
+/* Modo claro */
+:root[data-theme="light"] .download-btn {
+  background: linear-gradient(145deg, #e8f4fd, #d0e8f7);
+  color: #0a4a7a;
+  border-color: rgba(10, 74, 122, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 80, 140, 0.12);
+}
+
+:root[data-theme="light"] .download-btn:hover {
+  background: linear-gradient(145deg, #d0e8f7, #b8dcf0);
+  box-shadow: 0 4px 12px rgba(0, 80, 140, 0.25);
+  border-color: rgba(10, 74, 122, 0.5);
+  color: #063a5e;
+}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Calendario Lunisolar</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <div class="calendar-container">
+
+    <button id="theme-toggle" class="theme-toggle" aria-label="Cambiar tema">
+      <!-- Luna Realista (Día) -->
+      <svg class="icon moon" viewBox="0 0 24 24" fill="none">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 11.79 9 9 0 0 1 .5-.21z" fill="url(#moon-gradient)" />
+        <circle cx="12" cy="15" r="1.2" fill="rgba(0,0,0,0.1)" />
+        <circle cx="16" cy="12" r="0.8" fill="rgba(0,0,0,0.1)" />
+        <circle cx="10" cy="18" r="1" fill="rgba(0,0,0,0.1)" />
+        <defs>
+          <radialGradient id="moon-gradient" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+            gradientTransform="translate(15 10) rotate(90) scale(15)">
+            <stop offset="0" stop-color="#FFFDF2" />
+            <stop offset="1" stop-color="#C0C0C0" />
+          </radialGradient>
+        </defs>
+      </svg>
+
+      <!-- Sol Realista (Noche) -->
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="6" fill="url(#sun-gradient)" />
+        <g stroke="url(#sun-gradient)" stroke-width="2" stroke-linecap="round">
+          <line x1="12" y1="1" x2="12" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="23" />
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+          <line x1="1" y1="12" x2="3" y2="12" />
+          <line x1="21" y1="12" x2="23" y2="12" />
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </g>
+        <defs>
+          <linearGradient id="sun-gradient" x1="12" y1="6" x2="12" y2="18" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#FFEA00" />
+            <stop offset="1" stop-color="#FF8C00" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </button>
+
+    <header class="calendar-header">
+      <div style="flex: 1; text-align: center;">
+        <h1 id="calendar-title"></h1>
+        <h2 id="calendar-subtitle"></h2>
+      </div>
+    </header>
+
+    <div class="month-slider">
+      <input type="range" id="month-slider" min="-12" max="12" value="0" />
+      <span id="slider-label">Mes actual</span>
+    </div>
+
+    <div class="weekdays-row">
+      <div>1</div>
+      <div>2</div>
+      <div>3</div>
+      <div>4</div>
+      <div>5</div>
+      <div>6</div>
+      <div>Shabat</div>
+    </div>
+
+
+
+    <div class="calendar-wrapper">
+      <button id="side-prev" class="nav-arrow left" aria-label="Mes anterior"></button>
+      <div id="calendar-grid" class="calendar-grid"></div>
+      <button id="side-next" class="nav-arrow right" aria-label="Siguiente mes"></button>
+    </div>
+
+
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+
+</body>
+
+</html>

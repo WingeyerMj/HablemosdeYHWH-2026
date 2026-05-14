@@ -1,0 +1,105 @@
+<%- include('partials/_sidebar') %>
+
+<main class="col-md-10 p-4">
+    <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-4 border-bottom">
+        <div>
+            <h1 class="h2"><i class="bi bi-table"></i> Datos: <%= title %>
+            </h1>
+            <p class="text-white-50 small">Gestionando tabla dinámica: <code><%= tableName %></code></p>
+        </div>
+        <a href="/admin/dynamic-sections" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-arrow-left"></i> Volver a Secciones
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Formulario de carga -->
+        <div class="col-md-4">
+            <div class="card bg-dark text-white border-secondary shadow-sm">
+                <div class="card-header border-secondary fw-bold">
+                    <i class="bi bi-plus-lg"></i> Nuevo Registro
+                </div>
+                <div class="card-body">
+                    <form action="/admin/entity/<%= tableName %>/add" method="POST">
+                        <% columns.forEach(col=> { %>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-white-50">
+                                    <%= col.Field.charAt(0).toUpperCase() + col.Field.slice(1).replace(/_/g, ' ' ) %>
+                                </label>
+                                <% if (col.Type.includes('text')) { %>
+                                    <textarea name="<%= col.Field %>"
+                                        class="form-control bg-secondary text-white border-0" rows="3"></textarea>
+                                    <% } else { %>
+                                        <input type="text" name="<%= col.Field %>"
+                                            class="form-control bg-secondary text-white border-0">
+                                        <% } %>
+                            </div>
+                            <% }) %>
+                                <button type="submit" class="btn btn-success w-100 mt-2">
+                                    <i class="bi bi-check-lg"></i> Guardar
+                                </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de datos -->
+        <div class="col-md-8">
+            <div class="card bg-dark text-white border-secondary shadow-sm">
+                <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                    <span class="fw-bold"><i class="bi bi-list-ul"></i> Registros Existentes</span>
+                    <span class="badge bg-secondary">
+                        <%= data.length %> registros
+                    </span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0">
+                            <thead class="bg-black bg-opacity-50">
+                                <tr>
+                                    <% columns.forEach(col=> { %>
+                                        <th class="border-secondary small">
+                                            <%= col.Field.replace(/_/g, ' ' ).toUpperCase() %>
+                                        </th>
+                                        <% }) %>
+                                            <th class="border-secondary text-end">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (data.length> 0) { %>
+                                    <% data.forEach(row=> { %>
+                                        <tr>
+                                            <% columns.forEach(col=> { %>
+                                                <td class="align-middle small">
+                                                    <% if (row[col.Field] && row[col.Field].length> 50) { %>
+                                                        <%= row[col.Field].substring(0, 50) %>...
+                                                            <% } else { %>
+                                                                <%= row[col.Field] %>
+                                                                    <% } %>
+                                                </td>
+                                                <% }) %>
+                                                    <td class="text-end">
+                                                        <a href="/admin/entity/<%= tableName %>/delete/<%= row.id %>"
+                                                            class="btn btn-sm btn-outline-danger"
+                                                            onclick="return confirm('¿Eliminar este registro?')">
+                                                            <i class="bi bi-trash"></i>
+                                                        </a>
+                                                    </td>
+                                        </tr>
+                                        <% }) %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="<%= columns.length + 1 %>"
+                                                        class="text-center py-4 text-white-50">
+                                                        No hay datos cargados aún.
+                                                    </td>
+                                                </tr>
+                                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
