@@ -62,32 +62,87 @@
                                 </div>
 
                                 <% if (typeof tableData !=='undefined' && tableData && tableData.length> 0) { %>
-                                    <div class="table-responsive mt-5" data-aos="fade-up">
-                                        <table class="table table-hover border">
-                                            <thead class="bg-light">
-                                                <tr>
-                                                    <% tableColumns.forEach(col=> { %>
-                                                        <th class="py-3 text-uppercase small fw-bold"
-                                                            style="color: #d4b895;">
-                                                            <%= col.Field.replace(/_/g, ' ' ) %>
-                                                        </th>
-                                                        <% }) %>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <% tableData.forEach(row=> { %>
-                                                    <tr>
-                                                        <% tableColumns.forEach(col=> { %>
-                                                            <td class="py-3">
-                                                                <%= row[col.Field] %>
-                                                            </td>
-                                                            <% }) %>
-                                                    </tr>
-                                                    <% }) %>
-                                            </tbody>
-                                        </table>
+                                    <div class="row gy-4 mt-5" data-aos="fade-up">
+                                        <% tableData.forEach((row, i) => { %>
+                                            <div class="col-12 mb-4">
+                                                <div class="card shadow-sm border-0" style="border-radius: 15px; overflow: hidden; background: #fff;">
+                                                    <div class="row g-0">
+                                                        <% 
+                                                            const imgField = tableColumns.find(c => c.Field.includes('imagen') || c.Field.includes('img') || c.Field.includes('url'))?.Field;
+                                                            const titleField = tableColumns.find(c => c.Field.includes('titulo') || c.Field.includes('title') || c.Field.includes('name') || c.Field.includes('nombre'))?.Field;
+                                                            const subtitleField = tableColumns.find(c => c.Field.includes('subtitulo') || c.Field.includes('subtitle'))?.Field;
+                                                            const descField = tableColumns.find(c => c.Field.includes('desc') || c.Field.includes('resumen'))?.Field;
+                                                            const contentField = tableColumns.find(c => c.Field.includes('contenido') || c.Field.includes('content') || c.Field.includes('texto'))?.Field;
+                                                            const videoField = tableColumns.find(c => c.Field.includes('video') || c.Field.includes('youtube'))?.Field;
+                                                            
+                                                            const hasMedia = (imgField && row[imgField]) || (videoField && row[videoField]);
+                                                        %>
+                                                        
+                                                        <% if (hasMedia) { %>
+                                                            <div class="col-md-5">
+                                                                <% if (videoField && row[videoField]) { 
+                                                                    // Convertir URL de YouTube a Embed
+                                                                    let embedUrl = row[videoField];
+                                                                    if (embedUrl.includes('watch?v=')) {
+                                                                        embedUrl = embedUrl.replace('watch?v=', 'embed/');
+                                                                        const ampIndex = embedUrl.indexOf('&');
+                                                                        if (ampIndex !== -1) embedUrl = embedUrl.substring(0, ampIndex);
+                                                                    } else if (embedUrl.includes('youtu.be/')) {
+                                                                        embedUrl = embedUrl.replace('youtu.be/', 'youtube.com/embed/');
+                                                                        const qIndex = embedUrl.indexOf('?');
+                                                                        if (qIndex !== -1) embedUrl = embedUrl.substring(0, qIndex);
+                                                                    }
+                                                                %>
+                                                                    <div class="ratio ratio-16x9 h-100" style="min-height: 250px;">
+                                                                        <iframe src="<%= embedUrl %>" title="YouTube video" allowfullscreen style="border-radius: 15px 0 0 15px; object-fit: cover; height: 100%;"></iframe>
+                                                                    </div>
+                                                                <% } else if (imgField && row[imgField]) { %>
+                                                                    <img src="<%= row[imgField] %>" alt="<%= titleField ? row[titleField] : 'Imagen' %>" style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px 0 0 15px; min-height: 250px;">
+                                                                <% } %>
+                                                            </div>
+                                                        <% } %>
+
+                                                        <div class="col-md-<%= hasMedia ? '7' : '12' %>">
+                                                            <div class="card-body p-5 d-flex flex-column h-100">
+                                                                <% if (titleField && row[titleField]) { %>
+                                                                    <h3 class="card-title fw-bold mb-1" style="color: #222;"><%= row[titleField] %></h3>
+                                                                <% } %>
+                                                                
+                                                                <% if (subtitleField && row[subtitleField]) { %>
+                                                                    <h6 class="card-subtitle mb-4" style="color: #d4b895; font-weight: 600;"><%= row[subtitleField] %></h6>
+                                                                <% } %>
+
+                                                                <% if (descField && row[descField]) { %>
+                                                                    <p class="card-text lead mb-4" style="font-size: 1.1rem; color: #555;"><%= row[descField] %></p>
+                                                                <% } %>
+
+                                                                <% if (contentField && row[contentField]) { %>
+                                                                    <div class="card-text mt-auto" style="font-size: 1rem; color: #666; line-height: 1.8;">
+                                                                        <%- row[contentField] %>
+                                                                    </div>
+                                                                <% } %>
+                                                                
+                                                                <!-- Render de campos extra -->
+                                                                <div class="mt-4 pt-3 border-top d-flex flex-wrap gap-4">
+                                                                    <% tableColumns.forEach(col => { 
+                                                                        const isSpecial = [imgField, titleField, subtitleField, descField, contentField, videoField].includes(col.Field);
+                                                                        if (!isSpecial && row[col.Field] && col.Field !== 'id') {
+                                                                    %>
+                                                                        <div>
+                                                                            <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.75rem; letter-spacing: 1px;"><%= col.Field.replace(/_/g, ' ') %></small>
+                                                                            <span style="color: #333; font-weight: 500;"><%= row[col.Field] %></span>
+                                                                        </div>
+                                                                    <% } 
+                                                                    }) %>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }) %>
                                     </div>
-                                    <% } %>
+                                <% } %>
                                         <div class="text-center mt-5">
                                             <a href="/"
                                                 style="background-color: #d4b895; color: #fff; padding: 12px 40px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600;">

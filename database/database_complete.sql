@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-05-2026 a las 15:17:30
+-- Tiempo de generación: 14-05-2026 a las 12:02:13
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -71,10 +71,77 @@ CREATE TABLE `footer_links` (
 --
 
 INSERT INTO `footer_links` (`id`, `category`, `title`, `url`, `order_index`) VALUES
-(10, 'Enlaces Útiles', 'Parashot', '/parashot', 2),
-(11, 'Recursos', 'Calendario', '/calendar', 3),
-(29, 'Enlaces Útiles', 'Sobre Nosotros', '/about', 1),
-(32, 'Recursos', 'Eventos', '/portfolio', 4);
+(9, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(10, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(11, 'Recursos', 'Calendario', '/calendar', 1),
+(12, 'Recursos', 'Eventos', '/#portfolio', 2),
+(26, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(27, 'Recursos', 'Calendario', '/calendar', 1),
+(28, 'Recursos', 'Eventos', '/#portfolio', 2),
+(29, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(30, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(31, 'Recursos', 'Calendario', '/calendar', 1),
+(32, 'Recursos', 'Eventos', '/#portfolio', 2),
+(33, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(34, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(35, 'Recursos', 'Calendario', '/calendar', 1),
+(36, 'Recursos', 'Eventos', '/#portfolio', 2),
+(37, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(38, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(39, 'Recursos', 'Calendario', '/calendar', 1),
+(40, 'Recursos', 'Eventos', '/#portfolio', 2),
+(41, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(42, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(43, 'Recursos', 'Calendario', '/calendar', 1),
+(44, 'Recursos', 'Eventos', '/#portfolio', 2),
+(45, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(46, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(47, 'Recursos', 'Calendario', '/calendar', 1),
+(48, 'Recursos', 'Eventos', '/#portfolio', 2),
+(49, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(50, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(51, 'Recursos', 'Calendario', '/calendar', 1),
+(52, 'Recursos', 'Eventos', '/#portfolio', 2),
+(53, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(54, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(55, 'Recursos', 'Calendario', '/calendar', 1),
+(56, 'Recursos', 'Eventos', '/#portfolio', 2),
+(57, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(58, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(59, 'Recursos', 'Calendario', '/calendar', 1),
+(60, 'Recursos', 'Eventos', '/#portfolio', 2),
+(61, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(62, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(63, 'Recursos', 'Calendario', '/calendar', 1),
+(64, 'Recursos', 'Eventos', '/#portfolio', 2),
+(65, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(66, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(67, 'Recursos', 'Calendario', '/calendar', 1),
+(68, 'Recursos', 'Eventos', '/#portfolio', 2),
+(69, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(70, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(71, 'Recursos', 'Calendario', '/calendar', 1),
+(72, 'Recursos', 'Eventos', '/#portfolio', 2),
+(73, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(74, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(75, 'Recursos', 'Calendario', '/calendar', 1),
+(76, 'Recursos', 'Eventos', '/#portfolio', 2),
+(77, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(78, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(79, 'Recursos', 'Calendario', '/calendar', 1),
+(80, 'Recursos', 'Eventos', '/#portfolio', 2),
+(81, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(82, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(83, 'Recursos', 'Calendario', '/calendar', 1),
+(84, 'Recursos', 'Eventos', '/#portfolio', 2),
+(85, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(86, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(87, 'Recursos', 'Calendario', '/calendar', 1),
+(88, 'Recursos', 'Eventos', '/#portfolio', 2),
+(89, 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2),
+(90, 'Enlaces Útiles', 'Parashot', '/parashot', 3),
+(91, 'Recursos', 'Calendario', '/calendar', 1),
+(92, 'Recursos', 'Eventos', '/#portfolio', 2);
 
 -- --------------------------------------------------------
 
@@ -443,8 +510,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `role`, `created_at`) VALUES
-(1, 'admin', '$2b$10$MGc2Xwf7Z/wQBvVP9VuTQOvX55sHXkT77nvCzBZpC906yE/tlfVnq', NULL, 'admin', '2026-02-18 11:47:23'),
-(2, 'editor', '$2b$10$MGc2Xwf7Z/wQBvVP9VuTQOvX55sHXkT77nvCzBZpC906yE/tlfVnq', NULL, 'editor', '2026-02-18 11:47:23');
+(1, 'admin', '$2b$10$GU9l7YchLgnI/V7adIbrxOxaKKTKRCaZDTJYGgxNYlCsQZkjI7EDW', NULL, 'admin', '2026-02-18 11:47:23'),
+(2, 'editor', '$2b$10$GU9l7YchLgnI/V7adIbrxOxaKKTKRCaZDTJYGgxNYlCsQZkjI7EDW', NULL, 'editor', '2026-02-18 11:47:23');
 
 --
 -- Índices para tablas volcadas
@@ -577,7 +644,7 @@ ALTER TABLE `dynamic_sections`
 -- AUTO_INCREMENT de la tabla `footer_links`
 --
 ALTER TABLE `footer_links`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
 
 --
 -- AUTO_INCREMENT de la tabla `home_section_about`
@@ -643,13 +710,13 @@ ALTER TABLE `pricing`
 -- AUTO_INCREMENT de la tabla `sections`
 --
 ALTER TABLE `sections`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT de la tabla `site_settings`
 --
 ALTER TABLE `site_settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=177;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=163;
 
 --
 -- AUTO_INCREMENT de la tabla `team`
@@ -667,7 +734,7 @@ ALTER TABLE `testimonials`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
 -- Restricciones para tablas volcadas

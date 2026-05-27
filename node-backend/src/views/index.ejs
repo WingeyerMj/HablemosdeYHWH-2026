@@ -10,11 +10,11 @@
             <main class="main">
 
                 <!-- Hero Section -->
-                <section id="hero" class="hero section dark-background" style="<%= (sections.Hero && sections.Hero.image_url) ? `background-image: url('${sections.Hero.image_url}') !important; background-size: cover !important; background-position: center !important;` : '' %>">
+                <section id="hero" class="hero section dark-background" style="<%= (sections.Hero && sections.Hero.image_url) ? `background: url('${sections.Hero.image_url}') center center / cover no-repeat !important;` : '' %>">
                     <div class="container text-center">
                         <div class="row justify-content-center" data-aos="zoom-out">
                             <div class="col-lg-8">
-                                <img src="/assets/img/pagina/logo.svg" alt="YHWH Hero Logo" class="img-fluid mb-3"
+                                <img src="/assets/img/pagina/logo.svg" alt="YHWH Hero Logo" class="img-fluid mb-3 logo-spin"
                                     style="max-height: 350px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;">
                                 <h2>
                                     <%= (sections.Hero && sections.Hero.title) || 'Hablemos de YHWH' %>
@@ -234,36 +234,63 @@
                                 <h2><i class="bi <%= ds.icon %>"></i>
                                     <%= ds.title %>
                                 </h2>
+                                <% if (ds.summary) { %>
+                                    <p><%= ds.summary %></p>
+                                <% } %>
                             </div>
                             <div class="container" data-aos="fade-up" data-aos-delay="100">
-                                <div class="row gy-4 align-items-center">
-                                    <% if (ds.image_url) { %>
-                                        <div class="col-lg-5">
-                                            <img src="<%= ds.image_url %>" class="img-fluid rounded shadow"
-                                                alt="<%= ds.title %>"
-                                                style="max-height: 350px; object-fit: cover; width: 100%;">
+                                <% if (ds.content) { %>
+                                    <div class="row mb-4">
+                                        <div class="col-12">
+                                            <%- ds.content %>
                                         </div>
-                                        <div class="col-lg-7">
-                                            <% } else { %>
-                                                <div class="col-lg-12">
-                                                    <% } %>
-                                                        <div class="content">
-                                                            <p style="font-size: 1.1rem; line-height: 1.8;">
-                                                                <%= ds.summary || '' %>
-                                                            </p>
-                                                            <a href="/s/<%= ds.slug %>" class="btn-get-started"
-                                                                style="background-color: #d4b895; color: #fff; padding: 10px 30px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600; margin-top: 15px;">
-                                                                Leer más <i class="bi bi-arrow-right"></i>
-                                                            </a>
-                                                        </div>
-                                                </div>
-                                        </div>
-                                </div>
-                        </section>
-                        <% }) %>
-                            <% } %>
+                                    </div>
+                                <% } %>
 
-                                <section id="contact" class="contact section">
+                                <% if (ds.items && ds.items.length > 0) { %>
+                                    <div class="row gy-4">
+                                        <% ds.items.forEach((item, i) => { %>
+                                            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="<%= (i+1)*100 %>">
+                                                <div class="card h-100 shadow-sm border-0" style="border-radius: 15px; overflow: hidden; transition: transform 0.3s ease;">
+                                                    <% 
+                                                        // Intentar encontrar una imagen en los campos
+                                                        const imgField = Object.keys(item).find(k => k.includes('imagen') || k.includes('img') || k.includes('url'));
+                                                        const titleField = Object.keys(item).find(k => k.includes('titulo') || k.includes('nombre') || k.includes('title') || k.includes('name')) || 'id';
+                                                        const descField = Object.keys(item).find(k => k.includes('desc') || k.includes('resumen') || k.includes('content')) || '';
+                                                    %>
+                                                    <% if (imgField && item[imgField]) { %>
+                                                        <div style="height: 200px; overflow: hidden;">
+                                                            <img src="<%= item[imgField] %>" class="card-img-top" alt="<%= item[titleField] %>" style="width: 100%; height: 100%; object-fit: cover;">
+                                                        </div>
+                                                    <% } else { %>
+                                                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px; color: #ddd;">
+                                                            <i class="bi <%= ds.icon %>" style="font-size: 3rem;"></i>
+                                                        </div>
+                                                    <% } %>
+                                                    <div class="card-body p-4">
+                                                        <h5 class="card-title fw-bold" style="color: #222;"><%= item[titleField] %></h5>
+                                                        <% if (descField && item[descField]) { %>
+                                                            <p class="card-text text-muted small"><%= item[descField].length > 100 ? item[descField].substring(0, 100) + '...' : item[descField] %></p>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                <% } %>
+
+                                <div class="text-center mt-5">
+                                    <a href="/s/<%= ds.slug %>" class="btn-get-started"
+                                        style="background-color: #d4b895; color: #fff; padding: 12px 40px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600;">
+                                        Ver <%= ds.title %> completo <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </section>
+                    <% }) %>
+                <% } %>
+
+                <section id="contact" class="contact section">
                                     <div class="container section-title" data-aos="fade-up">
                                         <h2>Contacto</h2>
                                         <p>Mantente en comunicación con nosotros</p>

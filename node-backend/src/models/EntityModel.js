@@ -75,6 +75,32 @@ class EntityModel {
         }
     }
 
+    // Obtener un registro por ID
+    static async getById(tableName, id) {
+        const quote = process.env.DATABASE_URL ? '"' : '`';
+        const [rows] = await db.query(`SELECT * FROM ${quote}${tableName}${quote} WHERE id = ?`, [id]);
+        return rows[0];
+    }
+
+    // Actualizar registro
+    static async update(tableName, id, data) {
+        const isPostgres = !!process.env.DATABASE_URL;
+        const quote = isPostgres ? '"' : '`';
+        
+        if (isPostgres) {
+            const keys = Object.keys(data);
+            const values = Object.values(data);
+            const setClause = keys.map(k => `"${k}" = ?`).join(', ');
+            
+            const sql = `UPDATE ${quote}${tableName}${quote} SET ${setClause} WHERE id = ?`;
+            const [result] = await db.query(sql, [...values, id]);
+            return result;
+        } else {
+            const [result] = await db.query(`UPDATE ${quote}${tableName}${quote} SET ? WHERE id = ?`, [data, id]);
+            return result;
+        }
+    }
+
     // Eliminar registro
     static async delete(tableName, id) {
         const quote = process.env.DATABASE_URL ? '"' : '`';

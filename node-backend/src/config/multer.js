@@ -8,7 +8,8 @@ const uploadDirs = [
     path.join(__dirname, '../../public/uploads/portfolio'),
     path.join(__dirname, '../../public/uploads/team'),
     path.join(__dirname, '../../public/uploads/pdf'),
-    path.join(__dirname, '../../public/uploads/general')
+    path.join(__dirname, '../../public/uploads/general'),
+    path.join(__dirname, '../../public/uploads/entity')
 ];
 
 uploadDirs.forEach(dir => {
@@ -26,6 +27,7 @@ const storage = multer.diskStorage({
             base = '../../public/assets/';
         } else if (req.originalUrl.includes('/portfolio')) folder = 'portfolio';
         else if (req.originalUrl.includes('/team')) folder = 'team';
+        else if (req.originalUrl.includes('/entity')) folder = 'entity';
 
         // Si es PDF, va a la carpeta de PDFs
         if (file.mimetype === 'application/pdf') folder = 'pdf';

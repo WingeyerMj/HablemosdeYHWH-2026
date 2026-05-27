@@ -12,6 +12,10 @@
         </a>
     </div>
 
+    <!-- Cargar Quill.js para el editor WYSIWYG -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
     <div class="row">
         <!-- Formulario de carga -->
         <div class="col-md-4">
@@ -20,24 +24,33 @@
                     <i class="bi bi-plus-lg"></i> Nuevo Registro
                 </div>
                 <div class="card-body">
-                    <form action="/admin/entity/<%= tableName %>/add" method="POST">
+                    <form action="/admin/entity/<%= tableName %>/add" method="POST" enctype="multipart/form-data" id="addEntityForm">
                         <% columns.forEach(col=> { %>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold text-white-50">
                                     <%= col.Field.charAt(0).toUpperCase() + col.Field.slice(1).replace(/_/g, ' ' ) %>
                                 </label>
-                                <% if (col.Type.includes('text')) { %>
-                                    <textarea name="<%= col.Field %>"
-                                        class="form-control bg-secondary text-white border-0" rows="3"></textarea>
-                                    <% } else { %>
-                                        <input type="text" name="<%= col.Field %>"
-                                            class="form-control bg-secondary text-white border-0">
-                                        <% } %>
+
+                                <% if (col.Field.includes('imagen') || col.Field.includes('img') || col.Field.includes('image')) { %>
+                                    <!-- Input file para imágenes -->
+                                    <input type="file" name="image_file" class="form-control bg-secondary text-white border-0" accept="image/*">
+                                    <input type="hidden" name="<%= col.Field %>" value="">
+                                <% } else if (col.Field.includes('contenido') || col.Field.includes('content') || col.Field.includes('texto') || col.Field.includes('text')) { %>
+                                    <!-- Editor rico para contenido largo -->
+                                    <div id="editor-<%= col.Field %>" style="height: 200px; background-color: #f8f9fa; color: #212529;"></div>
+                                    <input type="hidden" name="<%= col.Field %>" id="hidden-<%= col.Field %>">
+                                <% } else if (col.Field.includes('video') || col.Field.includes('youtube')) { %>
+                                    <input type="url" name="<%= col.Field %>" class="form-control bg-secondary text-white border-0" placeholder="Ej: https://youtube.com/watch?v=...">
+                                <% } else if (col.Type.includes('text')) { %>
+                                    <textarea name="<%= col.Field %>" class="form-control bg-secondary text-white border-0" rows="3"></textarea>
+                                <% } else { %>
+                                    <input type="text" name="<%= col.Field %>" class="form-control bg-secondary text-white border-0">
+                                <% } %>
                             </div>
-                            <% }) %>
-                                <button type="submit" class="btn btn-success w-100 mt-2">
-                                    <i class="bi bi-check-lg"></i> Guardar
-                                </button>
+                        <% }) %>
+                        <button type="submit" class="btn btn-success w-100 mt-2">
+                            <i class="bi bi-check-lg"></i> Guardar
+                        </button>
                     </form>
                 </div>
             </div>
@@ -71,14 +84,24 @@
                                         <tr>
                                             <% columns.forEach(col=> { %>
                                                 <td class="align-middle small">
-                                                    <% if (row[col.Field] && row[col.Field].length> 50) { %>
-                                                        <%= row[col.Field].substring(0, 50) %>...
-                                                            <% } else { %>
-                                                                <%= row[col.Field] %>
-                                                                    <% } %>
+                                                    <% if (col.Field.includes('imagen') || col.Field.includes('img') || col.Field.includes('image')) { %>
+                                                        <% if (row[col.Field]) { %>
+                                                            <img src="<%= row[col.Field] %>" alt="preview" style="height: 40px; border-radius: 4px; object-fit: cover;">
+                                                        <% } else { %>
+                                                            <span class="text-white-50">Sin imagen</span>
+                                                        <% } %>
+                                                    <% } else if (row[col.Field] && row[col.Field].length> 50) { %>
+                                                        <%= row[col.Field].replace(/<[^>]*>?/gm, '').substring(0, 50) %>...
+                                                    <% } else { %>
+                                                        <%= row[col.Field] %>
+                                                    <% } %>
                                                 </td>
                                                 <% }) %>
-                                                    <td class="text-end">
+                                                    <td class="text-end text-nowrap">
+                                                        <a href="/admin/entity/<%= tableName %>/edit/<%= row.id %>"
+                                                            class="btn btn-sm btn-outline-primary">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
                                                         <a href="/admin/entity/<%= tableName %>/delete/<%= row.id %>"
                                                             class="btn btn-sm btn-outline-danger"
                                                             onclick="return confirm('¿Eliminar este registro?')">
@@ -103,3 +126,38 @@
         </div>
     </div>
 </main>
+
+<script>
+    // Inicializar Quill para campos de contenido
+    document.addEventListener('DOMContentLoaded', function() {
+        const editors = {};
+        
+        <% columns.forEach(col => { %>
+            <% if (col.Field.includes('contenido') || col.Field.includes('content') || col.Field.includes('texto') || col.Field.includes('text')) { %>
+                editors['<%= col.Field %>'] = new Quill('#editor-<%= col.Field %>', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            [{ 'header': [1, 2, 3, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            ['link', 'video', 'image'],
+                            ['clean']
+                        ]
+                    }
+                });
+            <% } %>
+        <% }) %>
+
+        // Al hacer submit, pasar el HTML de Quill a los inputs hidden
+        const form = document.getElementById('addEntityForm');
+        if (form) {
+            form.addEventListener('submit', function() {
+                Object.keys(editors).forEach(field => {
+                    const html = editors[field].root.innerHTML;
+                    document.getElementById('hidden-' + field).value = html === '<p><br></p>' ? '' : html;
+                });
+            });
+        }
+    });
+</script>

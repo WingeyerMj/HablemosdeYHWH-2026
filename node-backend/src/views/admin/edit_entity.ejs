@@ -1,0 +1,98 @@
+<%- include('partials/_sidebar') %>
+
+<main class="col-md-10 p-4">
+    <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-4 border-bottom">
+        <div>
+            <h1 class="h2"><i class="bi bi-pencil"></i> Editar Registro: <%= title %>
+            </h1>
+            <p class="text-white-50 small">Tabla dinámica: <code><%= tableName %></code> | ID: <%= data.id %></p>
+        </div>
+        <a href="/admin/entity/<%= tableName %>" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-arrow-left"></i> Cancelar
+        </a>
+    </div>
+
+    <!-- Cargar Quill.js para el editor WYSIWYG -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card bg-dark text-white border-secondary shadow-sm">
+                <div class="card-header border-secondary fw-bold">
+                    <i class="bi bi-pencil-square"></i> Editar Datos
+                </div>
+                <div class="card-body">
+                    <form action="/admin/entity/<%= tableName %>/update/<%= data.id %>" method="POST" enctype="multipart/form-data" id="editEntityForm">
+                        <% columns.forEach(col=> { %>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-white-50">
+                                    <%= col.Field.charAt(0).toUpperCase() + col.Field.slice(1).replace(/_/g, ' ' ) %>
+                                </label>
+
+                                <% if (col.Field.includes('imagen') || col.Field.includes('img') || col.Field.includes('image')) { %>
+                                    <% if (data[col.Field]) { %>
+                                        <div class="mb-2">
+                                            <img src="<%= data[col.Field] %>" alt="Current Image" style="max-height: 100px; border-radius: 8px;">
+                                            <div class="small text-white-50 mt-1">Imagen actual</div>
+                                        </div>
+                                    <% } %>
+                                    <input type="file" name="image_file" class="form-control bg-secondary text-white border-0" accept="image/*">
+                                    <input type="hidden" name="<%= col.Field %>" value="<%= data[col.Field] || '' %>">
+                                <% } else if (col.Field.includes('contenido') || col.Field.includes('content') || col.Field.includes('texto') || col.Field.includes('text')) { %>
+                                    <div id="editor-<%= col.Field %>" style="height: 300px; background-color: #f8f9fa; color: #212529;"><%- data[col.Field] || '' %></div>
+                                    <input type="hidden" name="<%= col.Field %>" id="hidden-<%= col.Field %>" value="<%= data[col.Field] || '' %>">
+                                <% } else if (col.Field.includes('video') || col.Field.includes('youtube')) { %>
+                                    <input type="url" name="<%= col.Field %>" class="form-control bg-secondary text-white border-0" value="<%= data[col.Field] || '' %>" placeholder="Ej: https://youtube.com/watch?v=...">
+                                <% } else if (col.Type.includes('text')) { %>
+                                    <textarea name="<%= col.Field %>" class="form-control bg-secondary text-white border-0" rows="4"><%= data[col.Field] || '' %></textarea>
+                                <% } else { %>
+                                    <input type="text" name="<%= col.Field %>" class="form-control bg-secondary text-white border-0" value="<%= data[col.Field] || '' %>">
+                                <% } %>
+                            </div>
+                        <% }) %>
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-success flex-grow-1">
+                                <i class="bi bi-save"></i> Guardar Cambios
+                            </button>
+                            <a href="/admin/entity/<%= tableName %>" class="btn btn-outline-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const editors = {};
+        
+        <% columns.forEach(col => { %>
+            <% if (col.Field.includes('contenido') || col.Field.includes('content') || col.Field.includes('texto') || col.Field.includes('text')) { %>
+                editors['<%= col.Field %>'] = new Quill('#editor-<%= col.Field %>', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            [{ 'header': [1, 2, 3, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            ['link', 'video', 'image'],
+                            ['clean']
+                        ]
+                    }
+                });
+            <% } %>
+        <% }) %>
+
+        const form = document.getElementById('editEntityForm');
+        if (form) {
+            form.addEventListener('submit', function() {
+                Object.keys(editors).forEach(field => {
+                    const html = editors[field].root.innerHTML;
+                    document.getElementById('hidden-' + field).value = html === '<p><br></p>' ? '' : html;
+                });
+            });
+        }
+    });
+</script>

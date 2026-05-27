@@ -415,9 +415,11 @@ const adminController = {
             const { title, section_type, summary, content, icon, image_url, nav_order, show_in_navbar, allowed_editors, has_table, field_names, field_types } = req.body;
             const slug = DynamicSection.generateSlug(title);
 
+            // Forzamos la creación de una tabla para cada nueva sección
             let data_table = null;
-            if (has_table === 'on' && field_names) {
-                const fields = [];
+            const fields = [];
+            
+            if (field_names) {
                 const names = Array.isArray(field_names) ? field_names : [field_names];
                 const types = Array.isArray(field_types) ? field_types : [field_types];
 
@@ -426,11 +428,20 @@ const adminController = {
                         fields.push({ name: name.trim(), type: types[i] });
                     }
                 });
-
-                if (fields.length > 0) {
-                    data_table = await EntityModel.createDynamicTable(slug, fields);
-                }
             }
+
+            // Si no hay campos definidos, agregamos unos por defecto para que la sección sea funcional de inmediato
+            if (fields.length === 0) {
+                fields.push({ name: 'titulo', type: 'string' });
+                fields.push({ name: 'subtitulo', type: 'string' });
+                fields.push({ name: 'descripcion', type: 'text' });
+                fields.push({ name: 'contenido', type: 'text' });
+                fields.push({ name: 'video_url', type: 'string' });
+                fields.push({ name: 'imagen_url', type: 'string' });
+            }
+
+            // Crear la tabla siempre
+            data_table = await EntityModel.createDynamicTable(slug, fields);
 
             const result = await DynamicSection.create({
                 title,
@@ -568,9 +579,67 @@ const adminController = {
     },
 
     addEntityData: async (req, res) => {
-        const tableName = req.params.table;
-        await EntityModel.insert(tableName, req.body);
-        res.redirect(`/admin/entity/${tableName}`);
+        try {
+            const tableName = req.params.table;
+            const data = { ...req.body };
+            
+            if (req.file) {
+                const columns = await EntityModel.getColumns(tableName);
+                const imgCol = columns.find(c => c.Field.includes('imagen') || c.Field.includes('image') || c.Field.includes('img') || c.Field.includes('url'));
+                if (imgCol) {
+                    data[imgCol.Field] = '/uploads/entity/' + req.file.filename;
+                }
+            }
+            
+            await EntityModel.insert(tableName, data);
+            res.redirect(`/admin/entity/${tableName}`);
+        } catch (error) {
+            console.error('Error addEntityData:', error);
+            res.redirect(`/admin/entity/${req.params.table}`);
+        }
+    },
+
+    editEntityData: async (req, res) => {
+        try {
+            const { table, id } = req.params;
+            const columns = await EntityModel.getColumns(table);
+            const data = await EntityModel.getById(table, id);
+            const [rows] = await db.query('SELECT title FROM dynamic_sections WHERE data_table = ?', [table]);
+
+            if (!data) return res.redirect(`/admin/entity/${table}`);
+
+            res.render('admin/edit_entity', {
+                layout: 'admin/layout',
+                tableName: table,
+                columns,
+                data,
+                title: rows[0] ? rows[0].title : table
+            });
+        } catch (error) {
+            console.error('Error editEntityData:', error);
+            res.redirect(`/admin/dynamic-sections`);
+        }
+    },
+
+    updateEntityData: async (req, res) => {
+        try {
+            const { table, id } = req.params;
+            const data = { ...req.body };
+            
+            if (req.file) {
+                const columns = await EntityModel.getColumns(table);
+                const imgCol = columns.find(c => c.Field.includes('imagen') || c.Field.includes('image') || c.Field.includes('img') || c.Field.includes('url'));
+                if (imgCol) {
+                    data[imgCol.Field] = '/uploads/entity/' + req.file.filename;
+                }
+            }
+
+            await EntityModel.update(table, id, data);
+            res.redirect(`/admin/entity/${table}`);
+        } catch (error) {
+            console.error('Error updateEntityData:', error);
+            res.redirect(`/admin/entity/${req.params.table}`);
+        }
     },
 
     deleteEntityData: async (req, res) => {
