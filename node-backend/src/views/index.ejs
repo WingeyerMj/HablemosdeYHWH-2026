@@ -390,30 +390,68 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-8">
-                                                <form action="mailto:hablemosdeyhwh2024@gmail.com" method="post" enctype="text/plain"
-                                                    data-aos="fade-up" data-aos-delay="200">
+                                                <form id="contactForm" data-aos="fade-up" data-aos-delay="200">
                                                     <div class="row gy-4">
                                                         <div class="col-md-6">
                                                             <input type="text" name="name" class="form-control"
-                                                                placeholder="Your Name" required="">
+                                                                placeholder="Tu Nombre" required>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <input type="email" class="form-control" name="email"
-                                                                placeholder="Your Email" required="">
+                                                                placeholder="Tu Email" required>
                                                         </div>
                                                         <div class="col-md-12">
                                                             <input type="text" class="form-control" name="subject"
-                                                                placeholder="Subject" required="">
+                                                                placeholder="Asunto" required>
                                                         </div>
                                                         <div class="col-md-12">
                                                             <textarea class="form-control" name="message" rows="6"
-                                                                placeholder="Message" required=""></textarea>
+                                                                placeholder="Mensaje" required></textarea>
                                                         </div>
                                                         <div class="col-md-12 text-center">
-                                                            <button type="submit" style="background: var(--accent-color); color: var(--contrast-color); border: 0; padding: 10px 30px; transition: 0.4s; border-radius: 50px;">Send Message</button>
+                                                            <div id="contactMsg" style="display:none; margin-bottom: 12px; padding: 10px; border-radius: 8px;"></div>
+                                                            <button type="submit" id="contactBtn" style="background: var(--accent-color); color: var(--contrast-color); border: 0; padding: 10px 30px; transition: 0.4s; border-radius: 50px;">Enviar Mensaje</button>
                                                         </div>
                                                     </div>
                                                 </form>
+                                                <script>
+                                                document.getElementById('contactForm').addEventListener('submit', async function(e) {
+                                                    e.preventDefault();
+                                                    const btn = document.getElementById('contactBtn');
+                                                    const msg = document.getElementById('contactMsg');
+                                                    btn.disabled = true;
+                                                    btn.textContent = 'Enviando...';
+                                                    msg.style.display = 'none';
+                                                    try {
+                                                        const formData = new FormData(this);
+                                                        const data = Object.fromEntries(formData);
+                                                        const res = await fetch('/api/contact', {
+                                                            method: 'POST',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify(data)
+                                                        });
+                                                        const result = await res.json();
+                                                        msg.style.display = 'block';
+                                                        if (result.ok) {
+                                                            msg.style.background = '#d4edda';
+                                                            msg.style.color = '#155724';
+                                                            msg.textContent = '¡Mensaje enviado correctamente!';
+                                                            this.reset();
+                                                        } else {
+                                                            msg.style.background = '#f8d7da';
+                                                            msg.style.color = '#721c24';
+                                                            msg.textContent = result.error || 'Error al enviar el mensaje.';
+                                                        }
+                                                    } catch (err) {
+                                                        msg.style.display = 'block';
+                                                        msg.style.background = '#f8d7da';
+                                                        msg.style.color = '#721c24';
+                                                        msg.textContent = 'Error de conexión. Intenta nuevamente.';
+                                                    }
+                                                    btn.disabled = false;
+                                                    btn.textContent = 'Enviar Mensaje';
+                                                });
+                                                </script>
                                             </div>
                                         </div>
                                     </div>

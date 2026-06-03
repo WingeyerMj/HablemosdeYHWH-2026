@@ -72,8 +72,10 @@ app.use(async (req, res, next) => {
 // Routes
 const adminRoutes = require('./src/routes/admin');
 const indexRoutes = require('./src/routes/index');
+const apiRoutes = require('./src/routes/api');
 
 app.use('/admin', adminRoutes);
+app.use('/api', apiRoutes);
 app.use('/', indexRoutes);
 
 // Error handling - 404
