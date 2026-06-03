@@ -28,10 +28,10 @@
                             <% if (typeof parashot !== 'undefined' && parashot && parashot.length > 0) { %>
                                 <% parashot.forEach((service, index) => { %>
                                 <div class="col-lg-6" data-aos="fade-up" data-aos-delay="<%= (index + 1) * 50 %>">
-                                    <div class="service-item d-flex align-items-center justify-content-center py-2 px-3 shadow-sm" style="background: #ffffff; border-radius: 15px; border: 1px solid #f0f0f0; min-height: 120px;">
+                                    <div class="service-item d-flex align-items-center justify-content-center py-2 px-3 shadow-sm" style="position: relative; background: #ffffff; border-radius: 15px; border: 1px solid #f0f0f0; min-height: 120px;">
                                         <div class="row g-2 align-items-center w-100 flex-nowrap">
                                             <!-- Icono -->
-                                            <div class="col-auto">
+                                            <div class="col-auto d-none d-md-flex">
                                                 <div class="icon flex-shrink-0" style="width: 50px; height: 50px; background: #f8f9fa; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #eee;">
                                                     <i class="bi <%= service.icon || 'bi-journal-text' %>" style="font-size: 1.2rem;"></i>
                                                 </div>
