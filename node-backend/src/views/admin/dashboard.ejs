@@ -19,6 +19,15 @@
         <li class="nav-item" role="presentation"><button class="nav-link" id="pills-portfolio-tab" data-bs-toggle="pill" data-bs-target="#pills-portfolio" type="button">🗓️ Eventos</button></li>
         <li class="nav-item" role="presentation"><button class="nav-link" id="pills-team-tab" data-bs-toggle="pill" data-bs-target="#pills-team" type="button">👥 Equipo</button></li>
         <li class="nav-item" role="presentation"><button class="nav-link" id="pills-testimonials-tab" data-bs-toggle="pill" data-bs-target="#pills-testimonials" type="button">⭐ Testimonios</button></li>
+        <% if (typeof dashboardDynamicSections !== 'undefined') { %>
+            <% dashboardDynamicSections.forEach(ds => { %>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-ds-<%= ds.data_table %>-tab" data-bs-toggle="pill" data-bs-target="#pills-ds-<%= ds.data_table %>" type="button">
+                        <i class="bi <%= ds.icon %>"></i> <%= ds.title %>
+                    </button>
+                </li>
+            <% }) %>
+        <% } %>
     </ul>
 
     <div class="tab-content" id="pills-tabContent">
@@ -133,6 +142,44 @@
                 </table>
             </div>
         </div>
+
+        <!-- DYNAMIC TABS -->
+        <% if (typeof dashboardDynamicSections !== 'undefined') { %>
+            <% dashboardDynamicSections.forEach(ds => { %>
+            <div class="tab-pane fade" id="pills-ds-<%= ds.data_table %>" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0">Gestión de <%= ds.title %></h4>
+                    <button type="button" class="btn btn-success open-create-dynamic-modal" data-table="<%= ds.data_table %>" data-title="<%= ds.title %>"><i class="bi bi-plus-circle"></i> Nuevo Registro</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead><tr><th>Nº</th><th>Título</th><th>Descripción</th><th>PDF</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            <% if (ds.records && ds.records.length > 0) { %>
+                                <% ds.records.forEach(r => { %>
+                                <tr>
+                                    <td><%= r.parasha_number || '-' %></td>
+                                    <td><%= r.title || r.titulo || '-' %></td>
+                                    <td><span class="text-truncate d-inline-block" style="max-width:200px;"><%= r.description || r.descripcion || '-' %></span></td>
+                                    <td><% if (r.pdf_file) { %><a href="<%= r.pdf_file %>" target="_blank" class="badge bg-success"><i class="bi bi-file-pdf"></i> PDF</a><% } else { %>-<% } %></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-primary me-1 edit-dynamic-btn"
+                                            data-table="<%= ds.data_table %>"
+                                            data-title="<%= ds.title %>"
+                                            data-record='<%= JSON.stringify(r).replace(/'/g, "&#39;") %>'>Editar</button>
+                                        <a href="/admin/entity/<%= ds.data_table %>/delete/<%= r.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este registro?')">Eliminar</a>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr><td colspan="5" class="text-center text-white-50">No hay registros</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <% }) %>
+        <% } %>
     </div>
 </main>
 

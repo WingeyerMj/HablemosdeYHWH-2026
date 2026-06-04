@@ -22,3 +22,5 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+node-backend/node_modules
+node-backend/public/uploads

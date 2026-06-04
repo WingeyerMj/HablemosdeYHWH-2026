@@ -98,9 +98,15 @@ router.get('/dynamic-sections/toggle/:id', isAuthenticated, adminController.togg
 
 // Entidades Dinámicas (Tablas creadas por el usuario)
 router.get('/entity/:table', isAuthenticated, adminController.manageEntity);
-router.post('/entity/:table/add', isAuthenticated, upload.single('image_file'), adminController.addEntityData);
+router.post('/entity/:table/add', isAuthenticated, upload.fields([
+    { name: 'image_file', maxCount: 1 },
+    { name: 'pdf_upload', maxCount: 1 }
+]), adminController.addEntityData);
 router.get('/entity/:table/edit/:id', isAuthenticated, adminController.editEntityData);
-router.post('/entity/:table/update/:id', isAuthenticated, upload.single('image_file'), adminController.updateEntityData);
+router.post('/entity/:table/update/:id', isAuthenticated, upload.fields([
+    { name: 'image_file', maxCount: 1 },
+    { name: 'pdf_upload', maxCount: 1 }
+]), adminController.updateEntityData);
 router.get('/entity/:table/delete/:id', isAuthenticated, adminController.deleteEntityData);
 
 module.exports = router;

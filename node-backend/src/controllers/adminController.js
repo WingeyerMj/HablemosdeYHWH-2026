@@ -58,6 +58,27 @@ const adminController = {
                 console.warn('⚠️ No se pudieron cargar datos del dashboard:', dbErr.message);
             }
 
+            // Cargar secciones dinámicas y sus registros para las pestañas
+            const DynamicSection = require('../models/DynamicSection');
+            const EntityModel = require('../models/EntityModel');
+            let dashboardDynamicSections = [];
+            try {
+                dashboardDynamicSections = await DynamicSection.getAll();
+                for (let ds of dashboardDynamicSections) {
+                    if (ds.data_table) {
+                        try {
+                            ds.records = await EntityModel.getAll(ds.data_table);
+                        } catch (e) {
+                            ds.records = [];
+                        }
+                    } else {
+                        ds.records = [];
+                    }
+                }
+            } catch(e) {
+                console.warn('⚠️ No se pudieron cargar secciones dinámicas para dashboard:', e.message);
+            }
+
             res.render('admin/dashboard', {
                 layout: 'admin/layout',
                 parashot,
@@ -65,7 +86,8 @@ const adminController = {
                 team,
                 testimonials,
                 pricing,
-                sections
+                sections,
+                dashboardDynamicSections
             });
         } catch (error) {
             next(error);
@@ -432,12 +454,16 @@ const adminController = {
 
             // Si no hay campos definidos, agregamos unos por defecto para que la sección sea funcional de inmediato
             if (fields.length === 0) {
-                fields.push({ name: 'titulo', type: 'string' });
-                fields.push({ name: 'subtitulo', type: 'string' });
-                fields.push({ name: 'descripcion', type: 'text' });
-                fields.push({ name: 'contenido', type: 'text' });
-                fields.push({ name: 'video_url', type: 'string' });
-                fields.push({ name: 'imagen_url', type: 'string' });
+                fields.push({ name: 'parasha_number', type: 'string' });
+                fields.push({ name: 'title', type: 'string' });
+                fields.push({ name: 'subtitle', type: 'string' });
+                fields.push({ name: 'description', type: 'text' });
+                fields.push({ name: 'content', type: 'text' });
+                fields.push({ name: 'youtube_link', type: 'string' });
+                fields.push({ name: 'pdf_file', type: 'string' });
+                fields.push({ name: 'icon', type: 'string' });
+                fields.push({ name: 'link', type: 'string' });
+                fields.push({ name: 'image_url', type: 'string' });
             }
 
             // Crear la tabla siempre
@@ -583,11 +609,19 @@ const adminController = {
             const tableName = req.params.table;
             const data = { ...req.body };
             
-            if (req.file) {
+            if (req.files || req.file) {
                 const columns = await EntityModel.getColumns(tableName);
-                const imgCol = columns.find(c => c.Field.includes('imagen') || c.Field.includes('image') || c.Field.includes('img') || c.Field.includes('url'));
+                const imgCol = columns.find(c => (c.Field.includes('imagen') || c.Field.includes('image') || c.Field.includes('img') || c.Field.includes('url')) && !c.Field.includes('youtube'));
                 if (imgCol) {
-                    data[imgCol.Field] = '/uploads/entity/' + req.file.filename;
+                    if (req.files && req.files['image_file'] && req.files['image_file'][0]) {
+                        data[imgCol.Field] = '/uploads/entity/' + req.files['image_file'][0].filename;
+                    } else if (req.file) {
+                        data[imgCol.Field] = '/uploads/entity/' + req.file.filename;
+                    }
+                }
+                const pdfCol = columns.find(c => c.Field.includes('pdf'));
+                if (req.files && req.files['pdf_upload'] && req.files['pdf_upload'][0] && pdfCol) {
+                    data[pdfCol.Field] = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
                 }
             }
             
@@ -626,11 +660,19 @@ const adminController = {
             const { table, id } = req.params;
             const data = { ...req.body };
             
-            if (req.file) {
+            if (req.files || req.file) {
                 const columns = await EntityModel.getColumns(table);
-                const imgCol = columns.find(c => c.Field.includes('imagen') || c.Field.includes('image') || c.Field.includes('img') || c.Field.includes('url'));
+                const imgCol = columns.find(c => (c.Field.includes('imagen') || c.Field.includes('image') || c.Field.includes('img') || c.Field.includes('url')) && !c.Field.includes('youtube'));
                 if (imgCol) {
-                    data[imgCol.Field] = '/uploads/entity/' + req.file.filename;
+                    if (req.files && req.files['image_file'] && req.files['image_file'][0]) {
+                        data[imgCol.Field] = '/uploads/entity/' + req.files['image_file'][0].filename;
+                    } else if (req.file) {
+                        data[imgCol.Field] = '/uploads/entity/' + req.file.filename;
+                    }
+                }
+                const pdfCol = columns.find(c => c.Field.includes('pdf'));
+                if (req.files && req.files['pdf_upload'] && req.files['pdf_upload'][0] && pdfCol) {
+                    data[pdfCol.Field] = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
                 }
             }
 

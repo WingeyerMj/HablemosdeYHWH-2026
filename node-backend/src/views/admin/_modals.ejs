@@ -248,6 +248,140 @@
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
+<!-- MODAL: NUEVO REGISTRO DINAMICO -->
+<div class="modal fade" id="createDynamicModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="createDynamicModalTitle">Añadir Nuevo Registro</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="" method="POST" enctype="multipart/form-data" id="createDynamicForm">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-2">
+                            <label class="form-label small text-white-50">Nº</label>
+                            <input type="number" name="parasha_number" class="form-control" placeholder="#" min="1">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Título</label>
+                            <input type="text" name="title" class="form-control" required placeholder="Ej: Bereshit">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subtítulo / Versículo</label>
+                            <input type="text" name="subtitle" class="form-control" placeholder="Ej: Génesis 1:1">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">Resumen Breve (Descripción)</label>
+                            <input type="text" name="description" class="form-control" placeholder="Introducción corta...">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Link de YouTube</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-youtube"></i></span>
+                                <input type="text" name="youtube_link" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subir PDF (descargable)</label>
+                            <input type="file" name="pdf_upload" class="form-control" accept=".pdf">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Subir Imagen</label>
+                            <input type="file" id="dyn_create_image_file" name="image_file" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">O URL de Imagen</label>
+                            <input type="text" id="dyn_create_image_url" name="image_url" class="form-control" placeholder="https://...">
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height:100px;background:rgba(0,0,0,0.2);">
+                                <img id="dynCreateImgPreview" src="/assets/img/blog/blog-1.jpg" style="max-width:100%;max-height:100%;object-fit:contain;">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Contenido Completo (Enseñanza)</label>
+                            <div id="dyn-create-editor-container" style="height:300px;background:white;color:black;border-radius:5px;"></div>
+                            <input type="hidden" name="content" id="dynCreateContentInput">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success px-4">Guardar Registro</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: EDITAR REGISTRO DINAMICO -->
+<div class="modal fade" id="editDynamicModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="editDynamicModalTitle">Editar Registro</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="" method="POST" enctype="multipart/form-data" id="editDynamicForm">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-2">
+                            <label class="form-label small text-white-50">Nº</label>
+                            <input type="number" name="parasha_number" id="edit_dyn_parasha_number" class="form-control" placeholder="#" min="1">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Título</label>
+                            <input type="text" name="title" id="edit_dyn_title" class="form-control" required placeholder="Ej: Bereshit">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subtítulo / Versículo</label>
+                            <input type="text" name="subtitle" id="edit_dyn_subtitle" class="form-control" placeholder="Ej: Génesis 1:1">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">Resumen Breve</label>
+                            <input type="text" name="description" id="edit_dyn_description" class="form-control" placeholder="Introducción corta...">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Link de YouTube</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-youtube"></i></span>
+                                <input type="text" name="youtube_link" id="edit_dyn_youtube_link" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subir PDF (descargable)</label>
+                            <input type="file" name="pdf_upload" class="form-control" accept=".pdf">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Subir Imagen</label>
+                            <input type="file" id="dyn_edit_image_file" name="image_file" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">O URL de Imagen</label>
+                            <input type="text" id="dyn_edit_image_url" name="image_url" class="form-control" placeholder="https://...">
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height:100px;background:rgba(0,0,0,0.2);">
+                                <img id="dynEditImgPreview" src="" style="max-width:100%;max-height:100%;object-fit:contain;">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Contenido Completo (Enseñanza)</label>
+                            <div id="dyn-edit-editor-container" style="height:300px;background:white;color:black;border-radius:5px;"></div>
+                            <input type="hidden" name="content" id="dynEditContentInput">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary px-4">Actualizar Registro</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const qCfg = { theme:'snow', modules:{ toolbar:[[{'header':[1,2,3,false]}],['bold','italic','underline','strike'],[{'color':[]},{'background':[]}],['link','blockquote','code-block','image'],[{'list':'ordered'},{'list':'bullet'}],[{'align':[]}],['clean']] }};
@@ -255,6 +389,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const qCreate = new Quill('#create-editor-container', qCfg);
     const qPort = new Quill('#port-editor-container', qCfg);
     const qEditPort = new Quill('#edit-port-editor-container', qCfg);
+    const qDynCreate = new Quill('#dyn-create-editor-container', qCfg);
+    const qDynEdit = new Quill('#dyn-edit-editor-container', qCfg);
 
     // Image previews
     function setupPreview(urlId, fileId, prevId) {
@@ -265,6 +401,8 @@ document.addEventListener('DOMContentLoaded', function() {
     setupPreview('create_image_url','create_image_file','createImgPreview');
     setupPreview('port_image_url','port_image_file','portImgPreview');
     setupPreview('edit_port_image_url','edit_port_image_file','editPortImgPreview');
+    setupPreview('dyn_create_image_url','dyn_create_image_file','dynCreateImgPreview');
+    setupPreview('dyn_edit_image_url','dyn_edit_image_file','dynEditImgPreview');
 
     // Edit Portfolio modal
     const editPortModal = new bootstrap.Modal(document.getElementById('editPortfolioModal'));
@@ -316,6 +454,54 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('createParashaForm').onsubmit=function(){document.getElementById('createContentInput').value=qCreate.root.innerHTML;return true;};
     document.getElementById('createPortfolioForm').onsubmit=function(){document.getElementById('portContentInput').value=qPort.root.innerHTML;return true;};
     document.getElementById('editPortfolioForm').onsubmit=function(){document.getElementById('editPortContentInput').value=qEditPort.root.innerHTML;return true;};
+    const cdf = document.getElementById('createDynamicForm');
+    if(cdf) cdf.onsubmit=function(){document.getElementById('dynCreateContentInput').value=qDynCreate.root.innerHTML;return true;};
+    const edf = document.getElementById('editDynamicForm');
+    if(edf) edf.onsubmit=function(){document.getElementById('dynEditContentInput').value=qDynEdit.root.innerHTML;return true;};
+
+    // Dynamic Modals Logic
+    const createDynamicModalElement = document.getElementById('createDynamicModal');
+    if (createDynamicModalElement) {
+        const createDynamicModal = new bootstrap.Modal(createDynamicModalElement);
+        document.querySelectorAll('.open-create-dynamic-modal').forEach(btn => {
+            btn.onclick = function() {
+                const table = this.dataset.table;
+                const title = this.dataset.title;
+                document.getElementById('createDynamicModalTitle').textContent = 'Añadir Nuevo Registro - ' + title;
+                document.getElementById('createDynamicForm').action = '/admin/entity/' + table + '/add';
+                qDynCreate.root.innerHTML = '';
+                createDynamicModal.show();
+            };
+        });
+    }
+
+    const editDynamicModalElement = document.getElementById('editDynamicModal');
+    if (editDynamicModalElement) {
+        const editDynamicModal = new bootstrap.Modal(editDynamicModalElement);
+        document.querySelectorAll('.edit-dynamic-btn').forEach(btn => {
+            btn.onclick = function() {
+                const table = this.dataset.table;
+                const title = this.dataset.title;
+                const id = this.dataset.id;
+                const r = JSON.parse(this.dataset.record);
+
+                document.getElementById('editDynamicModalTitle').textContent = 'Editar Registro - ' + title;
+                document.getElementById('editDynamicForm').action = '/admin/entity/' + table + '/update/' + id;
+                
+                document.getElementById('edit_dyn_parasha_number').value = r.parasha_number || '';
+                document.getElementById('edit_dyn_title').value = r.title || r.titulo || '';
+                document.getElementById('edit_dyn_subtitle').value = r.subtitle || r.subtitulo || '';
+                document.getElementById('edit_dyn_description').value = r.description || r.descripcion || '';
+                document.getElementById('edit_dyn_youtube_link').value = r.youtube_link || r.video_url || '';
+                document.getElementById('dyn_edit_image_url').value = r.image_url || r.imagen_url || '';
+                document.getElementById('dynEditImgPreview').src = r.image_url || r.imagen_url || '';
+                
+                qDynEdit.root.innerHTML = r.content || r.contenido || '';
+                
+                editDynamicModal.show();
+            };
+        });
+    }
 
     // Tab hash management
     function activateTab(){const h=window.location.hash;if(h){const t=document.querySelector(`.nav-pills button[data-bs-target="${h}"]`);if(t)bootstrap.Tab.getOrCreateInstance(t).show();}}
