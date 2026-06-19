@@ -166,6 +166,7 @@
                                         <button type="button" class="btn btn-sm btn-primary me-1 edit-dynamic-btn"
                                             data-table="<%= ds.data_table %>"
                                             data-title="<%= ds.title %>"
+                                            data-id="<%= r.id %>"
                                             data-record='<%= JSON.stringify(r).replace(/'/g, "&#39;") %>'>Editar</button>
                                         <a href="/admin/entity/<%= ds.data_table %>/delete/<%= r.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este registro?')">Eliminar</a>
                                     </td>

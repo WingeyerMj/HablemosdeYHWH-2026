@@ -625,11 +625,16 @@ const adminController = {
                 }
             }
             
+            // Clean up empty fields to prevent errors with INT columns like parasha_number
+            Object.keys(data).forEach(key => {
+                if (data[key] === '') data[key] = null;
+            });
+
             await EntityModel.insert(tableName, data);
-            res.redirect(`/admin/entity/${tableName}`);
+            res.redirect(`/admin/dashboard#pills-ds-${tableName}`);
         } catch (error) {
             console.error('Error addEntityData:', error);
-            res.redirect(`/admin/entity/${req.params.table}`);
+            res.redirect(`/admin/dashboard#pills-ds-${req.params.table}`);
         }
     },
 
@@ -640,7 +645,7 @@ const adminController = {
             const data = await EntityModel.getById(table, id);
             const [rows] = await db.query('SELECT title FROM dynamic_sections WHERE data_table = ?', [table]);
 
-            if (!data) return res.redirect(`/admin/entity/${table}`);
+            if (!data) return res.redirect(`/admin/dashboard#pills-ds-${table}`);
 
             res.render('admin/edit_entity', {
                 layout: 'admin/layout',
@@ -651,7 +656,7 @@ const adminController = {
             });
         } catch (error) {
             console.error('Error editEntityData:', error);
-            res.redirect(`/admin/dynamic-sections`);
+            res.redirect(`/admin/dashboard`);
         }
     },
 
@@ -675,19 +680,24 @@ const adminController = {
                     data[pdfCol.Field] = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
                 }
             }
+            
+            // Clean up empty fields to prevent errors with INT columns like parasha_number
+            Object.keys(data).forEach(key => {
+                if (data[key] === '') data[key] = null;
+            });
 
             await EntityModel.update(table, id, data);
-            res.redirect(`/admin/entity/${table}`);
+            res.redirect(`/admin/dashboard#pills-ds-${table}`);
         } catch (error) {
             console.error('Error updateEntityData:', error);
-            res.redirect(`/admin/entity/${req.params.table}`);
+            res.redirect(`/admin/dashboard#pills-ds-${req.params.table}`);
         }
     },
 
     deleteEntityData: async (req, res) => {
         const { table, id } = req.params;
         await EntityModel.delete(table, id);
-        res.redirect(`/admin/entity/${table}`);
+        res.redirect(`/admin/dashboard#pills-ds-${table}`);
     }
 };
 
