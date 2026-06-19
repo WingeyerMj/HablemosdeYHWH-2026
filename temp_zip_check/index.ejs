@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('partials/head') %>
+
+    <body class="index-page">
+
+        <%- include('partials/header') %>
+
+            <main class="main">
+
+                <!-- Hero Section -->
+                <section id="hero" class="hero section dark-background" style="<%= (sections.Hero && sections.Hero.image_url) ? `background: url('${sections.Hero.image_url}') center center / cover no-repeat !important;` : '' %>">
+                    <div class="container text-center">
+                        <div class="row justify-content-center" data-aos="zoom-out">
+                            <div class="col-lg-8">
+                                <img src="/assets/img/pagina/logo.svg" alt="YHWH Hero Logo" class="img-fluid mb-3 logo-spin"
+                                    style="max-height: 350px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;">
+                                <h2>
+                                    <%= (sections.Hero && sections.Hero.title) || 'Hablemos de YHWH' %>
+                                </h2>
+                                <p>
+                                    <%= (sections.Hero && sections.Hero.subtitle)
+                                        || 'Somos un grupo de personas dedicados al estudio de las Sagradas escrituras, desde una perspectiva Hebrea'
+                                        %>
+                                </p>
+                                <a href="#about" class="btn-get-started">Comencemos!!!</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="about" class="about section">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2>
+                            <%= siteSettings.site_name || 'Hablemos de YHWH' %>
+                        </h2>
+                        <p>
+                            <%= (sections.About && sections.About.subtitle) || 'Nuestra historia y valores' %>
+                        </p>
+                    </div>
+                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                        <div class="row gy-4">
+                            <div class="col-lg-6">
+                                <img src="<%= (sections.About && sections.About.image_url) || '/assets/img/about.png' %>"
+                                    class="img-fluid" alt="">
+                            </div>
+                            <div class="col-lg-6 content">
+                                <h3><%= (sections.About && sections.About.title) || 'Sobre Nosotros' %></h3>
+                                <p>
+                                    <%= (sections.About && sections.About.content)
+                                        || 'Somos un grupo de personas dedicados al estudio de las Sagradas escrituras, desde una perspectiva Hebrea'
+                                        %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Torah Viviente Slider Section -->
+                <section id="torah-viviente" class="torah-viviente section dark-background" style="position: relative; overflow: hidden; padding: 60px 0;">
+                    <style>
+                        #torah-viviente .swiper-slide {
+                            width: 85%; /* Anchura de la diapositiva central */
+                            max-width: 1200px;
+                            opacity: 0.3; /* Diapositivas inactivas se ven más oscuras */
+                            transition: opacity 0.5s ease, transform 1.5s ease;
+                            -webkit-box-reflect: below 5px linear-gradient(transparent, transparent 80%, rgba(0,0,0,0.3));
+                        }
+                        #torah-viviente .swiper-slide-active {
+                            opacity: 1; /* Diapositiva central totalmente visible */
+                        }
+                    </style>
+                    <div class="container" data-aos="fade-up">
+                        <div class="section-title text-center mb-4">
+                            <h2 style="color: #d4a853; font-weight: 700;">Torah Viviente</h2>
+                            <p style="color: #ccc;">Biblia de Estudio Hebreo — Disponible para descargar</p>
+                        </div>
+                        <div class="swiper init-swiper" style="padding-bottom: 60px;">
+                            <script type="application/json" class="swiper-config">
+                            {
+                                "loop": true,
+                                "speed": 1000,
+                                "autoplay": { "delay": 3000, "disableOnInteraction": false },
+                                "effect": "coverflow",
+                                "grabCursor": true,
+                                "centeredSlides": true,
+                                "slidesPerView": "auto",
+                                "coverflowEffect": {
+                                    "rotate": 0,
+                                    "stretch": -20,
+                                    "depth": 300,
+                                    "modifier": 1.5,
+                                    "slideShadows": true
+                                },
+                                "pagination": { "el": ".swiper-pagination-tv", "type": "bullets", "clickable": true }
+                            }
+                            </script>
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide" style="border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.6);">
+                                    <img src="/assets/img/toraviviente/slide1.png" alt="Torah Viviente - Fuentes Textuales" style="width: 100%; height: auto; display: block;">
+                                </div>
+                                <div class="swiper-slide" style="border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.6);">
+                                    <img src="/assets/img/toraviviente/slide2.png" alt="Torah Viviente - Brit Hadasha" style="width: 100%; height: auto; display: block;">
+                                </div>
+                                <div class="swiper-slide" style="border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.6);">
+                                    <img src="/assets/img/toraviviente/slide3.png" alt="Torah Viviente - Bereshit" style="width: 100%; height: auto; display: block;">
+                                </div>
+                            </div>
+                            <div class="swiper-pagination swiper-pagination-tv" style="bottom: 0;"></div>
+                        </div>
+
+                        <!-- Download Button -->
+                        <div class="text-center mt-4" data-aos="zoom-in" data-aos-delay="200">
+                            <p style="color: #e0d6c2; font-size: 1.1rem; margin-bottom: 16px;">
+                                <i class="bi bi-download" style="margin-right: 6px;"></i>
+                                ¿Deseas descargar la aplicación Torah Viviente?
+                            </p>
+                            <a href="http://torahviviente.com" target="_blank" rel="noopener noreferrer"
+                               class="torah-viviente-btn"
+                               onclick="if(typeof gtag === 'function') gtag('event', 'click_descargar_torah', { 'event_category': 'Botones', 'event_label': 'Descargar Torah Viviente' });"
+                               style="display: inline-block; transition: transform 0.3s ease, box-shadow 0.3s ease; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(212,168,83,0.4);">
+                                <img src="/assets/img/toraviviente/boton.png" alt="Descargar Torah Viviente"
+                                     style="height: 70px; display: block;">
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="services" class="services section">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2><%= (sections.Parashot && sections.Parashot.title) || 'Parashot' %></h2>
+                        <p><%= (sections.Parashot && sections.Parashot.subtitle) || 'Lo que ofrecemos' %></p>
+                    </div>
+                    <div class="container">
+                        <div class="row gy-4">
+                            <% services.forEach((service, index)=> { %>
+                                <div class="col-lg-6 " data-aos="fade-up" data-aos-delay="<%= (index + 1) * 100 %>">
+                                    <div class="service-item d-flex align-items-center justify-content-center py-2 px-3 shadow-sm" style="position: relative; background: #ffffff; border-radius: 15px; border: 1px solid #f0f0f0;">
+                                        <div class="row g-2 align-items-center w-100 flex-nowrap">
+                                            <!-- Columna 1: Icono -->
+                                            <div class="col-auto d-none d-md-flex">
+                                                <div class="icon flex-shrink-0" style="width: 50px; height: 50px; background: #f8f9fa; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #eee;">
+                                                    <i class="bi <%= service.icon || 'bi-journal-text' %>" style="font-size: 1.2rem;"></i>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Columna 2: Texto (Título + Subtítulo + Descripción) -->
+                                            <div class="col text-start ps-2 overflow-hidden">
+                                                <h4 class="title mb-0" style="font-size: 1.2rem; font-weight: 700; white-space: nowrap;">
+                                                    <a href="/parashot/<%= service.id %>" class="stretched-link" style="color: #222;">
+                                                        <%= service.parasha_number ? service.parasha_number + '. ' : '' %><%= service.title %>
+                                                    </a>
+                                                </h4>
+                                                <% if (service.subtitle) { %>
+                                                    <div class="subtitle mb-0" style="color: var(--primary-color); font-size: 0.85rem; font-weight: 600; line-height: 1.2;">
+                                                        <%= service.subtitle %>
+                                                    </div>
+                                                <% } %>
+                                                <p class="description mb-0 text-truncate" style="color: #666; font-size: 0.8rem; opacity: 0.8;">
+                                                    <%= service.description %>
+                                                </p>
+                                            </div>
+
+                                            <!-- Columna 3: Imagen -->
+                                            <div class="col-auto">
+                                                <% if (service.image_url && service.image_url.trim() !== '') { %>
+                                                    <div class="parasha-cover-mini" style="width: 150px; height: 100px; border-radius: 10px; overflow: hidden; background: #1a1a1a; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center;">
+                                                        <img src="<%= service.image_url %>" alt="<%= service.title %>" style="width: 100%; height: 100%; object-fit: contain;">
+                                                    </div>
+                                                <% } else { %>
+                                                    <div class="parasha-cover-placeholder" style="width: 150px; height: 100px; border-radius: 10px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center;">
+                                                        <i class="bi bi-image text-muted" style="font-size: 1.5rem;"></i>
+                                                    </div>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                        </div>
+                        <div class="text-center mt-4" data-aos="fade-up">
+                            <a href="/parashot"
+                                style="background-color: #d4b895; color: #fff; padding: 12px 40px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600;">Ver
+                                todas</a>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="portfolio" class="portfolio section">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2><%= (sections.Eventos && sections.Eventos.title) || 'Eventos' %></h2>
+                        <p><%= (sections.Eventos && sections.Eventos.subtitle) || 'Nuestro trabajo' %></p>
+                    </div>
+                    <div class="container">
+                        <div class="isotope-layout" data-default-filter="*" data-layout="masonry"
+                            data-sort="original-order">
+                            <ul class="portfolio-filters isotope-filters" data-aos="fade-up" data-aos-delay="100">
+                                <li data-filter="*" class="filter-active">Todos</li>
+                                <li data-filter=".filter-app">Moedin</li>
+                                <li data-filter=".filter-product">Especiales</li>
+                            </ul>
+                            <div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200">
+                                <% portfolio.forEach(item=> { %>
+                                    <div class="col-lg-4 col-md-6 portfolio-item isotope-item <%= item.category %>">
+                                        <img src="<%= item.img %>" class="img-fluid" alt="">
+                                        <div class="portfolio-info">
+                                            <h4>
+                                                Próximo: <%= item.event_date ? new Date(item.event_date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Sin fecha' %>
+                                            </h4>
+                                            <p>
+                                                <%= item.title %>
+                                            </p>
+                                            <a href="<%= item.img %>" title="<%= item.title %>"
+                                                data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i
+                                                    class="bi bi-zoom-in"></i></a>
+                                            <a href="/eventos/<%= item.id %>" title="Más Detalles" class="details-link"><i
+                                                    class="bi bi-link-45deg"></i></a>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Testimonials Section -->
+                <section id="testimonials" class="testimonials section dark-background">
+                    <img src="/assets/img/testimonials-bg.jpg" class="testimonials-bg" alt="">
+                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                        <div class="swiper init-swiper">
+                            <script type="application/json" class="swiper-config">
+            {
+              "loop": true,
+              "speed": 600,
+              "autoplay": { "delay": 5000 },
+              "slidesPerView": "auto",
+              "pagination": { "el": ".swiper-pagination", "type": "bullets", "clickable": true }
+            }
+          </script>
+                            <div class="swiper-wrapper">
+                                <% testimonials.forEach(t=> { %>
+                                    <div class="swiper-slide">
+                                        <div class="testimonial-item">
+                                            <img src="<%= t.img %>" class="testimonial-img" alt="">
+                                            <h3>
+                                                <%= t.name %>
+                                            </h3>
+                                            <h4>
+                                                <%= t.role %>
+                                            </h4>
+                                            <div class="stars">
+                                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                    class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                    class="bi bi-star-fill"></i>
+                                            </div>
+                                            <p>
+                                                <i class="bi bi-quote quote-icon-left"></i>
+                                                <span>
+                                                    <%= t.text %>
+                                                </span>
+                                                <i class="bi bi-quote quote-icon-right"></i>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                            </div>
+                            <div class="swiper-pagination"></div>
+                        </div>
+                    </div>
+                </section>
+
+
+
+                <section id="team" class="team section">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2><%= (sections.Equipo && sections.Equipo.title) || 'Equipo' %></h2>
+                        <p><%= (sections.Equipo && sections.Equipo.subtitle) || 'Conoce a los encargados' %></p>
+                    </div>
+                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                        <div class="row gy-4 justify-content-center">
+                            <% team.forEach(member => { %>
+                                <div class="col-6 col-md-4 col-lg-3 col-xl-2 text-center d-flex justify-content-center">
+                                    <div class="team-member-card" style="padding: 10px; width: 100%;">
+                                        <div style="width: 100%; max-width: 180px; aspect-ratio: 1/1; margin: 0 auto 12px; border-radius: 50%; overflow: hidden; border: 3px solid #d4b895; box-shadow: 0 4px 15px rgba(212,184,149,0.3);">
+                                            <img src="<%= member.img || '/assets/img/team/default.png' %>" alt="<%= member.name %>"
+                                                style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
+                                        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; color: #222;"><%= member.name %></h4>
+                                        <span style="font-size: 0.8rem; color: #d4b895; font-weight: 600;"><%= member.role %></span>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Secciones Dinámicas Inline -->
+                <% if (typeof dynamicInline !=='undefined' && dynamicInline.length> 0) { %>
+                    <% dynamicInline.forEach((ds, idx)=> { %>
+                        <section id="section-<%= ds.slug %>"
+                            class="section <%= idx % 2 === 0 ? '' : 'dark-background' %>">
+                            <div class="container section-title" data-aos="fade-up">
+                                <h2><i class="bi <%= ds.icon %>"></i>
+                                    <%= ds.title %>
+                                </h2>
+                                <% if (ds.summary) { %>
+                                    <p><%= ds.summary %></p>
+                                <% } %>
+                            </div>
+                            <div class="container" data-aos="fade-up" data-aos-delay="100">
+                                <% if (ds.content) { %>
+                                    <div class="row mb-4">
+                                        <div class="col-12">
+                                            <%- ds.content %>
+                                        </div>
+                                    </div>
+                                <% } %>
+
+                                <% if (ds.items && ds.items.length > 0) { %>
+                                    <div class="row gy-4">
+                                        <% ds.items.forEach((item, i) => { %>
+                                            <div class="col-lg-3 col-md-6 col-6" data-aos="fade-up" data-aos-delay="<%= (i+1)*100 %>">
+                                                <a href="/s/<%= ds.slug %>" class="text-decoration-none" style="display: block;">
+                                                    <div class="card h-100 shadow-sm border-0 dynamic-card-hover" style="border-radius: 15px; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer;">
+                                                        <% 
+                                                            // Intentar encontrar una imagen o video en los campos
+                                                            const imgField = Object.keys(item).find(k => (k.includes('imagen') || k.includes('img') || k.includes('url')) && !k.includes('youtube') && !k.includes('video'));
+                                                            const videoField = Object.keys(item).find(k => k.includes('video') || k.includes('youtube'));
+                                                            const titleField = Object.keys(item).find(k => k.includes('titulo') || k.includes('nombre') || k.includes('title') || k.includes('name')) || 'id';
+                                                            const descField = Object.keys(item).find(k => k.includes('desc') || k.includes('resumen') || k.includes('content')) || '';
+                                                            
+                                                            let finalImgUrl = null;
+                                                            if (imgField && item[imgField]) {
+                                                                finalImgUrl = item[imgField];
+                                                            } else if (videoField && item[videoField]) {
+                                                                let embedUrl = item[videoField];
+                                                                let videoId = '';
+                                                                if (embedUrl.includes('watch?v=')) {
+                                                                    videoId = embedUrl.split('watch?v=')[1].split('&')[0];
+                                                                } else if (embedUrl.includes('youtu.be/')) {
+                                                                    videoId = embedUrl.split('youtu.be/')[1].split('?')[0];
+                                                                } else if (embedUrl.includes('embed/')) {
+                                                                    videoId = embedUrl.split('embed/')[1].split('?')[0];
+                                                                }
+                                                                if (videoId) {
+                                                                    finalImgUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                                                                }
+                                                            }
+                                                        %>
+                                                        <% if (finalImgUrl) { %>
+                                                            <div style="height: 200px; overflow: hidden; position: relative;">
+                                                                <img src="<%= finalImgUrl %>" class="card-img-top" alt="<%= item[titleField] %>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+                                                                <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%); opacity: 0; transition: opacity 0.3s ease;" class="card-overlay"></div>
+                                                                <div style="position: absolute; bottom: 12px; left: 0; right: 0; text-align: center; opacity: 0; transition: opacity 0.3s ease; transform: translateY(5px); transition: opacity 0.3s ease, transform 0.3s ease;" class="card-play-icon">
+                                                                    <i class="bi bi-play-circle-fill" style="font-size: 2.5rem; color: #fff; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));"></i>
+                                                                </div>
+                                                            </div>
+                                                        <% } else { %>
+                                                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px; color: #ddd;">
+                                                                <i class="bi <%= ds.icon %>" style="font-size: 3rem;"></i>
+                                                            </div>
+                                                        <% } %>
+                                                        <div class="card-body p-3">
+                                                            <h6 class="card-title fw-bold mb-1" style="color: #222; font-size: 0.95rem;"><%= item[titleField] %></h6>
+                                                            <% if (descField && item[descField]) { %>
+                                                                <p class="card-text text-muted mb-0" style="font-size: 0.8rem;"><%= item[descField].length > 60 ? item[descField].substring(0, 60) + '...' : item[descField] %></p>
+                                                            <% } %>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                    <style>
+                                        .dynamic-card-hover:hover {
+                                            transform: translateY(-6px) !important;
+                                            box-shadow: 0 12px 30px rgba(0,0,0,0.15) !important;
+                                        }
+                                        .dynamic-card-hover:hover img {
+                                            transform: scale(1.08);
+                                        }
+                                        .dynamic-card-hover:hover .card-overlay {
+                                            opacity: 1 !important;
+                                        }
+                                        .dynamic-card-hover:hover .card-play-icon {
+                                            opacity: 1 !important;
+                                            transform: translateY(0) !important;
+                                        }
+                                    </style>
+                                <% } %>
+
+                                <div class="text-center mt-5">
+                                    <a href="/s/<%= ds.slug %>" class="btn-get-started"
+                                        style="background-color: #d4b895; color: #fff; padding: 12px 40px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600;">
+                                        Ver <%= ds.title %> completo <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </section>
+                    <% }) %>
+                <% } %>
+
+                <section id="contact" class="contact section">
+                                    <div class="container section-title" data-aos="fade-up">
+                                        <h2>Contacto</h2>
+                                        <p>Mantente en comunicación con nosotros</p>
+                                    </div>
+                                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                                        <div class="row gy-4">
+                                            <div class="col-lg-4">
+                                                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
+                                                    <i class="bi bi-geo-alt flex-shrink-0"></i>
+                                                    <div>
+                                                        <h3>Dirección</h3>
+                                                        <p><%= siteSettings.contact_address || 'Misiones, Argentina' %></p>
+                                                    </div>
+                                                </div>
+                                                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+                                                    <i class="bi bi-telephone flex-shrink-0"></i>
+                                                    <div>
+                                                        <h3>Llámanos</h3>
+                                                        <p><%= siteSettings.contact_phone || '+54 9 XXX XXX XXXX' %></p>
+                                                    </div>
+                                                </div>
+                                                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
+                                                    <i class="bi bi-envelope flex-shrink-0"></i>
+                                                    <div>
+                                                        <h3>Email</h3>
+                                                        <p><%= siteSettings.contact_email || 'info@hablemosdeyhwh.com' %></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <form id="contactForm" data-aos="fade-up" data-aos-delay="200">
+                                                    <div class="row gy-4">
+                                                        <div class="col-md-6">
+                                                            <input type="text" name="name" class="form-control"
+                                                                placeholder="Tu Nombre" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input type="email" class="form-control" name="email"
+                                                                placeholder="Tu Email" required>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <input type="text" class="form-control" name="subject"
+                                                                placeholder="Asunto" required>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <textarea class="form-control" name="message" rows="6"
+                                                                placeholder="Mensaje" required></textarea>
+                                                        </div>
+                                                        <div class="col-md-12 text-center">
+                                                            <div id="contactMsg" style="display:none; margin-bottom: 12px; padding: 10px; border-radius: 8px;"></div>
+                                                            <button type="submit" id="contactBtn" style="background: var(--accent-color); color: var(--contrast-color); border: 0; padding: 10px 30px; transition: 0.4s; border-radius: 50px;">Enviar Mensaje</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                                <script>
+                                                document.getElementById('contactForm').addEventListener('submit', async function(e) {
+                                                    e.preventDefault();
+                                                    const btn = document.getElementById('contactBtn');
+                                                    const msg = document.getElementById('contactMsg');
+                                                    btn.disabled = true;
+                                                    btn.textContent = 'Enviando...';
+                                                    msg.style.display = 'none';
+                                                    try {
+                                                        const formData = new FormData(this);
+                                                        const data = Object.fromEntries(formData);
+                                                        const res = await fetch('/api/contact', {
+                                                            method: 'POST',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify(data)
+                                                        });
+                                                        const result = await res.json();
+                                                        msg.style.display = 'block';
+                                                        if (result.ok) {
+                                                            msg.style.background = '#d4edda';
+                                                            msg.style.color = '#155724';
+                                                            msg.textContent = '¡Mensaje enviado correctamente!';
+                                                            this.reset();
+                                                        } else {
+                                                            msg.style.background = '#f8d7da';
+                                                            msg.style.color = '#721c24';
+                                                            msg.textContent = result.error || 'Error al enviar el mensaje.';
+                                                        }
+                                                    } catch (err) {
+                                                        msg.style.display = 'block';
+                                                        msg.style.background = '#f8d7da';
+                                                        msg.style.color = '#721c24';
+                                                        msg.textContent = 'Error de conexión. Intenta nuevamente.';
+                                                    }
+                                                    btn.disabled = false;
+                                                    btn.textContent = 'Enviar Mensaje';
+                                                });
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+            </main>
+
+            <%- include('partials/footer') %>
+
+    </body>
+
+</html>
