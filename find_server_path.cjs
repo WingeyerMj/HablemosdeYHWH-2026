@@ -3,7 +3,7 @@ const { Client } = require('ssh2');
 const conn = new Client();
 conn.on('ready', () => {
   console.log('Client :: ready');
-  conn.exec('find /var /home /opt /root -type d -name "HablemosdeYHWH-2026" 2>/dev/null', (err, stream) => {
+  conn.exec('pm2 list && find /var /home /opt /root -type d -name "node-backend" 2>/dev/null', (err, stream) => {
     if (err) throw err;
     let result = '';
     stream.on('close', (code, signal) => {
@@ -17,11 +17,11 @@ conn.on('ready', () => {
     });
   });
 }).on('keyboard-interactive', (name, instructions, instructionsLang, prompts, finish) => {
-  finish(['M4rc3l0&W1ng3y3r']);
+  finish(['W1ng3y3r&M4rc3l0']);
 }).connect({
   host: '179.43.125.96',
   port: 5640,
   username: 'root',
-  password: 'M4rc3l0&W1ng3y3r',
+  password: 'W1ng3y3r&M4rc3l0',
   tryKeyboard: true
 });
