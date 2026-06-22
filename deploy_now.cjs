@@ -4,51 +4,64 @@ const conn = new Client();
 conn.on('ready', () => {
   console.log('Client :: ready');
   
-  // Read the .env file from the server
-  conn.exec('cat /var/www/hablemos_yhwh/node-backend/.env', (err, stream) => {
+  // Step 1: Git Pull
+  console.log('Running git pull...');
+  conn.exec('cd /var/www/hablemos_yhwh && git pull', (err, stream) => {
     if (err) throw err;
-    let envContent = '';
-    stream.on('close', (code, signal) => {
-      // Parse DB variables
-      const dbConfig = {};
-      envContent.split('\n').forEach(line => {
-        const parts = line.split('=');
-        if (parts.length >= 2) {
-          const key = parts[0].trim();
-          const val = parts.slice(1).join('=').trim();
-          dbConfig[key] = val;
-        }
-      });
+    stream.on('close', (code) => {
+      console.log('Git pull finished with code:', code);
       
-      const dbUser = dbConfig['DB_USER'] || 'root';
-      const dbPass = dbConfig['DB_PASS'] || '';
-      const dbName = dbConfig['DB_NAME'] || 'hablemos_yhwh';
-      
-      console.log(`Using Database Config - User: ${dbUser}, DB: ${dbName}, Has Password: ${dbPass ? 'Yes' : 'No'}`);
-      
-      let importCmd = `mysql -u "${dbUser}"`;
-      if (dbPass) {
-        importCmd += ` -p"${dbPass}"`;
-      }
-      importCmd += ` "${dbName}" < /var/www/hablemos_yhwh/database/hablemos_yhwh.sql`;
-      
-      console.log('Running DB Import...');
-      conn.exec(importCmd, (err2, stream2) => {
+      // Step 2: Read .env for DB config
+      conn.exec('cat /var/www/hablemos_yhwh/node-backend/.env', (err2, stream2) => {
         if (err2) throw err2;
-        stream2.on('close', (c, s) => {
-          console.log('DB Import Finished with code: ' + c);
-          conn.end();
-        }).on('data', (d) => {
-          console.log('DB STDOUT: ' + d);
-        }).stderr.on('data', (d) => {
-          console.error('DB STDERR: ' + d);
+        let envContent = '';
+        stream2.on('close', (code2) => {
+          const dbConfig = {};
+          envContent.split('\n').forEach(line => {
+            const parts = line.split('=');
+            if (parts.length >= 2) {
+              dbConfig[parts[0].trim()] = parts.slice(1).join('=').trim();
+            }
+          });
+          
+          const dbUser = dbConfig['DB_USER'] || 'root';
+          const dbPass = dbConfig['DB_PASS'] || '';
+          const dbName = dbConfig['DB_NAME'] || 'hablemos_yhwh';
+          
+          console.log(`Using Database - User: ${dbUser}, DB: ${dbName}, Has Password: ${dbPass ? 'Yes' : 'No'}`);
+          
+          let importCmd = `mysql -u "${dbUser}"`;
+          if (dbPass) importCmd += ` -p"${dbPass}"`;
+          importCmd += ` "${dbName}" < /var/www/hablemos_yhwh/database/hablemos_yhwh.sql`;
+          
+          // Step 3: DB Import
+          console.log('Running DB Import...');
+          conn.exec(importCmd, (err3, stream3) => {
+            if (err3) throw err3;
+            stream3.on('close', (code3) => {
+              console.log('DB Import finished with code:', code3);
+              
+              // Step 4: NPM Install & PM2 Restart
+              console.log('Restarting application...');
+              conn.exec('cd /var/www/hablemos_yhwh/node-backend && npm install && pm2 restart hablemos-web', (err4, stream4) => {
+                if (err4) throw err4;
+                stream4.on('close', (code4) => {
+                  console.log('Deploy completed. Restart code:', code4);
+                  conn.end();
+                }).on('data', (d) => console.log('RESTART STDOUT:', d.toString()))
+                  .stderr.on('data', (d) => console.error('RESTART STDERR:', d.toString()));
+              });
+            }).on('data', (d) => console.log('DB STDOUT:', d.toString()))
+              .stderr.on('data', (d) => console.error('DB STDERR:', d.toString()));
+          });
+        }).on('data', (data) => {
+          envContent += data;
         });
       });
-      
     }).on('data', (data) => {
-      envContent += data;
+      console.log('GIT STDOUT:', data.toString());
     }).stderr.on('data', (data) => {
-      console.error('ENV STDERR: ' + data);
+      console.error('GIT STDERR:', data.toString());
     });
   });
 }).on('keyboard-interactive', (name, instructions, instructionsLang, prompts, finish) => {
