@@ -127,8 +127,8 @@
                                                                                 if (qIndex !== -1) embedUrl = embedUrl.substring(0, qIndex);
                                                                             }
                                                                         %>
-                                                                            <div class="ratio ratio-16x9 w-100" style="min-height: 400px; max-height: 600px; border-radius: 15px; overflow: hidden;">
-                                                                                <iframe src="<%= embedUrl %>" title="YouTube video" allowfullscreen style="object-fit: cover; width: 100%; height: 100%;"></iframe>
+                                                                            <div class="ratio ratio-16x9" style="border-radius: 15px; overflow: hidden;">
+                                                                                <iframe src="<%= embedUrl %>" title="YouTube video" allowfullscreen></iframe>
                                                                             </div>
                                                                         <% } else if (imgField && row[imgField]) { %>
                                                                             <div class="text-center" style="border-radius: 15px; overflow: hidden;">
