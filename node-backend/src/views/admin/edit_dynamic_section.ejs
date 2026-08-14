@@ -41,6 +41,7 @@
 
     <form action="/admin/dynamic-sections/update" method="POST">
         <input type="hidden" name="id" value="<%= section.id %>">
+        <input type="hidden" name="data_table" value="<%= section.data_table || '' %>">
 
         <div class="row g-4">
             <div class="col-md-6">

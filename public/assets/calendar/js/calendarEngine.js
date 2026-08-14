@@ -47,7 +47,10 @@ export function getLunisolarMonthView(year, baseMonthIndex, monthOffset) {
   // ------------------------------------------------------------
 
   const start = new Date(month.roshJodes); // UTC
+  start.setUTCDate(start.getUTCDate() + 1); // +1: conjunción → astilla (día de declaración Rosh Jodesh)
+
   const end = new Date(month.next);        // UTC
+  end.setUTCDate(end.getUTCDate() + 1);
 
   const days = [];
   let cursor = new Date(start);

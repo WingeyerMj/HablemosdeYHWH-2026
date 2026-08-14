@@ -527,13 +527,16 @@ const adminController = {
 
     updateDynamicSection: async (req, res) => {
         try {
-            const { id, title, section_type, summary, content, icon, image_url, nav_order, is_active, show_in_navbar, allowed_editors } = req.body;
+            const { id, title, section_type, summary, content, icon, image_url, nav_order, is_active, show_in_navbar, allowed_editors, data_table } = req.body;
             if (req.session.role !== 'admin') {
                 const hasPerm = await DynamicSection.hasPermission(id, req.session.userId);
                 if (!hasPerm) return res.status(403).send('No tienes permiso.');
             }
 
+            const existing = await DynamicSection.getById(id);
             const slug = DynamicSection.generateSlug(title);
+            const resolvedDataTable = data_table !== undefined && data_table !== '' ? data_table : (existing ? existing.data_table : null);
+
             await DynamicSection.update(id, {
                 title,
                 slug,
@@ -544,7 +547,8 @@ const adminController = {
                 image_url,
                 nav_order: parseInt(nav_order) || 0,
                 is_active: is_active === 'on',
-                show_in_navbar: show_in_navbar === 'on'
+                show_in_navbar: show_in_navbar === 'on',
+                data_table: resolvedDataTable
             });
 
             if (req.session.role === 'admin') {
@@ -556,6 +560,7 @@ const adminController = {
 
             res.redirect('/admin/dynamic-sections');
         } catch (error) {
+            console.error('Error updating dynamic section:', error);
             res.redirect('/admin/dynamic-sections');
         }
     },

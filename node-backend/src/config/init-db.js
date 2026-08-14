@@ -121,14 +121,8 @@ async function initDB(db) {
             "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'" :
             "SHOW TABLES");
         console.log('--- Tablas detectadas en la DB:', tables.map(t => t.table_name || Object.values(t)[0]).join(', '));
-
-        // Asegurar que las contraseñas estén correctamente hasheadas
-        const bcrypt = require('bcryptjs');
-        const hashedPassword = await bcrypt.hash('admin123', 10);
-
-        console.log('--- Verificando credenciales... ---');
-        await db.query('UPDATE users SET password = ? WHERE username IN (?, ?)', [hashedPassword, 'admin', 'editor']);
-        console.log('--- Credenciales actualizadas exitosamente ---');
+        // Las credenciales nunca deben modificarse durante el arranque.
+        // Para una recuperación explícita existe el script update-pw.js.
     } catch (error) {
         console.error('--- ERROR CRÍTICO AL INICIALIZAR LA BASE DE DATOS ---');
         console.error(error);

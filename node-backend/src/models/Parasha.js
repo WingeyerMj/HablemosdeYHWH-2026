@@ -2,17 +2,17 @@ const db = require('../config/db');
 
 class Parasha {
     static async getLatest(limit = 6) {
-        const [rows] = await db.query('SELECT * FROM parashot ORDER BY parasha_number ASC, created_at DESC LIMIT ?', [limit]);
+        const [rows] = await db.query('SELECT * FROM parashot ORDER BY parasha_number DESC, id DESC LIMIT ?', [limit]);
         return rows;
     }
 
     static async getAll() {
-        const [rows] = await db.query('SELECT * FROM parashot ORDER BY parasha_number ASC, created_at DESC');
+        const [rows] = await db.query('SELECT * FROM parashot ORDER BY parasha_number DESC, id DESC');
         return rows;
     }
 
     static async getPublished() {
-        const [rows] = await db.query('SELECT * FROM parashot WHERE is_published = TRUE ORDER BY parasha_number ASC, created_at DESC');
+        const [rows] = await db.query('SELECT * FROM parashot WHERE is_published = TRUE ORDER BY parasha_number DESC, id DESC');
         return rows;
     }
 

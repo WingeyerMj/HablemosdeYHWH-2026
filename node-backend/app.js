@@ -18,6 +18,9 @@ process.on('uncaughtException', (err) => {
 });
 
 const app = express();
+const isProduction = process.env.NODE_ENV === 'production';
+
+if (isProduction) app.set('trust proxy', 1);
 
 // Settings
 app.set('port', process.env.PORT || 3000);
@@ -33,10 +36,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'fallback_secret',
+    secret: process.env.SESSION_SECRET || (isProduction ? (() => {
+        throw new Error('SESSION_SECRET es obligatorio en producción');
+    })() : 'development-only-secret'),
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false } // Set to true if using HTTPS
+    cookie: {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: isProduction,
+        maxAge: 8 * 60 * 60 * 1000
+    }
 }));
 
 // Global variables (access session in all views)
@@ -90,9 +100,6 @@ app.use((req, res, next) => {
         testimonials: [],
         pricing: [],
         dynamicInline: [],
-        siteSettings: {},
-        footerConfig: {},
-        footerLinks: {},
         layout: false
     });
 });

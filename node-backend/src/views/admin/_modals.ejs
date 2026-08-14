@@ -467,6 +467,10 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.onclick = function() {
                 const table = this.dataset.table;
                 const title = this.dataset.title;
+                if (!table || table === 'null' || table === 'undefined') {
+                    alert('Esta sección aún no tiene una tabla de datos asociada.');
+                    return;
+                }
                 document.getElementById('createDynamicModalTitle').textContent = 'Añadir Nuevo Registro - ' + title;
                 document.getElementById('createDynamicForm').action = '/admin/entity/' + table + '/add';
                 qDynCreate.root.innerHTML = '';

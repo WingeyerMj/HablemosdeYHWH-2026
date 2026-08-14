@@ -203,23 +203,31 @@ CREATE TABLE IF NOT EXISTS footer_links (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- Evita duplicados en instalaciones nuevas.
+CREATE UNIQUE INDEX footer_links_unique_link ON footer_links (category, title, url);
+
 -- Sección Footer inicial
 INSERT IGNORE INTO sections (section_name, title, subtitle, content)
 VALUES ('Footer', 'Hablemos de YHWH', 'Estudio bíblico desde la perspectiva hebrea', '');
 
 -- Enlaces de footer iniciales
-INSERT IGNORE INTO footer_links (category, title, url, order_index)
-VALUES ('Enlaces Útiles', 'Inicio', '/', 1);
+INSERT INTO footer_links (category, title, url, order_index)
+SELECT 'Enlaces Útiles', 'Inicio', '/', 1
+WHERE NOT EXISTS (SELECT 1 FROM footer_links WHERE title = 'Inicio' AND url = '/');
 
-INSERT IGNORE INTO footer_links (category, title, url, order_index)
-VALUES ('Enlaces Útiles', 'Sobre Nosotros', '/#about', 2);
+INSERT INTO footer_links (category, title, url, order_index)
+SELECT 'Enlaces Útiles', 'Sobre Nosotros', '/#about', 2
+WHERE NOT EXISTS (SELECT 1 FROM footer_links WHERE title = 'Sobre Nosotros' AND url = '/#about');
 
-INSERT IGNORE INTO footer_links (category, title, url, order_index)
-VALUES ('Enlaces Útiles', 'Parashot', '/parashot', 3);
+INSERT INTO footer_links (category, title, url, order_index)
+SELECT 'Enlaces Útiles', 'Parashot', '/parashot', 3
+WHERE NOT EXISTS (SELECT 1 FROM footer_links WHERE title = 'Parashot' AND url = '/parashot');
 
-INSERT IGNORE INTO footer_links (category, title, url, order_index)
-VALUES ('Recursos', 'Calendario', '/calendar', 1);
+INSERT INTO footer_links (category, title, url, order_index)
+SELECT 'Recursos', 'Calendario', '/calendar', 1
+WHERE NOT EXISTS (SELECT 1 FROM footer_links WHERE title = 'Calendario' AND url = '/calendar');
 
-INSERT IGNORE INTO footer_links (category, title, url, order_index)
-VALUES ('Recursos', 'Eventos', '/#portfolio', 2);
+INSERT INTO footer_links (category, title, url, order_index)
+SELECT 'Recursos', 'Eventos', '/#portfolio', 2
+WHERE NOT EXISTS (SELECT 1 FROM footer_links WHERE title = 'Eventos' AND url = '/#portfolio');
 

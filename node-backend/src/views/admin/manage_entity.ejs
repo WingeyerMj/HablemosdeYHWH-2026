@@ -31,9 +31,9 @@
                                     <%= col.Field.charAt(0).toUpperCase() + col.Field.slice(1).replace(/_/g, ' ' ) %>
                                 </label>
 
-                                <% if (col.Field.includes('imagen') || col.Field.includes('img') || col.Field.includes('image')) { %>
-                                    <!-- Input file para imágenes -->
-                                    <input type="file" name="image_file" class="form-control bg-secondary text-white border-0" accept="image/*">
+                                <% if (col.Field.includes('imagen') || col.Field.includes('img') || col.Field.includes('image') || col.Field.includes('video') || col.Field.includes('media')) { %>
+                                    <!-- Input file para imágenes/videos -->
+                                    <input type="file" name="image_file" class="form-control bg-secondary text-white border-0" accept="image/*,video/*">
                                     <input type="hidden" name="<%= col.Field %>" value="">
                                 <% } else if (col.Field.includes('contenido') || col.Field.includes('content') || col.Field.includes('texto') || col.Field.includes('text')) { %>
                                     <!-- Editor rico para contenido largo -->

@@ -102,32 +102,32 @@ function getHolidaysForYear(year) {
   const { month: abibMonth } = getLunisolarMonthView(year, 0, 0);
   const { month: month7 } = getLunisolarMonthView(year, 0, 6); // Mes 7 (índice 6)
 
-  // Rosh Jodesh Abib
+  // Rosh Jodesh Abib — buscar la astilla (primer día con iluminación > 0%)
   let rjAbibIdx = 0;
-  let minIllumAbib = 100;
-  abibMonth.days.forEach((d, idx) => {
-    const illum = getMoonPhaseInfo(d).illumination;
+  for (let i = 0; i < abibMonth.days.length; i++) {
+    const illum = getMoonPhaseInfo(abibMonth.days[i]).illumination;
     const val = typeof illum === "string" ? parseFloat(illum) : illum;
-    if (val < minIllumAbib) {
-      minIllumAbib = val;
-      rjAbibIdx = idx;
+    if (val > 0) {
+      rjAbibIdx = i;
+      break;
     }
-  });
+  }
 
-  // Rosh Jodesh Mes 7
+  // Rosh Jodesh Mes 7 — buscar la astilla
   let rj7Idx = 0;
-  let minIllum7 = 100;
-  month7.days.forEach((d, idx) => {
-    const illum = getMoonPhaseInfo(d).illumination;
+  for (let i = 0; i < month7.days.length; i++) {
+    const illum = getMoonPhaseInfo(month7.days[i]).illumination;
     const val = typeof illum === "string" ? parseFloat(illum) : illum;
-    if (val < minIllum7) {
-      minIllum7 = val;
-      rj7Idx = idx;
+    if (val > 0) {
+      rj7Idx = i;
+      break;
     }
-  });
+  }
 
-  const pesajDate = new Date(abibMonth.days[rjAbibIdx + 13]);
-  const hamatzoDate = new Date(abibMonth.days[rjAbibIdx + 14]);
+  // REGLA: rjAbibIdx = astilla (declaración Rosh Jodesh, sin número).
+  // Día 1 = rjAbibIdx + 1. Día 14 = rjAbibIdx + 14.
+  const pesajDate = new Date(abibMonth.days[rjAbibIdx + 14]);
+  const hamatzoDate = new Date(abibMonth.days[rjAbibIdx + 15]);
 
   let bikurimDate = null;
   for (let i = 1; i <= 7; i++) {
@@ -145,10 +145,10 @@ function getHolidaysForYear(year) {
     bikurimDate.getUTCDate() + 49
   )) : null;
 
-  // Festividades Mes 7
-  const yomTeruahDate = new Date(month7.days[rj7Idx]);
-  const yomKippurDate = new Date(month7.days[rj7Idx + 9]);
-  const sukkotDate = new Date(month7.days[rj7Idx + 14]);
+  // Festividades Mes 7 — rj7Idx = astilla. Día 1 = rj7Idx + 1.
+  const yomTeruahDate = new Date(month7.days[rj7Idx + 1]); // Día 1
+  const yomKippurDate = new Date(month7.days[rj7Idx + 10]); // Día 10
+  const sukkotDate = new Date(month7.days[rj7Idx + 15]); // Día 15
 
   return {
     pesajDate, hamatzoDate, bikurimDate, shavuotDate,
@@ -202,24 +202,18 @@ function renderCalendar() {
   // 8. Encontrar la PRIMER luna nueva del mes
   // ------------------------------------------------------------
 
-  let firstRoshIndex = 0;
-  let minIllum = 100;
-
+  // Buscar dinámicamente la astilla (primer día con iluminación > 0%)
   const monthMoonData = month.days.map(d => getMoonPhaseInfo(d));
 
-  monthMoonData.forEach((mi, idx) => {
-    const illum = typeof mi.illumination === "string"
-      ? parseFloat(mi.illumination)
-      : mi.illumination;
-
-    if (illum < minIllum) {
-      minIllum = illum;
-      firstRoshIndex = idx;
+  let firstRoshIndex = 0;
+  for (let i = 0; i < monthMoonData.length; i++) {
+    const mi = monthMoonData[i];
+    const illum = typeof mi.illumination === "string" ? parseFloat(mi.illumination) : mi.illumination;
+    if (illum > 0) {
+      firstRoshIndex = i;
+      break;
     }
-  });
-
-  // ------------------------------------------------------------
-  // 9. Identificar Festividades Globales del Año
+  }
   // ------------------------------------------------------------
 
   const {
@@ -246,23 +240,8 @@ function renderCalendar() {
 
     const moonInfo = monthMoonData[index];
 
-    // ------------------------------------------------------------
-    // 9.1 Detección de Rosh Hashaná (PRIORIDAD MÁXIMA)
-    // ------------------------------------------------------------
-
-    const gYear = gregDate.getUTCFullYear();
-    const gMonth = String(gregDate.getUTCMonth() + 1).padStart(2, "0");
-    const gDay = String(gregDate.getUTCDate()).padStart(2, "0");
-    const gregKey = `${gYear}-${gMonth}-${gDay}`;
-
-    // Convertir el timestamp del dataset a YYYY-MM-DD
-    const roshDate = new Date(yearData.roshHashana);
-    const roshKey =
-      `${roshDate.getUTCFullYear()}-` +
-      `${String(roshDate.getUTCMonth() + 1).padStart(2, "0")}-` +
-      `${String(roshDate.getUTCDate()).padStart(2, "0")}`;
-
-    const isRoshHashana = (gregKey === roshKey);
+    const isRoshJodesh = (index === firstRoshIndex);
+    const isRoshHashana = (isRoshJodesh && month.index === 0);
 
     if (isRoshHashana) {
       cell.classList.add("roshhashana");
@@ -272,15 +251,12 @@ function renderCalendar() {
       rhLabel.textContent = "Rosh Hashaná";
       cell.appendChild(rhLabel);
 
-      const lunisolarDayEl = document.createElement("div");
-      lunisolarDayEl.className = "lunisolar-day";
-      lunisolarDayEl.textContent = "1";
+      // Sin número de día — es la declaración, la cuenta empieza mañana
 
       const gregorianDayEl = document.createElement("div");
       gregorianDayEl.className = "gregorian-day";
       gregorianDayEl.textContent = gregDate.getUTCDate();
 
-      cell.appendChild(lunisolarDayEl);
       cell.appendChild(gregorianDayEl);
 
       gridEl.appendChild(cell);
@@ -291,12 +267,10 @@ function renderCalendar() {
     // 9.2 Rosh Jodesh (solo si NO es Rosh Hashaná)
     // ------------------------------------------------------------
 
-    const isRoshJodesh = (index === firstRoshIndex);
-
     let lunisolarDay;
 
     if (isRoshJodesh) {
-      lunisolarDay = 1;
+      lunisolarDay = ""; // La astilla es la declaración, sin número
       cell.classList.add("roshjodesh");
 
       const label = document.createElement("div");
@@ -305,8 +279,9 @@ function renderCalendar() {
       cell.appendChild(label);
 
     } else {
-      lunisolarDay = index - firstRoshIndex + 1;
-      if (lunisolarDay < 1) lunisolarDay = 1;
+      // La cuenta comienza el día posterior a la astilla (index 1 = Día 1)
+      lunisolarDay = index - firstRoshIndex;
+      if (lunisolarDay < 1) lunisolarDay = "";
     }
 
     // Día lunisolar
