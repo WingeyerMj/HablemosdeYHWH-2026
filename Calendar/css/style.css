@@ -137,8 +137,26 @@ button {
 }
 
 .today {
-  background: var(--today-bg);
-  border: 2px solid #66bfff;
+  border: 2px solid #00e5ff !important;
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.6), inset 0 0 10px rgba(0, 229, 255, 0.2) !important;
+  background: rgba(0, 229, 255, 0.12) !important;
+  z-index: 2;
+}
+
+.today-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #00e5ff;
+  color: #000;
+  font-size: 0.65rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 3;
 }
 
 /* ----------------------------------------------------------

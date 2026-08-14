@@ -5,16 +5,17 @@ import { getMoonPhaseInfo } from "./moonPhase.js";
 import { lunisolar2025 } from "./data/year2025.js";
 import { lunisolar2026 } from "./data/year2026.js";
 import { lunisolar2027 } from "./data/year2027.js";
+import { lunisolar2028 } from "./data/year2028.js";
 
 // ------------------------------------------------------------
-// 1. Fecha actual en UTC puro
+// 1. Fecha actual local convertida a fecha pura
 // ------------------------------------------------------------
 
 const now = new Date();
 const today = new Date(Date.UTC(
-  now.getUTCFullYear(),
-  now.getUTCMonth(),
-  now.getUTCDate()
+  now.getFullYear(),
+  now.getMonth(),
+  now.getDate()
 ));
 
 // ------------------------------------------------------------
@@ -27,8 +28,10 @@ if (today < new Date(lunisolar2026.roshHashana)) {
   currentYear = 2025;
 } else if (today < new Date(lunisolar2027.roshHashana)) {
   currentYear = 2026;
-} else {
+} else if (today < new Date(lunisolar2028.roshHashana)) {
   currentYear = 2027;
+} else {
+  currentYear = 2028;
 }
 
 const yearData = generateLunisolarYear(currentYear);
@@ -102,6 +105,7 @@ function getHolidaysForYear(year) {
   const { month: abibMonth } = getLunisolarMonthView(year, 0, 0);
   const { month: month7 } = getLunisolarMonthView(year, 0, 6); // Mes 7 (índice 6)
 
+<<<<<<< Updated upstream
   // Rosh Jodesh Abib — buscar la astilla (primer día con iluminación > 0%)
   let rjAbibIdx = 0;
   for (let i = 0; i < abibMonth.days.length; i++) {
@@ -126,6 +130,14 @@ function getHolidaysForYear(year) {
 
   // REGLA: rjAbibIdx = astilla (declaración Rosh Jodesh, sin número).
   // Día 1 = rjAbibIdx + 1. Día 14 = rjAbibIdx + 14.
+=======
+  // En la estructura lunisolar, el índice 0 del mes es siempre Rosh Jodesh (declaración)
+  const rjAbibIdx = 0;
+  const rj7Idx = 0;
+
+  // Festividades Mes 1 (Abib)
+  // Día 14 = rjAbibIdx + 14, Día 15 = rjAbibIdx + 15
+>>>>>>> Stashed changes
   const pesajDate = new Date(abibMonth.days[rjAbibIdx + 14]);
   const hamatzoDate = new Date(abibMonth.days[rjAbibIdx + 15]);
 
@@ -133,7 +145,7 @@ function getHolidaysForYear(year) {
   for (let i = 1; i <= 7; i++) {
     const d = new Date(pesajDate);
     d.setUTCDate(d.getUTCDate() + i);
-    if (d.getUTCDay() === 0) {
+    if (d.getUTCDay() === 0) { // Domingo es el día de Bikurim
       bikurimDate = d;
       break;
     }
@@ -145,14 +157,26 @@ function getHolidaysForYear(year) {
     bikurimDate.getUTCDate() + 49
   )) : null;
 
+<<<<<<< Updated upstream
   // Festividades Mes 7 — rj7Idx = astilla. Día 1 = rj7Idx + 1.
   const yomTeruahDate = new Date(month7.days[rj7Idx + 1]); // Día 1
   const yomKippurDate = new Date(month7.days[rj7Idx + 10]); // Día 10
   const sukkotDate = new Date(month7.days[rj7Idx + 15]); // Día 15
+=======
+  // Festividades Mes 7
+  // Día 1 = Yom Teruah, Día 10 = Yom Kippur, Día 15 = Sukkot (inicio 7 días), Día 22 = Shemini Atzeret (8vo día)
+  const yomTeruahDate = new Date(month7.days[rj7Idx + 1]); 
+  const yomKippurDate = new Date(month7.days[rj7Idx + 10]);
+  const sukkotDate = new Date(month7.days[rj7Idx + 15]);
+
+  // Shemini Atzeret es el 8vo día desde el inicio de Sukkot (7 días después del Día 15 = Día 22)
+  const sheminiAtzeretDate = new Date(sukkotDate);
+  sheminiAtzeretDate.setUTCDate(sheminiAtzeretDate.getUTCDate() + 7);
+>>>>>>> Stashed changes
 
   return {
     pesajDate, hamatzoDate, bikurimDate, shavuotDate,
-    yomTeruahDate, yomKippurDate, sukkotDate
+    yomTeruahDate, yomKippurDate, sukkotDate, sheminiAtzeretDate
   };
 }
 
@@ -199,9 +223,10 @@ function renderCalendar() {
   }
 
   // ------------------------------------------------------------
-  // 8. Encontrar la PRIMER luna nueva del mes
+  // 8. Fase lunar del mes
   // ------------------------------------------------------------
 
+<<<<<<< Updated upstream
   // Buscar dinámicamente la astilla (primer día con iluminación > 0%)
   const monthMoonData = month.days.map(d => getMoonPhaseInfo(d));
 
@@ -214,11 +239,17 @@ function renderCalendar() {
       break;
     }
   }
+=======
+  const monthMoonData = month.days.map(d => getMoonPhaseInfo(d));
+
+  // ------------------------------------------------------------
+  // 9. Identificar Festividades Globales del Año
+>>>>>>> Stashed changes
   // ------------------------------------------------------------
 
   const {
     pesajDate, hamatzoDate, bikurimDate, shavuotDate,
-    yomTeruahDate, yomKippurDate, sukkotDate
+    yomTeruahDate, yomKippurDate, sukkotDate, sheminiAtzeretDate
   } = getHolidaysForYear(yearData.year);
 
   // ------------------------------------------------------------
@@ -236,16 +267,41 @@ function renderCalendar() {
       gregDate.getUTCDate() === today.getUTCDate()
     ) {
       cell.classList.add("today");
+      const todayBadge = document.createElement("div");
+      todayBadge.className = "today-badge";
+      todayBadge.textContent = "HOY";
+      cell.appendChild(todayBadge);
     }
 
     const moonInfo = monthMoonData[index];
+    const illum = typeof moonInfo.illumination === "string" ? parseFloat(moonInfo.illumination) : moonInfo.illumination;
 
+<<<<<<< Updated upstream
     const isRoshJodesh = (index === firstRoshIndex);
     const isRoshHashana = (isRoshJodesh && month.index === 0);
+=======
+    // ------------------------------------------------------------
+    // 9.1 Detección de Rosh Hashaná y Rosh Jodesh
+    // ------------------------------------------------------------
+    const gYear = gregDate.getUTCFullYear();
+    const gMonth = String(gregDate.getUTCMonth() + 1).padStart(2, "0");
+    const gDay = String(gregDate.getUTCDate()).padStart(2, "0");
+    const gregKey = `${gYear}-${gMonth}-${gDay}`;
 
-    if (isRoshHashana) {
-      cell.classList.add("roshhashana");
+    // Convertir el timestamp del dataset a YYYY-MM-DD
+    const roshDate = new Date(yearData.roshHashana);
+    const roshKey =
+      `${roshDate.getUTCFullYear()}-` +
+      `${String(roshDate.getUTCMonth() + 1).padStart(2, "0")}-` +
+      `${String(roshDate.getUTCDate()).padStart(2, "0")}`;
 
+    const isRoshHashana = (gregKey === roshKey);
+    const isRoshJodesh = (index === 0);
+>>>>>>> Stashed changes
+
+    let lunisolarDay = "";
+
+<<<<<<< Updated upstream
       const rhLabel = document.createElement("div");
       rhLabel.className = "roshhashana-label";
       rhLabel.textContent = "Rosh Hashaná";
@@ -272,16 +328,26 @@ function renderCalendar() {
     if (isRoshJodesh) {
       lunisolarDay = ""; // La astilla es la declaración, sin número
       cell.classList.add("roshjodesh");
+=======
+    if (isRoshHashana || isRoshJodesh) {
+      cell.classList.add(isRoshHashana ? "roshhashana" : "roshjodesh");
+>>>>>>> Stashed changes
 
       const label = document.createElement("div");
-      label.className = "rosh-label";
-      label.textContent = "Rosh Jodesh";
+      label.className = isRoshHashana ? "roshhashana-label" : "rosh-label";
+      label.textContent = isRoshHashana ? "Rosh Hashaná" : "Rosh Jodesh";
       cell.appendChild(label);
 
+      lunisolarDay = ""; // No lleva número el día de declaración (Rosh Jodesh / Rosh Hashana)
     } else {
+<<<<<<< Updated upstream
       // La cuenta comienza el día posterior a la astilla (index 1 = Día 1)
       lunisolarDay = index - firstRoshIndex;
       if (lunisolarDay < 1) lunisolarDay = "";
+=======
+      // El conteo de días empieza al día siguiente de Rosh Jodesh (índice 1 = Día 1)
+      lunisolarDay = index;
+>>>>>>> Stashed changes
     }
 
     // Día lunisolar
@@ -316,65 +382,77 @@ function renderCalendar() {
     cell.appendChild(moonContainer);
 
     // 9.3 Inyectar Etiquetas de Festividades
-    // --- Festividades del Mes 1 (Abib) ---
-    if (month.index === 0) {
-      if (lunisolarDay >= 15 && lunisolarDay <= 21) {
-        const label = document.createElement("div");
-        label.className = "holiday-label hamatzo-label";
-        label.textContent = lunisolarDay === 15 ? "Hamatzo" : `Hamatzo Día ${lunisolarDay - 14}`;
-        cell.appendChild(label);
-        cell.classList.add("hamatzo");
-      }
-    }
 
-    // --- Festividades del Mes 7 ---
-    if (month.index === 6) {
-      if (lunisolarDay >= 15 && lunisolarDay <= 21) {
-        const label = document.createElement("div");
-        label.className = "holiday-label sukkot-label";
-        label.textContent = lunisolarDay === 15 ? "Sukkot" : `Sukkot Día ${lunisolarDay - 14}`;
-        cell.appendChild(label);
-        cell.classList.add("sukkot");
-      } else if (lunisolarDay === 22) {
-        const label = document.createElement("div");
-        label.className = "holiday-label shemini-label";
-        label.textContent = "Shemini Atzeret";
-        cell.appendChild(label);
-        cell.classList.add("shemini-atzeret");
-      }
-    }
+    // Cálculos de rango (diferencia en días)
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const hamatzoDiff = Math.round((gregDate - hamatzoDate) / msPerDay);
+    const sukkotDiff = Math.round((gregDate - sukkotDate) / msPerDay);
 
-    // Otras Festividades (Bikurim, Pesaj, etc.)
-    if (isSameDay(gregDate, bikurimDate)) {
-      const label = document.createElement("div");
-      label.className = "holiday-label bikurim-label";
-      label.textContent = "Bikurim";
-      // Si ya hay una etiqueta (ej: Hamatzo), posicionar esta debajo
-      if (cell.querySelector('.holiday-label')) {
-        label.style.top = "28px"; 
-      }
-      cell.appendChild(label);
-      cell.classList.add("bikurim");
-    }
-
+    // Pesaj
     if (isSameDay(gregDate, pesajDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label pesaj-label";
       label.textContent = "Pesaj";
       cell.appendChild(label);
       cell.classList.add("pesaj");
-    } else if (isSameDay(gregDate, yomTeruahDate)) {
+    }
+
+    // Hamatzo (7 días)
+    if (hamatzoDiff >= 0 && hamatzoDiff < 7) {
+      cell.classList.add("hamatzo");
+      if (hamatzoDiff === 0) {
+        const label = document.createElement("div");
+        label.className = "holiday-label hamatzo-label";
+        label.textContent = "Hamatzo";
+        cell.appendChild(label);
+      }
+    }
+
+    // Bikurim (puede coincidir con Hamatzo)
+    if (isSameDay(gregDate, bikurimDate)) {
+      const label = document.createElement("div");
+      label.className = "holiday-label bikurim-label";
+      label.textContent = "Bikurim";
+      cell.appendChild(label);
+      cell.classList.add("bikurim");
+    }
+
+    // Yom Teruah
+    if (isSameDay(gregDate, yomTeruahDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label yomteruah-label";
       label.textContent = "Yom Teruah";
       cell.appendChild(label);
       cell.classList.add("yomteruah");
-    } else if (isSameDay(gregDate, yomKippurDate)) {
+    }
+
+    // Yom Kippur
+    if (isSameDay(gregDate, yomKippurDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label yomkippur-label";
       label.textContent = "Yom Kippur";
       cell.appendChild(label);
       cell.classList.add("yomkippur");
+    }
+
+    // Sukkot (7 días)
+    if (sukkotDiff >= 0 && sukkotDiff < 7) {
+      cell.classList.add("sukkot");
+      if (sukkotDiff === 0) {
+        const label = document.createElement("div");
+        label.className = "holiday-label sukkot-label";
+        label.textContent = "Sukkot";
+        cell.appendChild(label);
+      }
+    }
+
+    // Shemini Atzeret
+    if (isSameDay(gregDate, sheminiAtzeretDate)) {
+      const label = document.createElement("div");
+      label.className = "holiday-label shemini-label";
+      label.textContent = "Shemini Atzeret";
+      cell.appendChild(label);
+      cell.classList.add("sheminiatzeret");
     }
 
     // Shavuot (Detección por fecha)
@@ -399,7 +477,7 @@ function renderCalendar() {
       if (diffDays >= 0 && diffDays < 49) {
         const omerTag = document.createElement("div");
         omerTag.className = "omer-row";
-        omerTag.textContent = `Omer Día ${diffDays + 1}`;
+        omerTag.textContent = `Omer ${diffDays + 1}`;
         // Insertar antes del contenedor de luna
         cell.insertBefore(omerTag, cell.querySelector('.moon-info'));
       }
@@ -407,6 +485,14 @@ function renderCalendar() {
 
     gridEl.appendChild(cell);
   });
+
+  // 10.1 Scrolear al día actual si existe en este mes
+  setTimeout(() => {
+    const todayCell = document.querySelector('.calendar-cell.today');
+    if (todayCell) {
+      todayCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 300);
 }
 
 // ------------------------------------------------------------
@@ -508,6 +594,7 @@ if (sideNext) sideNext.addEventListener('click', () => cambiarMesConTransicion(1
 // 16. Descarga como PNG / PDF
 // ------------------------------------------------------------
 
+// Cargar html2canvas dinámicamente desde CDN
 function loadScript(src) {
   return new Promise((resolve, reject) => {
     if (document.querySelector(`script[src="${src}"]`)) {
@@ -525,36 +612,56 @@ function loadScript(src) {
 const HTML2CANVAS_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
 const JSPDF_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
 
+/**
+ * Captura el contenedor del calendario como un canvas.
+ * Oculta temporalmente las flechas de navegación y los botones de descarga para la captura.
+ * También quita temporalmente la imagen de fondo para evitar que el canvas quede "tainted".
+ */
 async function captureCalendar() {
   await loadScript(HTML2CANVAS_CDN);
+
   const container = document.querySelector('.calendar-container');
   const body = document.body;
+  const section = document.querySelector('.section');
 
   // Guardar y quitar background-image para evitar tainted canvas
   const savedBodyBg = body.style.backgroundImage;
+  const savedSectionBg = section ? section.style.backgroundImage : '';
   body.style.backgroundImage = 'none';
+  if (section) section.style.backgroundImage = 'none';
 
+  // Ocultar flechas de navegación, botones de descarga y el toggle de tema durante la captura
   const hideEls = container.querySelectorAll('.nav-arrow, .download-bar, .theme-toggle');
   hideEls.forEach(el => el.style.visibility = 'hidden');
 
+  const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-global').trim() || '#060606';
+
   const canvas = await html2canvas(container, {
-    backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#1a1a1a',
+    backgroundColor: bgColor,
     scale: 2,
     useCORS: true,
     allowTaint: false,
     logging: false
   });
 
+  // Restaurar elementos ocultos
   hideEls.forEach(el => el.style.visibility = '');
+
+  // Restaurar background-image
   body.style.backgroundImage = savedBodyBg;
+  if (section) section.style.backgroundImage = savedSectionBg;
+
   return canvas;
 }
 
+/**
+ * Convierte un canvas a Blob y dispara la descarga con el nombre dado.
+ */
 function downloadCanvasAsFile(canvas, filename) {
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (!blob) {
-        reject(new Error('No se pudo generar el blob'));
+        reject(new Error('No se pudo generar el blob de la imagen'));
         return;
       }
       const url = URL.createObjectURL(blob);
@@ -564,12 +671,16 @@ function downloadCanvasAsFile(canvas, filename) {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      // Liberar el objeto URL después de un momento
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       resolve();
     }, 'image/png');
   });
 }
 
+/**
+ * Descargar el calendario como imagen PNG
+ */
 async function downloadPNG() {
   const btn = document.getElementById('btn-download-png');
   const originalText = btn.innerHTML;
@@ -590,6 +701,9 @@ async function downloadPNG() {
   }
 }
 
+/**
+ * Descargar el calendario como archivo PDF
+ */
 async function downloadPDF() {
   const btn = document.getElementById('btn-download-pdf');
   const originalText = btn.innerHTML;
@@ -600,20 +714,29 @@ async function downloadPDF() {
     await loadScript(JSPDF_CDN);
     const canvas = await captureCalendar();
     const imgData = canvas.toDataURL('image/png');
+
     const { jsPDF } = window.jspdf;
+    // Landscape para que el calendario quepa mejor
     const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
+
+    // Calcular dimensiones manteniendo aspecto
     const imgRatio = canvas.width / canvas.height;
-    let imgW = pageWidth - 20;
+    let imgW = pageWidth - 20; // 10mm margen cada lado
     let imgH = imgW / imgRatio;
+
     if (imgH > pageHeight - 20) {
       imgH = pageHeight - 20;
       imgW = imgH * imgRatio;
     }
+
     const x = (pageWidth - imgW) / 2;
     const y = (pageHeight - imgH) / 2;
+
     pdf.addImage(imgData, 'PNG', x, y, imgW, imgH);
+
     const monthName = titleEl.textContent || 'calendario';
     pdf.save(`Calendario_Lunisolar_${monthName.replace(/\s/g, '_')}.pdf`);
   } catch (err) {
@@ -625,6 +748,7 @@ async function downloadPDF() {
   }
 }
 
+// Crear la barra de botones de descarga
 function createDownloadBar() {
   const container = document.querySelector('.calendar-container');
   const bar = document.createElement('div');
@@ -656,8 +780,11 @@ function createDownloadBar() {
       <span>PDF</span>
     </button>
   `;
+
+  // Insertar después de la fila de días de la semana (antes del wrapper)
   const wrapper = container.querySelector('.calendar-wrapper');
   container.insertBefore(bar, wrapper);
+
   document.getElementById('btn-download-png').addEventListener('click', downloadPNG);
   document.getElementById('btn-download-pdf').addEventListener('click', downloadPDF);
 }

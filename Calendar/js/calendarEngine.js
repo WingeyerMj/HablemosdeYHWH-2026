@@ -3,6 +3,7 @@
 import { lunisolar2025 } from "./data/year2025.js";
 import { lunisolar2026 } from "./data/year2026.js";
 import { lunisolar2027 } from "./data/year2027.js";
+import { lunisolar2028 } from "./data/year2028.js";
 
 // ------------------------------------------------------------
 // 1. Cargar año lunisolar
@@ -12,6 +13,7 @@ export function generateLunisolarYear(year) {
   if (year === 2025) return lunisolar2025;
   if (year === 2026) return lunisolar2026;
   if (year === 2027) return lunisolar2027;
+  if (year === 2028) return lunisolar2028;
 
   throw new Error("Año no precalculado todavía: " + year);
 }
