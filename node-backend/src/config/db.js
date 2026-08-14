@@ -39,6 +39,7 @@ if (process.env.DATABASE_URL) {
         user: process.env.DB_USER || 'root',
         password: process.env.DB_PASS || '',
         database: process.env.DB_NAME || 'hablemos_yhwh',
+        charset: 'utf8mb4',
         waitForConnections: true,
         connectionLimit: 10,
         queueLimit: 0,

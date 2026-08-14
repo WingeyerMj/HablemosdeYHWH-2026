@@ -82,10 +82,24 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small text-white-50">Categoría</label>
-                            <select name="category" class="form-select">
-                                <option value="filter-app">Moedin</option>
-                                <option value="filter-product">Especiales</option>
+                            <select name="category" class="form-select" id="create_port_category" onchange="if(this.value==='__custom__'){this.style.display='none';document.getElementById('create_port_category_custom_wrap').style.display='flex';}">
+                                <option value="Enseñanzas">Enseñanzas</option>
+                                <option value="Moedim">Moedim</option>
+                                <option value="Mikra Kodesh">Mikra Kodesh</option>
+                                <% if (typeof eventCategories !== 'undefined' && eventCategories.length > 0) { %>
+                                    <% eventCategories.forEach(cat => { %>
+                                        <% if (!['Enseñanzas','Moedim','Mikra Kodesh'].includes(cat)) { %>
+                                            <option value="<%= cat %>"><%= cat %></option>
+                                        <% } %>
+                                    <% }) %>
+                                <% } %>
+                                <option value="__custom__">+ Nueva categoría...</option>
                             </select>
+                            <div id="create_port_category_custom_wrap" style="display:none;" class="input-group mt-1">
+                                <input type="text" id="create_port_category_custom" class="form-control" placeholder="Nombre de la categoría">
+                                <button type="button" class="btn btn-outline-light btn-sm" onclick="var inp=document.getElementById('create_port_category_custom');var sel=document.getElementById('create_port_category');if(inp.value.trim()){var opt=document.createElement('option');opt.value=inp.value.trim();opt.textContent=inp.value.trim();sel.insertBefore(opt,sel.querySelector('[value=__custom__]'));sel.value=inp.value.trim();inp.value='';this.parentNode.style.display='none';sel.style.display='';}">✓</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="this.parentNode.style.display='none';document.getElementById('create_port_category').style.display='';document.getElementById('create_port_category').value='Enseñanzas';">✕</button>
+                            </div>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small text-white-50">Fecha del Evento</label>
@@ -141,7 +155,7 @@
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-md-4"><label class="form-label small text-white-50">Título</label><input type="text" name="title" id="edit_port_title" class="form-control" required></div>
-                        <div class="col-md-4"><label class="form-label small text-white-50">Categoría</label><select name="category" id="edit_port_category" class="form-select"><option value="filter-app">Moedin</option><option value="filter-product">Especiales</option></select></div>
+                        <div class="col-md-4"><label class="form-label small text-white-50">Categoría</label><select name="category" id="edit_port_category" class="form-select" onchange="if(this.value==='__custom__'){this.style.display='none';document.getElementById('edit_port_category_custom_wrap').style.display='flex';}"><option value="Enseñanzas">Enseñanzas</option><option value="Moedim">Moedim</option><option value="Mikra Kodesh">Mikra Kodesh</option><% if (typeof eventCategories !== 'undefined' && eventCategories.length > 0) { %><% eventCategories.forEach(cat => { %><% if (!['Enseñanzas','Moedim','Mikra Kodesh'].includes(cat)) { %><option value="<%= cat %>"><%= cat %></option><% } %><% }) %><% } %><option value="__custom__">+ Nueva categoría...</option></select><div id="edit_port_category_custom_wrap" style="display:none;" class="input-group mt-1"><input type="text" id="edit_port_category_custom" class="form-control" placeholder="Nombre de la categoría"><button type="button" class="btn btn-outline-light btn-sm" onclick="var inp=document.getElementById('edit_port_category_custom');var sel=document.getElementById('edit_port_category');if(inp.value.trim()){var opt=document.createElement('option');opt.value=inp.value.trim();opt.textContent=inp.value.trim();sel.insertBefore(opt,sel.querySelector('[value=__custom__]'));sel.value=inp.value.trim();inp.value='';this.parentNode.style.display='none';sel.style.display='';}">✓</button><button type="button" class="btn btn-outline-secondary btn-sm" onclick="this.parentNode.style.display='none';document.getElementById('edit_port_category').style.display='';document.getElementById('edit_port_category').value='Enseñanzas';">✕</button></div></div>
                         <div class="col-md-4"><label class="form-label small text-white-50">Fecha</label><input type="date" name="event_date" id="edit_port_date" class="form-control"></div>
                         <div class="col-md-6"><label class="form-label small text-white-50">Subtítulo</label><input type="text" name="subtitle" id="edit_port_subtitle" class="form-control"></div>
                         <div class="col-md-6"><label class="form-label small text-white-50">Descripción</label><input type="text" name="description" id="edit_port_description" class="form-control"></div>
@@ -411,7 +425,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const d=this.dataset;
             document.getElementById('edit_port_id').value=d.id;
             document.getElementById('edit_port_title').value=d.title;
-            document.getElementById('edit_port_category').value=d.category;
+            var editCatSel=document.getElementById('edit_port_category');
+            var catFound=false;
+            for(var i=0;i<editCatSel.options.length;i++){if(editCatSel.options[i].value===d.category){catFound=true;break;}}
+            if(!catFound && d.category){var opt=document.createElement('option');opt.value=d.category;opt.textContent=d.category;editCatSel.insertBefore(opt,editCatSel.querySelector('[value=__custom__]'));}
+            editCatSel.value=d.category;
+            document.getElementById('edit_port_category_custom_wrap').style.display='none';editCatSel.style.display='';
             document.getElementById('edit_port_date').value=d.date;
             document.getElementById('edit_port_subtitle').value=d.subtitle;
             document.getElementById('edit_port_description').value=d.description;

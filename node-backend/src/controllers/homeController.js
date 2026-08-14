@@ -190,6 +190,20 @@ const homeController = {
         } catch (error) {
             next(error);
         }
+    },
+
+    eventosPage: async (req, res, next) => {
+        try {
+            const eventos = await Portfolio.getAll();
+            res.render('eventos', {
+                title: 'Eventos - Hablemos de YHWH',
+                page: 'eventos',
+                eventos,
+                layout: false
+            });
+        } catch (error) {
+            next(error);
+        }
     }
 };
 

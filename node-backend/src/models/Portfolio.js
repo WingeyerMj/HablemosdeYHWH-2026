@@ -6,6 +6,11 @@ class Portfolio {
         return rows;
     }
 
+    static async getLatest(limit = 4) {
+        const [rows] = await db.query('SELECT * FROM portfolio ORDER BY event_date DESC, created_at DESC LIMIT ?', [limit]);
+        return rows;
+    }
+
     static async getUpcoming() {
         const [rows] = await db.query(
             'SELECT * FROM portfolio WHERE event_date >= CURDATE() AND is_published = TRUE ORDER BY event_date ASC'
@@ -54,6 +59,11 @@ class Portfolio {
     static async count() {
         const [rows] = await db.query('SELECT COUNT(*) as total FROM portfolio');
         return rows[0].total;
+    }
+
+    static async getCategories() {
+        const [rows] = await db.query("SELECT DISTINCT category FROM portfolio WHERE category IS NOT NULL AND category != '' ORDER BY category");
+        return rows.map(r => r.category);
     }
 }
 

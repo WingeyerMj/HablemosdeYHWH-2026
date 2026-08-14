@@ -79,6 +79,11 @@ const adminController = {
                 console.warn('⚠️ No se pudieron cargar secciones dinámicas para dashboard:', e.message);
             }
 
+            let eventCategories = [];
+            try {
+                eventCategories = await Portfolio.getCategories();
+            } catch(e) {}
+
             res.render('admin/dashboard', {
                 layout: 'admin/layout',
                 parashot,
@@ -87,7 +92,8 @@ const adminController = {
                 testimonials,
                 pricing,
                 sections,
-                dashboardDynamicSections
+                dashboardDynamicSections,
+                eventCategories
             });
         } catch (error) {
             next(error);
