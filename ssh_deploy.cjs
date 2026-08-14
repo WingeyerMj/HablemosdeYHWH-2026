@@ -2,27 +2,33 @@ const { Client } = require('ssh2');
 
 const conn = new Client();
 conn.on('ready', () => {
-  console.log('Conectado al servidor - Iniciando deploy...');
+  console.log('Conectado al servidor - Forzando deploy...');
   
   const commands = [
-    'cd /var/www/hablemos_yhwh && git pull origin main 2>&1',
+    // Stash local changes and clean untracked files
+    'cd /var/www/hablemos_yhwh',
+    'git stash --include-untracked 2>&1',
+    'git checkout main 2>&1',
+    'git pull origin main 2>&1',
+    'echo "=== GIT PULL COMPLETADO ==="',
+    // Install dependencies
     'cd /var/www/hablemos_yhwh/node-backend && npm install --production 2>&1',
+    'echo "=== NPM INSTALL COMPLETADO ==="',
+    // Restart the app
     'pm2 restart hablemos-web 2>&1',
+    'echo "=== PM2 RESTART COMPLETADO ==="',
     'pm2 status 2>&1'
-  ].join(' && echo "=== SIGUIENTE ===" && ');
+  ].join(' && ');
   
   conn.exec(commands, (err, stream) => {
     if (err) throw err;
     let output = '';
     stream.on('close', (code) => {
-      console.log(output);
       console.log('\n--- Deploy finalizado con código:', code, '---');
       conn.end();
     }).on('data', (data) => {
-      output += data;
       process.stdout.write(data.toString());
     }).stderr.on('data', (data) => {
-      output += data;
       process.stderr.write(data.toString());
     });
   });
