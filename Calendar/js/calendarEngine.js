@@ -46,13 +46,15 @@ export function getLunisolarMonthView(year, baseMonthIndex, monthOffset) {
 
   // ------------------------------------------------------------
   // Generar días del mes en UTC puro
+  // El mes comienza en Rosh Jodesh (día de declaración/astilla) y termina el día anterior al siguiente Rosh Jodesh
+  // (incluyendo el día de luna 0% / conjunción al final del mes)
   // ------------------------------------------------------------
 
-  const start = new Date(month.roshJodes); // UTC
-  start.setUTCDate(start.getUTCDate() + 1); // +1: conjunción → astilla (día de declaración Rosh Jodesh)
+  const rj = new Date(month.roshJodes);
+  const start = new Date(Date.UTC(rj.getUTCFullYear(), rj.getUTCMonth(), rj.getUTCDate()));
 
-  const end = new Date(month.next);        // UTC
-  end.setUTCDate(end.getUTCDate() + 1);
+  const nxt = new Date(month.next);
+  const end = new Date(Date.UTC(nxt.getUTCFullYear(), nxt.getUTCMonth(), nxt.getUTCDate()));
 
   const days = [];
   let cursor = new Date(start);
