@@ -11,7 +11,7 @@ const db = require('../config/db');
 const homeController = {
     index: async (req, res, next) => {
         try {
-            let allDynamicSections = [], latestParashot = [], portfolio = [], team = [], testimonials = [], pricingRaw = [], siteSettings = {};
+            let allDynamicSections = [], latestParashot = [], portfolio = [], team = [], testimonials = [], pricingRaw = [], siteSettings = {}, eventCategories = [];
             const sectionsObj = {};
 
             try {
@@ -38,6 +38,7 @@ const homeController = {
                 allDynamicSections = await DynamicSection.getAll();
                 latestParashot = await Parasha.getLatest(6);
                 portfolio = await Portfolio.getPublished();
+                eventCategories = await Portfolio.getCategories();
                 team = await Team.getAll();
                 testimonials = await Testimonial.getAll();
                 pricingRaw = await Pricing.getAll();
@@ -92,6 +93,7 @@ const homeController = {
                 sections: sectionsObj,
                 services: latestParashot,
                 portfolio: portfolio,
+                eventCategories: eventCategories,
                 team: team,
                 testimonials: testimonials,
                 pricing: pricing,
