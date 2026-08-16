@@ -193,21 +193,62 @@
                         <p><%= (sections.Eventos && sections.Eventos.subtitle) || 'Próximos eventos programados' %></p>
                     </div>
                     <div class="container">
-                        <div class="isotope-layout" data-default-filter="*" data-layout="masonry" data-sort="original-order">
-                            <ul class="portfolio-filters isotope-filters" data-aos="fade-up" data-aos-delay="100">
-                                <li data-filter="*" class="filter-active">Todos</li>
-                                <% if (typeof eventCategories !== 'undefined' && eventCategories.length > 0) { %>
-                                    <% eventCategories.forEach(cat => { %>
-                                        <li data-filter=".<%= cat.replace(/\s+/g, '-').toLowerCase() %>"><%= cat %></li>
+                        <%
+                            // Helper para normalizar la categoría y su slug
+                            function getCatDetails(rawCat) {
+                                if (!rawCat || rawCat.trim() === '' || rawCat === 'filter-app' || rawCat.toLowerCase() === 'moedin' || rawCat.toLowerCase() === 'moedim') {
+                                    return { slug: 'moedim', name: 'Moedim' };
+                                }
+                                if (rawCat === 'filter-product' || rawCat.toLowerCase() === 'especiales') {
+                                    return { slug: 'especiales', name: 'Especiales' };
+                                }
+                                const name = rawCat.trim();
+                                const slug = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+                                return { slug: slug || 'general', name: name };
+                            }
+
+                            // Construir mapa de categorías presentes en los eventos
+                            const availableCategories = new Map();
+                            if (typeof portfolio !== 'undefined' && portfolio && portfolio.length > 0) {
+                                portfolio.forEach(item => {
+                                    const cat = getCatDetails(item.category);
+                                    if (!availableCategories.has(cat.slug)) {
+                                        availableCategories.set(cat.slug, { name: cat.name, count: 1 });
+                                    } else {
+                                        availableCategories.get(cat.slug).count++;
+                                    }
+                                });
+                            }
+                        %>
+
+                        <!-- Botones de Filtro por Categoría -->
+                        <div class="d-flex justify-content-center mb-4" data-aos="fade-up" data-aos-delay="100">
+                            <div class="event-filter-container">
+                                <ul class="portfolio-filters isotope-filters event-filter-list mb-0 p-0 d-flex flex-wrap justify-content-center gap-2 list-unstyled">
+                                    <li data-filter="*" class="filter-active event-filter-btn">
+                                        <i class="bi bi-grid-fill me-1"></i> Todos
+                                        <span class="badge-count ms-1"><%= (typeof portfolio !== 'undefined' && portfolio) ? portfolio.length : 0 %></span>
+                                    </li>
+                                    <% availableCategories.forEach((catData, catSlug) => { %>
+                                        <li data-filter=".cat-<%= catSlug %>" class="event-filter-btn">
+                                            <i class="bi bi-tag-fill me-1"></i> <%= catData.name %>
+                                            <span class="badge-count ms-1"><%= catData.count %></span>
+                                        </li>
                                     <% }) %>
-                                <% } %>
-                            </ul>
-                            <div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200">
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="row gy-4 isotope-container" id="eventos-cards-grid" data-aos="fade-up" data-aos-delay="200">
+                            <% if (typeof portfolio !== 'undefined' && portfolio && portfolio.length > 0) { %>
                                 <% portfolio.forEach(item => { %>
-                                    <div class="col-lg-3 col-md-6 portfolio-item isotope-item <%= item.category ? item.category.replace(/\s+/g, '-').toLowerCase() : '' %>">
-                                        <a href="/eventos/<%= item.id %>" class="evento-card-link" style="text-decoration: none; color: inherit;">
-                                            <div class="evento-card" style="background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: transform 0.3s ease, box-shadow 0.3s ease; height: 100%;">
-                                                <div style="width: 100%; height: 200px; overflow: hidden; background: #1a1a1a;">
+                                    <% 
+                                        const cat = getCatDetails(item.category);
+                                    %>
+                                    <div class="col-lg-3 col-md-6 portfolio-item isotope-item cat-<%= cat.slug %> <%= cat.slug === 'moedim' ? 'filter-app moedin' : '' %> <%= cat.slug === 'especiales' ? 'filter-product especiales' : '' %>">
+                                        <a href="/eventos/<%= item.id %>" class="evento-card-link" style="text-decoration: none; color: inherit; display: block; height: 100%;">
+                                            <div class="evento-card" style="background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: transform 0.3s ease, box-shadow 0.3s ease; height: 100%; display: flex; flex-direction: column;">
+                                                <div style="width: 100%; height: 200px; overflow: hidden; background: #1a1a1a; position: relative;">
                                                     <% if (item.img || item.image_url) { %>
                                                         <img src="<%= item.img || item.image_url %>" alt="<%= item.title %>"
                                                              style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
@@ -216,32 +257,89 @@
                                                             <i class="bi bi-calendar-event text-muted" style="font-size: 3rem;"></i>
                                                         </div>
                                                     <% } %>
+                                                    <span style="position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.75); color: #d4a853; border: 1px solid rgba(212,168,83,0.6); font-size: 0.72rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                                                        <%= cat.name %>
+                                                    </span>
                                                 </div>
-                                                <div style="padding: 16px;">
+                                                <div style="padding: 16px; flex-grow: 1; display: flex; flex-direction: column;">
                                                     <h5 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; color: #222; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"><%= item.title %></h5>
                                                     <% if (item.event_date) { %>
-                                                        <p style="font-size: 0.8rem; color: #d4a853; font-weight: 600; margin-bottom: 4px;">
+                                                        <p style="font-size: 0.8rem; color: #c49545; font-weight: 600; margin-bottom: 6px;">
                                                             <i class="bi bi-calendar3 me-1"></i>
                                                             <%= new Date(item.event_date).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }) %>
                                                         </p>
                                                     <% } %>
                                                     <% if (item.description) { %>
-                                                        <p style="font-size: 0.8rem; color: #888; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"><%= item.description %></p>
+                                                        <p style="font-size: 0.8rem; color: #777; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"><%= item.description %></p>
                                                     <% } %>
                                                 </div>
                                             </div>
                                         </a>
                                     </div>
                                 <% }) %>
-                            </div>
+                            <% } %>
                         </div>
+
+                        <!-- Mensaje cuando una categoría no tiene eventos -->
+                        <div id="no-events-category-msg" class="text-center py-5" style="display: none;">
+                            <i class="bi bi-calendar-x text-muted" style="font-size: 2.5rem;"></i>
+                            <p class="text-muted mt-2 mb-0">No se encontraron eventos en esta categoría.</p>
+                        </div>
+
                         <div class="text-center mt-4" data-aos="fade-up">
                             <a href="/eventos"
-                                style="background-color: #d4b895; color: #fff; padding: 12px 40px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600;">Ver
+                                style="background: linear-gradient(135deg, #d4a853, #c49545); color: #fff; padding: 12px 40px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600; box-shadow: 0 4px 15px rgba(212,168,83,0.3); transition: all 0.3s ease;">Ver
                                 más</a>
                         </div>
                     </div>
+
                     <style>
+                        .event-filter-container {
+                            background: #f8f6f2;
+                            padding: 6px 8px;
+                            border-radius: 50px;
+                            border: 1px solid #ebdccb;
+                            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+                            display: inline-block;
+                        }
+                        .event-filter-btn {
+                            cursor: pointer;
+                            padding: 8px 20px;
+                            border-radius: 30px;
+                            font-size: 0.88rem;
+                            font-weight: 600;
+                            color: #6b5847;
+                            background: transparent;
+                            transition: all 0.25s ease-in-out;
+                            user-select: none;
+                            display: inline-flex;
+                            align-items: center;
+                            border: 1px solid transparent;
+                        }
+                        .event-filter-btn:hover {
+                            background: #ede3d7;
+                            color: #2b231d;
+                            transform: translateY(-1px);
+                        }
+                        .event-filter-btn.filter-active {
+                            background: linear-gradient(135deg, #d4a853, #b8860b) !important;
+                            color: #fff !important;
+                            border-color: transparent !important;
+                            box-shadow: 0 4px 12px rgba(212, 168, 83, 0.4) !important;
+                        }
+                        .event-filter-btn .badge-count {
+                            background: rgba(0, 0, 0, 0.08);
+                            color: inherit;
+                            font-size: 0.75rem;
+                            padding: 2px 8px;
+                            border-radius: 12px;
+                            font-weight: 700;
+                            transition: background 0.2s ease;
+                        }
+                        .event-filter-btn.filter-active .badge-count {
+                            background: rgba(255, 255, 255, 0.28);
+                            color: #fff;
+                        }
                         .evento-card:hover {
                             transform: translateY(-6px) !important;
                             box-shadow: 0 12px 30px rgba(0,0,0,0.15) !important;
@@ -250,6 +348,37 @@
                             transform: scale(1.08);
                         }
                     </style>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const filterBtns = document.querySelectorAll('#portfolio .event-filter-btn');
+                            const eventCards = document.querySelectorAll('#portfolio .portfolio-item');
+                            const emptyMsg = document.getElementById('no-events-category-msg');
+
+                            filterBtns.forEach(btn => {
+                                btn.addEventListener('click', function(e) {
+                                    filterBtns.forEach(b => b.classList.remove('filter-active'));
+                                    this.classList.add('filter-active');
+
+                                    const targetFilter = this.getAttribute('data-filter');
+                                    let matchCount = 0;
+
+                                    eventCards.forEach(card => {
+                                        if (targetFilter === '*' || card.matches(targetFilter)) {
+                                            card.style.display = '';
+                                            matchCount++;
+                                        } else {
+                                            card.style.display = 'none';
+                                        }
+                                    });
+
+                                    if (emptyMsg) {
+                                        emptyMsg.style.display = (matchCount === 0) ? 'block' : 'none';
+                                    }
+                                });
+                            });
+                        });
+                    </script>
                 </section>
 
 

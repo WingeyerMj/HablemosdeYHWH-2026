@@ -4,6 +4,7 @@ import { lunisolar2025 } from "./data/year2025.js";
 import { lunisolar2026 } from "./data/year2026.js";
 import { lunisolar2027 } from "./data/year2027.js";
 import { lunisolar2028 } from "./data/year2028.js";
+import { getMoonPhaseInfo } from "./moonPhase.js";
 
 // ------------------------------------------------------------
 // 1. Cargar año lunisolar
@@ -46,8 +47,8 @@ export function getLunisolarMonthView(year, baseMonthIndex, monthOffset) {
 
   // ------------------------------------------------------------
   // Generar días del mes en UTC puro
-  // El mes comienza en Rosh Jodesh (día de declaración/astilla) y termina el día anterior al siguiente Rosh Jodesh
-  // (incluyendo el día de luna 0% / conjunción al final del mes)
+  // Regla: Los meses comienzan con la luna visible al ojo humano (iluminación >= 1%).
+  // Si la luminosidad es inferior a 1% (0%), pertenece al mes anterior.
   // ------------------------------------------------------------
 
   const rj = new Date(month.roshJodes);
@@ -62,6 +63,17 @@ export function getLunisolarMonthView(year, baseMonthIndex, monthOffset) {
   while (cursor < end) {
     days.push(new Date(cursor));
     cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+
+  // Asegurar que el inicio del mes sea SIEMPRE con luna visible (>= 1%)
+  while (days.length > 0) {
+    const firstMoon = getMoonPhaseInfo(days[0]);
+    const illum = typeof firstMoon.illumination === "string" ? parseFloat(firstMoon.illumination) : firstMoon.illumination;
+    if (illum < 1) {
+      days.shift(); // Días con 0% de luz pertenecen al mes anterior
+    } else {
+      break;
+    }
   }
 
   return {
