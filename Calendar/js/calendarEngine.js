@@ -47,8 +47,7 @@ export function getLunisolarMonthView(year, baseMonthIndex, monthOffset) {
 
   // ------------------------------------------------------------
   // Generar días del mes en UTC puro
-  // Regla: Los meses comienzan con la luna visible al ojo humano (iluminación >= 1%).
-  // Si la luminosidad es inferior a 1% (0%), pertenece al mes anterior.
+  // Regla: Los meses comienzan con la conjunción / Luna Nueva (0% de luminosidad)
   // ------------------------------------------------------------
 
   const rj = new Date(month.roshJodes);
@@ -63,17 +62,6 @@ export function getLunisolarMonthView(year, baseMonthIndex, monthOffset) {
   while (cursor < end) {
     days.push(new Date(cursor));
     cursor.setUTCDate(cursor.getUTCDate() + 1);
-  }
-
-  // Asegurar que el inicio del mes sea SIEMPRE con luna visible (>= 1%)
-  while (days.length > 0) {
-    const firstMoon = getMoonPhaseInfo(days[0]);
-    const illum = typeof firstMoon.illumination === "string" ? parseFloat(firstMoon.illumination) : firstMoon.illumination;
-    if (illum < 1) {
-      days.shift(); // Días con 0% de luz pertenecen al mes anterior
-    } else {
-      break;
-    }
   }
 
   return {
