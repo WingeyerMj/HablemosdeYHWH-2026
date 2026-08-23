@@ -37,7 +37,7 @@ const homeController = {
                 // 2. Cargar otros datos dinámicos
                 allDynamicSections = await DynamicSection.getAll();
                 latestParashot = await Parasha.getLatest(6);
-                portfolio = await Portfolio.getPublished();
+                portfolio = await Portfolio.getLatest(4);
                 eventCategories = await Portfolio.getCategories();
                 team = await Team.getAll();
                 testimonials = await Testimonial.getAll();
