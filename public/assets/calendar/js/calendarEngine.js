@@ -59,7 +59,7 @@ export function getLunisolarMonthView(year, baseMonthIndex, monthOffset) {
   const days = [];
   let cursor = new Date(start);
 
-  while (cursor < end) {
+  while (cursor <= end) {
     days.push(new Date(cursor));
     cursor.setUTCDate(cursor.getUTCDate() + 1);
   }
