@@ -289,8 +289,8 @@ function renderCalendar() {
     const hamatzoDiff = Math.round((gregDate - hamatzoDate) / msPerDay);
     const sukkotDiff = Math.round((gregDate - sukkotDate) / msPerDay);
 
-    // Pesaj
-    if (isSameDay(gregDate, pesajDate)) {
+    // Pesaj (Mes 1 / Abib)
+    if (month.index === 0 && isSameDay(gregDate, pesajDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label pesaj-label";
       label.textContent = "Pesaj";
@@ -298,8 +298,8 @@ function renderCalendar() {
       cell.classList.add("pesaj");
     }
 
-    // Hamatzo (7 días)
-    if (hamatzoDiff >= 0 && hamatzoDiff < 7) {
+    // Hamatzo (7 días en Mes 1 / Abib)
+    if (month.index === 0 && hamatzoDiff >= 0 && hamatzoDiff < 7) {
       cell.classList.add("hamatzo");
       if (hamatzoDiff === 0) {
         const label = document.createElement("div");
@@ -309,8 +309,8 @@ function renderCalendar() {
       }
     }
 
-    // Bikurim (puede coincidir con Hamatzo)
-    if (isSameDay(gregDate, bikurimDate)) {
+    // Bikurim (puede coincidir con Hamatzo en Mes 1)
+    if (month.index === 0 && isSameDay(gregDate, bikurimDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label bikurim-label";
       label.textContent = "Bikurim";
@@ -319,7 +319,7 @@ function renderCalendar() {
     }
 
     // Yom Teruah (Mes 7, Día 1 / Rosh Jodesh)
-    if (isSameDay(gregDate, yomTeruahDate)) {
+    if (month.index === 6 && isSameDay(gregDate, yomTeruahDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label yomteruah-label";
       label.textContent = "Yom Teruah";
@@ -327,8 +327,8 @@ function renderCalendar() {
       cell.classList.add("yomteruah");
     }
 
-    // Yom Kippur
-    if (isSameDay(gregDate, yomKippurDate)) {
+    // Yom Kippur (Mes 7)
+    if (month.index === 6 && isSameDay(gregDate, yomKippurDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label yomkippur-label";
       label.textContent = "Yom Kippur";
@@ -336,8 +336,8 @@ function renderCalendar() {
       cell.classList.add("yomkippur");
     }
 
-    // Sukkot (7 días)
-    if (sukkotDiff >= 0 && sukkotDiff < 7) {
+    // Sukkot (7 días en Mes 7)
+    if (month.index === 6 && sukkotDiff >= 0 && sukkotDiff < 7) {
       cell.classList.add("sukkot");
       if (sukkotDiff === 0) {
         const label = document.createElement("div");
@@ -347,8 +347,8 @@ function renderCalendar() {
       }
     }
 
-    // Shemini Atzeret
-    if (isSameDay(gregDate, sheminiAtzeretDate)) {
+    // Shemini Atzeret (Mes 7)
+    if (month.index === 6 && isSameDay(gregDate, sheminiAtzeretDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label shemini-label";
       label.textContent = "Shemini Atzeret";
@@ -356,8 +356,8 @@ function renderCalendar() {
       cell.classList.add("sheminiatzeret");
     }
 
-    // Shavuot (Detección por fecha)
-    if (isSameDay(gregDate, shavuotDate)) {
+    // Shavuot (Detección por fecha en Mes 3)
+    if (month.index === 2 && isSameDay(gregDate, shavuotDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label shavuot-label";
       label.textContent = "Shavuot";
@@ -366,7 +366,7 @@ function renderCalendar() {
     }
 
     // --- Cuenta de los días a Shavuot (Omer) ---
-    if (bikurimDate && shavuotDate) {
+    if (bikurimDate && shavuotDate && !isRoshJodesh && !isRoshHashana) {
       const d1 = Date.UTC(gregDate.getUTCFullYear(), gregDate.getUTCMonth(), gregDate.getUTCDate());
       const dB = Date.UTC(bikurimDate.getUTCFullYear(), bikurimDate.getUTCMonth(), bikurimDate.getUTCDate());
 
@@ -377,7 +377,12 @@ function renderCalendar() {
         const omerTag = document.createElement("div");
         omerTag.className = "omer-row";
         omerTag.textContent = `Omer ${diffDays + 1}`;
-        cell.insertBefore(omerTag, cell.querySelector('.moon-info'));
+        const moonEl = cell.querySelector('.moon-info');
+        if (moonEl) {
+          cell.insertBefore(omerTag, moonEl);
+        } else {
+          cell.appendChild(omerTag);
+        }
       }
     }
 
