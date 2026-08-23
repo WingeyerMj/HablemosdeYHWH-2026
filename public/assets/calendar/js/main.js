@@ -276,7 +276,11 @@ function renderCalendar() {
 
     cell.appendChild(lunisolarDayEl);
     cell.appendChild(gregorianDayEl);
-    cell.appendChild(moonContainer);
+
+    // No mostrar fase lunar en la celda de Rosh Jodesh / Rosh Hashaná
+    if (!isRoshJodesh && !isRoshHashana) {
+      cell.appendChild(moonContainer);
+    }
 
     // 9.3 Inyectar Etiquetas de Festividades
 
