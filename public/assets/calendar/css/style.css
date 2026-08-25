@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------
-   RESET BÁSICO
+   RESET BÁSICO & CONTENEDORES
 ---------------------------------------------------------- */
 * {
   margin: 0;
@@ -7,37 +7,109 @@
   box-sizing: border-box;
 }
 
-body {
-  font-family: system-ui, sans-serif;
-  background: var(--bg);
+body,
+.calendar-page,
+.calendar-page .main,
+.calendar-page .section {
+  font-family: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
+  background-color: var(--bg) !important;
   color: var(--text);
-  transition: background 0.3s, color 0.3s;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 /* ----------------------------------------------------------
-   TEMAS
+   TEMAS: OSCURO (NOCHE) Y CLARO (DÍA CON FONDO MARRÓN Y CELDAS GRISES)
 ---------------------------------------------------------- */
-:root[data-theme="light"] {
-  --bg: #CCCCCC;
-  --text: #222;
-  --cell-bg: #ffffff;
-  --cell-border: #d0d0d0;
-  --today-bg: #dff0ff;
-  --rosh-bg: #fff3cd;
-  --rosh-border: #ffcc00;
-  --surface-1: #ffffff;
-  --surface-2: #e9ecef;
-  --card-bg: #ffffff;
+
+/* ==========================================================
+   MODO OSCURO (NOCHE - Diseño original azul/cian)
+========================================================== */
+:root,
+:root[data-theme="dark"] {
+  --bg: #121316;
+  --bg-global: #121316;
+  --text: #e6e6e6;
+  --text-muted: #9aa0a6;
+  --cell-bg: #1e2025;
+  --cell-border: #32363f;
+  --cell-hover-border: #4fc3ff;
+  --surface-1: #16181d;
+  --surface-2: #242830;
+  --card-bg: #1e2025;
+  
+  --today-border: #00bfe6;
+  --today-bg: #1e2025;
+  --today-shadow: 0 0 15px rgba(0, 191, 230, 0.6), inset 0 0 8px rgba(0, 191, 230, 0.2);
+  --today-badge-bg: #00bfe6;
+  --today-badge-color: #000000;
+  
+  --rosh-bg: #4a3700;
+  --rosh-border: #d49b00;
+  --rosh-label-bg: #d49b00;
+  --rosh-label-color: #000000;
+  
+  --header-title-color: #ffffff;
+  --header-subtitle-color: rgba(255, 255, 255, 0.7);
+  --weekdays-text: #e6e6e6;
+  --shabat-text: #4fc3ff;
+  
+  --nav-arrow-bg: linear-gradient(145deg, #0a2a4f, #0d3b7a);
+  --nav-arrow-border: transparent;
+  --nav-arrow-icon: #4fc3ff;
+  --nav-arrow-shadow: 0 0 12px rgba(0, 150, 255, 0.7), inset 0 0 8px rgba(0, 150, 255, 0.4);
+  --nav-arrow-hover-shadow: 0 0 18px rgba(0, 180, 255, 1), inset 0 0 10px rgba(0, 180, 255, 0.6);
+  
+  --download-btn-bg: linear-gradient(145deg, rgba(10, 42, 79, 0.8), rgba(13, 59, 122, 0.8));
+  --download-btn-border: rgba(79, 195, 255, 0.4);
+  --download-btn-color: #4fc3ff;
+  --download-btn-hover-bg: linear-gradient(145deg, rgba(13, 59, 122, 0.95), rgba(20, 80, 160, 0.95));
+  --download-btn-hover-border: rgba(79, 195, 255, 0.7);
+  --download-btn-hover-color: #ffffff;
 }
 
-:root[data-theme="dark"] {
-  --bg: #1a1a1a;
-  --text: #e6e6e6;
-  --cell-bg: #2a2a2a;
-  --cell-border: #444;
-  --today-bg: #00334d;
-  --rosh-bg: #4d3b00;
-  --rosh-border: #ffcc00;
+/* ==========================================================
+   MODO CLARO (DÍA - Fondo Marrón Oscuro Cálido y Celdas Gris Suave)
+========================================================== */
+:root[data-theme="light"] {
+  --bg: #4e3d2f; /* Fondo marrón cálido elegante */
+  --bg-global: #4e3d2f;
+  --text: #1a1612;
+  --text-muted: #4d4439;
+  --cell-bg: #c9c2b7; /* Celdas en color gris suave */
+  --cell-border: #756857; /* Bordes más oscuros y nítidos */
+  --cell-hover-border: #382b20;
+  --surface-1: #382b20; /* Fila de días en marrón profundo */
+  --surface-2: #48382b;
+  --card-bg: #c9c2b7;
+  
+  --today-border: #005f9e; /* Azul oscuro más visible y no pálido */
+  --today-bg: #c9c2b7;
+  --today-shadow: 0 0 12px rgba(0, 95, 158, 0.45);
+  --today-badge-bg: #005f9e;
+  --today-badge-color: #ffffff;
+  
+  --rosh-bg: #a88a44; /* Tono ocre más oscuro y definido */
+  --rosh-border: #694f13;
+  --rosh-label-bg: #694f13;
+  --rosh-label-color: #ffffff;
+  
+  --header-title-color: #fdfbf7;
+  --header-subtitle-color: #ded3c3;
+  --weekdays-text: #f0e8dd;
+  --shabat-text: #d4b895;
+  
+  --nav-arrow-bg: linear-gradient(145deg, #3d2f23, #2e2319);
+  --nav-arrow-border: #735e49;
+  --nav-arrow-icon: #d4b895;
+  --nav-arrow-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --nav-arrow-hover-shadow: 0 6px 16px rgba(0, 0, 0, 0.6), 0 0 10px rgba(212, 184, 149, 0.3);
+  
+  --download-btn-bg: linear-gradient(145deg, #3d2f23, #2e2319);
+  --download-btn-border: #735e49;
+  --download-btn-color: #f0e8dd;
+  --download-btn-hover-bg: linear-gradient(145deg, #523f2f, #3d2f23);
+  --download-btn-hover-border: #d4b895;
+  --download-btn-hover-color: #ffffff;
 }
 
 /* ----------------------------------------------------------
@@ -61,17 +133,25 @@ body {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-bottom: 15px;
+  margin-bottom: 18px;
 }
 
 .calendar-header h1 {
-  font-size: 1.6rem;
-  margin-bottom: 4px;
+  font-family: "Montserrat", "Poppins", sans-serif;
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--header-title-color);
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .calendar-header h2 {
-  font-size: 1rem;
-  opacity: 0.8;
+  font-family: "Roboto", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--header-subtitle-color);
+  letter-spacing: 0.3px;
 }
 
 button {
@@ -100,10 +180,33 @@ button {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   width: 100%;
+  background: var(--surface-1);
+  border: 1px solid var(--cell-border);
+  border-radius: 10px;
+  padding: 6px 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  font-family: "Montserrat", "Segoe UI", sans-serif;
+  margin-bottom: 12px;
+}
+
+.weekdays-row > div {
   text-align: center;
-  margin-bottom: 10px;
-  font-weight: bold;
-  opacity: 0.8;
+  padding: 10px 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--weekdays-text);
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.weekdays-row > div:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.weekdays-row > div:last-child {
+  color: var(--shabat-text);
+  font-weight: 700;
 }
 
 /* ----------------------------------------------------------
@@ -114,6 +217,17 @@ button {
   grid-template-columns: repeat(7, 1fr);
   gap: 10px;
   width: 100%;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.calendar-grid.fade-out {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.calendar-grid.fade-in {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ----------------------------------------------------------
@@ -121,55 +235,81 @@ button {
 ---------------------------------------------------------- */
 .calendar-cell {
   background: var(--cell-bg);
-  border: 1px solid var(--cell-border);
-  padding: 6px;
-  border-radius: 6px;
-  min-height: 90px;
+  border: 1.5px solid var(--cell-border);
+  padding: 8px;
+  border-radius: 8px;
+  min-height: 96px;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.calendar-cell:hover:not(.empty) {
+  border-color: var(--cell-hover-border);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
 }
 
 .calendar-cell.empty {
   background: transparent;
   border: none;
+  box-shadow: none;
+  pointer-events: none;
 }
 
+/* DÍA ACTUAL (HOY) */
 .today {
-  border: 2px solid #00e5ff !important;
-  box-shadow: 0 0 15px rgba(0, 229, 255, 0.6), inset 0 0 10px rgba(0, 229, 255, 0.2) !important;
-  background: rgba(0, 229, 255, 0.12) !important;
+  border: 2.5px solid var(--today-border) !important;
+  box-shadow: var(--today-shadow) !important;
+  background: var(--cell-bg) !important;
   z-index: 2;
+}
+
+.today .lunisolar-day {
+  color: var(--text) !important;
+}
+
+.today .gregorian-day,
+.today .moon-info span:last-child {
+  color: var(--text-muted) !important;
 }
 
 .today-badge {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  background: #00e5ff;
-  color: #000;
+  top: 5px;
+  right: 5px;
+  background: var(--today-badge-bg);
+  color: var(--today-badge-color);
   font-size: 0.65rem;
-  font-weight: bold;
+  font-weight: 800;
   padding: 2px 6px;
   border-radius: 4px;
-  box-shadow: 0 0 8px rgba(0, 229, 255, 0.8);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   z-index: 3;
 }
 
 /* ----------------------------------------------------------
-   DÍAS
+   DÍAS & TIPOGRAFÍA
 ---------------------------------------------------------- */
 .lunisolar-day {
-  font-size: 1.2rem;
-  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
 }
 
 .gregorian-day {
-  font-size: 0.9rem;
-  opacity: 0.8;
+  font-family: "Roboto", sans-serif;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+  font-weight: 500;
 }
 
 /* ----------------------------------------------------------
@@ -180,10 +320,18 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-top: 4px;
 }
 
 .moon-icon {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.moon-info span:last-child {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 /* ----------------------------------------------------------
@@ -191,419 +339,432 @@ button {
 ---------------------------------------------------------- */
 .roshjodesh {
   background: var(--rosh-bg);
-  border: 2px solid #ffffff;
-  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.3);
+  border: 2.5px solid var(--rosh-border);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.15);
+  padding-top: 24px;
 }
 
 .rosh-label {
   position: absolute;
-  top: 4px;
+  top: 5px;
   left: 50%;
   transform: translateX(-50%);
-  background: #ffffff;
-  color: #000;
-  font-size: 0.7rem;
-  font-weight: bold;
+  background: var(--rosh-label-bg);
+  color: var(--rosh-label-color);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 800;
   padding: 2px 8px;
   border-radius: 4px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   text-transform: uppercase;
-}
-
-/* Estilos para Etiquetas de Festividades */
-.holiday-label {
-  position: absolute;
-  top: 4px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: bold;
-  padding: 2px 8px;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.5px;
   white-space: nowrap;
 }
 
-.pesaj-label {
-  background: #ff3131;
-  color: #fff !important;
-  box-shadow: 0 0 12px rgba(255, 49, 49, 0.8);
-  text-transform: uppercase;
+/* ----------------------------------------------------------
+   ETIQUETAS Y BORDES BASE DE FESTIVIDADES
+---------------------------------------------------------- */
+.holiday-label {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+  white-space: nowrap;
   letter-spacing: 0.5px;
+  z-index: 4;
+}
+
+.pesaj-label {
+  background: #9c1313;
+  color: #fff !important;
+  text-transform: uppercase;
 }
 
 .hamatzo-label {
-  background: #ff5e00;
+  background: #b33e00;
   color: #fff !important;
-  box-shadow: 0 0 12px rgba(255, 94, 0, 0.8);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .bikurim-label {
-  background: #39ff14;
-  color: #000 !important;
-  box-shadow: 0 0 12px rgba(57, 255, 20, 0.8);
+  background: #175e24;
+  color: #fff !important;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .shavuot-label {
-  background: #00d4ff;
-  color: #000 !important;
-  box-shadow: 0 0 12px rgba(0, 212, 255, 0.8);
+  background: #095273;
+  color: #fff !important;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .yomteruah-label {
-  background: #bc13fe;
+  background: #5b0f82;
   color: #fff !important;
-  box-shadow: 0 0 12px rgba(188, 19, 254, 0.8);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .yomkippur-label {
-  background: #fff01f;
-  color: #000 !important;
-  box-shadow: 0 0 12px rgba(255, 240, 31, 0.8);
+  background: #7d5e00;
+  color: #fff !important;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .sukkot-label {
-  background: #39ff14;
-  color: #000 !important;
-  box-shadow: 0 0 12px rgba(57, 255, 20, 0.8);
+  background: #175e24;
+  color: #fff !important;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .shemini-label {
-  background: #00ffff;
-  color: #000 !important;
-  box-shadow: 0 0 12px rgba(0, 255, 255, 0.8);
+  background: #095273;
+  color: #fff !important;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .pesaj {
-  border: 2px solid #ff3131;
-  box-shadow: inset 0 0 8px rgba(255, 49, 49, 0.2);
+  border: 2.5px solid #9c1313;
+  box-shadow: inset 0 0 8px rgba(156, 19, 19, 0.25);
+  padding-top: 24px;
 }
 
 .hamatzo {
-  border: 2px dashed #ff5e00;
-  box-shadow: inset 0 0 8px rgba(255, 94, 0, 0.2);
+  border: 2.5px dashed #b33e00;
+  box-shadow: inset 0 0 8px rgba(179, 62, 0, 0.25);
+  padding-top: 24px;
 }
 
 .bikurim {
-  border: 2px solid #39ff14;
-  box-shadow: inset 0 0 8px rgba(57, 255, 20, 0.2);
+  border: 2.5px solid #175e24;
+  box-shadow: inset 0 0 8px rgba(23, 94, 36, 0.25);
+  padding-top: 24px;
 }
 
 .shavuot {
-  border: 2px solid #00d4ff;
-  box-shadow: inset 0 0 8px rgba(0, 212, 255, 0.2);
+  border: 2.5px solid #095273;
+  box-shadow: inset 0 0 8px rgba(9, 82, 115, 0.25);
+  padding-top: 24px;
 }
 
 .yomteruah {
-  border: 2px solid #bc13fe;
-  box-shadow: inset 0 0 8px rgba(188, 19, 254, 0.2);
+  border: 2.5px solid #5b0f82;
+  box-shadow: inset 0 0 8px rgba(91, 15, 130, 0.25);
+  padding-top: 24px;
 }
 
 .yomkippur {
-  border: 2px solid #fff01f;
-  box-shadow: inset 0 0 8px rgba(255, 240, 31, 0.2);
+  border: 2.5px solid #7d5e00;
+  box-shadow: inset 0 0 8px rgba(125, 94, 0, 0.25);
+  padding-top: 24px;
 }
 
 .sukkot {
-  border: 2px solid #39ff14;
-  box-shadow: inset 0 0 8px rgba(57, 255, 20, 0.2);
+  border: 2.5px solid #175e24;
+  box-shadow: inset 0 0 8px rgba(23, 94, 36, 0.25);
+  padding-top: 24px;
 }
 
-.shemini-atzeret {
-  border: 2px solid #00ffff;
-  box-shadow: inset 0 0 8px rgba(0, 255, 255, 0.2);
+.shemini-atzeret,
+.sheminiatzeret {
+  border: 2.5px solid #095273;
+  box-shadow: inset 0 0 8px rgba(9, 82, 115, 0.25);
+  padding-top: 24px;
+}
+
+/* ==========================================================
+   FESTIVIDADES EN MODO CLARO (Celdas Completas Pintadas)
+========================================================== */
+:root[data-theme="light"] .pesaj {
+  background: #c62828 !important;
+  border: 2.5px solid #8e0000 !important;
+}
+:root[data-theme="light"] .pesaj-label {
+  background: #8e0000 !important;
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .pesaj .lunisolar-day {
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .pesaj .gregorian-day,
+:root[data-theme="light"] .pesaj .moon-info span {
+  color: #ffebee !important;
+}
+
+:root[data-theme="light"] .hamatzo {
+  background: #e65100 !important;
+  border: 2.5px dashed #bf360c !important;
+}
+:root[data-theme="light"] .hamatzo-label {
+  background: #bf360c !important;
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .hamatzo .lunisolar-day {
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .hamatzo .gregorian-day,
+:root[data-theme="light"] .hamatzo .moon-info span {
+  color: #fff3e0 !important;
+}
+
+:root[data-theme="light"] .bikurim {
+  border: 2.5px solid #2e7d32 !important;
+}
+:root[data-theme="light"] .bikurim-label {
+  background: #1b5e20 !important;
+  color: #ffffff !important;
+}
+
+:root[data-theme="light"] .yomteruah {
+  background: #6a1b9a !important;
+  border: 2.5px solid #4a148c !important;
+}
+:root[data-theme="light"] .yomteruah-label {
+  background: #4a148c !important;
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .yomteruah .lunisolar-day {
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .yomteruah .gregorian-day,
+:root[data-theme="light"] .yomteruah .moon-info span {
+  color: #f3e5f5 !important;
+}
+
+:root[data-theme="light"] .yomkippur {
+  background: #cf9b17 !important; /* Dorado cálido y luminoso, más claro que marrón */
+  border: 2.5px solid #8c6704 !important;
+}
+:root[data-theme="light"] .yomkippur-label {
+  background: #7a5a02 !important;
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .yomkippur .lunisolar-day {
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .yomkippur .gregorian-day,
+:root[data-theme="light"] .yomkippur .moon-info span {
+  color: #fffde7 !important;
+}
+
+:root[data-theme="light"] .sukkot {
+  background: #2e7d32 !important; /* Verde agradable y destacado */
+  border: 2.5px solid #1b5e20 !important;
+}
+:root[data-theme="light"] .sukkot-label {
+  background: #1b5e20 !important;
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .sukkot .lunisolar-day {
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .sukkot .gregorian-day,
+:root[data-theme="light"] .sukkot .moon-info span {
+  color: #e8f5e9 !important;
+}
+
+:root[data-theme="light"] .shemini-atzeret,
+:root[data-theme="light"] .sheminiatzeret {
+  background: #1565c0 !important; /* Azul destacado y nítido */
+  border: 2.5px solid #0d47a1 !important;
+}
+:root[data-theme="light"] .shemini-label {
+  background: #0d47a1 !important;
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .shemini-atzeret .lunisolar-day,
+:root[data-theme="light"] .sheminiatzeret .lunisolar-day {
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .shemini-atzeret .gregorian-day,
+:root[data-theme="light"] .sheminiatzeret .gregorian-day,
+:root[data-theme="light"] .shemini-atzeret .moon-info span,
+:root[data-theme="light"] .sheminiatzeret .moon-info span {
+  color: #e3f2fd !important;
+}
+
+:root[data-theme="light"] .shavuot {
+  background: #00838f !important;
+  border: 2.5px solid #006064 !important;
+}
+:root[data-theme="light"] .shavuot-label {
+  background: #006064 !important;
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .shavuot .lunisolar-day {
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .shavuot .gregorian-day,
+:root[data-theme="light"] .shavuot .moon-info span {
+  color: #e0f7fa !important;
 }
 
 /* Cuenta del Omer */
 :root[data-theme="light"] .omer-row {
   margin-top: 4px;
   font-size: 0.75rem;
-  font-weight: 600;
-  color: #000;
-  /* Negro en modo claro */
-  background: rgba(41, 128, 185, 0.1);
+  font-weight: 700;
+  color: #ffffff;
+  background: #17496e;
   padding: 2px 6px;
   border-radius: 4px;
   text-align: center;
-  border-left: 3px solid #000;
+  border-left: 3.5px solid #0d2f47;
 }
 
 :root[data-theme="dark"] .omer-row {
   margin-top: 4px;
   font-size: 0.75rem;
-  font-weight: 600;
-  color: #87CEEB;
-  /* Celeste claro en modo oscuro */
-  background: rgba(135, 206, 235, 0.15);
+  font-weight: 700;
+  color: #ffffff;
+  background: #0e466e;
   padding: 2px 6px;
   border-radius: 4px;
   text-align: center;
-  border-left: 3px solid #87CEEB;
+  border-left: 3.5px solid #00bfe6;
 }
 
 /* ----------------------------------------------------------
    ROSH HASHANÁ (EVENTO MAYOR)
 ---------------------------------------------------------- */
 .roshhashana {
-  background: linear-gradient(135deg, #8b0000, #b30000);
+  background: linear-gradient(135deg, #660a14, #85121e);
   color: #fff;
-  border: 2px solid #ffcc00;
-  box-shadow: 0 0 10px rgba(255, 204, 0, 0.6);
+  border: 2.5px solid #d49b00;
+  box-shadow: 0 0 12px rgba(212, 155, 0, 0.6);
   padding-top: 28px;
 }
 
 .roshhashana-label {
   position: absolute;
-  top: 4px;
+  top: 5px;
   left: 50%;
   transform: translateX(-50%);
-  background: #ffcc00;
-  color: #000;
-  font-size: 0.75rem;
-  font-weight: bold;
+  background: #85121e;
+  color: #fff;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
   padding: 2px 8px;
   border-radius: 4px;
-  box-shadow: 0 0 12px rgba(255, 204, 0, 0.9);
+  border: 1px solid #d49b00;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .roshhashana .lunisolar-day {
-  font-size: 1.4rem;
-  font-weight: bold;
+  font-size: 1.35rem;
+  font-weight: 700;
 }
 
 .roshhashana .gregorian-day {
-  font-size: 1rem;
+  font-size: 0.95rem;
   opacity: 0.9;
 }
 
-
-.weekdays-row {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  background: var(--surface-1, #f7f7f7);
-  border-radius: 8px;
-  padding: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  font-family: "Inter", "Segoe UI", sans-serif;
-}
-
-.weekdays-row>div {
-  text-align: center;
-  padding: 10px 0;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #444;
-  border-radius: 6px;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.weekdays-row>div:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-
+/* ----------------------------------------------------------
+   BOTÓN CAMBIO DE TEMA (LUNA EN DÍA / SOL EN NOCHE)
+---------------------------------------------------------- */
 .theme-toggle {
   position: fixed;
   top: 16px;
   right: 16px;
-
   width: 46px;
   height: 46px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
-
-  background: #001f3f;
-  /* Azul Marino */
   display: flex;
   align-items: center;
   justify-content: center;
-
   transition: background 0.4s ease, box-shadow 0.4s ease, transform 0.2s ease;
-  box-shadow: 0 4px 12px rgba(0, 31, 63, 0.4);
   z-index: 999;
 }
 
-.theme-toggle:hover {
-  background: var(--surface-hover, #dcdcdc);
+/* MODO CLARO (DÍA): Botón Azul Marino que muestra la LUNA */
+:root[data-theme="light"] .theme-toggle,
+body:not(.dark) .theme-toggle {
+  background: #001f3f !important;
+  box-shadow: 0 4px 12px rgba(0, 31, 63, 0.4) !important;
+}
+
+:root[data-theme="light"] .theme-toggle:hover,
+body:not(.dark) .theme-toggle:hover {
+  background: #0a3159 !important;
+  transform: scale(1.05);
+}
+
+:root[data-theme="light"] .theme-toggle .moon,
+body:not(.dark) .theme-toggle .moon {
+  opacity: 1 !important;
+  transform: rotate(0deg) scale(1) !important;
+}
+
+:root[data-theme="light"] .theme-toggle .sun,
+body:not(.dark) .theme-toggle .sun {
+  opacity: 0 !important;
+  transform: rotate(45deg) scale(0.5) !important;
+}
+
+/* MODO OSCURO (NOCHE): Botón Celeste Claro que muestra el SOL */
+:root[data-theme="dark"] .theme-toggle,
+body.dark .theme-toggle {
+  background: #87CEEB !important;
+  box-shadow: 0 4px 15px rgba(135, 206, 235, 0.6) !important;
+}
+
+:root[data-theme="dark"] .theme-toggle:hover,
+body.dark .theme-toggle:hover {
+  background: #a0e4ff !important;
+  transform: scale(1.05);
+}
+
+:root[data-theme="dark"] .theme-toggle .moon,
+body.dark .theme-toggle .moon {
+  opacity: 0 !important;
+  transform: rotate(-45deg) scale(0.5) !important;
+}
+
+:root[data-theme="dark"] .theme-toggle .sun,
+body.dark .theme-toggle .sun {
+  opacity: 1 !important;
+  transform: rotate(0deg) scale(1) !important;
 }
 
 .theme-toggle .icon {
   width: 28px;
   height: 28px;
   position: absolute;
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* Modo claro → mostrar luna */
-.theme-toggle .moon {
-  opacity: 1;
-}
-
-.theme-toggle .sun {
-  opacity: 0;
-}
-
-/* Modo oscuro → mostrar sol y fondo celeste */
-.dark .theme-toggle {
-  background: #87CEEB;
-  /* Celeste Claro */
-  box-shadow: 0 4px 15px rgba(135, 206, 235, 0.6);
-}
-
-.dark .theme-toggle .moon {
-  opacity: 0;
-  transform: rotate(-45deg) scale(0.5);
-}
-
-.dark .theme-toggle .sun {
-  opacity: 1;
-  transform: rotate(0deg) scale(1);
-}
-
-/* Transiciones de iconos */
-.theme-toggle .moon {
-  opacity: 1;
-  transform: rotate(0deg) scale(1);
-}
-
-.theme-toggle .sun {
-  opacity: 0;
-  transform: rotate(45deg) scale(0.5);
-}
-
-.calendar-nav {
-  display: none;
-}
-
-.calendar-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.nav-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.05);
-  border: none;
-  padding: 10px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 22px;
-  font-weight: bold;
-  transition: background 0.2s, transform 0.2s;
-}
-
-.nav-arrow:hover {
-  background: rgba(0, 0, 0, 0.15);
-  transform: translateY(-50%) scale(1.1);
-}
-
-.prev-month {
-  left: -45px;
-  /* ajustá según tu layout */
-}
-
-.next-month {
-  right: -45px;
-}
-
-/* Contenedor lateral */
-.calendar-grid-wrapper {
-  display: grid;
-  grid-template-columns: 50px 1fr 50px;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-}
-
-/* Botones laterales */
-.side-arrow {
-  background: var(--card-bg);
-  border: none;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-color);
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
-}
-
-/* Icono */
-.arrow-icon {
-  font-size: 1.8rem;
-  font-weight: 300;
-  transition: transform 0.25s ease;
-}
-
-/* Hover */
-.side-arrow:hover {
-  transform: scale(1.15);
-  background: var(--accent-color);
-  color: var(--bg-color);
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.35);
-}
-
-.side-arrow:hover .arrow-icon {
-  transform: translateX(-2px);
-}
-
-#side-next:hover .arrow-icon {
-  transform: translateX(2px);
-}
-
-/* Transición del calendario */
-.calendar-grid {
-  transition: opacity 0.25s ease, transform 0.25s ease;
-}
-
-.calendar-grid.fade-out {
-  opacity: 0;
-  transform: translateY(10px);
-}
-
-.calendar-grid.fade-in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
+/* ----------------------------------------------------------
+   WRAPPER Y FLECHAS DE NAVEGACIÓN
+---------------------------------------------------------- */
 .calendar-wrapper {
   position: relative;
   width: 100%;
+  display: flex;
+  align-items: center;
 }
 
-/* Flechas */
 .nav-arrow {
   width: 55px;
   height: 55px;
-  border: none;
-  background: linear-gradient(145deg, #0a2a4f, #0d3b7a);
-  box-shadow: 0 0 12px rgba(0, 150, 255, 0.7), inset 0 0 8px rgba(0, 150, 255, 0.4);
+  border: 1px solid var(--nav-arrow-border);
+  background: var(--nav-arrow-bg);
+  box-shadow: var(--nav-arrow-shadow);
   border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -612,34 +773,29 @@ button {
   z-index: 10;
 }
 
-/* Icono interno */
 .nav-arrow::before {
   content: "";
   width: 18px;
   height: 18px;
-  border-right: 4px solid #4fc3ff;
-  border-top: 4px solid #4fc3ff;
+  border-right: 4px solid var(--nav-arrow-icon);
+  border-top: 4px solid var(--nav-arrow-icon);
   transform: rotate(45deg);
   display: block;
 }
 
-/* Flecha izquierda */
 .nav-arrow.left::before {
   transform: rotate(-135deg);
 }
 
-/* Flecha derecha */
 .nav-arrow.right::before {
   transform: rotate(45deg);
 }
 
-/* Hover */
 .nav-arrow:hover {
   transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 0 18px rgba(0, 180, 255, 1), inset 0 0 10px rgba(0, 180, 255, 0.6);
+  box-shadow: var(--nav-arrow-hover-shadow);
 }
 
-/* Posición fuera del grid */
 .nav-arrow.left {
   position: absolute;
   left: -70px;
@@ -650,12 +806,35 @@ button {
   right: -70px;
 }
 
+@media (max-width: 1550px) {
+  .nav-arrow.left {
+    left: -55px;
+  }
+  .nav-arrow.right {
+    right: -55px;
+  }
+}
+
+@media (max-width: 1400px) {
+  .nav-arrow {
+    width: 46px;
+    height: 46px;
+  }
+  .nav-arrow.left {
+    left: -48px;
+  }
+  .nav-arrow.right {
+    right: -48px;
+  }
+}
+
 /* ----------------------------------------------------------
-   BARRA DE DESCARGA
+   BARRA DE DESCARGA & ACCIONES
 ---------------------------------------------------------- */
 .download-bar {
   display: flex;
   justify-content: flex-start;
+  align-items: center;
   gap: 10px;
   width: 100%;
   margin-bottom: 12px;
@@ -664,33 +843,32 @@ button {
 .download-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   padding: 8px 16px;
-  border: 1px solid rgba(79, 195, 255, 0.4);
+  border: 1px solid var(--download-btn-border);
   border-radius: 8px;
-  background: linear-gradient(145deg, rgba(10, 42, 79, 0.8), rgba(13, 59, 122, 0.8));
-  color: #4fc3ff;
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  background: var(--download-btn-bg);
+  color: var(--download-btn-color);
+  font-family: "Montserrat", "Inter", sans-serif;
   font-size: 0.82rem;
   font-weight: 600;
+  letter-spacing: 0.3px;
   cursor: pointer;
   transition: all 0.25s ease;
-  box-shadow: 0 2px 8px rgba(0, 120, 200, 0.2);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  text-decoration: none;
 }
 
 .download-btn:hover {
-  background: linear-gradient(145deg, rgba(13, 59, 122, 0.95), rgba(20, 80, 160, 0.95));
-  box-shadow: 0 0 14px rgba(0, 150, 255, 0.6), inset 0 0 6px rgba(0, 150, 255, 0.2);
-  border-color: rgba(79, 195, 255, 0.7);
+  background: var(--download-btn-hover-bg);
+  border-color: var(--download-btn-hover-border);
+  color: var(--download-btn-hover-color);
   transform: translateY(-1px);
-  color: #fff;
 }
 
 .download-btn:active {
   transform: translateY(0);
-  box-shadow: 0 1px 4px rgba(0, 120, 200, 0.3);
 }
 
 .download-btn:disabled {
@@ -701,19 +879,5 @@ button {
 
 .download-btn svg {
   flex-shrink: 0;
-}
-
-/* Modo claro */
-:root[data-theme="light"] .download-btn {
-  background: linear-gradient(145deg, #e8f4fd, #d0e8f7);
-  color: #0a4a7a;
-  border-color: rgba(10, 74, 122, 0.3);
-  box-shadow: 0 2px 8px rgba(0, 80, 140, 0.12);
-}
-
-:root[data-theme="light"] .download-btn:hover {
-  background: linear-gradient(145deg, #d0e8f7, #b8dcf0);
-  box-shadow: 0 4px 12px rgba(0, 80, 140, 0.25);
-  border-color: rgba(10, 74, 122, 0.5);
-  color: #063a5e;
+  stroke: currentColor;
 }

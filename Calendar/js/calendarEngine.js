@@ -4,18 +4,45 @@ import { lunisolar2025 } from "./data/year2025.js";
 import { lunisolar2026 } from "./data/year2026.js";
 import { lunisolar2027 } from "./data/year2027.js";
 import { lunisolar2028 } from "./data/year2028.js";
+import { lunisolar2029 } from "./data/year2029.js";
+import { lunisolar2030 } from "./data/year2030.js";
+import { lunisolar2031 } from "./data/year2031.js";
+import { lunisolar2032 } from "./data/year2032.js";
+import { lunisolar2033 } from "./data/year2033.js";
+import { lunisolar2034 } from "./data/year2034.js";
+import { lunisolar2035 } from "./data/year2035.js";
+import { lunisolar2036 } from "./data/year2036.js";
+import { lunisolar2037 } from "./data/year2037.js";
+import { lunisolar2038 } from "./data/year2038.js";
+import { lunisolar2039 } from "./data/year2039.js";
+import { lunisolar2040 } from "./data/year2040.js";
 import { getMoonPhaseInfo } from "./moonPhase.js";
+
+const yearsMap = {
+  2025: lunisolar2025,
+  2026: lunisolar2026,
+  2027: lunisolar2027,
+  2028: lunisolar2028,
+  2029: lunisolar2029,
+  2030: lunisolar2030,
+  2031: lunisolar2031,
+  2032: lunisolar2032,
+  2033: lunisolar2033,
+  2034: lunisolar2034,
+  2035: lunisolar2035,
+  2036: lunisolar2036,
+  2037: lunisolar2037,
+  2038: lunisolar2038,
+  2039: lunisolar2039,
+  2040: lunisolar2040
+};
 
 // ------------------------------------------------------------
 // 1. Cargar año lunisolar
 // ------------------------------------------------------------
 
 export function generateLunisolarYear(year) {
-  if (year === 2025) return lunisolar2025;
-  if (year === 2026) return lunisolar2026;
-  if (year === 2027) return lunisolar2027;
-  if (year === 2028) return lunisolar2028;
-
+  if (yearsMap[year]) return yearsMap[year];
   throw new Error("Año no precalculado todavía: " + year);
 }
 

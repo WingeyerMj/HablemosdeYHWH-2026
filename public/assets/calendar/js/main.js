@@ -6,6 +6,18 @@ import { lunisolar2025 } from "./data/year2025.js";
 import { lunisolar2026 } from "./data/year2026.js";
 import { lunisolar2027 } from "./data/year2027.js";
 import { lunisolar2028 } from "./data/year2028.js";
+import { lunisolar2029 } from "./data/year2029.js";
+import { lunisolar2030 } from "./data/year2030.js";
+import { lunisolar2031 } from "./data/year2031.js";
+import { lunisolar2032 } from "./data/year2032.js";
+import { lunisolar2033 } from "./data/year2033.js";
+import { lunisolar2034 } from "./data/year2034.js";
+import { lunisolar2035 } from "./data/year2035.js";
+import { lunisolar2036 } from "./data/year2036.js";
+import { lunisolar2037 } from "./data/year2037.js";
+import { lunisolar2038 } from "./data/year2038.js";
+import { lunisolar2039 } from "./data/year2039.js";
+import { lunisolar2040 } from "./data/year2040.js";
 
 // ------------------------------------------------------------
 // 1. Fecha actual local convertida a fecha pura (dinámica por zona horaria)
@@ -22,16 +34,20 @@ const today = new Date(Date.UTC(
 // 2. Determinar año lunisolar actual
 // ------------------------------------------------------------
 
-let currentYear;
+const allYearsData = [
+  lunisolar2025, lunisolar2026, lunisolar2027, lunisolar2028,
+  lunisolar2029, lunisolar2030, lunisolar2031, lunisolar2032,
+  lunisolar2033, lunisolar2034, lunisolar2035, lunisolar2036,
+  lunisolar2037, lunisolar2038, lunisolar2039, lunisolar2040
+];
 
-if (today < new Date(lunisolar2026.roshHashana)) {
-  currentYear = 2025;
-} else if (today < new Date(lunisolar2027.roshHashana)) {
-  currentYear = 2026;
-} else if (today < new Date(lunisolar2028.roshHashana)) {
-  currentYear = 2027;
-} else {
-  currentYear = 2028;
+let currentYear = allYearsData[0].year;
+for (let i = 0; i < allYearsData.length; i++) {
+  const nextYearData = allYearsData[i + 1];
+  if (!nextYearData || today < new Date(nextYearData.roshHashana)) {
+    currentYear = allYearsData[i].year;
+    break;
+  }
 }
 
 const yearData = generateLunisolarYear(currentYear);
@@ -435,26 +451,32 @@ function updateSliderLabel() {
 renderCalendar();
 
 // ------------------------------------------------------------
-// 12. Tema oscuro
+// 12. Alternar Tema Claro (Día) / Oscuro (Noche)
 // ------------------------------------------------------------
+
+function applyTheme(theme) {
+  const isDark = (theme === "dark");
+  document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+  if (isDark) {
+    document.body.classList.add("dark");
+  } else {
+    document.body.classList.remove("dark");
+  }
+  localStorage.setItem("theme", isDark ? "dark" : "light");
+}
 
 const themeToggle = document.getElementById("theme-toggle");
 
+// Cargar preferencia guardada o usar la predeterminada del documento
+const initialTheme = localStorage.getItem("theme") || document.documentElement.getAttribute("data-theme") || "dark";
+applyTheme(initialTheme);
+
 if (themeToggle) {
   themeToggle.addEventListener("click", () => {
-    const current = document.documentElement.getAttribute("data-theme");
-    const next = current === "dark" ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", next);
-    document.body.classList.toggle("dark");
-
-    const isDark = document.body.classList.contains("dark");
-    localStorage.setItem("theme", isDark ? "dark" : "light");
+    const current = document.documentElement.getAttribute("data-theme") || "dark";
+    const next = (current === "dark") ? "light" : "dark";
+    applyTheme(next);
   });
-}
-
-// Cargar preferencia guardada
-if (localStorage.getItem("theme") === "dark") {
-  document.body.classList.add("dark");
 }
 
 // ------------------------------------------------------------
