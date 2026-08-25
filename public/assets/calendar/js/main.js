@@ -74,17 +74,42 @@ function findCurrentLunisolarMonth(yearData, todayUTC) {
 let baseLunisolarMonthIndex = findCurrentLunisolarMonth(yearData, today);
 let currentMonthOffset = 0;
 
-// ------------------------------------------------------------
-// 4. Elementos del DOM
-// ------------------------------------------------------------
-
 const gridEl = document.getElementById("calendar-grid");
 const titleEl = document.getElementById("calendar-title");
 const subtitleEl = document.getElementById("calendar-subtitle");
+const yearSelectEl = document.getElementById("year-select");
 const sliderEl = document.getElementById("month-slider");
 const sliderLabelEl = document.getElementById("slider-label");
 const sidePrev = document.getElementById("side-prev");
 const sideNext = document.getElementById("side-next");
+
+function populateYearSelect() {
+  if (!yearSelectEl) return;
+  yearSelectEl.innerHTML = "";
+  allYearsData.forEach(y => {
+    const opt = document.createElement("option");
+    opt.value = y.year;
+    opt.textContent = y.year;
+    if (y.year === currentYear) {
+      opt.selected = true;
+    }
+    yearSelectEl.appendChild(opt);
+  });
+}
+
+populateYearSelect();
+
+if (yearSelectEl) {
+  yearSelectEl.addEventListener("change", (e) => {
+    const selectedYear = parseInt(e.target.value, 10);
+    if (selectedYear) {
+      currentYear = selectedYear;
+      baseLunisolarMonthIndex = 0;
+      currentMonthOffset = 0;
+      cambiarMesConTransicion(0);
+    }
+  });
+}
 
 // ------------------------------------------------------------
 // 5. Formateador LATAM dd/mm/yyyy
@@ -184,6 +209,12 @@ function renderCalendar() {
 
   // Título
   titleEl.textContent = `${month.name}`;
+
+  // Sincronizar selector de año si cambia por navegación de meses
+  if (yearSelectEl && parseInt(yearSelectEl.value, 10) !== yearData.year) {
+    yearSelectEl.value = yearData.year;
+  }
+  currentYear = yearData.year;
 
   const firstDay = month.days[0];
   const lastDay = month.days[month.days.length - 1];

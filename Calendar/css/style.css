@@ -7,12 +7,16 @@
   box-sizing: border-box;
 }
 
+html,
 body,
 .calendar-page,
 .calendar-page .main,
-.calendar-page .section {
+.calendar-page .section,
+.calendar-page footer,
+.calendar-page .footer {
   font-family: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
   background-color: var(--bg) !important;
+  background-image: none !important;
   color: var(--text);
   transition: background 0.3s ease, color 0.3s ease;
 }
@@ -130,10 +134,27 @@ body,
 ---------------------------------------------------------- */
 .calendar-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   width: 100%;
   margin-bottom: 18px;
+}
+
+.calendar-header-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.calendar-title-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
 .calendar-header h1 {
@@ -142,8 +163,70 @@ body,
   font-weight: 700;
   color: var(--header-title-color);
   letter-spacing: 0.5px;
-  margin-bottom: 6px;
+  margin: 0;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.year-select-container {
+  display: inline-flex;
+  align-items: center;
+}
+
+.year-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border-radius: 8px;
+  padding: 5px 32px 5px 12px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.25s ease;
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 13px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Modo Noche (Oscuro) para el Selector de Año */
+:root[data-theme="dark"] .year-select,
+body.dark .year-select {
+  background-color: #1e2025;
+  border: 1.5px solid #32363f;
+  color: #4fc3ff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234fc3ff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
+:root[data-theme="dark"] .year-select:hover,
+:root[data-theme="dark"] .year-select:focus {
+  border-color: #4fc3ff;
+  box-shadow: 0 0 12px rgba(79, 195, 255, 0.45);
+}
+
+:root[data-theme="dark"] .year-select option {
+  background-color: #1e2025;
+  color: #e6e6e6;
+}
+
+/* Modo Día (Claro) para el Selector de Año */
+:root[data-theme="light"] .year-select {
+  background-color: #382b20;
+  border: 1.5px solid #735e49;
+  color: #fdfbf7;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d4b895' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
+:root[data-theme="light"] .year-select:hover,
+:root[data-theme="light"] .year-select:focus {
+  border-color: #d4b895;
+  box-shadow: 0 0 12px rgba(212, 184, 149, 0.35);
+}
+
+:root[data-theme="light"] .year-select option {
+  background-color: #382b20;
+  color: #fdfbf7;
 }
 
 .calendar-header h2 {
@@ -152,6 +235,7 @@ body,
   font-weight: 400;
   color: var(--header-subtitle-color);
   letter-spacing: 0.3px;
+  margin: 0;
 }
 
 button {

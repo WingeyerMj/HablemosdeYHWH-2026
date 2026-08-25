@@ -50,8 +50,13 @@
     </button>
 
     <header class="calendar-header">
-      <div style="flex: 1; text-align: center;">
-        <h1 id="calendar-title"></h1>
+      <div class="calendar-header-content">
+        <div class="calendar-title-wrapper">
+          <h1 id="calendar-title"></h1>
+          <div class="year-select-container">
+            <select id="year-select" class="year-select" aria-label="Seleccionar Año"></select>
+          </div>
+        </div>
         <h2 id="calendar-subtitle"></h2>
       </div>
     </header>
