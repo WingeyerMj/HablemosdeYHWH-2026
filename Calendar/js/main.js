@@ -78,6 +78,7 @@ const gridEl = document.getElementById("calendar-grid");
 const titleEl = document.getElementById("calendar-title");
 const subtitleEl = document.getElementById("calendar-subtitle");
 const yearSelectEl = document.getElementById("year-select");
+const monthSelectEl = document.getElementById("month-select");
 const sliderEl = document.getElementById("month-slider");
 const sliderLabelEl = document.getElementById("slider-label");
 const sidePrev = document.getElementById("side-prev");
@@ -97,7 +98,23 @@ function populateYearSelect() {
   });
 }
 
+function populateMonthSelect(year, selectedIdx = 0) {
+  if (!monthSelectEl) return;
+  const yData = generateLunisolarYear(year);
+  monthSelectEl.innerHTML = "";
+  yData.months.forEach((m, idx) => {
+    const opt = document.createElement("option");
+    opt.value = idx;
+    opt.textContent = m.name;
+    if (idx === selectedIdx) {
+      opt.selected = true;
+    }
+    monthSelectEl.appendChild(opt);
+  });
+}
+
 populateYearSelect();
+populateMonthSelect(currentYear, baseLunisolarMonthIndex);
 
 if (yearSelectEl) {
   yearSelectEl.addEventListener("change", (e) => {
@@ -106,6 +123,22 @@ if (yearSelectEl) {
       currentYear = selectedYear;
       baseLunisolarMonthIndex = 0;
       currentMonthOffset = 0;
+      populateMonthSelect(currentYear, 0);
+      if (sliderEl) sliderEl.value = 0;
+      updateSliderLabel();
+      cambiarMesConTransicion(0);
+    }
+  });
+}
+
+if (monthSelectEl) {
+  monthSelectEl.addEventListener("change", (e) => {
+    const selectedMonth = parseInt(e.target.value, 10);
+    if (!isNaN(selectedMonth)) {
+      baseLunisolarMonthIndex = selectedMonth;
+      currentMonthOffset = 0;
+      if (sliderEl) sliderEl.value = 0;
+      updateSliderLabel();
       cambiarMesConTransicion(0);
     }
   });
@@ -201,7 +234,7 @@ function isSameDay(d1, d2) {
 // ------------------------------------------------------------
 
 function renderCalendar() {
-  const { yearData, month } = getLunisolarMonthView(
+  const { yearData, month, monthIndex } = getLunisolarMonthView(
     currentYear,
     baseLunisolarMonthIndex,
     currentMonthOffset
@@ -211,10 +244,20 @@ function renderCalendar() {
   titleEl.textContent = `${month.name}`;
 
   // Sincronizar selector de año si cambia por navegación de meses
+  const yearChanged = yearData.year !== currentYear;
   if (yearSelectEl && parseInt(yearSelectEl.value, 10) !== yearData.year) {
     yearSelectEl.value = yearData.year;
   }
   currentYear = yearData.year;
+
+  // Sincronizar selector de mes
+  if (monthSelectEl) {
+    if (yearChanged || monthSelectEl.children.length !== yearData.months.length) {
+      populateMonthSelect(yearData.year, monthIndex);
+    } else {
+      monthSelectEl.value = monthIndex;
+    }
+  }
 
   const firstDay = month.days[0];
   const lastDay = month.days[month.days.length - 1];

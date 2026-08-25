@@ -26,8 +26,8 @@ try {
     fs.unlinkSync(LOCAL_TAR_PATH);
   }
 
-  // Comando tar para excluir directorios pesados y envs locales
-  const tarCmd = `tar --exclude=node_modules --exclude=vendor --exclude=.git --exclude=.env --exclude=*.zip --exclude=temp_zip_check --exclude=node-backend/node_modules --exclude=node-backend/.env -czf "${LOCAL_TAR_PATH}" .`;
+  // Comando tar para excluir directorios pesados, envs y carpetas de uploads dinámicos
+  const tarCmd = `tar --exclude=node_modules --exclude=vendor --exclude=.git --exclude=.env --exclude=*.zip --exclude=temp_zip_check --exclude=node-backend/node_modules --exclude=node-backend/.env --exclude=node-backend/public/assets/parashot --exclude=node-backend/public/uploads --exclude=public/uploads -czf "${LOCAL_TAR_PATH}" .`;
   
   execSync(tarCmd, { cwd: __dirname });
   const stats = fs.statSync(LOCAL_TAR_PATH);
