@@ -174,6 +174,125 @@
     </div>
 </div>
 
+<!-- MODAL: NUEVA ENSEÑANZA -->
+<div class="modal fade" id="createEnsenanzaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Añadir Nueva Enseñanza</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/ensenanzas/create" method="POST" enctype="multipart/form-data" id="createEnsenanzaForm">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Título</label>
+                            <input type="text" name="title" class="form-control" required placeholder="Ej: Las Raíces de la Fe">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subtítulo / Tema</label>
+                            <input type="text" name="subtitle" class="form-control" placeholder="Ej: Estudio Bíblico Profundo">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">Resumen Breve (para tarjetas y listados)</label>
+                            <textarea name="description" class="form-control" rows="2" placeholder="Breve introducción o descripción..."></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">Link de YouTube (Video de la Enseñanza)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-youtube text-danger"></i></span>
+                                <input type="text" name="youtube_link" class="form-control" placeholder="https://www.youtube.com/watch?v=... o https://youtu.be/...">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Subir Imagen de Portada</label>
+                            <input type="file" id="create_ens_image_file" name="image_file" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">O URL de Imagen</label>
+                            <input type="text" id="create_ens_image_url" name="image_url" class="form-control" placeholder="https://...">
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height:100px;background:rgba(0,0,0,0.2);">
+                                <img id="createEnsImgPreview" src="" style="max-width:100%;max-height:100%;object-fit:contain;">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Contenido Detallado del Estudio (Opcional)</label>
+                            <div id="ensenanza-create-editor-container" style="height:250px;background:white;color:black;border-radius:5px;"></div>
+                            <input type="hidden" name="content" id="createEnsenanzaContentInput">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success px-4">Guardar Enseñanza</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: EDITAR ENSEÑANZA -->
+<div class="modal fade" id="editEnsenanzaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Editar Enseñanza</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/ensenanzas/update" method="POST" enctype="multipart/form-data" id="editEnsenanzaForm">
+                <input type="hidden" name="id" id="edit_ens_id">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Título</label>
+                            <input type="text" name="title" id="edit_ens_title" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subtítulo / Tema</label>
+                            <input type="text" name="subtitle" id="edit_ens_subtitle" class="form-control">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">Resumen Breve</label>
+                            <textarea name="description" id="edit_ens_description" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">Link de YouTube</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-youtube text-danger"></i></span>
+                                <input type="text" name="youtube_link" id="edit_ens_youtube" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Subir Nueva Imagen</label>
+                            <input type="file" id="edit_ens_image_file" name="image_file" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">URL Imagen</label>
+                            <input type="text" id="edit_ens_image_url" name="image_url" class="form-control">
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height:100px;background:rgba(0,0,0,0.2);">
+                                <img id="editEnsImgPreview" src="" style="max-width:100%;max-height:100%;object-fit:contain;">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Contenido Detallado</label>
+                            <div id="ensenanza-edit-editor-container" style="height:250px;background:white;color:black;border-radius:5px;"></div>
+                            <input type="hidden" name="content" id="editEnsenanzaContentInput">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary px-4">Actualizar Enseñanza</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- MODAL: NUEVO MIEMBRO -->
 <div class="modal fade" id="createTeamModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -403,6 +522,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const qCreate = new Quill('#create-editor-container', qCfg);
     const qPort = new Quill('#port-editor-container', qCfg);
     const qEditPort = new Quill('#edit-port-editor-container', qCfg);
+    const qEnsCreate = new Quill('#ensenanza-create-editor-container', qCfg);
+    const qEnsEdit = new Quill('#ensenanza-edit-editor-container', qCfg);
     const qDynCreate = new Quill('#dyn-create-editor-container', qCfg);
     const qDynEdit = new Quill('#dyn-edit-editor-container', qCfg);
 
@@ -415,6 +536,8 @@ document.addEventListener('DOMContentLoaded', function() {
     setupPreview('create_image_url','create_image_file','createImgPreview');
     setupPreview('port_image_url','port_image_file','portImgPreview');
     setupPreview('edit_port_image_url','edit_port_image_file','editPortImgPreview');
+    setupPreview('create_ens_image_url','create_ens_image_file','createEnsImgPreview');
+    setupPreview('edit_ens_image_url','edit_ens_image_file','editEnsImgPreview');
     setupPreview('dyn_create_image_url','dyn_create_image_file','dynCreateImgPreview');
     setupPreview('dyn_edit_image_url','dyn_edit_image_file','dynEditImgPreview');
 
@@ -438,6 +561,23 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('editPortImgPreview').src=d.image||'/assets/img/blog/blog-1.jpg';
             qEditPort.root.innerHTML=d.content;
             editPortModal.show();
+        };
+    });
+
+    // Edit Ensenanza modal
+    const editEnsModal = new bootstrap.Modal(document.getElementById('editEnsenanzaModal'));
+    document.querySelectorAll('.edit-ensenanza-btn').forEach(btn=>{
+        btn.onclick=function(){
+            const d=this.dataset;
+            document.getElementById('edit_ens_id').value=d.id;
+            document.getElementById('edit_ens_title').value=d.title;
+            document.getElementById('edit_ens_subtitle').value=d.subtitle || '';
+            document.getElementById('edit_ens_description').value=d.description || '';
+            document.getElementById('edit_ens_youtube').value=d.youtube || '';
+            document.getElementById('edit_ens_image_url').value=d.image || '';
+            document.getElementById('editEnsImgPreview').src=d.image || '';
+            qEnsEdit.root.innerHTML=d.content || '';
+            editEnsModal.show();
         };
     });
 
@@ -473,6 +613,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('createParashaForm').onsubmit=function(){document.getElementById('createContentInput').value=qCreate.root.innerHTML;return true;};
     document.getElementById('createPortfolioForm').onsubmit=function(){document.getElementById('portContentInput').value=qPort.root.innerHTML;return true;};
     document.getElementById('editPortfolioForm').onsubmit=function(){document.getElementById('editPortContentInput').value=qEditPort.root.innerHTML;return true;};
+    const cEnsForm = document.getElementById('createEnsenanzaForm');
+    if(cEnsForm) cEnsForm.onsubmit=function(){document.getElementById('createEnsenanzaContentInput').value=qEnsCreate.root.innerHTML;return true;};
+    const eEnsForm = document.getElementById('editEnsenanzaForm');
+    if(eEnsForm) eEnsForm.onsubmit=function(){document.getElementById('editEnsenanzaContentInput').value=qEnsEdit.root.innerHTML;return true;};
     const cdf = document.getElementById('createDynamicForm');
     if(cdf) cdf.onsubmit=function(){document.getElementById('dynCreateContentInput').value=qDynCreate.root.innerHTML;return true;};
     const edf = document.getElementById('editDynamicForm');

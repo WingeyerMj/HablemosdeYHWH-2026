@@ -231,3 +231,35 @@ INSERT INTO footer_links (category, title, url, order_index)
 SELECT 'Recursos', 'Eventos', '/#portfolio', 2
 WHERE NOT EXISTS (SELECT 1 FROM footer_links WHERE title = 'Eventos' AND url = '/#portfolio');
 
+INSERT INTO footer_links (category, title, url, order_index)
+SELECT 'Enlaces Útiles', 'Enseñanzas', '/ensenanzas', 4
+WHERE NOT EXISTS (SELECT 1 FROM footer_links WHERE title = 'Enseñanzas' AND url = '/ensenanzas');
+
+-- Tabla para Enseñanzas
+CREATE TABLE IF NOT EXISTS ensenanzas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    subtitle VARCHAR(255),
+    description TEXT,
+    content LONGTEXT,
+    image_url VARCHAR(500),
+    youtube_link VARCHAR(500),
+    is_published BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Tabla para sección Enseñanzas del Home
+CREATE TABLE IF NOT EXISTS home_section_ensenanzas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) DEFAULT 'Enseñanzas',
+    subtitle TEXT,
+    content TEXT,
+    image_url VARCHAR(500),
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT IGNORE INTO home_section_ensenanzas (id, title, subtitle, content)
+VALUES (1, 'Enseñanzas', 'Estudios profundos de las Sagradas Escrituras', 'Descubre nuestras enseñanzas temáticas y reflexiones.');
+
+

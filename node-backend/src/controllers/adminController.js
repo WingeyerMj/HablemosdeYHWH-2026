@@ -35,24 +35,28 @@ const adminController = {
         try {
             const Parasha = require('../models/Parasha');
             const Portfolio = require('../models/Portfolio');
+            const Ensenanza = require('../models/Ensenanza');
             const Team = require('../models/Team');
             const Testimonial = require('../models/Testimonial');
             const Pricing = require('../models/Pricing');
 
-            let parashot = [], portfolio = [], team = [], testimonials = [], pricing = [], sections = [];
+            let parashot = [], portfolio = [], ensenanzas = [], team = [], testimonials = [], pricing = [], sections = [];
             
             try {
                 parashot = await Parasha.getAll();
                 portfolio = await Portfolio.getAll();
+                try { ensenanzas = await Ensenanza.getAll(); } catch(e) { ensenanzas = []; }
                 team = await Team.getAll();
                 testimonials = await Testimonial.getAll();
                 pricing = await Pricing.getAll();
-                const sectionNames = ['hero', 'calendario', 'about', 'parashot', 'eventos', 'equipo', 'footer'];
+                const sectionNames = ['hero', 'calendario', 'about', 'parashot', 'eventos', 'ensenanzas', 'equipo', 'footer'];
                 for (const name of sectionNames) {
-                    const [rows] = await db.query(`SELECT * FROM home_section_${name} LIMIT 1`);
-                    if (rows.length > 0) {
-                        sections.push({ ...rows[0], section_name: name });
-                    }
+                    try {
+                        const [rows] = await db.query(`SELECT * FROM home_section_${name} LIMIT 1`);
+                        if (rows.length > 0) {
+                            sections.push({ ...rows[0], section_name: name });
+                        }
+                    } catch(e) {}
                 }
             } catch (dbErr) {
                 console.warn('⚠️ No se pudieron cargar datos del dashboard:', dbErr.message);
@@ -88,6 +92,7 @@ const adminController = {
                 layout: 'admin/layout',
                 parashot,
                 portfolio,
+                ensenanzas,
                 team,
                 testimonials,
                 pricing,
@@ -220,6 +225,76 @@ const adminController = {
         }
     },
 
+    // ==================== ENSEÑANZAS ====================
+    createEnsenanza: async (req, res) => {
+        try {
+            let { title, subtitle, description, content, youtube_link, image_url } = req.body;
+            if (req.file) {
+                image_url = '/uploads/ensenanzas/' + req.file.filename;
+            }
+            
+            const Ensenanza = require('../models/Ensenanza');
+            await Ensenanza.create({
+                title,
+                subtitle: subtitle || '',
+                description: description || '',
+                content: content || '',
+                youtube_link: youtube_link || '',
+                image_url: image_url || ''
+            });
+            res.redirect('/admin/dashboard#pills-ensenanzas');
+        } catch (error) {
+            console.error('Error createEnsenanza:', error);
+            res.redirect('/admin/dashboard#pills-ensenanzas');
+        }
+    },
+
+    editEnsenanzaPage: async (req, res) => {
+        try {
+            const Ensenanza = require('../models/Ensenanza');
+            const ensenanza = await Ensenanza.getById(req.params.id);
+            if (!ensenanza) return res.redirect('/admin/dashboard#pills-ensenanzas');
+            res.render('admin/edit_ensenanza', { layout: 'admin/layout', ensenanza });
+        } catch (error) {
+            console.error('Error editEnsenanzaPage:', error);
+            res.redirect('/admin/dashboard#pills-ensenanzas');
+        }
+    },
+
+    updateEnsenanza: async (req, res) => {
+        try {
+            let { id, title, subtitle, description, content, youtube_link, image_url } = req.body;
+            if (req.file) {
+                image_url = '/uploads/ensenanzas/' + req.file.filename;
+            }
+            
+            const Ensenanza = require('../models/Ensenanza');
+            await Ensenanza.update(id, {
+                title,
+                subtitle: subtitle || '',
+                description: description || '',
+                content: content || '',
+                youtube_link: youtube_link || '',
+                image_url: image_url || ''
+            });
+            res.redirect('/admin/dashboard#pills-ensenanzas');
+        } catch (error) {
+            console.error('Error updateEnsenanza:', error);
+            res.redirect('/admin/dashboard#pills-ensenanzas');
+        }
+    },
+
+    deleteEnsenanza: async (req, res) => {
+        try {
+            const Ensenanza = require('../models/Ensenanza');
+            await Ensenanza.delete(req.params.id);
+            res.redirect('/admin/dashboard#pills-ensenanzas');
+        } catch (error) {
+            console.error('Error deleteEnsenanza:', error);
+            res.redirect('/admin/dashboard#pills-ensenanzas');
+        }
+    },
+
     // ==================== EQUIPO ====================
     createTeamMember: async (req, res) => {
         try {
@@ -302,17 +377,19 @@ const adminController = {
     // ==================== SECCIONES DEL HOME (Hero, About, etc.) ====================
     sectionsPage: async (req, res) => {
         try {
-            const sectionNames = ['hero', 'calendario', 'about', 'parashot', 'eventos', 'equipo', 'footer'];
+            const sectionNames = ['hero', 'calendario', 'about', 'parashot', 'eventos', 'ensenanzas', 'equipo', 'footer'];
             const sections = [];
             for (const name of sectionNames) {
-                const [rows] = await db.query(`SELECT * FROM home_section_${name} LIMIT 1`);
-                if (rows.length > 0) {
-                    sections.push({
-                        ...rows[0],
-                        section_name: name,
-                        tableName: `home_section_${name}`
-                    });
-                }
+                try {
+                    const [rows] = await db.query(`SELECT * FROM home_section_${name} LIMIT 1`);
+                    if (rows.length > 0) {
+                        sections.push({
+                            ...rows[0],
+                            section_name: name,
+                            tableName: `home_section_${name}`
+                        });
+                    }
+                } catch(e) {}
             }
             res.render('admin/sections', { layout: 'admin/layout', sections });
         } catch (error) {

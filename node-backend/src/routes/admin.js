@@ -61,6 +61,12 @@ router.get('/portfolio/edit/:id', isAuthenticated, adminController.editPortfolio
 router.post('/portfolio/update', isAuthenticated, upload.single('image_file'), adminController.updatePortfolio);
 router.get('/portfolio/delete/:id', isAuthenticated, adminController.deletePortfolio);
 
+// Enseñanzas
+router.post('/ensenanzas/create', isAuthenticated, upload.single('image_file'), adminController.createEnsenanza);
+router.get('/ensenanzas/edit/:id', isAuthenticated, adminController.editEnsenanzaPage);
+router.post('/ensenanzas/update', isAuthenticated, upload.single('image_file'), adminController.updateEnsenanza);
+router.get('/ensenanzas/delete/:id', isAuthenticated, adminController.deleteEnsenanza);
+
 // Equipo
 router.post('/team/create', isAuthenticated, upload.single('image_file'), adminController.createTeamMember);
 router.post('/team/update', isAuthenticated, upload.single('image_file'), adminController.updateTeamMember);

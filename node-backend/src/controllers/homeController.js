@@ -1,5 +1,6 @@
 const Parasha = require('../models/Parasha');
 const Portfolio = require('../models/Portfolio');
+const Ensenanza = require('../models/Ensenanza');
 const Team = require('../models/Team');
 const Testimonial = require('../models/Testimonial');
 const Pricing = require('../models/Pricing');
@@ -11,12 +12,12 @@ const db = require('../config/db');
 const homeController = {
     index: async (req, res, next) => {
         try {
-            let allDynamicSections = [], latestParashot = [], portfolio = [], team = [], testimonials = [], pricingRaw = [], siteSettings = {}, eventCategories = [];
+            let allDynamicSections = [], latestParashot = [], portfolio = [], latestEnsenanzas = [], team = [], testimonials = [], pricingRaw = [], siteSettings = {}, eventCategories = [];
             const sectionsObj = {};
 
             try {
                 // 1. Cargar Secciones Base desde tablas individuales
-                const sectionNames = ['hero', 'calendario', 'about', 'parashot', 'eventos', 'equipo', 'footer'];
+                const sectionNames = ['hero', 'calendario', 'about', 'parashot', 'eventos', 'ensenanzas', 'equipo', 'footer'];
                 for (const name of sectionNames) {
                     try {
                         const tableName = `home_section_${name}`;
@@ -30,7 +31,7 @@ const homeController = {
                             console.warn(`⚠️ La tabla ${tableName} está vacía.`);
                         }
                     } catch (e) {
-                        console.error(`❌ Error crítico cargando tabla home_section_${name}:`, e.message);
+                        // Tabla no crítica si aún no está creada
                     }
                 }
 
@@ -38,6 +39,7 @@ const homeController = {
                 allDynamicSections = await DynamicSection.getAll();
                 latestParashot = await Parasha.getLatest(6);
                 portfolio = await Portfolio.getLatest(4);
+                try { latestEnsenanzas = await Ensenanza.getLatest(4); } catch(e) { latestEnsenanzas = []; }
                 eventCategories = await Portfolio.getCategories();
                 team = await Team.getAll();
                 testimonials = await Testimonial.getAll();
@@ -49,7 +51,7 @@ const homeController = {
 
             // 3. Procesar secciones dinámicas y cargar sus datos
             const dynamicInline = [];
-            const baseSlugs = ['hero', 'about', 'calendario', 'parashot', 'eventos', 'equipo', 'footer'];
+            const baseSlugs = ['hero', 'about', 'calendario', 'parashot', 'eventos', 'ensenanzas', 'equipo', 'footer'];
 
             for (const ds of allDynamicSections) {
                 if (ds.is_active) {
@@ -93,6 +95,7 @@ const homeController = {
                 sections: sectionsObj,
                 services: latestParashot,
                 portfolio: portfolio,
+                ensenanzas: latestEnsenanzas,
                 eventCategories: eventCategories,
                 team: team,
                 testimonials: testimonials,
@@ -201,6 +204,35 @@ const homeController = {
                 title: 'Eventos - Hablemos de YHWH',
                 page: 'eventos',
                 eventos,
+                layout: false
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    ensenanzasPage: async (req, res, next) => {
+        try {
+            const ensenanzas = await Ensenanza.getPublished();
+            res.render('ensenanzas', {
+                title: 'Enseñanzas - Hablemos de YHWH',
+                page: 'ensenanzas',
+                ensenanzas,
+                layout: false
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    ensenanzaDetail: async (req, res, next) => {
+        try {
+            const ensenanza = await Ensenanza.getById(req.params.id);
+            if (!ensenanza) return next();
+            res.render('ensenanza_detail', {
+                title: ensenanza.title + ' - Hablemos de YHWH',
+                page: 'ensenanzas',
+                ensenanza,
                 layout: false
             });
         } catch (error) {

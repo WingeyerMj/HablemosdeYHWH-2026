@@ -11,6 +11,8 @@ router.get('/parashot', homeController.parashot);
 router.get('/parashot/:id', homeController.parashaDetail);
 router.get('/eventos', homeController.eventosPage);
 router.get('/eventos/:id', homeController.eventDetail);
+router.get('/ensenanzas', homeController.ensenanzasPage);
+router.get('/ensenanzas/:id', homeController.ensenanzaDetail);
 if (process.env.NODE_ENV !== 'production') {
     router.get('/debug', homeController.debug);
 }

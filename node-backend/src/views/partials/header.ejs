@@ -24,6 +24,8 @@
                         Calendario</a></li>
                 <li><a href="/#services" class="<%= page === 'parashot' ? 'active' : '' %>"><i class="bi bi-journal-text"></i>
                         Parashot</a></li>
+                <li><a href="/#ensenanzas" class="<%= page === 'ensenanzas' ? 'active' : '' %>"><i class="bi bi-book"></i>
+                        Enseñanzas</a></li>
 
                 <% if (typeof navbarDynamicSections !=='undefined' && navbarDynamicSections.length> 0) { %>
                     <% navbarDynamicSections.forEach(ds=> { %>
@@ -36,6 +38,7 @@
                             if (ds.slug === 'about') href = '/#about'; 
                             if (ds.slug === 'parashot') href = '/#services'; 
                             if (ds.slug === 'eventos') href = '/#portfolio'; 
+                            if (ds.slug === 'ensenanzas') href = '/#ensenanzas'; 
                             if (ds.slug === 'equipo') href = '/#team'; 
                             if (ds.slug === 'calendario') href = '/calendar';
                             

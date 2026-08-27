@@ -381,6 +381,77 @@
                     </script>
                 </section>
 
+                <!-- Sección de Enseñanzas (Resumen con imagen) -->
+                <!-- Sección de Enseñanzas (Resumen con imagen) -->
+                <section id="ensenanzas" class="ensenanzas section">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2><%= (sections.Ensenanzas && sections.Ensenanzas.title) || 'Enseñanzas' %></h2>
+                        <p><%= (sections.Ensenanzas && sections.Ensenanzas.subtitle) || 'Estudios bíblicos y reflexiones para el crecimiento espiritual' %></p>
+                    </div>
+                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                        <% if (typeof ensenanzas !== 'undefined' && ensenanzas && ensenanzas.length > 0) { %>
+                            <div class="row gy-4 justify-content-center">
+                                <% ensenanzas.forEach((item, index) => { %>
+                                    <div class="col-lg-3 col-md-6 col-12" data-aos="fade-up" data-aos-delay="<%= (index + 1) * 100 %>">
+                                        <a href="/ensenanzas/<%= item.id %>" class="text-decoration-none text-reset d-block h-100">
+                                            <div class="ensenanza-card h-100 shadow-sm" style="background: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #eee; transition: all 0.35s ease; display: flex; flex-direction: column;">
+                                                <div class="ensenanza-img-box" style="position: relative; width: 100%; height: 210px; overflow: hidden; background: #1a1a1a;">
+                                                    <% if (item.image_url && item.image_url.trim() !== '') { %>
+                                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+                                                    <% } else { %>
+                                                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #f8f6f0, #eae4d8);">
+                                                            <i class="bi bi-journal-bookmark text-muted" style="font-size: 3rem; color: #d4a853 !important;"></i>
+                                                        </div>
+                                                    <% } %>
+                                                    <div class="ensenanza-hover-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%); opacity: 0; transition: opacity 0.3s ease;"></div>
+                                                </div>
+                                                <div class="p-3 d-flex flex-column flex-grow-1">
+                                                    <h5 class="fw-bold mb-2" style="font-size: 1.05rem; color: #222; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                                        <%= item.title %>
+                                                    </h5>
+                                                    <% if (item.subtitle) { %>
+                                                        <div class="mb-2" style="color: #d4a853; font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                                                            <%= item.subtitle %>
+                                                        </div>
+                                                    <% } %>
+                                                    <% if (item.description) { %>
+                                                        <p class="text-muted mb-0" style="font-size: 0.85rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                                            <%= item.description %>
+                                                        </p>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                <% }) %>
+                            </div>
+                            <div class="text-center mt-5" data-aos="fade-up">
+                                <a href="/ensenanzas"
+                                    style="background: linear-gradient(135deg, #d4a853, #b8860b); color: #fff; padding: 12px 40px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600; box-shadow: 0 4px 15px rgba(212,168,83,0.35); transition: all 0.3s ease;">
+                                    Ver todas las enseñanzas <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        <% } else { %>
+                            <div class="text-center py-4">
+                                <p class="text-muted">Próximamente publicaremos nuevas enseñanzas.</p>
+                                <a href="/ensenanzas" class="btn btn-outline-dark btn-sm rounded-pill px-4">Ir a la sección de Enseñanzas</a>
+                            </div>
+                        <% } %>
+                    </div>
+                </section>
+                <style>
+                    .ensenanza-card:hover {
+                        transform: translateY(-6px);
+                        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12) !important;
+                        border-color: #d4a853 !important;
+                    }
+                    .ensenanza-card:hover .ensenanza-img-box img {
+                        transform: scale(1.06);
+                    }
+                    .ensenanza-card:hover .ensenanza-hover-overlay {
+                        opacity: 1;
+                    }
+                </style>
 
                 <!-- Testimonials Section -->
                 <section id="testimonials" class="testimonials section dark-background">
