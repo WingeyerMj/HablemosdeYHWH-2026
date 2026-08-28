@@ -16,11 +16,12 @@
                         e.preventDefault();
                         const msg = document.getElementById('newsletterMsg');
                         const btn = this.querySelector('input[type="submit"]');
+                        const input = this.querySelector('input[type="email"]');
                         btn.disabled = true;
                         btn.value = 'Enviando...';
                         msg.style.display = 'none';
                         try {
-                            const email = this.querySelector('input[type="email"]').value;
+                            const email = input.value.trim();
                             const res = await fetch('/api/newsletter', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
@@ -31,18 +32,21 @@
                             if (result.ok) {
                                 msg.style.background = '#d4edda';
                                 msg.style.color = '#155724';
-                                msg.textContent = '¡Te has suscrito correctamente!';
-                                this.reset();
+                                msg.style.border = '1px solid #c3e6cb';
+                                msg.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> ' + (result.message || '¡Te has suscrito correctamente al boletín!');
+                                input.value = '';
                             } else {
                                 msg.style.background = '#f8d7da';
                                 msg.style.color = '#721c24';
-                                msg.textContent = result.error || 'Error al suscribirse.';
+                                msg.style.border = '1px solid #f5c6cb';
+                                msg.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-1"></i> ' + (result.error || 'Error al suscribirse.');
                             }
                         } catch (err) {
                             msg.style.display = 'block';
                             msg.style.background = '#f8d7da';
                             msg.style.color = '#721c24';
-                            msg.textContent = 'Error de conexión. Intenta nuevamente.';
+                            msg.style.border = '1px solid #f5c6cb';
+                            msg.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-1"></i> Error de conexión. Intenta nuevamente.';
                         }
                         btn.disabled = false;
                         btn.value = 'Suscribirse';

@@ -14,8 +14,10 @@
         <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-newspaper"></i></div><div><div class="text-white-50 small">Blog</div><div class="fs-4 fw-bold"><%= (typeof blogs !== 'undefined' && blogs) ? blogs.length : 0 %></div></div></div></div>
         <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-calendar-event"></i></div><div><div class="text-white-50 small">Eventos</div><div class="fs-4 fw-bold"><%= portfolio.length %></div></div></div></div>
         <% if (role === 'admin') { %>
+            <div class="col-md"><div class="card-stat d-flex align-items-center gap-3" style="border-left: 4px solid #a855f7;"><div class="stat-icon" style="color: #a855f7;"><i class="bi bi-balloon-heart"></i></div><div><div class="text-white-50 small">Semillas</div><div class="fs-4 fw-bold" style="color: #c084fc;"><%= (typeof semillas !== 'undefined' && semillas) ? semillas.length : 0 %></div></div></div></div>
             <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-people"></i></div><div><div class="text-white-50 small">Equipo</div><div class="fs-4 fw-bold"><%= team.length %></div></div></div></div>
             <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-star"></i></div><div><div class="text-white-50 small">Testimonios</div><div class="fs-4 fw-bold"><%= testimonials.length %></div></div></div></div>
+            <div class="col-md"><div class="card-stat d-flex align-items-center gap-3" style="border-left: 4px solid #22c55e;"><div class="stat-icon" style="color: #22c55e;"><i class="bi bi-envelope-check"></i></div><div><div class="text-white-50 small">Suscriptores</div><div class="fs-4 fw-bold text-success"><%= (typeof subscribers !== 'undefined') ? subscribers.length : 0 %></div></div></div></div>
         <% } %>
     </div>
 
@@ -25,9 +27,11 @@
             <li class="nav-item" role="presentation"><button class="nav-link active" id="pills-services-tab" data-bs-toggle="pill" data-bs-target="#pills-services" type="button">📖 Parashot</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="pills-portfolio-tab" data-bs-toggle="pill" data-bs-target="#pills-portfolio" type="button">🗓️ Eventos</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="pills-ensenanzas-tab" data-bs-toggle="pill" data-bs-target="#pills-ensenanzas" type="button">📚 Enseñanzas</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-semillas-tab" data-bs-toggle="pill" data-bs-target="#pills-semillas" type="button" style="color: #d8b4fe;"><i class="bi bi-balloon-heart-fill me-1 text-purple"></i> Semillas de Torah</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="pills-blog-tab" data-bs-toggle="pill" data-bs-target="#pills-blog" type="button">📰 Blog</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="pills-team-tab" data-bs-toggle="pill" data-bs-target="#pills-team" type="button">👥 Equipo</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="pills-testimonials-tab" data-bs-toggle="pill" data-bs-target="#pills-testimonials" type="button">⭐ Testimonios</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-subscribers-tab" data-bs-toggle="pill" data-bs-target="#pills-subscribers" type="button">📬 Suscriptores (<%= (typeof subscribers !== 'undefined') ? subscribers.length : 0 %>)</button></li>
             <% if (typeof dashboardDynamicSections !== 'undefined') { %>
                 <% dashboardDynamicSections.forEach(ds => { %>
                     <li class="nav-item" role="presentation">
@@ -40,6 +44,7 @@
         <% } else { %>
             <li class="nav-item" role="presentation"><button class="nav-link active" id="pills-blog-tab" data-bs-toggle="pill" data-bs-target="#pills-blog" type="button">📰 Blog</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="pills-portfolio-tab" data-bs-toggle="pill" data-bs-target="#pills-portfolio" type="button">🗓️ Eventos</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-semillas-tab" data-bs-toggle="pill" data-bs-target="#pills-semillas" type="button" style="color: #d8b4fe;"><i class="bi bi-balloon-heart-fill me-1 text-purple"></i> Semillas de Torah</button></li>
         <% } %>
     </ul>
 
@@ -157,6 +162,90 @@
                 </div>
             </div>
         <% } %>
+
+        <!-- SEMILLAS DE TORAH TAB -->
+        <div class="tab-pane fade" id="pills-semillas" role="tabpanel">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <div>
+                    <h4 class="mb-1 text-white"><i class="bi bi-balloon-heart-fill me-2" style="color: #c084fc;"></i>Semillas de Torah — Material Infantil</h4>
+                    <p class="text-white-50 small mb-0">Administra lecciones bíblicas, parashá para niños, hojas de actividades, canciones y testimonios.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="/semillas-de-torah" target="_blank" class="btn btn-outline-light"><i class="bi bi-eye"></i> Ver en la Web</a>
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createSemillasModal"><i class="bi bi-plus-circle"></i> Nuevo Contenido</button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Portada</th>
+                            <th>Título</th>
+                            <th>Categoría</th>
+                            <th>Autor</th>
+                            <th>Recursos</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (typeof semillas !== 'undefined' && semillas && semillas.length > 0) { %>
+                            <% semillas.forEach(item => { %>
+                            <tr>
+                                <td style="width: 70px;">
+                                    <% if (item.image_url) { %>
+                                        <img src="<%= item.image_url %>" alt="" style="width: 55px; height: 55px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
+                                    <% } else { %>
+                                        <div class="d-flex align-items-center justify-content-center bg-secondary text-white-50" style="width: 55px; height: 55px; border-radius: 8px;">
+                                            <i class="bi bi-flower1 fs-4"></i>
+                                        </div>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-white"><%= item.title %></div>
+                                    <% if (item.subtitle) { %>
+                                        <div class="text-white-50 small fst-italic"><%= item.subtitle %></div>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <span class="badge px-2 py-1" style="background: #581c87; color: #e9d5ff; font-weight: 600; font-size: 0.8rem;">
+                                        <%= item.category || 'Parashá Infantil' %>
+                                    </span>
+                                </td>
+                                <td><span class="small text-white"><i class="bi bi-person me-1 text-muted"></i><%= item.author || 'Elva Avila' %></span></td>
+                                <td>
+                                    <div class="d-flex gap-1 flex-wrap">
+                                        <% if (item.pdf_file) { %>
+                                            <a href="<%= item.pdf_file %>" target="_blank" class="badge bg-success text-decoration-none" title="PDF / Actividad imprimible"><i class="bi bi-file-pdf"></i> PDF</a>
+                                        <% } %>
+                                        <% if (item.youtube_link) { %>
+                                            <a href="<%= item.youtube_link %>" target="_blank" class="badge bg-danger text-decoration-none" title="Video de YouTube"><i class="bi bi-youtube"></i> Video</a>
+                                        <% } %>
+                                        <% if (!item.pdf_file && !item.youtube_link) { %>
+                                            <span class="text-white-50 small">-</span>
+                                        <% } %>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge <%= item.is_published ? 'bg-success' : 'bg-secondary' %>">
+                                        <%= item.is_published ? 'Publicado' : 'Borrador' %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="/admin/semillas/edit/<%= item.id %>" class="btn btn-primary" title="Editar contenido"><i class="bi bi-pencil"></i> Editar</a>
+                                        <a href="/admin/semillas/delete/<%= item.id %>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar este contenido infantil?')" title="Eliminar"><i class="bi bi-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr><td colspan="7" class="text-center py-4 text-white-50"><i class="bi bi-balloon-heart fs-3 d-block mb-2 text-purple"></i>No hay contenidos registrados en Semillas de Torah aún. ¡Haz clic en "Nuevo Contenido" para agregar el primero!</td></tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
         <!-- BLOG TAB -->
         <div class="tab-pane fade <%= role !== 'admin' ? 'show active' : '' %>" id="pills-blog" role="tabpanel">
@@ -306,6 +395,63 @@
                                 </td>
                             </tr>
                             <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SUBSCRIBERS TAB -->
+            <div class="tab-pane fade" id="pills-subscribers" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h4 class="mb-1">📬 Suscriptores al Boletín</h4>
+                        <p class="text-white-50 small mb-0">Lista de usuarios que se han suscrito desde el sitio web.</p>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Correo Electrónico</th>
+                                <th>IP</th>
+                                <th>Fecha de Suscripción</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (typeof subscribers !== 'undefined' && subscribers && subscribers.length > 0) { %>
+                                <% subscribers.forEach((s, idx) => { %>
+                                <tr>
+                                    <td><%= idx + 1 %></td>
+                                    <td>
+                                        <a href="mailto:<%= s.email %>" class="text-info text-decoration-none fw-semibold">
+                                            <i class="bi bi-envelope me-1"></i> <%= s.email %>
+                                        </a>
+                                    </td>
+                                    <td><span class="text-white-50 small"><%= s.ip_address || '-' %></span></td>
+                                    <td><%= s.subscribed_at ? new Date(s.subscribed_at).toLocaleString('es-ES') : '-' %></td>
+                                    <td>
+                                        <span class="badge <%= s.is_active ? 'bg-success' : 'bg-secondary' %>">
+                                            <%= s.is_active ? 'Activo' : 'Inactivo' %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/subscribers/delete/<%= s.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este suscriptor?')">
+                                            <i class="bi bi-trash"></i> Eliminar
+                                        </a>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="6" class="text-center py-4 text-white-50">
+                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                        Aún no hay suscriptores registrados.
+                                    </td>
+                                </tr>
+                            <% } %>
                         </tbody>
                     </table>
                 </div>

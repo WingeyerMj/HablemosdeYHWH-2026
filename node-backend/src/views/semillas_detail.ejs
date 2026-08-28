@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('partials/head') %>
+
+<body class="semillas-detail-page" style="background-color: #faf7f2;">
+
+    <%- include('partials/header') %>
+
+    <main class="main">
+
+        <!-- Page Title Header -->
+        <div class="page-title accent-background" style="background: linear-gradient(135deg, #4a154b 0%, #6b21a8 50%, #2e7d32 100%); padding: 130px 0 50px 0;">
+            <div class="container d-lg-flex justify-content-between align-items-center">
+                <div data-aos="fade-right">
+                    <span class="badge mb-2 px-3 py-2 text-uppercase" style="background: rgba(255,255,255,0.25); backdrop-filter: blur(5px); font-size: 0.82rem; letter-spacing: 1px; color: #fff; border-radius: 20px;">
+                        🌱 Semillas de Torah • <%= item.category || 'Material Infantil' %>
+                    </span>
+                    <h1 class="mb-2 text-white fw-bold" style="font-size: 2.2rem; line-height: 1.3;"><%= item.title %></h1>
+                    <% if (item.subtitle) { %>
+                        <p class="text-white-50 mb-0" style="font-size: 1.1rem;"><%= item.subtitle %></p>
+                    <% } %>
+                </div>
+                <nav class="breadcrumbs mt-3 mt-lg-0" data-aos="fade-left">
+                    <ol class="d-flex list-unstyled gap-2 m-0 p-0 text-white-50">
+                        <li><a href="/" class="text-white text-decoration-none">Inicio</a></li>
+                        <li class="text-white-50">/</li>
+                        <li><a href="/semillas-de-torah" class="text-white text-decoration-none">Semillas de Torah</a></li>
+                        <li class="text-white-50">/</li>
+                        <li class="current text-white fw-semibold text-truncate" style="max-width: 200px;"><%= item.title %></li>
+                    </ol>
+                </nav>
+            </div>
+        </div><!-- End Page Title -->
+
+        <!-- Main Content Area -->
+        <section class="section py-5">
+            <div class="container">
+                <div class="row g-5">
+                    
+                    <!-- Left Column: Main Article -->
+                    <div class="col-lg-8" data-aos="fade-up">
+                        <article class="bg-white p-4 p-md-5 rounded-4 shadow-sm" style="border: 1px solid #f3e8ff;">
+                            
+                            <!-- Author & Meta bar -->
+                            <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-4 border-bottom gap-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <img src="/assets/img/pagina/semillas_torah_logo.png" alt="Elva Avila" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #6b21a8;">
+                                    <div>
+                                        <div class="fw-bold" style="color: #2e1065;"><%= item.author || 'Elva Avila' %></div>
+                                        <div class="text-muted small">Semillas de Torah • Ministerio Infantil</div>
+                                    </div>
+                                </div>
+                                <div class="text-muted small d-flex align-items-center gap-2">
+                                    <i class="bi bi-calendar3 text-purple" style="color: #6b21a8;"></i>
+                                    <span><%= item.created_at ? new Date(item.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }) : '' %></span>
+                                </div>
+                            </div>
+
+                            <!-- YouTube Video Player if present -->
+                            <% if (item.youtube_link && item.youtube_link.trim() !== '') { 
+                                let videoId = '';
+                                const yt = item.youtube_link;
+                                if (yt.includes('youtu.be/')) videoId = yt.split('youtu.be/')[1].split('?')[0];
+                                else if (yt.includes('watch?v=')) videoId = yt.split('watch?v=')[1].split('&')[0];
+                                else if (yt.includes('embed/')) videoId = yt.split('embed/')[1].split('?')[0];
+                            %>
+                                <% if (videoId) { %>
+                                    <div class="ratio ratio-16x9 mb-4 rounded-4 overflow-hidden shadow-sm">
+                                        <iframe src="https://www.youtube.com/embed/<%= videoId %>" title="<%= item.title %>" allowfullscreen></iframe>
+                                    </div>
+                                <% } %>
+                            <% } %>
+
+                            <!-- Cover Image if present and no video (or alongside video) -->
+                            <% if (item.image_url && item.image_url.trim() !== '' && (!item.youtube_link || item.youtube_link.trim() === '')) { %>
+                                <div class="mb-4 text-center rounded-4 overflow-hidden shadow-sm" style="max-height: 440px;">
+                                    <img src="<%= item.image_url %>" alt="<%= item.title %>" class="img-fluid w-100" style="object-fit: cover;">
+                                </div>
+                            <% } %>
+
+                            <!-- Description callout -->
+                            <% if (item.description && item.description.trim() !== '') { %>
+                                <div class="p-3 mb-4 rounded-3" style="background: #faf5ff; border-left: 4px solid #6b21a8; font-size: 1.1rem; color: #4c1d95; line-height: 1.7;">
+                                    <%= item.description %>
+                                </div>
+                            <% } %>
+
+                            <!-- PDF Download / Activity Box if present -->
+                            <% if (item.pdf_file && item.pdf_file.trim() !== '') { %>
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 p-4 mb-4 rounded-4 shadow-sm" style="background: linear-gradient(135deg, #fdfbf7, #f5efe6); border: 2px dashed #22c55e;">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="d-flex align-items-center justify-content-center text-white rounded-circle shadow-sm" style="width: 54px; height: 54px; background: #22c55e; font-size: 1.6rem;">
+                                            <i class="bi bi-file-earmark-pdf"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold mb-1" style="color: #14532d;">Hoja de Actividad / Dibujo para Descargar</h6>
+                                            <p class="text-muted small mb-0">Imprime esta actividad en PDF para trabajarla en familia o en la clase de niños.</p>
+                                        </div>
+                                    </div>
+                                    <a href="<%= item.pdf_file %>" target="_blank" download class="btn btn-success px-4 py-2 rounded-pill fw-bold shadow-sm d-inline-flex align-items-center gap-2">
+                                        <i class="bi bi-download"></i> Descargar PDF
+                                    </a>
+                                </div>
+                            <% } %>
+
+                            <!-- Formatted HTML Body Content -->
+                            <div class="article-body-content my-4" style="font-size: 1.12rem; line-height: 1.9; color: #334155;">
+                                <%- item.content || '<p class="text-muted">Pronto compartiremos más detalles de esta lección.</p>' %>
+                            </div>
+
+                            <!-- Bottom Share & Facebook Follow -->
+                            <div class="mt-5 pt-4 border-top d-flex flex-wrap align-items-center justify-content-between gap-3">
+                                <a href="/semillas-de-torah" class="btn btn-outline-dark rounded-pill px-4">
+                                    <i class="bi bi-arrow-left me-1"></i> Volver a Semillas de Torah
+                                </a>
+                                <a href="https://www.facebook.com/profile.php?id=61592294939779" target="_blank" rel="noopener noreferrer" class="btn btn-primary rounded-pill px-4" style="background: #1877F2; border: none;">
+                                    <i class="bi bi-facebook me-1"></i> Compartir en Facebook
+                                </a>
+                            </div>
+
+                        </article>
+                    </div>
+
+                    <!-- Right Column: Sidebar & Related Items -->
+                    <div class="col-lg-4" data-aos="fade-left">
+                        <div class="sticky-top" style="top: 100px;">
+                            
+                            <!-- Ministry Card -->
+                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 p-4 text-center bg-white" style="border-top: 5px solid #6b21a8 !important;">
+                                <img src="/assets/img/pagina/semillas_torah_logo.png" alt="Semillas de Torah" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; margin: 0 auto 15px; border: 3px solid #6b21a8;">
+                                <h5 class="fw-bold mb-1" style="color: #2e1065;">Semillas de Torah</h5>
+                                <p class="text-muted small mb-3">Enseñanza bíblica infantil coordinada por <strong>Elva Avila</strong>.</p>
+                                <a href="https://www.facebook.com/profile.php?id=61592294939779" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary rounded-pill w-100 fw-bold" style="border-color: #1877F2; color: #1877F2;">
+                                    <i class="bi bi-facebook me-1"></i> Seguir en Facebook
+                                </a>
+                            </div>
+
+                            <!-- Related Lessons -->
+                            <% if (typeof relatedItems !== 'undefined' && relatedItems && relatedItems.length > 0) { %>
+                                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                                    <h5 class="fw-bold mb-3" style="color: #2e1065;">
+                                        <i class="bi bi-collection-play me-2 text-purple" style="color: #6b21a8;"></i>Más Lecciones
+                                    </h5>
+                                    <div class="d-flex flex-column gap-3">
+                                        <% relatedItems.forEach(rel => { %>
+                                            <a href="/semillas-de-torah/<%= rel.id %>" class="d-flex align-items-center gap-3 text-decoration-none p-2 rounded-3 hover-item-box" style="transition: all 0.2s ease;">
+                                                <% if (rel.image_url) { %>
+                                                    <img src="<%= rel.image_url %>" alt="" style="width: 60px; height: 60px; border-radius: 10px; object-fit: cover; flex-shrink: 0;">
+                                                <% } else { %>
+                                                    <div class="d-flex align-items-center justify-content-center rounded-3 text-white flex-shrink-0" style="width: 60px; height: 60px; background: linear-gradient(135deg, #6b21a8, #22c55e); font-size: 1.3rem;">
+                                                        <i class="bi bi-flower1"></i>
+                                                    </div>
+                                                <% } %>
+                                                <div>
+                                                    <span class="badge px-2 py-0 mb-1" style="background: #f3e8ff; color: #6b21a8; font-size: 0.72rem;"><%= rel.category %></span>
+                                                    <div class="fw-semibold text-dark text-truncate-2" style="font-size: 0.92rem; line-height: 1.35;"><%= rel.title %></div>
+                                                </div>
+                                            </a>
+                                        <% }) %>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <style>
+        .hover-item-box:hover {
+            background-color: #faf5ff;
+            transform: translateX(4px);
+        }
+        .text-truncate-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+
+    <%- include('partials/footer') %>
+
+</body>
+</html>

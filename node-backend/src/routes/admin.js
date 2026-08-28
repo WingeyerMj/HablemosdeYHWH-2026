@@ -67,6 +67,18 @@ router.get('/ensenanzas/edit/:id', isAuthenticated, isAdmin, adminController.edi
 router.post('/ensenanzas/update', isAuthenticated, isAdmin, upload.single('image_file'), adminController.updateEnsenanza);
 router.get('/ensenanzas/delete/:id', isAuthenticated, isAdmin, adminController.deleteEnsenanza);
 
+// Semillas de Torah (Infantil) - Admin y Editor
+router.post('/semillas/create', isAuthenticated, upload.fields([
+    { name: 'image_file', maxCount: 1 },
+    { name: 'pdf_upload', maxCount: 1 }
+]), adminController.createSemillas);
+router.get('/semillas/edit/:id', isAuthenticated, adminController.editSemillasPage);
+router.post('/semillas/update', isAuthenticated, upload.fields([
+    { name: 'image_file', maxCount: 1 },
+    { name: 'pdf_upload', maxCount: 1 }
+]), adminController.updateSemillas);
+router.get('/semillas/delete/:id', isAuthenticated, adminController.deleteSemillas);
+
 // Blog / Artículos - Admin y Editor
 router.post('/blog/create', isAuthenticated, upload.single('image_file'), adminController.createBlogPost);
 router.get('/blog/edit/:id', isAuthenticated, adminController.editBlogPostPage);
@@ -120,5 +132,8 @@ router.post('/entity/:table/update/:id', isAuthenticated, isAdmin, upload.fields
     { name: 'pdf_upload', maxCount: 1 }
 ]), adminController.updateEntityData);
 router.get('/entity/:table/delete/:id', isAuthenticated, isAdmin, adminController.deleteEntityData);
+
+// Suscriptores Boletín (Solo Admin)
+router.get('/subscribers/delete/:id', isAuthenticated, isAdmin, adminController.deleteSubscriber);
 
 module.exports = router;

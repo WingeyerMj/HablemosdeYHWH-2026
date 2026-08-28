@@ -14,6 +14,10 @@ router.get('/eventos', homeController.eventosPage);
 router.get('/eventos/:id', homeController.eventDetail);
 router.get('/ensenanzas', homeController.ensenanzasPage);
 router.get('/ensenanzas/:id', homeController.ensenanzaDetail);
+router.get('/semillas-de-torah', homeController.semillasTorah);
+router.get('/semillas-de-torah/:id', homeController.semillasDetail);
+router.get('/semillas', homeController.semillasTorah);
+router.get('/semillas/:id', homeController.semillasDetail);
 if (process.env.NODE_ENV !== 'production') {
     router.get('/debug', homeController.debug);
 }

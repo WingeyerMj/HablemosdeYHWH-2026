@@ -243,6 +243,47 @@ const homeController = {
         }
     },
 
+    semillasTorah: async (req, res, next) => {
+        try {
+            const SemillasTorah = require('../models/SemillasTorah');
+            const items = await SemillasTorah.getPublished();
+            const categories = await SemillasTorah.getCategories();
+            const siteSettings = await SiteSettings.getMap();
+            res.render('semillas_torah', {
+                title: 'Semillas de Torah - Enseñanza Bíblica Infantil',
+                page: 'semillas-torah',
+                items,
+                categories,
+                siteSettings,
+                layout: false
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    semillasDetail: async (req, res, next) => {
+        try {
+            const SemillasTorah = require('../models/SemillasTorah');
+            const item = await SemillasTorah.getById(req.params.id);
+            if (!item) return res.redirect('/semillas-de-torah');
+            
+            const relatedItems = await SemillasTorah.getLatest(4);
+            const siteSettings = await SiteSettings.getMap();
+            
+            res.render('semillas_detail', {
+                title: item.title + ' - Semillas de Torah',
+                page: 'semillas-torah',
+                item,
+                relatedItems: relatedItems.filter(r => r.id != item.id),
+                siteSettings,
+                layout: false
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
     eventosPage: async (req, res, next) => {
         try {
             const eventos = await Portfolio.getAll();

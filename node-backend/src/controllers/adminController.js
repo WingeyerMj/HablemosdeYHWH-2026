@@ -41,16 +41,27 @@ const adminController = {
             const Testimonial = require('../models/Testimonial');
             const Pricing = require('../models/Pricing');
 
-            let parashot = [], portfolio = [], ensenanzas = [], blogs = [], team = [], testimonials = [], pricing = [], sections = [];
+            let parashot = [], portfolio = [], ensenanzas = [], blogs = [], team = [], testimonials = [], pricing = [], sections = [], semillas = [];
             
             try {
                 parashot = await Parasha.getAll();
                 portfolio = await Portfolio.getAll();
                 try { ensenanzas = await Ensenanza.getAll(); } catch(e) { ensenanzas = []; }
                 try { blogs = await BlogPost.getAll(); } catch(e) { blogs = []; }
+                try { 
+                    const SemillasTorah = require('../models/SemillasTorah');
+                    semillas = await SemillasTorah.getAll(); 
+                } catch(e) { semillas = []; }
                 team = await Team.getAll();
                 testimonials = await Testimonial.getAll();
                 pricing = await Pricing.getAll();
+                let subscribers = [];
+                try {
+                    const [subRows] = await db.query('SELECT * FROM newsletter_subscribers ORDER BY subscribed_at DESC');
+                    subscribers = subRows || [];
+                } catch(e) {
+                    subscribers = [];
+                }
                 const sectionNames = ['hero', 'calendario', 'about', 'parashot', 'eventos', 'ensenanzas', 'blog', 'equipo', 'footer'];
                 for (const name of sectionNames) {
                     try {
@@ -95,19 +106,28 @@ const adminController = {
                 blogCategories = await BlogPost.getCategories();
             } catch(e) {}
 
+            let semillasCategories = [];
+            try {
+                const SemillasTorah = require('../models/SemillasTorah');
+                semillasCategories = await SemillasTorah.getCategories();
+            } catch(e) {}
+
             res.render('admin/dashboard', {
                 layout: 'admin/layout',
                 parashot,
                 portfolio,
                 ensenanzas,
                 blogs,
+                semillas,
                 team,
                 testimonials,
                 pricing,
                 sections,
                 dashboardDynamicSections,
                 eventCategories,
-                blogCategories
+                blogCategories,
+                semillasCategories,
+                subscribers: typeof subscribers !== 'undefined' ? subscribers : []
             });
         } catch (error) {
             next(error);
@@ -301,6 +321,100 @@ const adminController = {
         } catch (error) {
             console.error('Error deleteEnsenanza:', error);
             res.redirect('/admin/dashboard#pills-ensenanzas');
+        }
+    },
+
+    // ==================== SEMILLAS DE TORAH ====================
+    createSemillas: async (req, res) => {
+        try {
+            let { title, subtitle, category, author, description, content, youtube_link, is_published, image_url, pdf_file } = req.body;
+            
+            if (req.files) {
+                if (req.files['image_file'] && req.files['image_file'][0]) {
+                    image_url = '/uploads/semillas/' + req.files['image_file'][0].filename;
+                }
+                if (req.files['pdf_upload'] && req.files['pdf_upload'][0]) {
+                    pdf_file = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
+                }
+            } else if (req.file) {
+                image_url = '/uploads/semillas/' + req.file.filename;
+            }
+
+            const SemillasTorah = require('../models/SemillasTorah');
+            await SemillasTorah.create({
+                title,
+                subtitle: subtitle || '',
+                category: category || 'Parashá Infantil',
+                author: author || 'Elva Avila',
+                description: description || '',
+                content: content || '',
+                youtube_link: youtube_link || '',
+                image_url: image_url || '',
+                pdf_file: pdf_file || '',
+                is_published: is_published !== '0' && is_published !== false
+            });
+            res.redirect('/admin/dashboard#pills-semillas');
+        } catch (error) {
+            console.error('Error createSemillas:', error);
+            res.redirect('/admin/dashboard#pills-semillas');
+        }
+    },
+
+    editSemillasPage: async (req, res) => {
+        try {
+            const SemillasTorah = require('../models/SemillasTorah');
+            const item = await SemillasTorah.getById(req.params.id);
+            if (!item) return res.redirect('/admin/dashboard#pills-semillas');
+            res.render('admin/edit_semillas', { layout: 'admin/layout', item });
+        } catch (error) {
+            console.error('Error editSemillasPage:', error);
+            res.redirect('/admin/dashboard#pills-semillas');
+        }
+    },
+
+    updateSemillas: async (req, res) => {
+        try {
+            let { id, title, subtitle, category, author, description, content, youtube_link, is_published, image_url, pdf_file } = req.body;
+            
+            if (req.files) {
+                if (req.files['image_file'] && req.files['image_file'][0]) {
+                    image_url = '/uploads/semillas/' + req.files['image_file'][0].filename;
+                }
+                if (req.files['pdf_upload'] && req.files['pdf_upload'][0]) {
+                    pdf_file = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
+                }
+            } else if (req.file) {
+                image_url = '/uploads/semillas/' + req.file.filename;
+            }
+
+            const SemillasTorah = require('../models/SemillasTorah');
+            await SemillasTorah.update(id, {
+                title,
+                subtitle: subtitle || '',
+                category: category || 'Parashá Infantil',
+                author: author || 'Elva Avila',
+                description: description || '',
+                content: content || '',
+                youtube_link: youtube_link || '',
+                image_url: image_url || '',
+                pdf_file: pdf_file || '',
+                is_published: is_published !== '0' && is_published !== false
+            });
+            res.redirect('/admin/dashboard#pills-semillas');
+        } catch (error) {
+            console.error('Error updateSemillas:', error);
+            res.redirect('/admin/dashboard#pills-semillas');
+        }
+    },
+
+    deleteSemillas: async (req, res) => {
+        try {
+            const SemillasTorah = require('../models/SemillasTorah');
+            await SemillasTorah.delete(req.params.id);
+            res.redirect('/admin/dashboard#pills-semillas');
+        } catch (error) {
+            console.error('Error deleteSemillas:', error);
+            res.redirect('/admin/dashboard#pills-semillas');
         }
     },
 
@@ -877,6 +991,17 @@ const adminController = {
         const { table, id } = req.params;
         await EntityModel.delete(table, id);
         res.redirect(`/admin/dashboard#pills-ds-${table}`);
+    },
+
+    deleteSubscriber: async (req, res) => {
+        try {
+            const { id } = req.params;
+            await db.query('DELETE FROM newsletter_subscribers WHERE id = ?', [id]);
+            res.redirect('/admin/dashboard#pills-subscribers');
+        } catch (error) {
+            console.error('Error deleteSubscriber:', error);
+            res.redirect('/admin/dashboard#pills-subscribers');
+        }
     }
 };
 

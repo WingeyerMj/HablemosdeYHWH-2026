@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('partials/head') %>
+
+<body class="semillas-page" style="background-color: #faf7f2;">
+
+    <%- include('partials/header') %>
+
+    <main class="main">
+
+        <!-- Page Title Banner -->
+        <div class="page-title accent-background" style="background: linear-gradient(135deg, #4a154b 0%, #6b21a8 50%, #2e7d32 100%); padding: 130px 0 60px 0;">
+            <div class="container d-lg-flex justify-content-between align-items-center">
+                <div data-aos="fade-right">
+                    <span class="badge mb-2 px-3 py-2 text-uppercase" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); font-size: 0.85rem; letter-spacing: 1px; color: #fff; border-radius: 20px;">
+                        🌱 Ministerio Infantil • By Elva Avila
+                    </span>
+                    <h1 class="mb-2 text-white fw-bold" style="font-size: 2.6rem;">Semillas de Torah</h1>
+                    <p class="text-white-50 mb-0" style="font-size: 1.15rem;">Sembrando la Palabra, cosechando vida 💚</p>
+                </div>
+                <nav class="breadcrumbs mt-3 mt-lg-0" data-aos="fade-left">
+                    <ol class="d-flex list-unstyled gap-2 m-0 p-0 text-white-50">
+                        <li><a href="/" class="text-white text-decoration-none">Inicio</a></li>
+                        <li class="text-white-50">/</li>
+                        <li class="current text-white fw-semibold">Semillas de Torah</li>
+                    </ol>
+                </nav>
+            </div>
+        </div><!-- End Page Title -->
+
+        <!-- Hero Section with Official Banner -->
+        <section class="section py-5 position-relative overflow-hidden">
+            <div class="container">
+                <div class="row align-items-center gy-5">
+                    <div class="col-lg-6" data-aos="fade-right">
+                        <div class="pe-lg-4">
+                            <div class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-3 rounded-pill" style="background: #f3e8ff; color: #6b21a8; font-weight: 700; font-size: 0.88rem; border: 1px solid #e9d5ff;">
+                                <i class="bi bi-balloon-heart-fill text-danger"></i> Por Elva Avila
+                            </div>
+                            <h2 class="display-6 fw-bold mb-3" style="color: #2e1065; line-height: 1.3;">
+                                Sembrando la Palabra en el corazón de las <span style="color: #6b21a8; border-bottom: 3px solid #22c55e;">nuevas generaciones</span>
+                            </h2>
+                            <p class="lead text-muted mb-4" style="font-size: 1.12rem; line-height: 1.8;">
+                                <strong>Semillas de Torah</strong> es un espacio creado para que los niños y familias conozcan las riquezas de la Toráh, los valores bíblicos y las fiestas del Creador de una manera alegre, visual y pedagógica. <em>¡Abba sea glorificado!</em>
+                            </p>
+
+                            <div class="d-flex flex-wrap gap-3 mt-4">
+                                <a href="https://www.facebook.com/profile.php?id=61592294939779" target="_blank" rel="noopener noreferrer" class="btn btn-lg px-4 py-3 shadow-sm rounded-pill fw-bold text-white d-inline-flex align-items-center gap-2" style="background: #1877F2; border: none; transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                                    <i class="bi bi-facebook fs-5"></i> Seguir en Facebook Oficial
+                                </a>
+                                <a href="#actividades-seccion" class="btn btn-lg px-4 py-3 rounded-pill fw-bold d-inline-flex align-items-center gap-2" style="background: #ffffff; border: 2px solid #6b21a8; color: #6b21a8; transition: all 0.3s ease;">
+                                    <i class="bi bi-collection-play me-1"></i> Explorar Lecciones (<%= (typeof items !== 'undefined' && items) ? items.length : 0 %>)
+                                </a>
+                            </div>
+
+                            <div class="mt-4 pt-3 border-top d-flex align-items-center gap-4 text-muted small">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                    <span>Material Didáctico</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                    <span>Para toda la familia</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                    <span>100% Gratuito</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 text-center" data-aos="fade-left">
+                        <div class="position-relative d-inline-block">
+                            <!-- Official Banner Card -->
+                            <div class="card border-0 shadow-lg" style="border-radius: 24px; overflow: hidden; background: #6b21a8; border: 4px solid #fff;">
+                                <img src="/assets/img/pagina/semillas_torah_banner.png" alt="Semillas de Torah - Banner Oficial con Elva Avila" class="img-fluid w-100" style="object-fit: cover; max-height: 440px;">
+                                <div class="p-3 text-center" style="background: linear-gradient(135deg, #581c87, #3b0764); color: #fff;">
+                                    <p class="mb-0 fw-semibold" style="font-size: 0.95rem;">
+                                        🌱 <em>"Instruye al niño en su camino, y aun cuando fuere viejo no se apartará de él."</em> — Proverbios 22:6
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DYNAMIC ITEMS FROM CRUD BACKEND -->
+        <section id="actividades-seccion" class="section py-5" style="background-color: #ffffff;">
+            <div class="container">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 pb-3 border-bottom" data-aos="fade-up">
+                    <div>
+                        <span class="badge px-3 py-2 rounded-pill text-uppercase mb-2" style="background: #f3e8ff; color: #6b21a8; font-weight: 700; font-size: 0.8rem; letter-spacing: 1px;">
+                            Contenido & Recursos Didácticos
+                        </span>
+                        <h2 class="fw-bold mb-1" style="color: #2e1065;">Lecciones, Parashot y Actividades</h2>
+                        <p class="text-muted mb-0">Historias bíblicas, hojas imprimibles en PDF, videos y testimonios infantiles.</p>
+                    </div>
+                    <div class="mt-3 mt-md-0 d-flex align-items-center gap-2">
+                        <span class="badge px-3 py-2" style="background: linear-gradient(135deg, #6b21a8, #22c55e); font-size: 0.95rem; font-weight: 600; border-radius: 20px;">
+                            <%= (typeof items !== 'undefined' && items) ? items.length : 0 %> Recursos disponibles
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Grid de Items Dinámicos -->
+                <div class="row g-4">
+                    <% if (typeof items !== 'undefined' && items && items.length > 0) { %>
+                        <% items.forEach((item, index) => { %>
+                            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="<%= (index % 3 + 1) * 100 %>">
+                                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden dynamic-semilla-card bg-white" style="transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid #f3e8ff;">
+                                    
+                                    <!-- Card Image & Badges -->
+                                    <div class="position-relative" style="height: 220px; background: #2e1065; overflow: hidden;">
+                                        <% if (item.image_url && item.image_url.trim() !== '') { %>
+                                            <img src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;" class="card-img-top-hover">
+                                        <% } else { %>
+                                            <div class="d-flex align-items-center justify-content-center h-100 w-100" style="background: linear-gradient(135deg, #f3e8ff, #ede9fe);">
+                                                <i class="bi bi-balloon-heart text-purple" style="font-size: 4rem; color: #a855f7;"></i>
+                                            </div>
+                                        <% } %>
+
+                                        <!-- Category badge -->
+                                        <span class="position-absolute top-0 start-0 m-3 badge px-3 py-1 shadow-sm" style="background: rgba(107, 33, 168, 0.9); backdrop-filter: blur(4px); font-size: 0.75rem; border-radius: 20px;">
+                                            <%= item.category || 'Parashá Infantil' %>
+                                        </span>
+
+                                        <!-- Video / PDF Badges -->
+                                        <div class="position-absolute bottom-0 end-0 m-3 d-flex gap-1">
+                                            <% if (item.pdf_file) { %>
+                                                <span class="badge bg-success shadow-sm" title="Tiene PDF descargable"><i class="bi bi-file-pdf"></i> PDF</span>
+                                            <% } %>
+                                            <% if (item.youtube_link) { %>
+                                                <span class="badge bg-danger shadow-sm" title="Tiene Video de YouTube"><i class="bi bi-youtube"></i> Video</span>
+                                            <% } %>
+                                        </div>
+                                    </div>
+
+                                    <!-- Card Body -->
+                                    <div class="card-body p-4 d-flex flex-column">
+                                        <% if (item.subtitle) { %>
+                                            <div class="text-uppercase fw-bold small mb-1" style="color: #6b21a8; font-size: 0.78rem; letter-spacing: 0.5px;">
+                                                <%= item.subtitle %>
+                                            </div>
+                                        <% } %>
+                                        
+                                        <h4 class="fw-bold mb-2" style="font-size: 1.25rem; line-height: 1.4;">
+                                            <a href="/semillas-de-torah/<%= item.id %>" class="text-decoration-none text-dark hover-purple">
+                                                <%= item.title %>
+                                            </a>
+                                        </h4>
+
+                                        <% if (item.description) { %>
+                                            <p class="text-muted mb-4 small" style="line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                                <%= item.description %>
+                                            </p>
+                                        <% } %>
+
+                                        <div class="mt-auto pt-3 border-top d-flex align-items-center justify-content-between">
+                                            <span class="small text-muted"><i class="bi bi-person me-1"></i><%= item.author || 'Elva Avila' %></span>
+                                            <a href="/semillas-de-torah/<%= item.id %>" class="btn btn-sm px-3 rounded-pill fw-bold text-white shadow-sm" style="background: #6b21a8;">
+                                                Ver Detalle <i class="bi bi-arrow-right ms-1"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="col-12 text-center py-5">
+                            <div class="d-inline-flex p-4 rounded-circle mb-3" style="background: #f3e8ff; color: #6b21a8; font-size: 3rem;">
+                                <i class="bi bi-balloon-heart"></i>
+                            </div>
+                            <h4 class="fw-bold" style="color: #2e1065;">Próximamente publicaremos lecciones infantiles</h4>
+                            <p class="text-muted">Estamos preparando historias, actividades para colorear y resúmenes de la Toráh para compartir aquí.</p>
+                            <a href="https://www.facebook.com/profile.php?id=61592294939779" target="_blank" class="btn btn-primary rounded-pill px-4" style="background: #1877F2; border: none;">
+                                <i class="bi bi-facebook me-1"></i> Visitar Facebook Oficial
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </section>
+
+        <!-- Presentación de la Coordinadora / Acerca de -->
+        <section class="section py-5" style="background: linear-gradient(135deg, #fdfbf7 0%, #f5efe6 100%);">
+            <div class="container">
+                <div class="row align-items-center gy-4 p-4 p-md-5 bg-white rounded-4 shadow-sm" style="border: 2px solid #f3e8ff;">
+                    <div class="col-md-4 text-center" data-aos="zoom-in">
+                        <div style="width: 220px; height: 220px; margin: 0 auto; border-radius: 50%; padding: 6px; background: linear-gradient(135deg, #6b21a8, #22c55e); box-shadow: 0 10px 25px rgba(107,33,168,0.25);">
+                            <img src="/assets/img/pagina/semillas_torah_logo.png" alt="Logo Oficial Semillas de Torah" class="img-fluid w-100 h-100 rounded-circle" style="object-fit: cover;">
+                        </div>
+                    </div>
+                    <div class="col-md-8" data-aos="fade-left">
+                        <span class="badge px-3 py-2 rounded-pill text-uppercase mb-2" style="background: #e8f5e9; color: #2e7d32; font-weight: 700; font-size: 0.8rem;">
+                            Enseñanza y Edificación
+                        </span>
+                        <h3 class="fw-bold mb-3" style="color: #2e1065;">Sobre Semillas de Torah</h3>
+                        <p class="text-muted" style="font-size: 1.05rem; line-height: 1.8;">
+                            Coordinado por <strong>Elva Avila</strong>, este ministerio tiene como propósito sembrar en los corazones infantiles el amor por las Escrituras, la identidad en el Creador y la belleza de caminar en obediencia a Su Toráh, mediante narraciones amenas, recursos interactivos y actividades familiares.
+                        </p>
+                        <div class="d-flex align-items-center gap-3 mt-4">
+                            <a href="https://www.facebook.com/profile.php?id=61592294939779" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-semibold" style="border-color: #1877F2; color: #1877F2;">
+                                <i class="bi bi-facebook me-1"></i> Ver perfil en Facebook
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pilares de Aprendizaje -->
+        <section class="section py-5" style="background-color: #ffffff;">
+            <div class="container">
+                <div class="text-center max-w-700 mx-auto mb-5" data-aos="fade-up">
+                    <span class="badge px-3 py-2 rounded-pill text-uppercase" style="background: #f3e8ff; color: #6b21a8; font-weight: 700; font-size: 0.8rem; letter-spacing: 1px;">
+                        ¿Qué aprendemos?
+                    </span>
+                    <h2 class="fw-bold mt-2" style="color: #2e1065;">Pilares de Nuestra Enseñanza</h2>
+                    <p class="text-muted" style="font-size: 1.05rem;">Cada lección y dinámica está orientada a nutrir espiritualmente a los pequeños.</p>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Pilar 1 -->
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                        <div class="card h-100 border-0 p-4 shadow-sm feature-card" style="border-radius: 20px; background: #faf5ff; border-top: 5px solid #6b21a8 !important;">
+                            <div class="icon-box mb-3 d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 16px; background: #ede9fe; color: #6b21a8; font-size: 1.8rem;">
+                                <i class="bi bi-journal-bookmark-fill"></i>
+                            </div>
+                            <h4 class="fw-bold mb-2" style="color: #2e1065;">Parashá Semanal Infantil</h4>
+                            <p class="text-muted mb-0">Resúmenes comprensibles de la porción semanal de la Toráh, adaptados a un lenguaje divertido y claro para niños.</p>
+                        </div>
+                    </div>
+
+                    <!-- Pilar 2 -->
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                        <div class="card h-100 border-0 p-4 shadow-sm feature-card" style="border-radius: 20px; background: #faf5ff; border-top: 5px solid #22c55e !important;">
+                            <div class="icon-box mb-3 d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 16px; background: #dcfce7; color: #16a34a; font-size: 1.8rem;">
+                                <i class="bi bi-palette-fill"></i>
+                            </div>
+                            <h4 class="fw-bold mb-2" style="color: #14532d;">Dibujos y Manualidades</h4>
+                            <p class="text-muted mb-0">Hojas de actividades imprimibles, coloreables de las fiestas bíblicas (Moedim), laberintos, crucigramas y dinámicas didácticas.</p>
+                        </div>
+                    </div>
+
+                    <!-- Pilar 3 -->
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                        <div class="card h-100 border-0 p-4 shadow-sm feature-card" style="border-radius: 20px; background: #faf5ff; border-top: 5px solid #0288d1 !important;">
+                            <div class="icon-box mb-3 d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 16px; background: #e0f2fe; color: #0288d1; font-size: 1.8rem;">
+                                <i class="bi bi-translate"></i>
+                            </div>
+                            <h4 class="fw-bold mb-2" style="color: #0c4a6e;">Alef-Bet y Letras Hebreas</h4>
+                            <p class="text-muted mb-0">Primeros pasos en el idioma hebreo: reconocimiento de las letras, su significado, sonidos y palabras clave de las Escrituras.</p>
+                        </div>
+                    </div>
+
+                    <!-- Pilar 4 -->
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                        <div class="card h-100 border-0 p-4 shadow-sm feature-card" style="border-radius: 20px; background: #faf5ff; border-top: 5px solid #e11d48 !important;">
+                            <div class="icon-box mb-3 d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 16px; background: #ffe4e6; color: #e11d48; font-size: 1.8rem;">
+                                <i class="bi bi-heart-fill"></i>
+                            </div>
+                            <h4 class="fw-bold mb-2" style="color: #881337;">Valores y Mandamientos</h4>
+                            <p class="text-muted mb-0">Enseñanzas prácticas sobre el respeto a los padres, la honestidad, el amor al prójimo, el Shabat y la bondad con la creación.</p>
+                        </div>
+                    </div>
+
+                    <!-- Pilar 5 -->
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                        <div class="card h-100 border-0 p-4 shadow-sm feature-card" style="border-radius: 20px; background: #faf5ff; border-top: 5px solid #f59e0b !important;">
+                            <div class="icon-box mb-3 d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 16px; background: #fef3c7; color: #d97706; font-size: 1.8rem;">
+                                <i class="bi bi-music-note-beamed"></i>
+                            </div>
+                            <h4 class="fw-bold mb-2" style="color: #78350f;">Canciones y Alabanzas</h4>
+                            <p class="text-muted mb-0">Melodías alegres y fáciles de recordar para cantar en Shabat y en familia, aprendiendo versículos bíblicos de memoria.</p>
+                        </div>
+                    </div>
+
+                    <!-- Pilar 6 -->
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
+                        <div class="card h-100 border-0 p-4 shadow-sm feature-card" style="border-radius: 20px; background: #faf5ff; border-top: 5px solid #0d9488 !important;">
+                            <div class="icon-box mb-3 d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 16px; background: #ccfbf1; color: #0d9488; font-size: 1.8rem;">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <h4 class="fw-bold mb-2" style="color: #134e4a;">Guía para Padres y Maestros</h4>
+                            <p class="text-muted mb-0">Consejos y recursos prácticos para llevar a cabo clases bíblicas infantiles inspiradoras en el hogar o la congregación.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Facebook Community Banner -->
+        <section class="section py-5" style="background: linear-gradient(135deg, #1877F2 0%, #0d54b8 100%); color: #fff;">
+            <div class="container text-center py-4" data-aos="zoom-in">
+                <div class="d-inline-flex p-3 rounded-circle bg-white text-primary mb-3 shadow-sm" style="font-size: 2.5rem; color: #1877F2 !important;">
+                    <i class="bi bi-facebook"></i>
+                </div>
+                <h2 class="fw-bold text-white mb-3" style="font-size: 2.2rem;">¡Sigue la página oficial de Semillas de Torah!</h2>
+                <p class="lead text-white-50 max-w-700 mx-auto mb-4" style="font-size: 1.15rem;">
+                    Acompaña a <strong>Elva Avila</strong> en las transmisiones semanales, novedades, dinámicas bíblicas y materiales gratuitos para tus hijos.
+                </p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="https://www.facebook.com/profile.php?id=61592294939779" target="_blank" rel="noopener noreferrer" class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold shadow" style="color: #1877F2; font-size: 1.05rem;">
+                        <i class="bi bi-hand-thumbs-up-fill me-2"></i> Seguir Página en Facebook
+                    </a>
+                    <a href="/#contact" class="btn btn-outline-light btn-lg px-4 py-3 rounded-pill fw-bold">
+                        <i class="bi bi-envelope me-2"></i> Contactar al Equipo
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <style>
+        .dynamic-semilla-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 35px rgba(107,33,168,0.12) !important;
+            border-color: #a855f7 !important;
+        }
+        .dynamic-semilla-card:hover .card-img-top-hover {
+            transform: scale(1.06);
+        }
+        .hover-purple:hover {
+            color: #6b21a8 !important;
+        }
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 30px rgba(0,0,0,0.08) !important;
+        }
+    </style>
+
+    <%- include('partials/footer') %>
+
+</body>
+</html>

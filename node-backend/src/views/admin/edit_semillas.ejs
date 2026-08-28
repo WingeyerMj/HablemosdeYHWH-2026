@@ -1,0 +1,137 @@
+<!-- Sidebar -->
+<%- include('partials/_sidebar') %>
+
+<main class="col-md-10 main-content">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1><i class="bi bi-balloon-heart-fill me-2" style="color: #c084fc;"></i>Editar Contenido de Semillas de Torah</h1>
+            <p class="text-white-50 mb-0">Editando: <strong><%= item.title %></strong></p>
+        </div>
+        <a href="/admin/dashboard#pills-semillas" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
+    </div>
+
+    <form action="/admin/semillas/update" method="POST" enctype="multipart/form-data" id="editSemillasPageForm">
+        <input type="hidden" name="id" value="<%= item.id %>">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label small text-white-50">Título *</label>
+                <input type="text" name="title" class="form-control" required value="<%= item.title %>">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label small text-white-50">Subtítulo / Pasaje</label>
+                <input type="text" name="subtitle" class="form-control" value="<%= item.subtitle || '' %>">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label small text-white-50">Categoría</label>
+                <select name="category" class="form-select bg-dark text-white border-secondary">
+                    <option value="Parashá Infantil" <%= item.category === 'Parashá Infantil' ? 'selected' : '' %>>Parashá Infantil</option>
+                    <option value="Historias Bíblicas" <%= item.category === 'Historias Bíblicas' ? 'selected' : '' %>>Historias Bíblicas</option>
+                    <option value="Manualidades & Dibujos" <%= item.category === 'Manualidades & Dibujos' ? 'selected' : '' %>>Manualidades & Dibujos</option>
+                    <option value="Testimonios & Vivencias" <%= item.category === 'Testimonios & Vivencias' ? 'selected' : '' %>>Testimonios & Vivencias</option>
+                    <option value="Canciones & Alabanzas" <%= item.category === 'Canciones & Alabanzas' ? 'selected' : '' %>>Canciones & Alabanzas</option>
+                    <option value="Alef-Bet / Hebreo" <%= item.category === 'Alef-Bet / Hebreo' ? 'selected' : '' %>>Alef-Bet / Idioma Hebreo</option>
+                    <option value="Noticias & Avisos" <%= item.category === 'Noticias & Avisos' ? 'selected' : '' %>>Noticias & Avisos</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small text-white-50">Autor / Coordinadora</label>
+                <input type="text" name="author" class="form-control" value="<%= item.author || 'Elva Avila' %>">
+            </div>
+            <div class="col-md-4 d-flex align-items-center mt-4">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" name="is_published" value="1" id="edit_semillas_published" <%= item.is_published ? 'checked' : '' %>>
+                    <label class="form-check-label text-white small" for="edit_semillas_published">Publicado en la Web</label>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <label class="form-label small text-white-50">Resumen Breve</label>
+                <textarea name="description" class="form-control" rows="2"><%= item.description || '' %></textarea>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label small text-white-50">Link de Video (YouTube)</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-youtube text-danger"></i></span>
+                    <input type="text" name="youtube_link" class="form-control" value="<%= item.youtube_link || '' %>" placeholder="https://www.youtube.com/watch?v=...">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label small text-white-50">Subir Hoja de Actividades / Dibujo (PDF)</label>
+                <input type="file" name="pdf_upload" class="form-control" accept=".pdf">
+                <% if (item.pdf_file) { %>
+                    <div class="mt-1 small">
+                        <a href="<%= item.pdf_file %>" target="_blank" class="badge bg-success text-decoration-none"><i class="bi bi-file-pdf"></i> Ver PDF Actual</a>
+                    </div>
+                <% } %>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label small text-white-50">Subir Nueva Imagen</label>
+                <input type="file" name="image_file" id="edit_semillas_image_file" class="form-control" accept="image/*">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small text-white-50">O URL de Imagen</label>
+                <input type="text" name="image_url" id="edit_semillas_image_url" class="form-control" value="<%= item.image_url || '' %>">
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="border border-secondary rounded overflow-hidden" style="height:120px;background:rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;">
+                    <img id="editSemillasImgPreview" src="<%= item.image_url || '/assets/img/pagina/semillas_torah_logo.png' %>" style="max-width:100%;max-height:100%;object-fit:contain;">
+                </div>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label small text-white-50">Contenido Detallado</label>
+                <div id="edit-semillas-editor" style="height:380px;background:white;color:black;border-radius:5px;"></div>
+                <input type="hidden" name="content" id="editSemillasPageContent">
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end mt-4 mb-5 gap-3">
+            <a href="/admin/dashboard#pills-semillas" class="btn btn-outline-secondary px-4">Cancelar</a>
+            <button type="submit" class="btn btn-primary px-5"><i class="bi bi-check-lg me-2"></i>Guardar Cambios</button>
+        </div>
+    </form>
+</main>
+
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const quill = new Quill('#edit-semillas-editor', {
+        theme: 'snow',
+        modules: { toolbar: [[{'header':[1,2,3,false]}],['bold','italic','underline','strike'],[{'color':[]},{'background':[]}],['link','blockquote','code-block','image'],[{'list':'ordered'},{'list':'bullet'}],[{'align':[]}],['clean']] }
+    });
+    quill.root.innerHTML = `<%- (item.content || item.description || '').replace(/`/g, '\\`').replace(/\\/g, '\\\\') %>`;
+    
+    // Image preview
+    const urlInput = document.getElementById('edit_semillas_image_url');
+    const fileInput = document.getElementById('edit_semillas_image_file');
+    const previewImg = document.getElementById('editSemillasImgPreview');
+
+    if (urlInput) {
+        urlInput.addEventListener('input', e => {
+            if (e.target.value) previewImg.src = e.target.value;
+        });
+    }
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    previewImg.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    document.getElementById('editSemillasPageForm').onsubmit = function() {
+        document.getElementById('editSemillasPageContent').value = quill.root.innerHTML;
+        return true;
+    };
+});
+</script>

@@ -11,6 +11,7 @@ const uploadDirs = [
     path.join(__dirname, '../../public/uploads/team'),
     path.join(__dirname, '../../public/uploads/pdf'),
     path.join(__dirname, '../../public/uploads/general'),
+    path.join(__dirname, '../../public/uploads/semillas'),
     path.join(__dirname, '../../public/uploads/entity')
 ];
 
@@ -30,6 +31,7 @@ const storage = multer.diskStorage({
             base = '../../public/assets/';
         } else if (req.originalUrl.includes('/portfolio')) folder = 'portfolio';
         else if (req.originalUrl.includes('/ensenanzas')) folder = 'ensenanzas';
+        else if (req.originalUrl.includes('/semillas')) folder = 'semillas';
         else if (req.originalUrl.includes('/blog')) folder = 'blog';
         else if (req.originalUrl.includes('/team')) folder = 'team';
         else if (req.originalUrl.includes('/entity')) folder = 'entity';

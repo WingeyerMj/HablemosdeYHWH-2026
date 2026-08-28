@@ -235,6 +235,10 @@ INSERT INTO footer_links (category, title, url, order_index)
 SELECT 'Enlaces Útiles', 'Enseñanzas', '/ensenanzas', 4
 WHERE NOT EXISTS (SELECT 1 FROM footer_links WHERE title = 'Enseñanzas' AND url = '/ensenanzas');
 
+INSERT INTO footer_links (category, title, url, order_index)
+SELECT 'Recursos', 'Semillas de Torah', '/semillas-de-torah', 3
+WHERE NOT EXISTS (SELECT 1 FROM footer_links WHERE title = 'Semillas de Torah' AND url = '/semillas-de-torah');
+
 -- Tabla para Enseñanzas
 CREATE TABLE IF NOT EXISTS ensenanzas (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -293,6 +297,50 @@ CREATE TABLE IF NOT EXISTS home_section_blog (
 
 INSERT IGNORE INTO home_section_blog (id, title, subtitle, content)
 VALUES (1, 'Blog & Noticias', 'Reflexiones, artículos y novedades de nuestra comunidad', 'Espacio para compartir reflexiones de fe, estudios bíblicos y noticias relevantes.');
+
+-- Tabla para Suscriptores del Boletín / Newsletter
+CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    ip_address VARCHAR(45),
+    is_active BOOLEAN DEFAULT TRUE,
+    subscribed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla para Semillas de Torah (Ministerio Infantil)
+CREATE TABLE IF NOT EXISTS semillas_torah (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    subtitle VARCHAR(255),
+    category VARCHAR(100) DEFAULT 'Parashá Infantil',
+    author VARCHAR(100) DEFAULT 'Elva Avila',
+    description TEXT,
+    content LONGTEXT,
+    image_url VARCHAR(500),
+    pdf_file VARCHAR(500),
+    youtube_link VARCHAR(500),
+    is_published BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Registros iniciales de ejemplo para Semillas de Torah
+INSERT IGNORE INTO semillas_torah (id, title, subtitle, category, author, description, content, image_url, youtube_link, is_published)
+VALUES 
+(1, 'Parashá Bereshit: El Comienzo de Todo', 'Génesis 1:1 - 6:8', 'Parashá Infantil', 'Elva Avila', 
+'Descubre cómo el Creador hizo el mundo en seis días con Su Palabra y descansó en el sagrado Shabat.', 
+'<p>¡Shalom amiguitos! En esta primera porción de la Toráh llamada <strong>Bereshit</strong> ("En el principio"), aprendemos cómo nuestro Creador dio vida a la luz, el cielo, la tierra, los mares, los animalitos y finalmente al ser humano.</p><p>Cada día de la creación nos muestra Su amor y sabiduría. ¡Y para coronar toda Su obra, nos regaló el Shabat como día especial de descanso y alegría!</p>', 
+'/assets/img/pagina/semillas_torah_banner.png', '', TRUE),
+
+(2, 'La Historia de Noé y el Gran Arcoíris', 'Génesis 6:9 - 11:32', 'Historias Bíblicas', 'Elva Avila', 
+'Una lección sobre la obediencia, la confianza en el Creador y la hermosa señal del pacto en el cielo.', 
+'<p>Noé era un hombre justo que caminaba con el Creador. Cuando llegó el diluvio, confió plenamente y construyó el arca.</p><p>Al terminar, el Creador puso el arcoíris en las nubes como recordatorio de Su fidelidad y misericordia para siempre.</p>', 
+'/assets/img/pagina/semillas_torah.jpg', '', TRUE),
+
+(3, 'Manualidad para Shabat: Candelabro y Flores', 'Actividad Familiar', 'Manualidades & Dibujos', 'Elva Avila', 
+'Aprende a preparar una linda decoración para la mesa de Shabat con materiales sencillos que tienes en casa.', 
+'<p>¡Prepara junto a tus papás una hermosa manualidad para recibir el día de reposo con gozo y alegría!</p>', 
+'/assets/img/pagina/semillas_torah_logo.png', '', TRUE);
 
 
 

@@ -26,6 +26,8 @@
                         Parashot</a></li>
                 <li><a href="/#ensenanzas" class="<%= page === 'ensenanzas' ? 'active' : '' %>"><i class="bi bi-book"></i>
                         Enseñanzas</a></li>
+                <li><a href="/semillas-de-torah" class="<%= typeof page !== 'undefined' && page === 'semillas-torah' ? 'active' : '' %>"><i class="bi bi-balloon-heart"></i>
+                        Semillas de Torah</a></li>
 
                 <% if (typeof navbarDynamicSections !=='undefined' && navbarDynamicSections.length> 0) { %>
                     <% navbarDynamicSections.forEach(ds=> { %>
