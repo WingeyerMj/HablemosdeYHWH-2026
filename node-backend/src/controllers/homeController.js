@@ -1,6 +1,7 @@
 const Parasha = require('../models/Parasha');
 const Portfolio = require('../models/Portfolio');
 const Ensenanza = require('../models/Ensenanza');
+const BlogPost = require('../models/BlogPost');
 const Team = require('../models/Team');
 const Testimonial = require('../models/Testimonial');
 const Pricing = require('../models/Pricing');
@@ -12,12 +13,12 @@ const db = require('../config/db');
 const homeController = {
     index: async (req, res, next) => {
         try {
-            let allDynamicSections = [], latestParashot = [], portfolio = [], latestEnsenanzas = [], team = [], testimonials = [], pricingRaw = [], siteSettings = {}, eventCategories = [];
+            let allDynamicSections = [], latestParashot = [], portfolio = [], latestEnsenanzas = [], latestBlogPosts = [], team = [], testimonials = [], pricingRaw = [], siteSettings = {}, eventCategories = [];
             const sectionsObj = {};
 
             try {
                 // 1. Cargar Secciones Base desde tablas individuales
-                const sectionNames = ['hero', 'calendario', 'about', 'parashot', 'eventos', 'ensenanzas', 'equipo', 'footer'];
+                const sectionNames = ['hero', 'calendario', 'about', 'parashot', 'eventos', 'ensenanzas', 'blog', 'equipo', 'footer'];
                 for (const name of sectionNames) {
                     try {
                         const tableName = `home_section_${name}`;
@@ -40,6 +41,7 @@ const homeController = {
                 latestParashot = await Parasha.getLatest(6);
                 portfolio = await Portfolio.getLatest(4);
                 try { latestEnsenanzas = await Ensenanza.getLatest(4); } catch(e) { latestEnsenanzas = []; }
+                try { latestBlogPosts = await BlogPost.getLatest(3); } catch(e) { latestBlogPosts = []; }
                 eventCategories = await Portfolio.getCategories();
                 team = await Team.getAll();
                 testimonials = await Testimonial.getAll();
@@ -51,7 +53,7 @@ const homeController = {
 
             // 3. Procesar secciones dinámicas y cargar sus datos
             const dynamicInline = [];
-            const baseSlugs = ['hero', 'about', 'calendario', 'parashot', 'eventos', 'ensenanzas', 'equipo', 'footer'];
+            const baseSlugs = ['hero', 'about', 'calendario', 'parashot', 'eventos', 'ensenanzas', 'blog', 'equipo', 'footer'];
 
             for (const ds of allDynamicSections) {
                 if (ds.is_active) {
@@ -96,6 +98,7 @@ const homeController = {
                 services: latestParashot,
                 portfolio: portfolio,
                 ensenanzas: latestEnsenanzas,
+                blogPosts: latestBlogPosts,
                 eventCategories: eventCategories,
                 team: team,
                 testimonials: testimonials,
@@ -111,8 +114,51 @@ const homeController = {
         }
     },
 
-    blog: (req, res) => {
-        res.render('blog', { title: 'Blog - Hablemos de YHWH', page: 'blog', layout: false });
+    blog: async (req, res, next) => {
+        try {
+            const { category, q } = req.query;
+            const posts = await BlogPost.getPublished({ category, search: q, limit: 12 });
+            const categories = await BlogPost.getCategories();
+            const totalCount = await BlogPost.countPublished({ category, search: q });
+            const recentPosts = await BlogPost.getLatest(4);
+            
+            res.render('blog', {
+                title: 'Blog & Noticias - Hablemos de YHWH',
+                page: 'blog',
+                posts,
+                categories,
+                totalCount,
+                recentPosts,
+                activeCategory: category || 'all',
+                searchQuery: q || '',
+                layout: false
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    blogDetail: async (req, res, next) => {
+        try {
+            const post = await BlogPost.getById(req.params.id);
+            if (!post) return next();
+            
+            try { await BlogPost.incrementViews(post.id); } catch(e) {}
+            
+            const relatedPosts = await BlogPost.getRelated(post.id, post.category, 3);
+            const categories = await BlogPost.getCategories();
+
+            res.render('blog_detail', {
+                title: post.title + ' - Blog Hablemos de YHWH',
+                page: 'blog',
+                post,
+                relatedPosts,
+                categories,
+                layout: false
+            });
+        } catch (error) {
+            next(error);
+        }
     },
 
     calendar: (req, res) => {

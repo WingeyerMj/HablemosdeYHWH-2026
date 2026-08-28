@@ -36,20 +36,22 @@ const adminController = {
             const Parasha = require('../models/Parasha');
             const Portfolio = require('../models/Portfolio');
             const Ensenanza = require('../models/Ensenanza');
+            const BlogPost = require('../models/BlogPost');
             const Team = require('../models/Team');
             const Testimonial = require('../models/Testimonial');
             const Pricing = require('../models/Pricing');
 
-            let parashot = [], portfolio = [], ensenanzas = [], team = [], testimonials = [], pricing = [], sections = [];
+            let parashot = [], portfolio = [], ensenanzas = [], blogs = [], team = [], testimonials = [], pricing = [], sections = [];
             
             try {
                 parashot = await Parasha.getAll();
                 portfolio = await Portfolio.getAll();
                 try { ensenanzas = await Ensenanza.getAll(); } catch(e) { ensenanzas = []; }
+                try { blogs = await BlogPost.getAll(); } catch(e) { blogs = []; }
                 team = await Team.getAll();
                 testimonials = await Testimonial.getAll();
                 pricing = await Pricing.getAll();
-                const sectionNames = ['hero', 'calendario', 'about', 'parashot', 'eventos', 'ensenanzas', 'equipo', 'footer'];
+                const sectionNames = ['hero', 'calendario', 'about', 'parashot', 'eventos', 'ensenanzas', 'blog', 'equipo', 'footer'];
                 for (const name of sectionNames) {
                     try {
                         const [rows] = await db.query(`SELECT * FROM home_section_${name} LIMIT 1`);
@@ -88,17 +90,24 @@ const adminController = {
                 eventCategories = await Portfolio.getCategories();
             } catch(e) {}
 
+            let blogCategories = [];
+            try {
+                blogCategories = await BlogPost.getCategories();
+            } catch(e) {}
+
             res.render('admin/dashboard', {
                 layout: 'admin/layout',
                 parashot,
                 portfolio,
                 ensenanzas,
+                blogs,
                 team,
                 testimonials,
                 pricing,
                 sections,
                 dashboardDynamicSections,
-                eventCategories
+                eventCategories,
+                blogCategories
             });
         } catch (error) {
             next(error);
@@ -295,6 +304,88 @@ const adminController = {
         }
     },
 
+    // ==================== BLOG / ARTÍCULOS ====================
+    createBlogPost: async (req, res) => {
+        try {
+            let { title, subtitle, category, author, summary, content, tags, is_published, image_url } = req.body;
+            if (req.file) {
+                image_url = '/uploads/blog/' + req.file.filename;
+            }
+            
+            const BlogPost = require('../models/BlogPost');
+            await BlogPost.create({
+                title,
+                subtitle: subtitle || '',
+                category: category || 'Reflexiones',
+                author: author || 'Hablemos de YHWH',
+                summary: summary || '',
+                content: content || '',
+                tags: tags || '',
+                is_published: is_published !== '0' && is_published !== false,
+                image_url: image_url || ''
+            });
+            res.redirect('/admin/dashboard#pills-blog');
+        } catch (error) {
+            console.error('Error createBlogPost:', error);
+            res.redirect('/admin/dashboard#pills-blog');
+        }
+    },
+
+    editBlogPostPage: async (req, res) => {
+        try {
+            const BlogPost = require('../models/BlogPost');
+            const post = await BlogPost.getById(req.params.id);
+            if (!post) return res.redirect('/admin/dashboard#pills-blog');
+            
+            let blogCategories = [];
+            try {
+                blogCategories = await BlogPost.getCategories();
+            } catch(e) {}
+
+            res.render('admin/edit_blog', { layout: 'admin/layout', post, blogCategories });
+        } catch (error) {
+            console.error('Error editBlogPostPage:', error);
+            res.redirect('/admin/dashboard#pills-blog');
+        }
+    },
+
+    updateBlogPost: async (req, res) => {
+        try {
+            let { id, title, subtitle, category, author, summary, content, tags, is_published, image_url } = req.body;
+            if (req.file) {
+                image_url = '/uploads/blog/' + req.file.filename;
+            }
+            
+            const BlogPost = require('../models/BlogPost');
+            await BlogPost.update(id, {
+                title,
+                subtitle: subtitle || '',
+                category: category || 'Reflexiones',
+                author: author || 'Hablemos de YHWH',
+                summary: summary || '',
+                content: content || '',
+                tags: tags || '',
+                is_published: is_published !== '0' && is_published !== false,
+                image_url: image_url || ''
+            });
+            res.redirect('/admin/dashboard#pills-blog');
+        } catch (error) {
+            console.error('Error updateBlogPost:', error);
+            res.redirect('/admin/dashboard#pills-blog');
+        }
+    },
+
+    deleteBlogPost: async (req, res) => {
+        try {
+            const BlogPost = require('../models/BlogPost');
+            await BlogPost.delete(req.params.id);
+            res.redirect('/admin/dashboard#pills-blog');
+        } catch (error) {
+            console.error('Error deleteBlogPost:', error);
+            res.redirect('/admin/dashboard#pills-blog');
+        }
+    },
+
     // ==================== EQUIPO ====================
     createTeamMember: async (req, res) => {
         try {
@@ -377,7 +468,7 @@ const adminController = {
     // ==================== SECCIONES DEL HOME (Hero, About, etc.) ====================
     sectionsPage: async (req, res) => {
         try {
-            const sectionNames = ['hero', 'calendario', 'about', 'parashot', 'eventos', 'ensenanzas', 'equipo', 'footer'];
+            const sectionNames = ['hero', 'calendario', 'about', 'parashot', 'eventos', 'ensenanzas', 'blog', 'equipo', 'footer'];
             const sections = [];
             for (const name of sectionNames) {
                 try {

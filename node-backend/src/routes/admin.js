@@ -43,76 +43,82 @@ router.get('/logout', adminController.logout);
 
 router.get('/dashboard', isAuthenticated, adminController.dashboard);
 
-// Parashot (soporta imagen + PDF)
-router.post('/parashot/create', isAuthenticated, upload.fields([
+// Parashot (Solo Admin)
+router.post('/parashot/create', isAuthenticated, isAdmin, upload.fields([
     { name: 'image_file', maxCount: 1 },
     { name: 'pdf_upload', maxCount: 1 }
 ]), adminController.createParasha);
-router.get('/parashot/edit/:id', isAuthenticated, adminController.editParashaPage);
-router.post('/parashot/update', isAuthenticated, upload.fields([
+router.get('/parashot/edit/:id', isAuthenticated, isAdmin, adminController.editParashaPage);
+router.post('/parashot/update', isAuthenticated, isAdmin, upload.fields([
     { name: 'image_file', maxCount: 1 },
     { name: 'pdf_upload', maxCount: 1 }
 ]), adminController.updateParasha);
-router.get('/parashot/delete/:id', isAuthenticated, adminController.deleteParasha);
+router.get('/parashot/delete/:id', isAuthenticated, isAdmin, adminController.deleteParasha);
 
-// Eventos (Portfolio)
+// Eventos (Portfolio) - Admin y Editor
 router.post('/portfolio/create', isAuthenticated, upload.single('image_file'), adminController.createPortfolio);
 router.get('/portfolio/edit/:id', isAuthenticated, adminController.editPortfolioPage);
 router.post('/portfolio/update', isAuthenticated, upload.single('image_file'), adminController.updatePortfolio);
 router.get('/portfolio/delete/:id', isAuthenticated, adminController.deletePortfolio);
 
-// Enseñanzas
-router.post('/ensenanzas/create', isAuthenticated, upload.single('image_file'), adminController.createEnsenanza);
-router.get('/ensenanzas/edit/:id', isAuthenticated, adminController.editEnsenanzaPage);
-router.post('/ensenanzas/update', isAuthenticated, upload.single('image_file'), adminController.updateEnsenanza);
-router.get('/ensenanzas/delete/:id', isAuthenticated, adminController.deleteEnsenanza);
+// Enseñanzas (Solo Admin)
+router.post('/ensenanzas/create', isAuthenticated, isAdmin, upload.single('image_file'), adminController.createEnsenanza);
+router.get('/ensenanzas/edit/:id', isAuthenticated, isAdmin, adminController.editEnsenanzaPage);
+router.post('/ensenanzas/update', isAuthenticated, isAdmin, upload.single('image_file'), adminController.updateEnsenanza);
+router.get('/ensenanzas/delete/:id', isAuthenticated, isAdmin, adminController.deleteEnsenanza);
 
-// Equipo
-router.post('/team/create', isAuthenticated, upload.single('image_file'), adminController.createTeamMember);
-router.post('/team/update', isAuthenticated, upload.single('image_file'), adminController.updateTeamMember);
-router.get('/team/delete/:id', isAuthenticated, adminController.deleteTeamMember);
+// Blog / Artículos - Admin y Editor
+router.post('/blog/create', isAuthenticated, upload.single('image_file'), adminController.createBlogPost);
+router.get('/blog/edit/:id', isAuthenticated, adminController.editBlogPostPage);
+router.post('/blog/update', isAuthenticated, upload.single('image_file'), adminController.updateBlogPost);
+router.get('/blog/delete/:id', isAuthenticated, adminController.deleteBlogPost);
 
-// Testimonios
-router.post('/testimonials/create', isAuthenticated, adminController.createTestimonial);
-router.post('/testimonials/update', isAuthenticated, adminController.updateTestimonial);
-router.get('/testimonials/delete/:id', isAuthenticated, adminController.deleteTestimonial);
+// Equipo (Solo Admin)
+router.post('/team/create', isAuthenticated, isAdmin, upload.single('image_file'), adminController.createTeamMember);
+router.post('/team/update', isAuthenticated, isAdmin, upload.single('image_file'), adminController.updateTeamMember);
+router.get('/team/delete/:id', isAuthenticated, isAdmin, adminController.deleteTeamMember);
 
-// Pricing
-router.post('/pricing/update', isAuthenticated, adminController.updatePricing);
+// Testimonios (Solo Admin)
+router.post('/testimonials/create', isAuthenticated, isAdmin, adminController.createTestimonial);
+router.post('/testimonials/update', isAuthenticated, isAdmin, adminController.updateTestimonial);
+router.get('/testimonials/delete/:id', isAuthenticated, isAdmin, adminController.deleteTestimonial);
 
-// Secciones del Home (Hero, About, etc.)
+// Pricing (Solo Admin)
+router.post('/pricing/update', isAuthenticated, isAdmin, adminController.updatePricing);
+
+// Secciones del Home (Hero, About, etc. - Solo Admin)
 router.get('/sections', isAuthenticated, isAdmin, adminController.sectionsPage);
 router.post('/sections/update', isAuthenticated, isAdmin, upload.single('image_file'), adminController.updateSection);
 
-// Configuración del Sitio
+// Configuración del Sitio (Solo Admin)
 router.get('/settings', isAuthenticated, isAdmin, adminController.settingsPage);
 router.post('/settings/update', isAuthenticated, isAdmin, adminController.updateSettings);
 
-// Gestión de Usuarios (Solo Admins)
+// Gestión de Usuarios (Solo Admin)
 router.get('/users', isAuthenticated, isAdmin, adminController.usersPage);
 router.post('/users/create', isAuthenticated, isAdmin, adminController.createUser);
 router.get('/users/delete/:id', isAuthenticated, isAdmin, adminController.deleteUser);
 
-// Secciones Dinámicas
-router.get('/dynamic-sections', isAuthenticated, adminController.listDynamicSections);
-router.get('/dynamic-sections/new', isAuthenticated, adminController.createDynamicSectionPage);
-router.post('/dynamic-sections/create', isAuthenticated, adminController.createDynamicSection);
-router.get('/dynamic-sections/edit/:id', isAuthenticated, adminController.editDynamicSection);
-router.post('/dynamic-sections/update', isAuthenticated, adminController.updateDynamicSection);
-router.get('/dynamic-sections/delete/:id', isAuthenticated, adminController.deleteDynamicSection);
-router.get('/dynamic-sections/toggle/:id', isAuthenticated, adminController.toggleDynamicSection);
+// Secciones Dinámicas (Solo Admin)
+router.get('/dynamic-sections', isAuthenticated, isAdmin, adminController.listDynamicSections);
+router.get('/dynamic-sections/new', isAuthenticated, isAdmin, adminController.createDynamicSectionPage);
+router.post('/dynamic-sections/create', isAuthenticated, isAdmin, adminController.createDynamicSection);
+router.get('/dynamic-sections/edit/:id', isAuthenticated, isAdmin, adminController.editDynamicSection);
+router.post('/dynamic-sections/update', isAuthenticated, isAdmin, adminController.updateDynamicSection);
+router.get('/dynamic-sections/delete/:id', isAuthenticated, isAdmin, adminController.deleteDynamicSection);
+router.get('/dynamic-sections/toggle/:id', isAuthenticated, isAdmin, adminController.toggleDynamicSection);
 
-// Entidades Dinámicas (Tablas creadas por el usuario)
-router.get('/entity/:table', isAuthenticated, adminController.manageEntity);
-router.post('/entity/:table/add', isAuthenticated, upload.fields([
+// Entidades Dinámicas (Solo Admin)
+router.get('/entity/:table', isAuthenticated, isAdmin, adminController.manageEntity);
+router.post('/entity/:table/add', isAuthenticated, isAdmin, upload.fields([
     { name: 'image_file', maxCount: 1 },
     { name: 'pdf_upload', maxCount: 1 }
 ]), adminController.addEntityData);
-router.get('/entity/:table/edit/:id', isAuthenticated, adminController.editEntityData);
-router.post('/entity/:table/update/:id', isAuthenticated, upload.fields([
+router.get('/entity/:table/edit/:id', isAuthenticated, isAdmin, adminController.editEntityData);
+router.post('/entity/:table/update/:id', isAuthenticated, isAdmin, upload.fields([
     { name: 'image_file', maxCount: 1 },
     { name: 'pdf_upload', maxCount: 1 }
 ]), adminController.updateEntityData);
-router.get('/entity/:table/delete/:id', isAuthenticated, adminController.deleteEntityData);
+router.get('/entity/:table/delete/:id', isAuthenticated, isAdmin, adminController.deleteEntityData);
 
 module.exports = router;

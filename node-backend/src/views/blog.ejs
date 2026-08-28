@@ -8,28 +8,187 @@
         <%- include('partials/header') %>
 
             <main class="main">
-                <div class="page-title dark-background">
-                    <div class="container">
-                        <h1>Blog</h1>
-                        <nav class="breadcrumbs">
+                <!-- Page Title -->
+                <div class="page-title dark-background" style="padding: 60px 0; background: linear-gradient(135deg, #181512 0%, #2b231d 100%);">
+                    <div class="container d-lg-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="mb-2" style="font-size: 2.4rem; font-weight: 800; color: #d4a853;"><i class="bi bi-newspaper me-2"></i>Blog & Noticias</h1>
+                            <p class="text-white-50 mb-0" style="font-size: 1.05rem;">Reflexiones, artículos de fe, estudios bíblicos y novedades de nuestra comunidad</p>
+                        </div>
+                        <nav class="breadcrumbs mt-3 mt-lg-0">
                             <ol>
-                                <li><a href="/">Home</a></li>
+                                <li><a href="/">Inicio</a></li>
                                 <li class="current">Blog</li>
                             </ol>
                         </nav>
                     </div>
                 </div>
 
-                <section id="blog-posts" class="blog-posts section">
+                <section id="blog-posts" class="blog-posts section py-5" style="background-color: #faf9f6;">
                     <div class="container">
+                        
+                        <!-- Barra de Búsqueda y Filtros de Categoría -->
+                        <div class="row align-items-center mb-5 gy-3">
+                            <div class="col-lg-7 col-12">
+                                <div class="blog-filter-pills d-flex flex-wrap gap-2">
+                                    <a href="/blog" class="badge-filter <%= activeCategory === 'all' ? 'active' : '' %>">
+                                        <i class="bi bi-grid-fill me-1"></i> Todos
+                                        <span class="count-pill ms-1"><%= totalCount %></span>
+                                    </a>
+                                    <% if (typeof categories !== 'undefined' && categories && categories.length > 0) { %>
+                                        <% categories.forEach(cat => { %>
+                                            <a href="/blog?category=<%= encodeURIComponent(cat.category) %><%= searchQuery ? '&q=' + encodeURIComponent(searchQuery) : '' %>" 
+                                               class="badge-filter <%= activeCategory === cat.category ? 'active' : '' %>">
+                                                <%= cat.category %>
+                                                <span class="count-pill ms-1"><%= cat.count %></span>
+                                            </a>
+                                        <% }) %>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 col-12">
+                                <form action="/blog" method="GET" class="d-flex search-blog-form">
+                                    <% if (activeCategory && activeCategory !== 'all') { %>
+                                        <input type="hidden" name="category" value="<%= activeCategory %>">
+                                    <% } %>
+                                    <div class="input-group shadow-sm" style="border-radius: 30px; overflow: hidden; border: 1px solid #ebdccb;">
+                                        <span class="input-group-text bg-white border-0 text-muted ps-3"><i class="bi bi-search"></i></span>
+                                        <input type="text" name="q" class="form-control border-0 py-2" placeholder="Buscar por tema, palabra o autor..." value="<%= searchQuery || '' %>">
+                                        <button class="btn btn-gold px-4 fw-semibold" type="submit">Buscar</button>
+                                        <% if (searchQuery) { %>
+                                            <a href="/blog<%= activeCategory !== 'all' ? '?category=' + encodeURIComponent(activeCategory) : '' %>" class="btn btn-outline-secondary d-flex align-items-center" title="Limpiar búsqueda">✕</a>
+                                        <% } %>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Grid de Artículos -->
                         <div class="row gy-4">
-                            <p>Blog content goes here...</p>
+                            <% if (typeof posts !== 'undefined' && posts && posts.length > 0) { %>
+                                <% posts.forEach((post, index) => { %>
+                                    <div class="col-lg-4 col-md-6 col-12" data-aos="fade-up" data-aos-delay="<%= (index % 3 + 1) * 100 %>">
+                                        <article class="card h-100 shadow-sm border-0 blog-item-card" style="border-radius: 20px; overflow: hidden; background: #ffffff; transition: transform 0.35s ease, box-shadow 0.35s ease;">
+                                            <div class="blog-card-img position-relative" style="height: 220px; background: #1a1a1a; overflow: hidden;">
+                                                <a href="/blog/<%= post.id %>" class="d-block w-100 h-100">
+                                                    <% if (post.image_url && post.image_url.trim() !== '') { %>
+                                                        <img src="<%= post.image_url %>" alt="<%= post.title %>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+                                                    <% } else { %>
+                                                        <div class="d-flex align-items-center justify-content-center h-100 w-100" style="background: linear-gradient(135deg, #f0ebd8, #e2d9c2);">
+                                                            <i class="bi bi-newspaper" style="font-size: 3.5rem; color: #d4a853;"></i>
+                                                        </div>
+                                                    <% } %>
+                                                </a>
+                                                <span class="position-absolute top-0 start-0 m-3 px-3 py-1 rounded-pill text-white fw-bold shadow-sm" style="background: linear-gradient(135deg, #d4a853, #b8860b); font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">
+                                                    <%= post.category || 'General' %>
+                                                </span>
+                                            </div>
+
+                                            <div class="card-body p-4 d-flex flex-column">
+                                                <div class="d-flex align-items-center gap-3 mb-2 text-muted" style="font-size: 0.82rem;">
+                                                    <span><i class="bi bi-calendar3 me-1" style="color: #d4a853;"></i> <%= post.published_at ? new Date(post.published_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) : '-' %></span>
+                                                    <span><i class="bi bi-person me-1" style="color: #d4a853;"></i> <%= post.author || 'Editorial' %></span>
+                                                </div>
+
+                                                <h4 class="card-title fw-bold mb-2" style="font-size: 1.2rem; line-height: 1.35;">
+                                                    <a href="/blog/<%= post.id %>" class="text-decoration-none text-dark hover-gold">
+                                                        <%= post.title %>
+                                                    </a>
+                                                </h4>
+
+                                                <% if (post.subtitle) { %>
+                                                    <p class="text-muted small mb-2 fst-italic"><%= post.subtitle %></p>
+                                                <% } %>
+
+                                                <% if (post.summary) { %>
+                                                    <p class="card-text text-muted mb-3" style="font-size: 0.88rem; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                                        <%= post.summary %>
+                                                    </p>
+                                                <% } %>
+
+                                                <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                                                    <a href="/blog/<%= post.id %>" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-1 fw-semibold d-inline-flex align-items-center gap-1">
+                                                        Leer artículo <i class="bi bi-arrow-right"></i>
+                                                    </a>
+                                                    <span class="text-muted small"><i class="bi bi-eye me-1"></i><%= post.views || 0 %> visitas</span>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <div class="col-12 text-center py-5">
+                                    <div class="p-5 bg-white rounded-4 shadow-sm d-inline-block" style="max-width: 500px;">
+                                        <i class="bi bi-search text-muted" style="font-size: 3rem; color: #d4a853 !important;"></i>
+                                        <h4 class="mt-3 fw-bold">No se encontraron artículos</h4>
+                                        <p class="text-muted mb-3">No hay publicaciones que coincidan con los filtros seleccionados.</p>
+                                        <a href="/blog" class="btn btn-outline-dark rounded-pill px-4">Ver todos los artículos</a>
+                                    </div>
+                                </div>
+                            <% } %>
                         </div>
                     </div>
                 </section>
             </main>
 
             <%- include('partials/footer') %>
+
+            <style>
+                .blog-item-card:hover {
+                    transform: translateY(-8px);
+                    box-shadow: 0 16px 35px rgba(0,0,0,0.1) !important;
+                }
+                .blog-item-card:hover .blog-card-img img {
+                    transform: scale(1.08);
+                }
+                .hover-gold:hover {
+                    color: #d4a853 !important;
+                }
+                .badge-filter {
+                    display: inline-flex;
+                    align-items: center;
+                    padding: 8px 18px;
+                    border-radius: 30px;
+                    background: #ffffff;
+                    color: #6b5847;
+                    border: 1px solid #ebdccb;
+                    text-decoration: none;
+                    font-size: 0.88rem;
+                    font-weight: 600;
+                    transition: all 0.25s ease;
+                }
+                .badge-filter:hover {
+                    background: #ede3d7;
+                    color: #2b231d;
+                    transform: translateY(-1px);
+                }
+                .badge-filter.active {
+                    background: linear-gradient(135deg, #d4a853, #b8860b) !important;
+                    color: #fff !important;
+                    border-color: transparent !important;
+                    box-shadow: 0 4px 12px rgba(212,168,83,0.35) !important;
+                }
+                .count-pill {
+                    background: rgba(0,0,0,0.08);
+                    color: inherit;
+                    padding: 2px 7px;
+                    border-radius: 10px;
+                    font-size: 0.75rem;
+                }
+                .badge-filter.active .count-pill {
+                    background: rgba(255,255,255,0.28);
+                    color: #fff;
+                }
+                .btn-gold {
+                    background: linear-gradient(135deg, #d4a853, #b8860b);
+                    color: #fff;
+                    border: none;
+                }
+                .btn-gold:hover {
+                    background: linear-gradient(135deg, #b8860b, #996e00);
+                    color: #fff;
+                }
+            </style>
 
     </body>
 

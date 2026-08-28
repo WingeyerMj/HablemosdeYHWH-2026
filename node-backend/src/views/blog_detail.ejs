@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('partials/head') %>
+
+    <body class="blog-details-page">
+
+        <%- include('partials/header') %>
+
+            <main class="main">
+
+                <!-- Page Title -->
+                <div class="page-title dark-background" data-aos="fade" style="padding: 60px 0; background: linear-gradient(135deg, #181512 0%, #2b231d 100%);">
+                    <div class="container d-lg-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge px-3 py-2 mb-2 rounded-pill fw-bold text-uppercase" style="background: linear-gradient(135deg, #d4a853, #b8860b); font-size: 0.8rem; letter-spacing: 0.5px;">
+                                <%= post.category || 'Artículo' %>
+                            </span>
+                            <h1 class="mb-2 text-white" style="font-size: 2.2rem; font-weight: 800;"><%= post.title %></h1>
+                            <% if (post.subtitle) { %>
+                                <p class="text-white-50 mb-0" style="font-size: 1.1rem;"><%= post.subtitle %></p>
+                            <% } %>
+                        </div>
+                        <nav class="breadcrumbs mt-3 mt-lg-0">
+                            <ol>
+                                <li><a href="/">Inicio</a></li>
+                                <li><a href="/blog">Blog</a></li>
+                                <li class="current"><%= post.title.length > 25 ? post.title.substring(0, 25) + '...' : post.title %></li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Encabezado visible solo en el PDF -->
+                <div id="pdf-header" style="display: none;">
+                    <h1><%= post.title %></h1>
+                    <% if (post.subtitle) { %>
+                        <p class="pdf-subtitle"><%= post.subtitle %></p>
+                    <% } %>
+                    <p class="pdf-subtitle" style="font-size: 10pt; color: #888;">
+                        Por <%= post.author || 'Hablemos de YHWH' %> &bull; <%= post.published_at ? new Date(post.published_at).toLocaleDateString('es-ES') : '' %> &bull; www.hablemosdeyhwh.com
+                    </p>
+                </div>
+
+                <section id="blog-details" class="blog-details section py-5" style="background-color: #faf9f6;">
+                    <div class="container">
+                        <div class="row gy-4">
+
+                            <!-- Columna Principal del Artículo -->
+                            <div class="col-lg-8">
+                                <article class="article p-4 p-md-5 bg-white rounded-4 shadow-sm border" style="border-color: #ede5dc !important;">
+                                    
+                                    <!-- Imagen Destacada del Post -->
+                                    <% if (post.image_url && post.image_url.trim() !== '') { %>
+                                        <div class="post-img-main mb-4 rounded-3 overflow-hidden shadow-sm" style="max-height: 440px; background: #1a1a1a;">
+                                            <img src="<%= post.image_url %>" alt="<%= post.title %>" class="img-fluid w-100" style="object-fit: cover; max-height: 440px;">
+                                        </div>
+                                    <% } %>
+
+                                    <!-- Metadatos del Post -->
+                                    <div class="meta-top mb-4 pb-3 border-bottom d-flex flex-wrap align-items-center justify-content-between gap-3 text-muted" style="font-size: 0.9rem;">
+                                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                                            <span><i class="bi bi-person me-1" style="color: #d4a853;"></i> <strong><%= post.author || 'Hablemos de YHWH' %></strong></span>
+                                            <span><i class="bi bi-calendar3 me-1" style="color: #d4a853;"></i> <%= post.published_at ? new Date(post.published_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }) : '-' %></span>
+                                            <span><i class="bi bi-tag me-1" style="color: #d4a853;"></i> <%= post.category || 'General' %></span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge bg-light text-dark border px-3 py-2 rounded-pill"><i class="bi bi-eye me-1" style="color: #d4a853;"></i> <%= post.views || 0 %> lecturas</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Resumen Destacado si existe -->
+                                    <% if (post.summary) { %>
+                                        <div class="lead-summary p-3 mb-4 rounded-3" style="background: #fdfbf7; border-left: 4px solid #d4a853; font-size: 1.15rem; line-height: 1.7; color: #4a3e35; font-style: italic;">
+                                            "<%= post.summary %>"
+                                        </div>
+                                    <% } %>
+
+                                    <!-- Cuerpo del Contenido HTML -->
+                                    <div class="content article-body-content" style="font-size: 1.1rem; line-height: 1.9; color: #2e2620;">
+                                        <% if (post.content && post.content.trim() !== '') { %>
+                                            <%- post.content %>
+                                        <% } else if (post.summary) { %>
+                                            <p><%= post.summary %></p>
+                                        <% } %>
+                                    </div>
+
+                                    <!-- Etiquetas / Tags -->
+                                    <% if (post.tags && post.tags.trim() !== '') { %>
+                                        <div class="meta-bottom mt-5 pt-4 border-top">
+                                            <div class="d-flex align-items-center flex-wrap gap-2">
+                                                <span class="fw-bold me-2 text-muted"><i class="bi bi-tags me-1" style="color: #d4a853;"></i> Etiquetas:</span>
+                                                <% post.tags.split(',').forEach(tag => { %>
+                                                    <span class="badge bg-light text-dark border px-3 py-2 rounded-pill" style="font-size: 0.85rem; font-weight: 500;">
+                                                        #<%= tag.trim() %>
+                                                    </span>
+                                                <% }) %>
+                                            </div>
+                                        </div>
+                                    <% } %>
+
+                                    <!-- Sección de Compartir en Redes Sociales -->
+                                    <div class="share-article-box mt-5 p-4 rounded-4 shadow-sm border no-print" style="background: linear-gradient(135deg, #fdfbf7, #faf4eb); border-color: #ebdccb !important;">
+                                        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+                                            <div>
+                                                <h6 class="fw-bold mb-1" style="color: #2b231d;">
+                                                    <i class="bi bi-share-fill me-2" style="color: #d4a853;"></i>¿Te gustó este artículo? ¡Compártelo!
+                                                </h6>
+                                                <p class="text-muted small mb-0">Ayúdanos a difundir la Palabra y las reflexiones con tus hermanos y amigos.</p>
+                                            </div>
+                                            <div class="d-flex flex-wrap gap-2 align-items-center">
+                                                <!-- WhatsApp -->
+                                                <a href="https://api.whatsapp.com/send?text=<%= encodeURIComponent(post.title + '\n\nLee más aquí: https://hablemosdeyhwh.com/blog/' + post.id) %>" 
+                                                   target="_blank" rel="noopener noreferrer"
+                                                   class="btn btn-sm text-white rounded-circle shadow-sm d-inline-flex align-items-center justify-content-center share-social-btn" 
+                                                   style="background-color: #25D366; width: 38px; height: 38px;" title="Compartir en WhatsApp">
+                                                    <i class="bi bi-whatsapp" style="font-size: 1.15rem;"></i>
+                                                </a>
+
+                                                <!-- Facebook -->
+                                                <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('https://hablemosdeyhwh.com/blog/' + post.id) %>" 
+                                                   target="_blank" rel="noopener noreferrer"
+                                                   class="btn btn-sm text-white rounded-circle shadow-sm d-inline-flex align-items-center justify-content-center share-social-btn" 
+                                                   style="background-color: #1877F2; width: 38px; height: 38px;" title="Compartir en Facebook">
+                                                    <i class="bi bi-facebook" style="font-size: 1.15rem;"></i>
+                                                </a>
+
+                                                <!-- Instagram -->
+                                                <a href="javascript:void(0)" 
+                                                   onclick="navigator.clipboard.writeText(window.location.href); alert('¡Enlace del artículo copiado! Abriendo Instagram para que puedas compartirlo en tus historias.'); window.open('https://www.instagram.com/', '_blank');"
+                                                   class="btn btn-sm text-white rounded-circle shadow-sm d-inline-flex align-items-center justify-content-center share-social-btn" 
+                                                   style="background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); width: 38px; height: 38px;" title="Compartir en Instagram">
+                                                    <i class="bi bi-instagram" style="font-size: 1.15rem;"></i>
+                                                </a>
+
+                                                <!-- Telegram -->
+                                                <a href="https://t.me/share/url?url=<%= encodeURIComponent('https://hablemosdeyhwh.com/blog/' + post.id) %>&text=<%= encodeURIComponent(post.title) %>" 
+                                                   target="_blank" rel="noopener noreferrer"
+                                                   class="btn btn-sm text-white rounded-circle shadow-sm d-inline-flex align-items-center justify-content-center share-social-btn" 
+                                                   style="background-color: #229ED9; width: 38px; height: 38px;" title="Compartir en Telegram">
+                                                    <i class="bi bi-telegram" style="font-size: 1.15rem;"></i>
+                                                </a>
+
+                                                <!-- X / Twitter -->
+                                                <a href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent(post.title) %>&url=<%= encodeURIComponent('https://hablemosdeyhwh.com/blog/' + post.id) %>" 
+                                                   target="_blank" rel="noopener noreferrer"
+                                                   class="btn btn-sm text-white rounded-circle shadow-sm d-inline-flex align-items-center justify-content-center share-social-btn" 
+                                                   style="background-color: #000000; width: 38px; height: 38px;" title="Compartir en X">
+                                                    <i class="bi bi-twitter-x" style="font-size: 1.1rem;"></i>
+                                                </a>
+
+                                                <!-- Copiar Link -->
+                                                <button type="button" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-1 fw-semibold d-inline-flex align-items-center gap-1 ms-1"
+                                                        onclick="navigator.clipboard.writeText(window.location.href); alert('¡Enlace del artículo copiado al portapapeles!');" title="Copiar Enlace">
+                                                    <i class="bi bi-link-45deg"></i> Copiar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Botones de Acción Inferiores -->
+                                    <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center mt-5 pt-4 border-top no-print">
+                                        <a href="/blog" class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2">
+                                            <i class="bi bi-arrow-left"></i> Volver al Blog
+                                        </a>
+
+                                        <div class="d-flex gap-2">
+                                            <button onclick="window.print()" class="btn d-inline-flex align-items-center gap-2 shadow-sm rounded-pill px-4 py-2 fw-semibold text-white" 
+                                                    style="background: linear-gradient(135deg, #d4a853, #b8860b); border: none;">
+                                                <i class="bi bi-printer" style="font-size: 1.1rem;"></i>
+                                                <span>Imprimir / PDF</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+
+                            <!-- Barra Lateral (Sidebar) -->
+                            <div class="col-lg-4">
+                                <div class="sidebar position-sticky" style="top: 100px;">
+                                    
+                                    <!-- Widget: Categorías -->
+                                    <% if (typeof categories !== 'undefined' && categories && categories.length > 0) { %>
+                                        <div class="card p-4 rounded-4 shadow-sm border-0 mb-4 bg-white">
+                                            <h5 class="fw-bold mb-3 pb-2 border-bottom" style="color: #2b231d;">
+                                                <i class="bi bi-folder2-open me-2" style="color: #d4a853;"></i>Categorías
+                                            </h5>
+                                            <ul class="list-unstyled mb-0">
+                                                <% categories.forEach(cat => { %>
+                                                    <li class="py-2 border-bottom d-flex justify-content-between align-items-center">
+                                                        <a href="/blog?category=<%= encodeURIComponent(cat.category) %>" class="text-decoration-none text-dark hover-gold fw-medium">
+                                                            <%= cat.category %>
+                                                        </a>
+                                                        <span class="badge bg-light text-muted border rounded-pill"><%= cat.count %></span>
+                                                    </li>
+                                                <% }) %>
+                                            </ul>
+                                        </div>
+                                    <% } %>
+
+                                    <!-- Widget: Artículos Relacionados / Recientes -->
+                                    <% if (typeof relatedPosts !== 'undefined' && relatedPosts && relatedPosts.length > 0) { %>
+                                        <div class="card p-4 rounded-4 shadow-sm border-0 mb-4 bg-white">
+                                            <h5 class="fw-bold mb-3 pb-2 border-bottom" style="color: #2b231d;">
+                                                <i class="bi bi-stars me-2" style="color: #d4a853;"></i>Lecturas Recomendadas
+                                            </h5>
+                                            <div class="d-flex flex-column gap-3">
+                                                <% relatedPosts.forEach(rel => { %>
+                                                    <a href="/blog/<%= rel.id %>" class="text-decoration-none text-dark d-flex gap-3 align-items-center p-2 rounded-3 hover-bg-light transition">
+                                                        <div style="width: 70px; height: 60px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a;">
+                                                            <% if (rel.image_url) { %>
+                                                                <img src="<%= rel.image_url %>" alt="<%= rel.title %>" style="width: 100%; height: 100%; object-fit: cover;">
+                                                            <% } else { %>
+                                                                <div class="d-flex align-items-center justify-content-center h-100 w-100 bg-light text-muted">
+                                                                    <i class="bi bi-newspaper"></i>
+                                                                </div>
+                                                            <% } %>
+                                                        </div>
+                                                        <div class="overflow-hidden">
+                                                            <h6 class="mb-1 fw-bold text-truncate" style="font-size: 0.92rem;"><%= rel.title %></h6>
+                                                            <small class="text-muted" style="font-size: 0.78rem;">
+                                                                <i class="bi bi-calendar3 me-1"></i><%= rel.published_at ? new Date(rel.published_at).toLocaleDateString('es-ES') : '' %>
+                                                            </small>
+                                                        </div>
+                                                    </a>
+                                                <% }) %>
+                                            </div>
+                                        </div>
+                                    <% } %>
+
+                                    <!-- Widget: Suscripción / Comunidad -->
+                                    <div class="card p-4 rounded-4 shadow-sm border-0 text-white text-center" style="background: linear-gradient(135deg, #181512 0%, #2b231d 100%); border: 1px solid #d4a853 !important;">
+                                        <i class="bi bi-journal-bookmark mb-2" style="font-size: 2.5rem; color: #d4a853;"></i>
+                                        <h5 class="fw-bold mb-2">Hablemos de YHWH</h5>
+                                        <p class="text-white-50 small mb-3">Estudio de las Sagradas Escrituras desde una perspectiva hebrea e histórica.</p>
+                                        <a href="/#contact" class="btn btn-sm rounded-pill px-4 py-2 fw-bold text-dark" style="background: #d4a853;">Contáctanos</a>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <%- include('partials/footer') %>
+
+            <!-- Estilos de Lectura y para Impresión / PDF -->
+            <style>
+                .hover-gold:hover {
+                    color: #d4a853 !important;
+                }
+                .hover-bg-light:hover {
+                    background-color: #f8f6f2 !important;
+                }
+                .article-body-content h2, .article-body-content h3, .article-body-content h4 {
+                    color: #2b231d;
+                    font-weight: 700;
+                    margin-top: 1.8rem;
+                    margin-bottom: 0.9rem;
+                }
+                .article-body-content p {
+                    margin-bottom: 1.4rem;
+                }
+                .article-body-content img {
+                    max-width: 100%;
+                    border-radius: 12px;
+                    margin: 1.5rem 0;
+                }
+                .article-body-content blockquote {
+                    border-left: 4px solid #d4a853;
+                    padding: 10px 20px;
+                    margin: 1.5rem 0;
+                    background: #fdfbf7;
+                    font-style: italic;
+                    color: #555;
+                }
+
+                @media print {
+                    .no-print,
+                    header, 
+                    nav, 
+                    footer, 
+                    .breadcrumbs,
+                    .page-title,
+                    .sidebar,
+                    .scroll-top,
+                    #header,
+                    .footer {
+                        display: none !important;
+                    }
+
+                    body {
+                        background: white !important;
+                        color: #000 !important;
+                        font-size: 12pt !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                    }
+
+                    .main {
+                        padding: 0 !important;
+                        margin: 0 !important;
+                    }
+
+                    .blog-details.section {
+                        padding: 0 !important;
+                    }
+
+                    .container {
+                        max-width: 100% !important;
+                        padding: 0 20px !important;
+                    }
+
+                    #pdf-header {
+                        display: block !important;
+                        text-align: center;
+                        border-bottom: 2px solid #333;
+                        padding-bottom: 15px;
+                        margin-bottom: 25px;
+                    }
+
+                    #pdf-header h1 {
+                        font-size: 22pt !important;
+                        color: #000 !important;
+                        margin-bottom: 5px;
+                    }
+
+                    #pdf-header .pdf-subtitle {
+                        font-size: 12pt;
+                        color: #555;
+                    }
+
+                    .content {
+                        font-size: 12pt !important;
+                        line-height: 1.6 !important;
+                        color: #000 !important;
+                    }
+
+                    .col-lg-8 {
+                        width: 100% !important;
+                        max-width: 100% !important;
+                        flex: 0 0 100% !important;
+                    }
+
+                    .col-lg-4 {
+                        display: none !important;
+                    }
+                }
+            </style>
+
+    </body>
+
+</html>

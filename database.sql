@@ -262,4 +262,37 @@ CREATE TABLE IF NOT EXISTS home_section_ensenanzas (
 INSERT IGNORE INTO home_section_ensenanzas (id, title, subtitle, content)
 VALUES (1, 'Enseñanzas', 'Estudios profundos de las Sagradas Escrituras', 'Descubre nuestras enseñanzas temáticas y reflexiones.');
 
+-- Tabla para Blog / Artículos
+CREATE TABLE IF NOT EXISTS blog_posts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255),
+    subtitle VARCHAR(255),
+    category VARCHAR(100) DEFAULT 'Reflexiones',
+    author VARCHAR(100) DEFAULT 'Hablemos de YHWH',
+    summary TEXT,
+    content LONGTEXT,
+    image_url VARCHAR(500),
+    tags VARCHAR(255),
+    views INT DEFAULT 0,
+    is_published BOOLEAN DEFAULT TRUE,
+    published_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Tabla para sección Blog del Home
+CREATE TABLE IF NOT EXISTS home_section_blog (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) DEFAULT 'Blog & Noticias',
+    subtitle TEXT,
+    content TEXT,
+    image_url VARCHAR(500),
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT IGNORE INTO home_section_blog (id, title, subtitle, content)
+VALUES (1, 'Blog & Noticias', 'Reflexiones, artículos y novedades de nuestra comunidad', 'Espacio para compartir reflexiones de fe, estudios bíblicos y noticias relevantes.');
+
+
 

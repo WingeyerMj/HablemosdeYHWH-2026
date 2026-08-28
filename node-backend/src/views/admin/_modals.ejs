@@ -293,6 +293,179 @@
     </div>
 </div>
 
+<!-- MODAL: NUEVA PUBLICACIÓN DE BLOG -->
+<div class="modal fade" id="createBlogModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title"><i class="bi bi-newspaper me-2 text-warning"></i>Nueva Publicación de Blog</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/blog/create" method="POST" enctype="multipart/form-data" id="createBlogForm">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Título del Artículo</label>
+                            <input type="text" name="title" class="form-control" required placeholder="Ej: Reflexiones sobre el Salmo 23">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-white-50">Categoría</label>
+                            <select name="category" class="form-select" id="create_blog_category" onchange="if(this.value==='__custom__'){this.style.display='none';document.getElementById('create_blog_cat_wrap').style.display='flex';}">
+                                <option value="Reflexiones">Reflexiones</option>
+                                <option value="Estudios">Estudios</option>
+                                <option value="Noticias">Noticias</option>
+                                <option value="Comunidad">Comunidad</option>
+                                <% if (typeof blogCategories !== 'undefined' && blogCategories.length > 0) { %>
+                                    <% blogCategories.forEach(cat => { %>
+                                        <% if (!['Reflexiones','Estudios','Noticias','Comunidad'].includes(cat.category)) { %>
+                                            <option value="<%= cat.category %>"><%= cat.category %></option>
+                                        <% } %>
+                                    <% }) %>
+                                <% } %>
+                                <option value="__custom__">+ Nueva categoría...</option>
+                            </select>
+                            <div id="create_blog_cat_wrap" style="display:none;" class="input-group mt-1">
+                                <input type="text" id="create_blog_cat_custom" class="form-control" placeholder="Nombre de la categoría">
+                                <button type="button" class="btn btn-outline-light btn-sm" onclick="var inp=document.getElementById('create_blog_cat_custom');var sel=document.getElementById('create_blog_category');if(inp.value.trim()){var opt=document.createElement('option');opt.value=inp.value.trim();opt.textContent=inp.value.trim();sel.insertBefore(opt,sel.querySelector('[value=__custom__]'));sel.value=inp.value.trim();inp.value='';this.parentNode.style.display='none';sel.style.display='';}">✓</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="this.parentNode.style.display='none';document.getElementById('create_blog_category').style.display='';document.getElementById('create_blog_category').value='Reflexiones';">✕</button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-white-50">Autor</label>
+                            <input type="text" name="author" class="form-control" value="Hablemos de YHWH" placeholder="Nombre del autor">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subtítulo / Bajada</label>
+                            <input type="text" name="subtitle" class="form-control" placeholder="Frase corta explicativa...">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Etiquetas / Tags (separadas por coma)</label>
+                            <input type="text" name="tags" class="form-control" placeholder="Ej: Fe, Torah, Shabat, Oración">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">Resumen Breve (para tarjetas y listados)</label>
+                            <textarea name="summary" class="form-control" rows="2" placeholder="Resumen conciso del artículo..."></textarea>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Subir Imagen de Portada</label>
+                            <input type="file" id="create_blog_image_file" name="image_file" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">O URL de Imagen</label>
+                            <input type="text" id="create_blog_image_url" name="image_url" class="form-control" placeholder="https://...">
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height:100px;background:rgba(0,0,0,0.2);">
+                                <img id="createBlogImgPreview" src="/assets/img/blog/blog-1.jpg" style="max-width:100%;max-height:100%;object-fit:contain;">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Contenido Completo del Artículo</label>
+                            <div id="blog-create-editor-container" style="height:280px;background:white;color:black;border-radius:5px;"></div>
+                            <input type="hidden" name="content" id="createBlogContentInput">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success px-4"><i class="bi bi-check-lg me-1"></i>Publicar Artículo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: EDITAR PUBLICACIÓN DE BLOG -->
+<div class="modal fade" id="editBlogModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title"><i class="bi bi-pencil-square me-2 text-primary"></i>Editar Publicación de Blog</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/blog/update" method="POST" enctype="multipart/form-data" id="editBlogForm">
+                <input type="hidden" name="id" id="edit_blog_id">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Título</label>
+                            <input type="text" name="title" id="edit_blog_title" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-white-50">Categoría</label>
+                            <select name="category" id="edit_blog_category" class="form-select" onchange="if(this.value==='__custom__'){this.style.display='none';document.getElementById('edit_blog_cat_wrap').style.display='flex';}">
+                                <option value="Reflexiones">Reflexiones</option>
+                                <option value="Estudios">Estudios</option>
+                                <option value="Noticias">Noticias</option>
+                                <option value="Comunidad">Comunidad</option>
+                                <% if (typeof blogCategories !== 'undefined' && blogCategories.length > 0) { %>
+                                    <% blogCategories.forEach(cat => { %>
+                                        <% if (!['Reflexiones','Estudios','Noticias','Comunidad'].includes(cat.category)) { %>
+                                            <option value="<%= cat.category %>"><%= cat.category %></option>
+                                        <% } %>
+                                    <% }) %>
+                                <% } %>
+                                <option value="__custom__">+ Nueva categoría...</option>
+                            </select>
+                            <div id="edit_blog_cat_wrap" style="display:none;" class="input-group mt-1">
+                                <input type="text" id="edit_blog_cat_custom" class="form-control" placeholder="Nombre de la categoría">
+                                <button type="button" class="btn btn-outline-light btn-sm" onclick="var inp=document.getElementById('edit_blog_cat_custom');var sel=document.getElementById('edit_blog_category');if(inp.value.trim()){var opt=document.createElement('option');opt.value=inp.value.trim();opt.textContent=inp.value.trim();sel.insertBefore(opt,sel.querySelector('[value=__custom__]'));sel.value=inp.value.trim();inp.value='';this.parentNode.style.display='none';sel.style.display='';}">✓</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="this.parentNode.style.display='none';document.getElementById('edit_blog_category').style.display='';">✕</button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-white-50">Autor</label>
+                            <input type="text" name="author" id="edit_blog_author" class="form-control">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subtítulo</label>
+                            <input type="text" name="subtitle" id="edit_blog_subtitle" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Etiquetas / Tags</label>
+                            <input type="text" name="tags" id="edit_blog_tags" class="form-control">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">Resumen Breve</label>
+                            <textarea name="summary" id="edit_blog_summary" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Subir Nueva Imagen</label>
+                            <input type="file" id="edit_blog_image_file" name="image_file" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">URL Imagen</label>
+                            <input type="text" id="edit_blog_image_url" name="image_url" class="form-control">
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height:100px;background:rgba(0,0,0,0.2);">
+                                <img id="editBlogImgPreview" src="" style="max-width:100%;max-height:100%;object-fit:contain;">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Contenido</label>
+                            <div id="blog-edit-editor-container" style="height:280px;background:white;color:black;border-radius:5px;"></div>
+                            <input type="hidden" name="content" id="editBlogContentInput">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary px-4"><i class="bi bi-check-lg me-1"></i>Actualizar Artículo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- MODAL: NUEVO MIEMBRO -->
 <div class="modal fade" id="createTeamModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -524,6 +697,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const qEditPort = new Quill('#edit-port-editor-container', qCfg);
     const qEnsCreate = new Quill('#ensenanza-create-editor-container', qCfg);
     const qEnsEdit = new Quill('#ensenanza-edit-editor-container', qCfg);
+    const qBlogCreate = new Quill('#blog-create-editor-container', qCfg);
+    const qBlogEdit = new Quill('#blog-edit-editor-container', qCfg);
     const qDynCreate = new Quill('#dyn-create-editor-container', qCfg);
     const qDynEdit = new Quill('#dyn-edit-editor-container', qCfg);
 
@@ -538,6 +713,8 @@ document.addEventListener('DOMContentLoaded', function() {
     setupPreview('edit_port_image_url','edit_port_image_file','editPortImgPreview');
     setupPreview('create_ens_image_url','create_ens_image_file','createEnsImgPreview');
     setupPreview('edit_ens_image_url','edit_ens_image_file','editEnsImgPreview');
+    setupPreview('create_blog_image_url','create_blog_image_file','createBlogImgPreview');
+    setupPreview('edit_blog_image_url','edit_blog_image_file','editBlogImgPreview');
     setupPreview('dyn_create_image_url','dyn_create_image_file','dynCreateImgPreview');
     setupPreview('dyn_edit_image_url','dyn_edit_image_file','dynEditImgPreview');
 
@@ -581,6 +758,39 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     });
 
+    // Edit Blog modal
+    const editBlogModalEl = document.getElementById('editBlogModal');
+    if (editBlogModalEl) {
+        const editBlogModal = new bootstrap.Modal(editBlogModalEl);
+        document.querySelectorAll('.edit-blog-btn').forEach(btn=>{
+            btn.onclick=function(){
+                const d=this.dataset;
+                document.getElementById('edit_blog_id').value=d.id;
+                document.getElementById('edit_blog_title').value=d.title;
+                document.getElementById('edit_blog_subtitle').value=d.subtitle || '';
+                document.getElementById('edit_blog_author').value=d.author || 'Hablemos de YHWH';
+                document.getElementById('edit_blog_summary').value=d.summary || '';
+                document.getElementById('edit_blog_tags').value=d.tags || '';
+                
+                var editCatSel=document.getElementById('edit_blog_category');
+                if (editCatSel) {
+                    var catFound=false;
+                    for(var i=0;i<editCatSel.options.length;i++){if(editCatSel.options[i].value===d.category){catFound=true;break;}}
+                    if(!catFound && d.category){
+                        var opt=document.createElement('option');opt.value=d.category;opt.textContent=d.category;
+                        editCatSel.insertBefore(opt,editCatSel.querySelector('[value=__custom__]'));
+                    }
+                    editCatSel.value=d.category || 'Reflexiones';
+                }
+                
+                document.getElementById('edit_blog_image_url').value=d.image || '';
+                document.getElementById('editBlogImgPreview').src=d.image || '/assets/img/blog/blog-1.jpg';
+                qBlogEdit.root.innerHTML=d.content || '';
+                editBlogModal.show();
+            };
+        });
+    }
+
     // Edit Team modal
     const editTeamModal = new bootstrap.Modal(document.getElementById('editTeamModal'));
     document.querySelectorAll('.edit-team-btn').forEach(btn=>{
@@ -617,6 +827,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if(cEnsForm) cEnsForm.onsubmit=function(){document.getElementById('createEnsenanzaContentInput').value=qEnsCreate.root.innerHTML;return true;};
     const eEnsForm = document.getElementById('editEnsenanzaForm');
     if(eEnsForm) eEnsForm.onsubmit=function(){document.getElementById('editEnsenanzaContentInput').value=qEnsEdit.root.innerHTML;return true;};
+    const cBlogForm = document.getElementById('createBlogForm');
+    if(cBlogForm) cBlogForm.onsubmit=function(){document.getElementById('createBlogContentInput').value=qBlogCreate.root.innerHTML;return true;};
+    const eBlogForm = document.getElementById('editBlogForm');
+    if(eBlogForm) eBlogForm.onsubmit=function(){document.getElementById('editBlogContentInput').value=qBlogEdit.root.innerHTML;return true;};
     const cdf = document.getElementById('createDynamicForm');
     if(cdf) cdf.onsubmit=function(){document.getElementById('dynCreateContentInput').value=qDynCreate.root.innerHTML;return true;};
     const edf = document.getElementById('editDynamicForm');

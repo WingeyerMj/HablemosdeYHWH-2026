@@ -524,6 +524,99 @@
                     </div>
                 </section>
 
+                <!-- Blog & Noticias Section -->
+                <section id="blog" class="blog-home section" style="background-color: #faf9f6; padding: 70px 0;">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2><%= (sections.Blog && sections.Blog.title) || 'Blog & Noticias' %></h2>
+                        <p><%= (sections.Blog && sections.Blog.subtitle) || 'Reflexiones, artículos y novedades de nuestra comunidad' %></p>
+                    </div>
+                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                        <% if (typeof blogPosts !== 'undefined' && blogPosts && blogPosts.length > 0) { %>
+                            <div class="row gy-4 justify-content-center">
+                                <% blogPosts.forEach((post, index) => { %>
+                                    <div class="col-lg-4 col-md-6 col-12" data-aos="fade-up" data-aos-delay="<%= (index + 1) * 100 %>">
+                                        <article class="blog-card h-100 shadow-sm" style="background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #ebe5dc; transition: all 0.35s ease; display: flex; flex-direction: column;">
+                                            <div class="blog-img-box" style="position: relative; width: 100%; height: 220px; overflow: hidden; background: #1a1a1a;">
+                                                <a href="/blog/<%= post.id %>" class="d-block w-100 h-100">
+                                                    <% if (post.image_url && post.image_url.trim() !== '') { %>
+                                                        <img src="<%= post.image_url %>" alt="<%= post.title %>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+                                                    <% } else { %>
+                                                        <div class="d-flex align-items-center justify-content-center h-100 w-100" style="background: linear-gradient(135deg, #efe8db, #dfd4bf);">
+                                                            <i class="bi bi-newspaper text-muted" style="font-size: 3.5rem; color: #d4a853 !important;"></i>
+                                                        </div>
+                                                    <% } %>
+                                                </a>
+                                                <span class="blog-category-badge position-absolute top-0 start-0 m-3 px-3 py-1 rounded-pill text-white fw-bold shadow-sm" 
+                                                      style="background: linear-gradient(135deg, #d4a853, #b8860b); font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">
+                                                    <%= post.category || 'General' %>
+                                                </span>
+                                            </div>
+                                            
+                                            <div class="p-4 d-flex flex-column flex-grow-1">
+                                                <div class="blog-meta d-flex align-items-center gap-3 mb-2 text-muted" style="font-size: 0.82rem;">
+                                                    <span><i class="bi bi-calendar3 me-1" style="color: #d4a853;"></i> <%= post.published_at ? new Date(post.published_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) : '-' %></span>
+                                                    <span><i class="bi bi-person me-1" style="color: #d4a853;"></i> <%= post.author || 'Editorial' %></span>
+                                                </div>
+
+                                                <h4 class="fw-bold mb-2" style="font-size: 1.15rem; line-height: 1.4;">
+                                                    <a href="/blog/<%= post.id %>" class="text-decoration-none text-dark hover-gold-title">
+                                                        <%= post.title %>
+                                                    </a>
+                                                </h4>
+
+                                                <% if (post.subtitle) { %>
+                                                    <p class="text-muted small mb-2 fst-italic" style="color: #8c7b6c !important;"><%= post.subtitle %></p>
+                                                <% } %>
+
+                                                <% if (post.summary) { %>
+                                                    <p class="text-muted mb-3" style="font-size: 0.88rem; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                                        <%= post.summary %>
+                                                    </p>
+                                                <% } %>
+
+                                                <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                                                    <a href="/blog/<%= post.id %>" class="btn-read-more text-decoration-none fw-bold" style="color: #d4a853; font-size: 0.9rem; transition: transform 0.2s ease; display: inline-flex; align-items: center; gap: 4px;">
+                                                        Leer artículo <i class="bi bi-arrow-right"></i>
+                                                    </a>
+                                                    <span class="text-muted small"><i class="bi bi-eye me-1"></i><%= post.views || 0 %></span>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    </div>
+                                <% }) %>
+                            </div>
+
+                            <div class="text-center mt-5" data-aos="fade-up">
+                                <a href="/blog"
+                                    style="background: linear-gradient(135deg, #d4a853, #b8860b); color: #fff; padding: 13px 42px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 700; box-shadow: 0 4px 18px rgba(212,168,83,0.35); transition: all 0.3s ease;">
+                                    <i class="bi bi-newspaper me-2"></i>Ver todas las publicaciones
+                                </a>
+                            </div>
+                        <% } else { %>
+                            <div class="text-center py-4">
+                                <p class="text-muted">Próximamente compartiremos nuevas publicaciones y noticias.</p>
+                                <a href="/blog" class="btn btn-outline-dark btn-sm rounded-pill px-4">Ir a la sección de Blog</a>
+                            </div>
+                        <% } %>
+                    </div>
+                </section>
+                <style>
+                    .blog-card:hover {
+                        transform: translateY(-8px);
+                        box-shadow: 0 16px 35px rgba(0, 0, 0, 0.12) !important;
+                        border-color: #d4a853 !important;
+                    }
+                    .blog-card:hover .blog-img-box img {
+                        transform: scale(1.08);
+                    }
+                    .hover-gold-title:hover {
+                        color: #d4a853 !important;
+                    }
+                    .btn-read-more:hover {
+                        transform: translateX(4px);
+                    }
+                </style>
+
                 <!-- Secciones Dinámicas Inline -->
                 <% if (typeof dynamicInline !=='undefined' && dynamicInline.length> 0) { %>
                     <% dynamicInline.forEach((ds, idx)=> { %>

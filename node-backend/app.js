@@ -23,7 +23,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 if (isProduction) app.set('trust proxy', 1);
 
 // Settings
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 3001);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 

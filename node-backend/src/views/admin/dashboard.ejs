@@ -7,59 +7,72 @@
 
     <!-- Stats -->
     <div class="row g-3 mb-4">
-        <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-journal-text"></i></div><div><div class="text-white-50 small">Parashot</div><div class="fs-4 fw-bold"><%= parashot.length %></div></div></div></div>
+        <% if (role === 'admin') { %>
+            <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-journal-text"></i></div><div><div class="text-white-50 small">Parashot</div><div class="fs-4 fw-bold"><%= parashot.length %></div></div></div></div>
+            <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-book"></i></div><div><div class="text-white-50 small">Enseñanzas</div><div class="fs-4 fw-bold"><%= (typeof ensenanzas !== 'undefined' && ensenanzas) ? ensenanzas.length : 0 %></div></div></div></div>
+        <% } %>
+        <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-newspaper"></i></div><div><div class="text-white-50 small">Blog</div><div class="fs-4 fw-bold"><%= (typeof blogs !== 'undefined' && blogs) ? blogs.length : 0 %></div></div></div></div>
         <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-calendar-event"></i></div><div><div class="text-white-50 small">Eventos</div><div class="fs-4 fw-bold"><%= portfolio.length %></div></div></div></div>
-        <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-book"></i></div><div><div class="text-white-50 small">Enseñanzas</div><div class="fs-4 fw-bold"><%= (typeof ensenanzas !== 'undefined' && ensenanzas) ? ensenanzas.length : 0 %></div></div></div></div>
-        <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-people"></i></div><div><div class="text-white-50 small">Equipo</div><div class="fs-4 fw-bold"><%= team.length %></div></div></div></div>
-        <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-star"></i></div><div><div class="text-white-50 small">Testimonios</div><div class="fs-4 fw-bold"><%= testimonials.length %></div></div></div></div>
+        <% if (role === 'admin') { %>
+            <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-people"></i></div><div><div class="text-white-50 small">Equipo</div><div class="fs-4 fw-bold"><%= team.length %></div></div></div></div>
+            <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-star"></i></div><div><div class="text-white-50 small">Testimonios</div><div class="fs-4 fw-bold"><%= testimonials.length %></div></div></div></div>
+        <% } %>
     </div>
 
     <!-- Tabs -->
     <ul class="nav nav-pills mb-4" id="pills-tab" role="tablist">
-        <li class="nav-item" role="presentation"><button class="nav-link active" id="pills-services-tab" data-bs-toggle="pill" data-bs-target="#pills-services" type="button">📖 Parashot</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" id="pills-portfolio-tab" data-bs-toggle="pill" data-bs-target="#pills-portfolio" type="button">🗓️ Eventos</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" id="pills-ensenanzas-tab" data-bs-toggle="pill" data-bs-target="#pills-ensenanzas" type="button">📚 Enseñanzas</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" id="pills-team-tab" data-bs-toggle="pill" data-bs-target="#pills-team" type="button">👥 Equipo</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" id="pills-testimonials-tab" data-bs-toggle="pill" data-bs-target="#pills-testimonials" type="button">⭐ Testimonios</button></li>
-        <% if (typeof dashboardDynamicSections !== 'undefined') { %>
-            <% dashboardDynamicSections.forEach(ds => { %>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-ds-<%= ds.data_table %>-tab" data-bs-toggle="pill" data-bs-target="#pills-ds-<%= ds.data_table %>" type="button">
-                        <i class="bi <%= ds.icon %>"></i> <%= ds.title %>
-                    </button>
-                </li>
-            <% }) %>
+        <% if (role === 'admin') { %>
+            <li class="nav-item" role="presentation"><button class="nav-link active" id="pills-services-tab" data-bs-toggle="pill" data-bs-target="#pills-services" type="button">📖 Parashot</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-portfolio-tab" data-bs-toggle="pill" data-bs-target="#pills-portfolio" type="button">🗓️ Eventos</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-ensenanzas-tab" data-bs-toggle="pill" data-bs-target="#pills-ensenanzas" type="button">📚 Enseñanzas</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-blog-tab" data-bs-toggle="pill" data-bs-target="#pills-blog" type="button">📰 Blog</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-team-tab" data-bs-toggle="pill" data-bs-target="#pills-team" type="button">👥 Equipo</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-testimonials-tab" data-bs-toggle="pill" data-bs-target="#pills-testimonials" type="button">⭐ Testimonios</button></li>
+            <% if (typeof dashboardDynamicSections !== 'undefined') { %>
+                <% dashboardDynamicSections.forEach(ds => { %>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-ds-<%= ds.data_table %>-tab" data-bs-toggle="pill" data-bs-target="#pills-ds-<%= ds.data_table %>" type="button">
+                            <i class="bi <%= ds.icon %>"></i> <%= ds.title %>
+                        </button>
+                    </li>
+                <% }) %>
+            <% } %>
+        <% } else { %>
+            <li class="nav-item" role="presentation"><button class="nav-link active" id="pills-blog-tab" data-bs-toggle="pill" data-bs-target="#pills-blog" type="button">📰 Blog</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-portfolio-tab" data-bs-toggle="pill" data-bs-target="#pills-portfolio" type="button">🗓️ Eventos</button></li>
         <% } %>
     </ul>
 
     <div class="tab-content" id="pills-tabContent">
 
-        <!-- PARASHOT TAB -->
-        <div class="tab-pane fade show active" id="pills-services" role="tabpanel">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="mb-0">Gestión de Parashot</h4>
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createParashaModal"><i class="bi bi-plus-circle"></i> Nueva Parasha</button>
+        <% if (role === 'admin') { %>
+            <!-- PARASHOT TAB -->
+            <div class="tab-pane fade show active" id="pills-services" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0">Gestión de Parashot</h4>
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createParashaModal"><i class="bi bi-plus-circle"></i> Nueva Parasha</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead><tr><th>Nº</th><th>Título</th><th>Descripción</th><th>PDF</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            <% parashot.forEach(p => { %>
+                            <tr>
+                                <td><%= p.parasha_number || '-' %></td>
+                                <td><%= p.title %></td>
+                                <td><span class="text-truncate d-inline-block" style="max-width:200px;"><%= p.description %></span></td>
+                                <td><% if (p.pdf_file) { %><a href="<%= p.pdf_file %>" target="_blank" class="badge bg-success"><i class="bi bi-file-pdf"></i> PDF</a><% } else { %>-<% } %></td>
+                                <td>
+                                    <a href="/admin/parashot/edit/<%= p.id %>" class="btn btn-sm btn-primary me-1">Editar</a>
+                                    <a href="/admin/parashot/delete/<%= p.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta Parashá?')">Eliminar</a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="table-responsive">
-                <table class="table table-dark table-hover">
-                    <thead><tr><th>Nº</th><th>Título</th><th>Descripción</th><th>PDF</th><th>Acciones</th></tr></thead>
-                    <tbody>
-                        <% parashot.forEach(p => { %>
-                        <tr>
-                            <td><%= p.parasha_number || '-' %></td>
-                            <td><%= p.title %></td>
-                            <td><span class="text-truncate d-inline-block" style="max-width:200px;"><%= p.description %></span></td>
-                            <td><% if (p.pdf_file) { %><a href="<%= p.pdf_file %>" target="_blank" class="badge bg-success"><i class="bi bi-file-pdf"></i> PDF</a><% } else { %>-<% } %></td>
-                            <td>
-                                <a href="/admin/parashot/edit/<%= p.id %>" class="btn btn-sm btn-primary me-1">Editar</a>
-                                <a href="/admin/parashot/delete/<%= p.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta Parashá?')">Eliminar</a>
-                            </td>
-                        </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <% } %>
 
         <!-- EVENTOS TAB -->
         <div class="tab-pane fade" id="pills-portfolio" role="tabpanel">
@@ -92,147 +105,250 @@
             </div>
         </div>
 
-        <!-- ENSEÑANZAS TAB -->
-        <div class="tab-pane fade" id="pills-ensenanzas" role="tabpanel">
+        <% if (role === 'admin') { %>
+            <!-- ENSEÑANZAS TAB -->
+            <div class="tab-pane fade" id="pills-ensenanzas" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0">Gestión de Enseñanzas</h4>
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createEnsenanzaModal"><i class="bi bi-plus-circle"></i> Nueva Enseñanza</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead><tr><th>Imagen</th><th>Título</th><th>Subtítulo</th><th>Video YouTube</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            <% if (typeof ensenanzas !== 'undefined' && ensenanzas && ensenanzas.length > 0) { %>
+                                <% ensenanzas.forEach(item => { %>
+                                <tr>
+                                    <td>
+                                        <% if (item.image_url) { %>
+                                            <img src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 45px; height: 35px; object-fit: cover; border-radius: 4px;">
+                                        <% } else { %>
+                                            <span class="text-muted"><i class="bi bi-image"></i></span>
+                                        <% } %>
+                                    </td>
+                                    <td><strong><%= item.title %></strong></td>
+                                    <td><span class="text-truncate d-inline-block text-white-50" style="max-width:180px;"><%= item.subtitle || '-' %></span></td>
+                                    <td>
+                                        <% if (item.youtube_link) { %>
+                                            <a href="<%= item.youtube_link %>" target="_blank" class="badge bg-danger text-decoration-none"><i class="bi bi-youtube"></i> Ver</a>
+                                        <% } else { %>
+                                            <span class="text-white-50">-</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-primary me-1 edit-ensenanza-btn"
+                                            data-id="<%= item.id %>"
+                                            data-title="<%= item.title %>"
+                                            data-subtitle="<%= item.subtitle || '' %>"
+                                            data-description="<%= item.description || '' %>"
+                                            data-image="<%= item.image_url || '' %>"
+                                            data-youtube="<%= item.youtube_link || '' %>"
+                                            data-content='<%= item.content ? item.content.replace(/'/g, "&#39;") : "" %>'>Editar</button>
+                                        <a href="/admin/ensenanzas/edit/<%= item.id %>" class="btn btn-sm btn-outline-light me-1" title="Editor completo"><i class="bi bi-pencil-square"></i></a>
+                                        <a href="/admin/ensenanzas/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta Enseñanza?')">Eliminar</a>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr><td colspan="5" class="text-center text-white-50">No hay enseñanzas registradas</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        <% } %>
+
+        <!-- BLOG TAB -->
+        <div class="tab-pane fade <%= role !== 'admin' ? 'show active' : '' %>" id="pills-blog" role="tabpanel">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="mb-0">Gestión de Enseñanzas</h4>
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createEnsenanzaModal"><i class="bi bi-plus-circle"></i> Nueva Enseñanza</button>
+                <h4 class="mb-0">Gestión de Publicaciones del Blog</h4>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createBlogModal"><i class="bi bi-plus-circle"></i> Nuevo Artículo</button>
             </div>
             <div class="table-responsive">
                 <table class="table table-dark table-hover">
-                    <thead><tr><th>Imagen</th><th>Título</th><th>Subtítulo</th><th>Video YouTube</th><th>Acciones</th></tr></thead>
+                    <thead><tr><th>Portada</th><th>Título</th><th>Categoría</th><th>Autor</th><th>Fecha</th><th>Visitas</th><th>Acciones</th></tr></thead>
                     <tbody>
-                        <% if (typeof ensenanzas !== 'undefined' && ensenanzas && ensenanzas.length > 0) { %>
-                            <% ensenanzas.forEach(item => { %>
+                        <% if (typeof blogs !== 'undefined' && blogs && blogs.length > 0) { %>
+                            <% blogs.forEach(post => { %>
                             <tr>
                                 <td>
-                                    <% if (item.image_url) { %>
-                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 45px; height: 35px; object-fit: cover; border-radius: 4px;">
+                                    <% if (post.image_url) { %>
+                                        <img src="<%= post.image_url %>" alt="<%= post.title %>" style="width: 45px; height: 35px; object-fit: cover; border-radius: 4px;">
                                     <% } else { %>
                                         <span class="text-muted"><i class="bi bi-image"></i></span>
                                     <% } %>
                                 </td>
-                                <td><strong><%= item.title %></strong></td>
-                                <td><span class="text-truncate d-inline-block text-white-50" style="max-width:180px;"><%= item.subtitle || '-' %></span></td>
                                 <td>
-                                    <% if (item.youtube_link) { %>
-                                        <a href="<%= item.youtube_link %>" target="_blank" class="badge bg-danger text-decoration-none"><i class="bi bi-youtube"></i> Ver</a>
-                                    <% } else { %>
-                                        <span class="text-white-50">-</span>
+                                    <strong><%= post.title %></strong>
+                                    <% if (post.subtitle) { %>
+                                        <br><small class="text-white-50"><%= post.subtitle %></small>
                                     <% } %>
                                 </td>
+                                <td><span class="badge bg-secondary"><%= post.category || 'General' %></span></td>
+                                <td><small class="text-white-50"><%= post.author || 'Editorial' %></small></td>
+                                <td><small class="text-white-50"><%= post.published_at ? new Date(post.published_at).toLocaleDateString('es-ES') : '-' %></small></td>
+                                <td><span class="badge bg-dark border border-secondary"><i class="bi bi-eye"></i> <%= post.views || 0 %></span></td>
                                 <td>
-                                    <button type="button" class="btn btn-sm btn-primary me-1 edit-ensenanza-btn"
-                                        data-id="<%= item.id %>"
-                                        data-title="<%= item.title %>"
-                                        data-subtitle="<%= item.subtitle || '' %>"
-                                        data-description="<%= item.description || '' %>"
-                                        data-image="<%= item.image_url || '' %>"
-                                        data-youtube="<%= item.youtube_link || '' %>"
-                                        data-content='<%= item.content ? item.content.replace(/'/g, "&#39;") : "" %>'>Editar</button>
-                                    <a href="/admin/ensenanzas/edit/<%= item.id %>" class="btn btn-sm btn-outline-light me-1" title="Editor completo"><i class="bi bi-pencil-square"></i></a>
-                                    <a href="/admin/ensenanzas/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta Enseñanza?')">Eliminar</a>
+                                    <div class="btn-group btn-group-sm me-1">
+                                        <button type="button" class="btn btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" title="Compartir en Redes">
+                                            <i class="bi bi-share-fill"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-dark shadow">
+                                            <li><h6 class="dropdown-header text-warning"><i class="bi bi-share me-1"></i>Difundir Artículo</h6></li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-2" href="https://api.whatsapp.com/send?text=<%= encodeURIComponent(post.title + '\n\n' + (post.summary || '') + '\n\nLee más en: https://hablemosdeyhwh.com/blog/' + post.id) %>" target="_blank">
+                                                    <i class="bi bi-whatsapp text-success"></i> WhatsApp
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-2" href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('https://hablemosdeyhwh.com/blog/' + post.id) %>" target="_blank">
+                                                    <i class="bi bi-facebook text-primary"></i> Facebook
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-2" href="javascript:void(0)" onclick="navigator.clipboard.writeText('https://hablemosdeyhwh.com/blog/<%= post.id %>'); alert('¡Enlace copiado! Abriendo Instagram...'); window.open('https://www.instagram.com/', '_blank');">
+                                                    <i class="bi bi-instagram" style="color: #E1306C;"></i> Instagram
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-2" href="https://t.me/share/url?url=<%= encodeURIComponent('https://hablemosdeyhwh.com/blog/' + post.id) %>&text=<%= encodeURIComponent(post.title) %>" target="_blank">
+                                                    <i class="bi bi-telegram text-info"></i> Telegram
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-2" href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent(post.title) %>&url=<%= encodeURIComponent('https://hablemosdeyhwh.com/blog/' + post.id) %>" target="_blank">
+                                                    <i class="bi bi-twitter-x text-white"></i> X (Twitter)
+                                                </a>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-2" href="javascript:void(0)" onclick="navigator.clipboard.writeText('https://hablemosdeyhwh.com/blog/<%= post.id %>'); alert('¡Enlace copiado al portapapeles!');">
+                                                    <i class="bi bi-link-45deg text-warning"></i> Copiar Enlace
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-2" href="/blog/<%= post.id %>" target="_blank">
+                                                    <i class="bi bi-box-arrow-up-right text-light"></i> Ver en la Web
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <button type="button" class="btn btn-sm btn-primary me-1 edit-blog-btn"
+                                        data-id="<%= post.id %>"
+                                        data-title="<%= post.title %>"
+                                        data-subtitle="<%= post.subtitle || '' %>"
+                                        data-category="<%= post.category || 'Reflexiones' %>"
+                                        data-author="<%= post.author || 'Hablemos de YHWH' %>"
+                                        data-summary="<%= post.summary || '' %>"
+                                        data-tags="<%= post.tags || '' %>"
+                                        data-image="<%= post.image_url || '' %>"
+                                        data-content='<%= post.content ? post.content.replace(/'/g, "&#39;") : "" %>'>Editar</button>
+                                    <a href="/admin/blog/edit/<%= post.id %>" class="btn btn-sm btn-outline-light me-1" title="Editor completo"><i class="bi bi-pencil-square"></i></a>
+                                    <a href="/admin/blog/delete/<%= post.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este artículo del blog?')">Eliminar</a>
                                 </td>
                             </tr>
                             <% }) %>
                         <% } else { %>
-                            <tr><td colspan="5" class="text-center text-white-50">No hay enseñanzas registradas</td></tr>
+                            <tr><td colspan="7" class="text-center text-white-50">No hay artículos publicados en el blog</td></tr>
                         <% } %>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- EQUIPO TAB -->
-        <div class="tab-pane fade" id="pills-team" role="tabpanel">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="mb-0">Gestión de Equipo</h4>
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createTeamModal"><i class="bi bi-plus-circle"></i> Nuevo Miembro</button>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-dark table-hover">
-                    <thead><tr><th>Nombre</th><th>Rol</th><th>Acciones</th></tr></thead>
-                    <tbody>
-                        <% team.forEach(member => { %>
-                        <tr>
-                            <td><%= member.name %></td><td><%= member.role %></td>
-                            <td>
-                                <button type="button" class="btn btn-sm btn-primary me-1 edit-team-btn"
-                                    data-id="<%= member.id %>" data-name="<%= member.name %>" data-role="<%= member.role %>"
-                                    data-description="<%= member.description || '' %>" data-img="<%= member.img || '' %>">Editar</button>
-                                <a href="/admin/team/delete/<%= member.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este miembro?')">Eliminar</a>
-                            </td>
-                        </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- TESTIMONIOS TAB -->
-        <div class="tab-pane fade" id="pills-testimonials" role="tabpanel">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="mb-0">Gestión de Testimonios</h4>
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createTestimonialModal"><i class="bi bi-plus-circle"></i> Nuevo Testimonio</button>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-dark table-hover">
-                    <thead><tr><th>Nombre</th><th>Rol</th><th>Testimonio</th><th>Acciones</th></tr></thead>
-                    <tbody>
-                        <% testimonials.forEach(t => { %>
-                        <tr>
-                            <td><%= t.name %></td><td><%= t.role %></td>
-                            <td><span class="text-truncate d-inline-block" style="max-width:250px;"><%= t.text %></span></td>
-                            <td>
-                                <button type="button" class="btn btn-sm btn-primary me-1 edit-testimonial-btn"
-                                    data-id="<%= t.id %>" data-name="<%= t.name %>" data-role="<%= t.role %>"
-                                    data-text="<%= t.text %>" data-img="<%= t.img || '' %>">Editar</button>
-                                <a href="/admin/testimonials/delete/<%= t.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este testimonio?')">Eliminar</a>
-                            </td>
-                        </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- DYNAMIC TABS -->
-        <% if (typeof dashboardDynamicSections !== 'undefined') { %>
-            <% dashboardDynamicSections.forEach(ds => { %>
-            <div class="tab-pane fade" id="pills-ds-<%= ds.data_table %>" role="tabpanel">
+        <% if (role === 'admin') { %>
+            <!-- EQUIPO TAB -->
+            <div class="tab-pane fade" id="pills-team" role="tabpanel">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="mb-0">Gestión de <%= ds.title %></h4>
-                    <button type="button" class="btn btn-success open-create-dynamic-modal" data-table="<%= ds.data_table %>" data-title="<%= ds.title %>"><i class="bi bi-plus-circle"></i> Nuevo Registro</button>
+                    <h4 class="mb-0">Gestión de Equipo</h4>
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createTeamModal"><i class="bi bi-plus-circle"></i> Nuevo Miembro</button>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-dark table-hover">
-                        <thead><tr><th>Nº</th><th>Título</th><th>Descripción</th><th>PDF</th><th>Acciones</th></tr></thead>
+                        <thead><tr><th>Nombre</th><th>Rol</th><th>Acciones</th></tr></thead>
                         <tbody>
-                            <% if (ds.records && ds.records.length > 0) { %>
-                                <% ds.records.forEach(r => { %>
-                                <tr>
-                                    <td><%= r.parasha_number || '-' %></td>
-                                    <td><%= r.title || r.titulo || '-' %></td>
-                                    <td><span class="text-truncate d-inline-block" style="max-width:200px;"><%= r.description || r.descripcion || '-' %></span></td>
-                                    <td><% if (r.pdf_file) { %><a href="<%= r.pdf_file %>" target="_blank" class="badge bg-success"><i class="bi bi-file-pdf"></i> PDF</a><% } else { %>-<% } %></td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-primary me-1 edit-dynamic-btn"
-                                            data-table="<%= ds.data_table %>"
-                                            data-title="<%= ds.title %>"
-                                            data-id="<%= r.id %>"
-                                            data-record='<%= JSON.stringify(r).replace(/'/g, "&#39;") %>'>Editar</button>
-                                        <a href="/admin/entity/<%= ds.data_table %>/delete/<%= r.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este registro?')">Eliminar</a>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                            <% } else { %>
-                                <tr><td colspan="5" class="text-center text-white-50">No hay registros</td></tr>
-                            <% } %>
+                            <% team.forEach(member => { %>
+                            <tr>
+                                <td><%= member.name %></td><td><%= member.role %></td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-primary me-1 edit-team-btn"
+                                        data-id="<%= member.id %>" data-name="<%= member.name %>" data-role="<%= member.role %>"
+                                        data-description="<%= member.description || '' %>" data-img="<%= member.img || '' %>">Editar</button>
+                                    <a href="/admin/team/delete/<%= member.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este miembro?')">Eliminar</a>
+                                </td>
+                            </tr>
+                            <% }) %>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <% }) %>
+
+            <!-- TESTIMONIOS TAB -->
+            <div class="tab-pane fade" id="pills-testimonials" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0">Gestión de Testimonios</h4>
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createTestimonialModal"><i class="bi bi-plus-circle"></i> Nuevo Testimonio</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead><tr><th>Nombre</th><th>Rol</th><th>Testimonio</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            <% testimonials.forEach(t => { %>
+                            <tr>
+                                <td><%= t.name %></td><td><%= t.role %></td>
+                                <td><span class="text-truncate d-inline-block" style="max-width:250px;"><%= t.text %></span></td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-primary me-1 edit-testimonial-btn"
+                                        data-id="<%= t.id %>" data-name="<%= t.name %>" data-role="<%= t.role %>"
+                                        data-text="<%= t.text %>" data-img="<%= t.img || '' %>">Editar</button>
+                                    <a href="/admin/testimonials/delete/<%= t.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este testimonio?')">Eliminar</a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- DYNAMIC TABS -->
+            <% if (typeof dashboardDynamicSections !== 'undefined') { %>
+                <% dashboardDynamicSections.forEach(ds => { %>
+                <div class="tab-pane fade" id="pills-ds-<%= ds.data_table %>" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="mb-0">Gestión de <%= ds.title %></h4>
+                        <button type="button" class="btn btn-success open-create-dynamic-modal" data-table="<%= ds.data_table %>" data-title="<%= ds.title %>"><i class="bi bi-plus-circle"></i> Nuevo Registro</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead><tr><th>Nº</th><th>Título</th><th>Descripción</th><th>PDF</th><th>Acciones</th></tr></thead>
+                            <tbody>
+                                <% if (ds.records && ds.records.length > 0) { %>
+                                    <% ds.records.forEach(r => { %>
+                                    <tr>
+                                        <td><%= r.parasha_number || '-' %></td>
+                                        <td><%= r.title || r.titulo || '-' %></td>
+                                        <td><span class="text-truncate d-inline-block" style="max-width:200px;"><%= r.description || r.descripcion || '-' %></span></td>
+                                        <td><% if (r.pdf_file) { %><a href="<%= r.pdf_file %>" target="_blank" class="badge bg-success"><i class="bi bi-file-pdf"></i> PDF</a><% } else { %>-<% } %></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-primary me-1 edit-dynamic-btn"
+                                                data-table="<%= ds.data_table %>"
+                                                data-title="<%= ds.title %>"
+                                                data-id="<%= r.id %>"
+                                                data-record='<%= JSON.stringify(r).replace(/'/g, "&#39;") %>'>Editar</button>
+                                            <a href="/admin/entity/<%= ds.data_table %>/delete/<%= r.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este registro?')">Eliminar</a>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr><td colspan="5" class="text-center text-white-50">No hay registros</td></tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <% }) %>
+            <% } %>
         <% } %>
     </div>
 </main>

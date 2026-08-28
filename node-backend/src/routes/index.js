@@ -6,6 +6,7 @@ const FooterModel = require('../models/FooterModel');
 
 router.get('/', homeController.index);
 router.get('/blog', homeController.blog);
+router.get('/blog/:id', homeController.blogDetail);
 router.get('/calendar', homeController.calendar);
 router.get('/parashot', homeController.parashot);
 router.get('/parashot/:id', homeController.parashaDetail);
