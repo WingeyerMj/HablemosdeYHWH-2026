@@ -78,16 +78,8 @@ select option:checked, select option:hover {
 
                             <!-- Referencia de versículos -->
                             <div class="col-md-6">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <label class="form-label small text-white-50 fw-bold mb-0">Referencia de Versículos</label>
-                                    <span class="badge bg-warning bg-opacity-25 text-warning small">Ej: DEUTERONOMIO 26:1-11</span>
-                                </div>
-                                <div class="input-group">
-                                    <input type="text" name="verses_reference" id="editVersesRefInput" class="form-control bg-black bg-opacity-50 text-white border-secondary fw-bold" value="<%= aliyah.verses_reference || '' %>" placeholder="Ej: DEUTERONOMIO 26:1-11">
-                                    <button type="button" id="btnAutoFetchFromRefEdit" class="btn btn-warning fw-bold d-flex align-items-center gap-1 shadow-sm" title="Cargar automáticamente el texto en Español, Hebreo y Fonética según esta cita bíblica">
-                                        <i class="bi bi-cloud-arrow-down-fill"></i> <strong>Cargar Versículos</strong>
-                                    </button>
-                                </div>
+                                <label class="form-label small text-white-50 fw-bold mb-1">Referencia de Versículos</label>
+                                <input type="text" name="verses_reference" id="editVersesRefInput" class="form-control bg-black bg-opacity-50 text-white border-secondary fw-bold" value="<%= aliyah.verses_reference || '' %>" placeholder="Ej: DEUTERONOMIO 26:1-11">
                             </div>
 
                             <!-- SECCIÓN DE AUDIOS (Soporta múltiples archivos) -->
@@ -187,9 +179,6 @@ select option:checked, select option:hover {
                                         <div class="d-flex flex-wrap gap-2">
                                             <button type="button" id="btnTranslateSpanishEdit" class="btn btn-sm btn-success d-flex align-items-center gap-1 shadow-sm" title="Traduce automáticamente el texto pegado en Español a Hebreo y genera la Fonética">
                                                 <i class="bi bi-translate"></i> <strong>✨ Traducir Español ➔ Hebreo + Fonética</strong>
-                                            </button>
-                                            <button type="button" id="btnAutoFetchVersesEdit" class="btn btn-sm btn-outline-info d-flex align-items-center gap-1" title="Obtener texto en hebreo y traducción según la cita bíblica">
-                                                <i class="bi bi-cloud-arrow-down"></i> Auto-Obtener Versículos
                                             </button>
                                             <button type="button" id="btnAutoTransliterateEdit" class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1" title="Convertir automáticamente el texto hebreo a fonética en español">
                                                 <i class="bi bi-magic"></i> Hebreo ➔ Fonética
