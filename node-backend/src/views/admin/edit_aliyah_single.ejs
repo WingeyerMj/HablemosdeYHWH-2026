@@ -70,43 +70,59 @@
                                 <input type="text" name="verses_reference" class="form-control bg-black bg-opacity-50 text-white border-secondary" value="<%= aliyah.verses_reference || '' %>" placeholder="Ej: Génesis 1:1 - 2:3">
                             </div>
 
-                            <!-- SECCIÓN DE AUDIO -->
+                            <!-- SECCIÓN DE AUDIOS (Soporta múltiples archivos) -->
                             <div class="col-12">
                                 <div class="p-3 rounded border border-secondary" style="background: rgba(255, 255, 255, 0.03);">
-                                    <label class="form-label fw-bold text-white d-flex align-items-center gap-2 mb-2">
-                                        <i class="bi bi-soundwave" style="color: var(--primary-color, #d4b895); font-size: 1.2rem;"></i>
-                                        Audio de la Lectura
+                                    <label class="form-label fw-bold text-white d-flex align-items-center justify-content-between mb-2">
+                                        <span class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-soundwave" style="color: var(--primary-color, #d4b895); font-size: 1.2rem;"></i>
+                                            Audios de la Lectura (<%= (aliyah.audios && aliyah.audios.length) || 0 %> cargados)
+                                        </span>
+                                        <small class="text-white-50">Puedes subir varios archivos de audio para esta misma Aliyá</small>
                                     </label>
 
-                                    <% if (aliyah.audio_url && aliyah.audio_url.trim() !== '') { %>
-                                        <div class="p-3 mb-3 rounded bg-black bg-opacity-50 border border-success d-flex flex-wrap align-items-center justify-content-between gap-3">
-                                            <div class="d-flex align-items-center gap-3">
-                                                <div class="rounded-circle bg-success bg-opacity-25 p-2 text-success d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
-                                                    <i class="bi bi-file-earmark-music fs-4"></i>
+                                    <!-- Lista de audios existentes -->
+                                    <% if (aliyah.audios && aliyah.audios.length > 0) { %>
+                                        <div class="d-flex flex-column gap-2 mb-3">
+                                            <% aliyah.audios.forEach((audio, idx) => { %>
+                                                <div class="p-2 px-3 rounded bg-black bg-opacity-50 border border-secondary d-flex flex-wrap align-items-center justify-content-between gap-2">
+                                                    <div class="d-flex align-items-center gap-3">
+                                                        <span class="badge bg-secondary">#<%= idx + 1 %></span>
+                                                        <div>
+                                                            <div class="text-white small fw-bold"><%= audio.title || `Audio ${idx + 1}` %></div>
+                                                            <audio controls class="mt-1" style="height: 30px; max-width: 250px;">
+                                                                <source src="<%= audio.url %>" type="audio/mpeg">
+                                                            </audio>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex gap-2">
+                                                        <a href="<%= audio.url %>" target="_blank" download class="btn btn-sm btn-outline-light" title="Descargar">
+                                                            <i class="bi bi-download"></i>
+                                                        </a>
+                                                        <button type="button" class="btn btn-sm btn-outline-danger btn-remove-audio-item" data-audio-idx="<%= idx %>" title="Eliminar este audio">
+                                                            <i class="bi bi-trash"></i> Eliminar
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <div class="text-white small fw-bold">Audio cargado</div>
-                                                    <audio controls class="mt-1" style="height: 34px; max-width: 320px;">
-                                                        <source src="<%= aliyah.audio_url %>" type="audio/mpeg">
-                                                    </audio>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex gap-2">
-                                                <a href="<%= aliyah.audio_url %>" target="_blank" download class="btn btn-sm btn-outline-light">
-                                                    <i class="bi bi-download"></i> Descargar
-                                                </a>
-                                            </div>
+                                            <% }) %>
                                         </div>
                                     <% } %>
 
-                                    <div class="row g-3">
+                                    <input type="hidden" name="existing_audios_json" id="existingAudiosJson" value='<%- JSON.stringify(aliyah.audios || []) %>'>
+                                    <input type="hidden" name="remove_audio_idx" id="removeAudioIdx" value="">
+
+                                    <!-- Subir nuevos audios -->
+                                    <div class="row g-3 pt-2 border-top border-secondary">
                                         <div class="col-md-6">
-                                            <label class="form-label small text-white-50">Subir nuevo archivo de audio (.mp3, .m4a, .wav, .aac)</label>
-                                            <input type="file" name="audio_file" class="form-control bg-black bg-opacity-50 text-white border-secondary" accept="audio/*">
+                                            <label class="form-label small text-white-50 fw-semibold">Subir archivos de audio (.mp3, .m4a, .wav) - Permite selección múltiple</label>
+                                            <input type="file" name="audio_files" class="form-control bg-black bg-opacity-50 text-white border-secondary" accept="audio/*" multiple>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label small text-white-50">O enlace de audio externo (opcional)</label>
-                                            <input type="text" name="custom_audio_url" class="form-control bg-black bg-opacity-50 text-white border-secondary" placeholder="https://.../audio.mp3" value="<%= (aliyah.audio_url && !aliyah.audio_url.startsWith('/uploads/')) ? aliyah.audio_url : '' %>">
+                                            <label class="form-label small text-white-50 fw-semibold">O agregar enlace de audio externo</label>
+                                            <div class="input-group">
+                                                <input type="text" name="custom_audio_title" class="form-control bg-black bg-opacity-50 text-white border-secondary" placeholder="Nombre (Ej: Reflexión)" style="max-width: 140px;">
+                                                <input type="text" name="custom_audio_url" class="form-control bg-black bg-opacity-50 text-white border-secondary" placeholder="https://.../audio.mp3">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -238,30 +254,15 @@ document.addEventListener('DOMContentLoaded', function() {
         return true;
     };
 
-    // Botón copiar enlace
-    const copyLinkBtn = document.getElementById('copyLinkBtn');
-    if (copyLinkBtn) {
-        copyLinkBtn.addEventListener('click', function() {
-            const url = this.getAttribute('data-url');
-            navigator.clipboard.writeText(url).then(() => {
-                const prev = this.innerHTML;
-                this.innerHTML = '<i class="bi bi-check-lg text-success fs-5"></i> ¡Enlace Copiado!';
-                setTimeout(() => { this.innerHTML = prev; }, 2000);
-            });
+    // Botón eliminar un audio específico
+    document.querySelectorAll('.btn-remove-audio-item').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (confirm('¿Deseas eliminar este audio? Los cambios se aplicarán al guardar.')) {
+                const idx = this.getAttribute('data-audio-idx');
+                document.getElementById('removeAudioIdx').value = idx;
+                document.getElementById('editAliyahSingleForm').submit();
+            }
         });
-    }
-
-    // Botón copiar mensaje completo
-    const copyFullMessageBtn = document.getElementById('copyFullMessageBtn');
-    if (copyFullMessageBtn) {
-        copyFullMessageBtn.addEventListener('click', function() {
-            const msg = this.getAttribute('data-msg');
-            navigator.clipboard.writeText(msg).then(() => {
-                const prev = this.innerHTML;
-                this.innerHTML = '<i class="bi bi-check-lg text-success fs-5"></i> ¡Mensaje Copiado!';
-                setTimeout(() => { this.innerHTML = prev; }, 2000);
-            });
-        });
-    }
+    });
 });
 </script>

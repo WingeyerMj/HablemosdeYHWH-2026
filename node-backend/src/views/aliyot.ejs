@@ -160,23 +160,32 @@
                                                 </div>
                                             </div>
 
-                                            <!-- REPRODUCTOR DE AUDIO -->
-                                            <% if (hasAudio) { %>
-                                                <div class="audio-player-box p-3 mb-4 rounded-3 d-flex flex-column gap-2" 
-                                                     style="background: linear-gradient(135deg, #1c1c1c 0%, #2a251f 100%); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
-                                                    <div class="d-flex align-items-center justify-content-between">
-                                                        <div class="d-flex align-items-center gap-2">
-                                                            <span class="pulse-icon text-warning"><i class="bi bi-soundwave fs-4"></i></span>
-                                                            <span class="small text-white-50">Audio de la Lectura Diaria</span>
+                                            <!-- REPRODUCTOR DE AUDIOS (Soporte individual o múltiple) -->
+                                            <% 
+                                                const audiosList = (aliyah.audios && aliyah.audios.length > 0)
+                                                    ? aliyah.audios
+                                                    : (aliyah.audio_url ? [{ title: 'Audio de la Lectura', url: aliyah.audio_url }] : []);
+                                            %>
+                                            <% if (audiosList.length > 0) { %>
+                                                <div class="audio-players-wrapper mb-4 d-flex flex-column gap-2">
+                                                    <% audiosList.forEach((aud, audIdx) => { %>
+                                                        <div class="audio-player-box p-3 rounded-3 d-flex flex-column gap-2" 
+                                                             style="background: linear-gradient(135deg, #1c1c1c 0%, #2a251f 100%); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+                                                            <div class="d-flex align-items-center justify-content-between">
+                                                                <div class="d-flex align-items-center gap-2">
+                                                                    <span class="pulse-icon text-warning"><i class="bi bi-soundwave fs-4"></i></span>
+                                                                    <span class="small text-white fw-bold"><%= aud.title || `Audio ${audIdx + 1}` %></span>
+                                                                </div>
+                                                                <a href="<%= aud.url %>" download target="_blank" class="text-white-50 text-decoration-none small hover-white" title="Descargar Audio">
+                                                                    <i class="bi bi-download me-1"></i> Descargar
+                                                                </a>
+                                                            </div>
+                                                            <audio controls class="w-100 mt-1" style="height: 38px; border-radius: 8px;">
+                                                                <source src="<%= aud.url %>" type="audio/mpeg">
+                                                                Tu navegador no soporta el reproductor de audio HTML5.
+                                                            </audio>
                                                         </div>
-                                                        <a href="<%= aliyah.audio_url %>" download target="_blank" class="text-white-50 text-decoration-none small hover-white" title="Descargar Audio">
-                                                            <i class="bi bi-download me-1"></i> Descargar
-                                                        </a>
-                                                    </div>
-                                                    <audio controls class="w-100 mt-1" style="height: 40px; border-radius: 8px;">
-                                                        <source src="<%= aliyah.audio_url %>" type="audio/mpeg">
-                                                        Tu navegador no soporta el reproductor de audio HTML5.
-                                                    </audio>
+                                                    <% }) %>
                                                 </div>
                                             <% } %>
 
@@ -186,7 +195,7 @@
                                                      style="background: #faf8f5; border: 1px solid #efe8dd; font-size: 1.08rem; line-height: 1.9; color: #333; font-family: Georgia, serif;">
                                                     <%- aliyah.content %>
                                                 </div>
-                                            <% } else if (!hasAudio) { %>
+                                            <% } else if (audiosList.length === 0) { %>
                                                 <div class="text-center py-4 text-muted">
                                                     <i class="bi bi-hourglass-split fs-2 d-block mb-2" style="color: #d4a853;"></i>
                                                     <p class="mb-0 small">El audio y los versículos de esta Aliyá se publicarán en el día correspondiente.</p>

@@ -2,7 +2,41 @@ const db = require('../config/db');
 
 class Aliyah {
     /**
-     * Obtener todas las Aliyot con datos de la Parashá (o NULL si no está vinculada aún)
+     * Parsear audio_url a un array estructurado de audios [{ title, url }]
+     */
+    static parseAudios(audio_url) {
+        if (!audio_url || typeof audio_url !== 'string' || audio_url.trim() === '') {
+            return [];
+        }
+        const trimmed = audio_url.trim();
+        if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+            try {
+                const parsed = JSON.parse(trimmed);
+                if (Array.isArray(parsed)) {
+                    return parsed.filter(item => item && item.url && item.url.trim() !== '');
+                } else if (parsed.url) {
+                    return [parsed];
+                }
+            } catch (e) {}
+        }
+        // Soporte retrocompatible para cadenas simples de URL
+        return [{ title: 'Audio de la Lectura', url: trimmed }];
+    }
+
+    /**
+     * Serializar lista de audios a JSON string
+     */
+    static serializeAudios(audios) {
+        if (!audios || !Array.isArray(audios) || audios.length === 0) {
+            return '';
+        }
+        const clean = audios.filter(a => a && a.url && a.url.trim() !== '');
+        if (clean.length === 0) return '';
+        return JSON.stringify(clean);
+    }
+
+    /**
+     * Obtener todas las Aliyot con datos de la Parashá y audios parseados
      */
     static async getAllWithParasha() {
         const sql = `
@@ -17,7 +51,10 @@ class Aliyah {
             ORDER BY a.created_at DESC, a.aliyah_number ASC
         `;
         const [rows] = await db.query(sql);
-        return rows;
+        return rows.map(r => ({
+            ...r,
+            audios: Aliyah.parseAudios(r.audio_url)
+        }));
     }
 
     /**
@@ -30,7 +67,10 @@ class Aliyah {
         }
         sql += ' ORDER BY aliyah_number ASC';
         const [rows] = await db.query(sql, [parashaId]);
-        return rows;
+        return rows.map(r => ({
+            ...r,
+            audios: Aliyah.parseAudios(r.audio_url)
+        }));
     }
 
     /**
@@ -39,7 +79,10 @@ class Aliyah {
     static async getUnlinked() {
         const sql = `SELECT * FROM aliyot WHERE parasha_id IS NULL ORDER BY created_at DESC`;
         const [rows] = await db.query(sql);
-        return rows;
+        return rows.map(r => ({
+            ...r,
+            audios: Aliyah.parseAudios(r.audio_url)
+        }));
     }
 
     /**
@@ -60,7 +103,10 @@ class Aliyah {
             LIMIT ?
         `;
         const [rows] = await db.query(sql, [limit]);
-        return rows;
+        return rows.map(r => ({
+            ...r,
+            audios: Aliyah.parseAudios(r.audio_url)
+        }));
     }
 
     /**
@@ -71,11 +117,15 @@ class Aliyah {
             'SELECT * FROM aliyot WHERE parasha_id = ? AND aliyah_number = ?',
             [parashaId, aliyahNumber]
         );
-        return rows[0] || null;
+        if (!rows[0]) return null;
+        return {
+            ...rows[0],
+            audios: Aliyah.parseAudios(rows[0].audio_url)
+        };
     }
 
     /**
-     * Obtener Aliyá por su ID con datos de la Parashá
+     * Obtener Aliyá por su ID con datos de la Parashá y audios parseados
      */
     static async getById(id) {
         const sql = `
@@ -90,7 +140,11 @@ class Aliyah {
             WHERE a.id = ?
         `;
         const [rows] = await db.query(sql, [id]);
-        return rows[0] || null;
+        if (!rows[0]) return null;
+        return {
+            ...rows[0],
+            audios: Aliyah.parseAudios(rows[0].audio_url)
+        };
     }
 
     /**
@@ -147,10 +201,8 @@ class Aliyah {
      * Guardar o actualizar una Aliyá (Upsert por parasha_id y aliyah_number)
      */
     static async upsert(data) {
-        const { parasha_id, aliyah_number, title, verses_reference, content, audio_url, reading_date, is_published } = data;
+        const { parasha_id, aliyah_number } = data;
         const pId = (parasha_id && parasha_id !== '' && parasha_id !== 'null') ? Number(parasha_id) : null;
-        const pub = (is_published !== undefined && is_published !== null) ? Boolean(is_published) : true;
-        const rDate = reading_date || null;
 
         if (pId) {
             const [existing] = await db.query('SELECT id FROM aliyot WHERE parasha_id = ? AND aliyah_number = ?', [pId, aliyah_number]);

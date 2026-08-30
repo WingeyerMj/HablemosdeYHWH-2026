@@ -1033,18 +1033,34 @@ const adminController = {
     createAliyahSingle: async (req, res) => {
         try {
             const Aliyah = require('../models/Aliyah');
-            const { parasha_id, aliyah_number, title, verses_reference, content, custom_audio_url, reading_date, is_published } = req.body;
+            const { parasha_id, aliyah_number, title, verses_reference, content, reading_date, is_published } = req.body;
 
-            let audio_url = custom_audio_url ? custom_audio_url.trim() : '';
-
-            if (req.files && req.files['audio_file'] && req.files['audio_file'][0]) {
-                audio_url = '/uploads/audios/' + req.files['audio_file'][0].filename;
+            let audiosList = [];
+            if (req.files) {
+                const newFiles = (req.files['audio_files'] || []).concat(req.files['audio_file'] || []);
+                const titles = req.body.audio_titles || [];
+                newFiles.forEach((file, idx) => {
+                    const defaultTitle = `Audio ${audiosList.length + 1}`;
+                    const customTitle = Array.isArray(titles) ? (titles[idx] || defaultTitle) : (titles || defaultTitle);
+                    audiosList.push({
+                        title: customTitle || defaultTitle,
+                        url: '/uploads/audios/' + file.filename
+                    });
+                });
             }
 
+            if (req.body.custom_audio_url && req.body.custom_audio_url.trim() !== '') {
+                audiosList.push({
+                    title: req.body.custom_audio_title || `Audio ${audiosList.length + 1}`,
+                    url: req.body.custom_audio_url.trim()
+                });
+            }
+
+            const audio_url = Aliyah.serializeAudios(audiosList);
             const pub = (is_published === '1' || is_published === 1 || is_published === true || is_published === 'on');
 
             await Aliyah.create({
-                parasha_id: Number(parasha_id),
+                parasha_id: parasha_id || null,
                 aliyah_number: Number(aliyah_number),
                 title: title || `Aliyá ${aliyah_number}`,
                 verses_reference: verses_reference || '',
@@ -1086,24 +1102,51 @@ const adminController = {
     updateAliyahSingle: async (req, res) => {
         try {
             const Aliyah = require('../models/Aliyah');
-            const { id, parasha_id, aliyah_number, title, verses_reference, content, existing_audio_url, custom_audio_url, remove_audio, reading_date, is_published } = req.body;
+            const { id, parasha_id, aliyah_number, title, verses_reference, content, existing_audios_json, remove_audio_idx, reading_date, is_published } = req.body;
 
-            let audio_url = existing_audio_url || '';
-
-            if (remove_audio === '1') {
-                audio_url = '';
+            let audiosList = [];
+            if (existing_audios_json) {
+                try {
+                    const parsed = JSON.parse(existing_audios_json);
+                    if (Array.isArray(parsed)) audiosList = parsed;
+                } catch(e) {}
             }
 
-            if (req.files && req.files['audio_file'] && req.files['audio_file'][0]) {
-                audio_url = '/uploads/audios/' + req.files['audio_file'][0].filename;
-            } else if (custom_audio_url && custom_audio_url.trim() !== '') {
-                audio_url = custom_audio_url.trim();
+            // Remove specific audio if requested
+            if (remove_audio_idx !== undefined && remove_audio_idx !== '') {
+                const idxToRemove = Number(remove_audio_idx);
+                if (!isNaN(idxToRemove) && idxToRemove >= 0 && idxToRemove < audiosList.length) {
+                    audiosList.splice(idxToRemove, 1);
+                }
             }
 
+            // Append newly uploaded files
+            if (req.files) {
+                const newFiles = (req.files['audio_files'] || []).concat(req.files['audio_file'] || []);
+                const titles = req.body.audio_titles || [];
+                newFiles.forEach((file, idx) => {
+                    const defaultTitle = `Audio ${audiosList.length + 1}`;
+                    const customTitle = Array.isArray(titles) ? (titles[idx] || defaultTitle) : (titles || defaultTitle);
+                    audiosList.push({
+                        title: customTitle || defaultTitle,
+                        url: '/uploads/audios/' + file.filename
+                    });
+                });
+            }
+
+            // Append custom audio URL
+            if (req.body.custom_audio_url && req.body.custom_audio_url.trim() !== '') {
+                audiosList.push({
+                    title: req.body.custom_audio_title || `Audio ${audiosList.length + 1}`,
+                    url: req.body.custom_audio_url.trim()
+                });
+            }
+
+            const audio_url = Aliyah.serializeAudios(audiosList);
             const pub = (is_published === '1' || is_published === 1 || is_published === true || is_published === 'on');
 
             await Aliyah.update(id, {
-                parasha_id: Number(parasha_id),
+                parasha_id: parasha_id || null,
                 aliyah_number: Number(aliyah_number),
                 title: title || `Aliyá ${aliyah_number}`,
                 verses_reference: verses_reference || '',
@@ -1177,6 +1220,7 @@ const adminController = {
                     verses_reference: '',
                     content: '',
                     audio_url: '',
+                    audios: [],
                     reading_date: null,
                     is_published: true
                 };
@@ -1200,24 +1244,47 @@ const adminController = {
     saveAliyah: async (req, res) => {
         try {
             const Aliyah = require('../models/Aliyah');
-            const { parasha_id, aliyah_number, title, verses_reference, content, existing_audio_url, remove_audio, reading_date, is_published } = req.body;
+            const { parasha_id, aliyah_number, title, verses_reference, content, existing_audios_json, reading_date, is_published } = req.body;
 
-            let audio_url = existing_audio_url || '';
-
-            if (remove_audio === '1') {
-                audio_url = '';
+            let audiosList = [];
+            if (existing_audios_json) {
+                try {
+                    const parsed = JSON.parse(existing_audios_json);
+                    if (Array.isArray(parsed)) audiosList = parsed;
+                } catch(e) {}
+            } else if (req.body.existing_audio_url && req.body.existing_audio_url.trim() !== '') {
+                audiosList = Aliyah.parseAudios(req.body.existing_audio_url);
             }
 
-            if (req.files && req.files['audio_file'] && req.files['audio_file'][0]) {
-                audio_url = '/uploads/audios/' + req.files['audio_file'][0].filename;
-            } else if (req.body.custom_audio_url && req.body.custom_audio_url.trim() !== '') {
-                audio_url = req.body.custom_audio_url.trim();
+            if (req.body.remove_audio === '1') {
+                audiosList = [];
             }
 
-            const pub = (is_published === '1' || is_published === 1 || is_published === true);
+            if (req.files) {
+                const newFiles = (req.files['audio_files'] || []).concat(req.files['audio_file'] || []);
+                const titles = req.body.audio_titles || [];
+                newFiles.forEach((file, idx) => {
+                    const defaultTitle = `Audio ${audiosList.length + 1}`;
+                    const customTitle = Array.isArray(titles) ? (titles[idx] || defaultTitle) : (titles || defaultTitle);
+                    audiosList.push({
+                        title: customTitle || defaultTitle,
+                        url: '/uploads/audios/' + file.filename
+                    });
+                });
+            }
+
+            if (req.body.custom_audio_url && req.body.custom_audio_url.trim() !== '') {
+                audiosList.push({
+                    title: req.body.custom_audio_title || `Audio ${audiosList.length + 1}`,
+                    url: req.body.custom_audio_url.trim()
+                });
+            }
+
+            const audio_url = Aliyah.serializeAudios(audiosList);
+            const pub = (is_published === '1' || is_published === 1 || is_published === true || is_published === 'on');
 
             await Aliyah.upsert({
-                parasha_id: Number(parasha_id),
+                parasha_id: parasha_id || null,
                 aliyah_number: Number(aliyah_number),
                 title: title || `Aliyá ${aliyah_number}`,
                 verses_reference: verses_reference || '',

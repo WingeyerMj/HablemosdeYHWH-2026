@@ -350,7 +350,7 @@ CREATE TABLE IF NOT EXISTS aliyot (
     title VARCHAR(255) NOT NULL,
     verses_reference VARCHAR(255),
     content LONGTEXT,
-    audio_url VARCHAR(500),
+    audio_url TEXT,
     reading_date DATE DEFAULT NULL,
     is_published BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
