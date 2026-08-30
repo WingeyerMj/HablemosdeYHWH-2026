@@ -1033,7 +1033,7 @@ const adminController = {
     createAliyahSingle: async (req, res) => {
         try {
             const Aliyah = require('../models/Aliyah');
-            const { parasha_id, aliyah_number, title, verses_reference, content, reading_date, is_published } = req.body;
+            const { parasha_id, aliyah_number, title, verses_reference, content, content_hebrew, content_phonetic, reading_date, is_published } = req.body;
 
             let audiosList = [];
             if (req.files) {
@@ -1066,6 +1066,8 @@ const adminController = {
                 title: title || `Aliyá ${aliyah_number}`,
                 verses_reference: verses_reference || '',
                 content: content || '',
+                content_hebrew: content_hebrew || '',
+                content_phonetic: content_phonetic || '',
                 audio_url: audio_url,
                 reading_date: reading_date || null,
                 is_published: pub
@@ -1103,7 +1105,7 @@ const adminController = {
     updateAliyahSingle: async (req, res) => {
         try {
             const Aliyah = require('../models/Aliyah');
-            const { id, parasha_id, aliyah_number, title, verses_reference, content, existing_audios_json, remove_audio_idx, reading_date, is_published } = req.body;
+            const { id, parasha_id, aliyah_number, title, verses_reference, content, content_hebrew, content_phonetic, existing_audios_json, remove_audio_idx, reading_date, is_published } = req.body;
 
             let audiosList = [];
             if (existing_audios_json) {
@@ -1153,6 +1155,8 @@ const adminController = {
                 title: title || `Aliyá ${aliyah_number}`,
                 verses_reference: verses_reference || '',
                 content: content || '',
+                content_hebrew: content_hebrew || '',
+                content_phonetic: content_phonetic || '',
                 audio_url: audio_url,
                 reading_date: reading_date || null,
                 is_published: pub
@@ -1221,6 +1225,8 @@ const adminController = {
                     title: dayNames[i - 1],
                     verses_reference: '',
                     content: '',
+                    content_hebrew: '',
+                    content_phonetic: '',
                     audio_url: '',
                     audios: [],
                     reading_date: null,
@@ -1246,7 +1252,7 @@ const adminController = {
     saveAliyah: async (req, res) => {
         try {
             const Aliyah = require('../models/Aliyah');
-            const { parasha_id, aliyah_number, title, verses_reference, content, existing_audios_json, reading_date, is_published } = req.body;
+            const { parasha_id, aliyah_number, title, verses_reference, content, content_hebrew, content_phonetic, existing_audios_json, reading_date, is_published } = req.body;
 
             let audiosList = [];
             if (existing_audios_json) {
@@ -1264,12 +1270,13 @@ const adminController = {
 
             if (req.files) {
                 const newFiles = (req.files['audio_files'] || []).concat(req.files['audio_file'] || []);
-                const titles = req.body.audio_titles || [];
+                const rawTitles = req.body.audio_titles || [];
+                const titles = Array.isArray(rawTitles) ? rawTitles : (rawTitles ? [rawTitles] : []);
                 newFiles.forEach((file, idx) => {
-                    const defaultTitle = `Audio ${audiosList.length + 1}`;
-                    const customTitle = Array.isArray(titles) ? (titles[idx] || defaultTitle) : (titles || defaultTitle);
+                    const rawTitle = titles[idx];
+                    const cleanTitle = (rawTitle && rawTitle.trim() !== '') ? rawTitle.trim() : (file.originalname ? file.originalname.replace(/\.[^/.]+$/, '') : `Audio ${audiosList.length + 1}`);
                     audiosList.push({
-                        title: customTitle || defaultTitle,
+                        title: cleanTitle,
                         url: '/uploads/audios/' + file.filename
                     });
                 });
@@ -1291,6 +1298,8 @@ const adminController = {
                 title: title || `Aliyá ${aliyah_number}`,
                 verses_reference: verses_reference || '',
                 content: content || '',
+                content_hebrew: content_hebrew || '',
+                content_phonetic: content_phonetic || '',
                 audio_url: audio_url,
                 reading_date: reading_date || null,
                 is_published: pub
@@ -1314,6 +1323,34 @@ const adminController = {
         } catch (error) {
             console.error('Error deleteAliyahAudio:', error);
             res.redirect('/admin/aliyot');
+        }
+    },
+
+    apiTransliterateHebrew: async (req, res) => {
+        try {
+            const { transliterateHebrewToSpanish } = require('../utils/hebrewHelper');
+            const { text } = req.body;
+            const phonetic = transliterateHebrewToSpanish(text || '');
+            res.json({ success: true, phonetic });
+        } catch (e) {
+            console.error('Error apiTransliterateHebrew:', e);
+            res.status(500).json({ success: false, error: e.message });
+        }
+    },
+
+    apiFetchVerses: async (req, res) => {
+        try {
+            const { fetchVersesFromSefaria } = require('../utils/hebrewHelper');
+            const { ref } = req.body;
+            const result = await fetchVersesFromSefaria(ref);
+            if (result) {
+                res.json({ success: true, ...result });
+            } else {
+                res.json({ success: false, message: 'No se encontraron versículos automáticos para la cita indicada.' });
+            }
+        } catch (e) {
+            console.error('Error apiFetchVerses:', e);
+            res.status(500).json({ success: false, error: e.message });
         }
     }
 };

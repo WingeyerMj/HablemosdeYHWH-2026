@@ -19,7 +19,6 @@ class Aliyah {
                 }
             } catch (e) {}
         }
-        // Soporte retrocompatible para cadenas simples de URL
         return [{ title: 'Audio de la Lectura', url: trimmed }];
     }
 
@@ -148,35 +147,56 @@ class Aliyah {
     }
 
     /**
-     * Crear una nueva Aliyá (parasha_id puede ser null)
+     * Crear una nueva Aliyá (incluyendo Hebreo y Fonética)
      */
     static async create(data) {
-        const { parasha_id, aliyah_number, title, verses_reference, content, audio_url, reading_date, is_published } = data;
+        const { parasha_id, aliyah_number, title, verses_reference, content, content_hebrew, content_phonetic, audio_url, reading_date, is_published } = data;
         const pId = (parasha_id && parasha_id !== '' && parasha_id !== 'null') ? Number(parasha_id) : null;
         const pub = (is_published !== undefined && is_published !== null) ? Boolean(is_published) : true;
         const rDate = reading_date || null;
 
         const sql = `
-            INSERT INTO aliyot (parasha_id, aliyah_number, title, verses_reference, content, audio_url, reading_date, is_published)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO aliyot (parasha_id, aliyah_number, title, verses_reference, content, content_hebrew, content_phonetic, audio_url, reading_date, is_published)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
-        return await db.query(sql, [pId, aliyah_number, title, verses_reference || '', content || '', audio_url || '', rDate, pub]);
+        return await db.query(sql, [
+            pId, 
+            aliyah_number, 
+            title, 
+            verses_reference || '', 
+            content || '', 
+            content_hebrew || '', 
+            content_phonetic || '', 
+            audio_url || '', 
+            rDate, 
+            pub
+        ]);
     }
 
     /**
      * Actualizar una Aliyá por su ID
      */
     static async update(id, data) {
-        const { parasha_id, aliyah_number, title, verses_reference, content, audio_url, reading_date, is_published } = data;
+        const { parasha_id, aliyah_number, title, verses_reference, content, content_hebrew, content_phonetic, audio_url, reading_date, is_published } = data;
         const pId = (parasha_id && parasha_id !== '' && parasha_id !== 'null') ? Number(parasha_id) : null;
         const pub = (is_published !== undefined && is_published !== null) ? Boolean(is_published) : true;
         const rDate = reading_date || null;
 
         let sql = `
             UPDATE aliyot 
-            SET parasha_id = ?, aliyah_number = ?, title = ?, verses_reference = ?, content = ?, reading_date = ?, is_published = ?
+            SET parasha_id = ?, aliyah_number = ?, title = ?, verses_reference = ?, content = ?, content_hebrew = ?, content_phonetic = ?, reading_date = ?, is_published = ?
         `;
-        const params = [pId, aliyah_number, title, verses_reference || '', content || '', rDate, pub];
+        const params = [
+            pId, 
+            aliyah_number, 
+            title, 
+            verses_reference || '', 
+            content || '', 
+            content_hebrew || '', 
+            content_phonetic || '', 
+            rDate, 
+            pub
+        ];
 
         if (audio_url !== undefined) {
             sql += `, audio_url = ?`;

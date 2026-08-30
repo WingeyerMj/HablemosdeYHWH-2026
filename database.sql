@@ -350,6 +350,8 @@ CREATE TABLE IF NOT EXISTS aliyot (
     title VARCHAR(255) NOT NULL,
     verses_reference VARCHAR(255),
     content LONGTEXT,
+    content_hebrew LONGTEXT,
+    content_phonetic LONGTEXT,
     audio_url TEXT,
     reading_date DATE DEFAULT NULL,
     is_published BOOLEAN DEFAULT TRUE,
@@ -358,6 +360,9 @@ CREATE TABLE IF NOT EXISTS aliyot (
     FOREIGN KEY (parasha_id) REFERENCES parashot(id) ON DELETE SET NULL,
     INDEX idx_parasha_aliyah (parasha_id, aliyah_number)
 );
+
+ALTER TABLE aliyot ADD COLUMN IF NOT EXISTS content_hebrew LONGTEXT AFTER content;
+ALTER TABLE aliyot ADD COLUMN IF NOT EXISTS content_phonetic LONGTEXT AFTER content_hebrew;
 
 -- Asegurar índice único para las 54 Parashot del ciclo anual
 ALTER TABLE parashot ADD UNIQUE INDEX IF NOT EXISTS unique_parasha_num (parasha_number);

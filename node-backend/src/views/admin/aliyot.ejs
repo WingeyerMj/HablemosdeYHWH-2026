@@ -352,13 +352,74 @@ select option:checked, select option:hover {
                             </div>
                         </div>
 
-                        <!-- EDITOR DE VERSÍCULOS / TEXTO -->
+                        <!-- EDITOR DE VERSÍCULOS EN 3 VERSIONES (Español, Hebreo, Fonética) -->
                         <div class="col-12">
-                            <label class="form-label small text-white-50 fw-bold">
-                                <i class="bi bi-fonts me-1"></i> Versículos y Contenido de la Lectura
-                            </label>
-                            <div id="modal-quill-editor" style="height: 250px; background: #ffffff; color: #111; border-radius: 6px;"></div>
-                            <input type="hidden" name="content" id="modalAliyahContent">
+                            <div class="p-3 rounded border border-secondary" style="background: rgba(255, 255, 255, 0.02);">
+                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                                    <label class="form-label small text-white fw-bold mb-0">
+                                        <i class="bi bi-book me-1" style="color: var(--primary-color, #d4b895);"></i>
+                                        Lectura en 3 Versiones: Español, Hebreo y Fonética
+                                    </label>
+                                    <div class="d-flex gap-2">
+                                        <button type="button" id="btnAutoFetchVersesModal" class="btn btn-sm btn-outline-info d-flex align-items-center gap-1" title="Obtener texto en hebreo y traducción según la cita bíblica">
+                                            <i class="bi bi-cloud-arrow-down"></i> Auto-Obtener Versículos
+                                        </button>
+                                        <button type="button" id="btnAutoTransliterateModal" class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1" title="Convertir automáticamente el texto hebreo a fonética en español">
+                                            <i class="bi bi-magic"></i> Hebreo ➔ Fonética
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Pestañas de las 3 versiones -->
+                                <ul class="nav nav-pills nav-fill mb-3 bg-black bg-opacity-50 p-1 rounded border border-secondary" id="modalLangTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active py-1 small fw-bold" id="modal-tab-es" data-bs-toggle="pill" data-bs-target="#modal-pane-es" type="button" role="tab">
+                                            🇪🇸 1. Español (Traducción)
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link py-1 small fw-bold" id="modal-tab-he" data-bs-toggle="pill" data-bs-target="#modal-pane-he" type="button" role="tab">
+                                            🇮🇱 2. Hebreo (עברית)
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link py-1 small fw-bold" id="modal-tab-fo" data-bs-toggle="pill" data-bs-target="#modal-pane-fo" type="button" role="tab">
+                                            🗣️ 3. Fonética en Español
+                                        </button>
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content" id="modalLangTabContent">
+                                    <!-- Panel Español -->
+                                    <div class="tab-pane fade show active" id="modal-pane-es" role="tabpanel">
+                                        <label class="form-label small text-white-50">Texto o versículos en Español:</label>
+                                        <div id="modal-quill-editor" style="height: 220px; background: #ffffff; color: #111; border-radius: 6px;"></div>
+                                        <input type="hidden" name="content" id="modalAliyahContent">
+                                    </div>
+
+                                    <!-- Panel Hebreo -->
+                                    <div class="tab-pane fade" id="modal-pane-he" role="tabpanel">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <label class="form-label small text-white-50 mb-0">Texto bíblico en Hebreo (con o sin vocales):</label>
+                                            <small class="text-warning">Dirección automática Derecha a Izquierda (RTL)</small>
+                                        </div>
+                                        <textarea name="content_hebrew" id="modalHebrewContent" class="form-control bg-black bg-opacity-50 text-white border-secondary" 
+                                                  dir="rtl" style="height: 220px; font-size: 1.35rem; font-family: 'David Libre', 'Frank Ruhl Libre', 'Times New Roman', serif; line-height: 1.8;" 
+                                                  placeholder="בְּרֵאשִׁית בָּרָא אֱלֹהִים אֵת הַשָּׁמַיִם וְאֵת הָאָרֶץ..."></textarea>
+                                    </div>
+
+                                    <!-- Panel Fonética -->
+                                    <div class="tab-pane fade" id="modal-pane-fo" role="tabpanel">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <label class="form-label small text-white-50 mb-0">Pronunciación / Transliteración Fonética en Español:</label>
+                                            <small class="text-info">Puedes editarlo manualmente o pulsar "Hebreo ➔ Fonética"</small>
+                                        </div>
+                                        <textarea name="content_phonetic" id="modalPhoneticContent" class="form-control bg-black bg-opacity-50 text-white border-secondary" 
+                                                  style="height: 220px; font-size: 1.1rem; font-family: 'Segoe UI', sans-serif; font-style: italic; line-height: 1.7;" 
+                                                  placeholder="Bereshit bará Elohim et hashamayim ve'et ha'aretz..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- FECHA Y ESTADO -->
@@ -509,6 +570,79 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('modalAliyahContent').value = modalQuill.root.innerHTML;
         return true;
     };
+
+    // Auto-Transliterar Hebreo a Fonética en Modal
+    const btnAutoTrans = document.getElementById('btnAutoTransliterateModal');
+    if (btnAutoTrans) {
+        btnAutoTrans.addEventListener('click', async function() {
+            const hebrewText = document.getElementById('modalHebrewContent').value.trim();
+            if (!hebrewText) {
+                alert('Por favor escribe o pega primero el texto en la pestaña Hebreo (עברית).');
+                document.getElementById('modal-tab-he').click();
+                return;
+            }
+            const originalBtnText = this.innerHTML;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Convirtiendo...';
+            this.disabled = true;
+
+            try {
+                const res = await fetch('/admin/aliyot/api/transliterate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: hebrewText })
+                });
+                const data = await res.json();
+                if (data.success && data.phonetic) {
+                    document.getElementById('modalPhoneticContent').value = data.phonetic;
+                    document.getElementById('modal-tab-fo').click();
+                } else {
+                    alert('No se pudo generar la fonética.');
+                }
+            } catch(e) {
+                alert('Error al convertir fonética: ' + e.message);
+            } finally {
+                this.innerHTML = originalBtnText;
+                this.disabled = false;
+            }
+        });
+    }
+
+    // Auto-Obtener Versículos en Modal
+    const btnAutoFetch = document.getElementById('btnAutoFetchVersesModal');
+    if (btnAutoFetch) {
+        btnAutoFetch.addEventListener('click', async function() {
+            const ref = document.querySelector('#createAliyahModalForm input[name="verses_reference"]').value.trim();
+            if (!ref) {
+                alert('Por favor ingresa la Referencia de Versículos (Ej: Génesis 1:1-5) primero.');
+                return;
+            }
+            const originalBtnText = this.innerHTML;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Buscando...';
+            this.disabled = true;
+
+            try {
+                const res = await fetch('/admin/aliyot/api/fetch-verses', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ref })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (data.hebrew) document.getElementById('modalHebrewContent').value = data.hebrew.replace(/<[^>]*>/g, '');
+                    if (data.phonetic) document.getElementById('modalPhoneticContent').value = data.phonetic;
+                    if (data.englishOrSpanish && modalQuill) modalQuill.root.innerHTML = data.englishOrSpanish;
+                    alert('¡Versículos y Fonética cargados con éxito! Puedes revisarlos en las 3 pestañas.');
+                } else {
+                    alert(data.message || 'No se pudieron obtener los versículos automáticamente.');
+                }
+            } catch(e) {
+                alert('Error de conexión al obtener versículos: ' + e.message);
+            } finally {
+                this.innerHTML = originalBtnText;
+                this.disabled = false;
+            }
+        });
+    }
 
     // 2. Filtro en vivo para la tabla
     const filterInput = document.getElementById('filterAliyotInput');

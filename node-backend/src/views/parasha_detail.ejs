@@ -198,12 +198,105 @@
                                                             </div>
                                                         <% } %>
 
-                                                        <!-- LECTOR DE VERSÍCULOS / TEXTO -->
-                                                        <% if (hasContent) { %>
-                                                            <div class="aliyah-reading-content p-3 rounded-3" 
-                                                                 style="background: #faf8f5; border: 1px solid #efe8dd; font-size: 1.08rem; line-height: 1.9; color: #333; font-family: Georgia, serif;">
-                                                                <%- aliyah.content %>
-                                                            </div>
+                                                        <!-- LECTOR DE VERSÍCULOS EN 3 VERSIONES (Español, Hebreo, Fonética) -->
+                                                        <% 
+                                                            const hasSpanish = Boolean(aliyah.content && aliyah.content.trim() !== '');
+                                                            const hasHebrew = Boolean(aliyah.content_hebrew && aliyah.content_hebrew.trim() !== '');
+                                                            const hasPhonetic = Boolean(aliyah.content_phonetic && aliyah.content_phonetic.trim() !== '');
+                                                            const isMultiVersion = (hasHebrew || hasPhonetic);
+                                                        %>
+
+                                                        <% if (hasSpanish || hasHebrew || hasPhonetic) { %>
+                                                            <% if (isMultiVersion) { %>
+                                                                <!-- Selector de versiones -->
+                                                                <div class="mb-3">
+                                                                    <ul class="nav nav-pills gap-2 p-1 rounded-3" style="background: #f4ece1;" id="pills-aliyah-<%= d.idx %>" role="tablist">
+                                                                        <% if (hasSpanish) { %>
+                                                                            <li class="nav-item" role="presentation">
+                                                                                <button class="nav-link active py-1 px-3 small fw-bold" id="tab-es-<%= d.idx %>" data-bs-toggle="pill" data-bs-target="#pane-es-<%= d.idx %>" type="button" role="tab">
+                                                                                    🇪🇸 Español
+                                                                                </button>
+                                                                            </li>
+                                                                        <% } %>
+                                                                        <% if (hasHebrew) { %>
+                                                                            <li class="nav-item" role="presentation">
+                                                                                <button class="nav-link <%= !hasSpanish ? 'active' : '' %> py-1 px-3 small fw-bold" id="tab-he-<%= d.idx %>" data-bs-toggle="pill" data-bs-target="#pane-he-<%= d.idx %>" type="button" role="tab">
+                                                                                    🇮🇱 Hebreo (עברית)
+                                                                                </button>
+                                                                            </li>
+                                                                        <% } %>
+                                                                        <% if (hasPhonetic) { %>
+                                                                            <li class="nav-item" role="presentation">
+                                                                                <button class="nav-link <%= (!hasSpanish && !hasHebrew) ? 'active' : '' %> py-1 px-3 small fw-bold" id="tab-fo-<%= d.idx %>" data-bs-toggle="pill" data-bs-target="#pane-fo-<%= d.idx %>" type="button" role="tab">
+                                                                                    🗣️ Fonética
+                                                                                </button>
+                                                                            </li>
+                                                                        <% } %>
+                                                                        <% if (hasSpanish && hasHebrew) { %>
+                                                                            <li class="nav-item" role="presentation">
+                                                                                <button class="nav-link py-1 px-3 small fw-bold" id="tab-tri-<%= d.idx %>" data-bs-toggle="pill" data-bs-target="#pane-tri-<%= d.idx %>" type="button" role="tab">
+                                                                                    📖 Vista Interlineal (3 en 1)
+                                                                                </button>
+                                                                            </li>
+                                                                        <% } %>
+                                                                    </ul>
+                                                                </div>
+
+                                                                <div class="tab-content">
+                                                                    <% if (hasSpanish) { %>
+                                                                        <div class="tab-pane fade show active" id="pane-es-<%= d.idx %>" role="tabpanel">
+                                                                            <div class="aliyah-reading-content p-3 rounded-3" style="background: #faf8f5; border: 1px solid #efe8dd; font-size: 1.08rem; line-height: 1.9; color: #333; font-family: Georgia, serif;">
+                                                                                <%- aliyah.content %>
+                                                                            </div>
+                                                                        </div>
+                                                                    <% } %>
+
+                                                                    <% if (hasHebrew) { %>
+                                                                        <div class="tab-pane fade <%= !hasSpanish ? 'show active' : '' %>" id="pane-he-<%= d.idx %>" role="tabpanel">
+                                                                            <div class="aliyah-reading-content p-4 rounded-3 text-end" dir="rtl" style="background: #fbf9f4; border: 1px solid #e8dfd0; font-size: 1.55rem; line-height: 2.2; color: #1a1a1a; font-family: 'David Libre', 'Frank Ruhl Libre', serif;">
+                                                                                <%- aliyah.content_hebrew.replace(/\n/g, '<br>') %>
+                                                                            </div>
+                                                                        </div>
+                                                                    <% } %>
+
+                                                                    <% if (hasPhonetic) { %>
+                                                                        <div class="tab-pane fade <%= (!hasSpanish && !hasHebrew) ? 'show active' : '' %>" id="pane-fo-<%= d.idx %>" role="tabpanel">
+                                                                            <div class="aliyah-reading-content p-3 rounded-3" style="background: #faf8f5; border: 1px solid #efe8dd; font-size: 1.12rem; line-height: 1.9; color: #2c3e50; font-family: 'Segoe UI', serif; font-style: italic;">
+                                                                                <%- aliyah.content_phonetic.replace(/\n/g, '<br>') %>
+                                                                            </div>
+                                                                        </div>
+                                                                    <% } %>
+
+                                                                    <% if (hasSpanish && hasHebrew) { %>
+                                                                        <div class="tab-pane fade" id="pane-tri-<%= d.idx %>" role="tabpanel">
+                                                                            <div class="p-3 rounded-3 d-flex flex-column gap-3" style="background: #faf8f5; border: 1px solid #efe8dd;">
+                                                                                <% if (hasHebrew) { %>
+                                                                                    <div class="p-3 rounded-3 text-end" dir="rtl" style="background: #ffffff; border-right: 4px solid #b8860b; font-size: 1.45rem; line-height: 2.1; font-family: 'David Libre', 'Frank Ruhl Libre', serif; color: #111;">
+                                                                                        <div class="small fw-bold text-muted mb-1" style="font-family: sans-serif;" dir="ltr">🇮🇱 Texto en Hebreo:</div>
+                                                                                        <%- aliyah.content_hebrew.replace(/\n/g, '<br>') %>
+                                                                                    </div>
+                                                                                <% } %>
+                                                                                <% if (hasPhonetic) { %>
+                                                                                    <div class="p-3 rounded-3" style="background: #ffffff; border-left: 4px solid #3498db; font-size: 1.08rem; line-height: 1.8; font-style: italic; color: #2c3e50;">
+                                                                                        <div class="small fw-bold text-muted mb-1" style="font-style: normal;">🗣️ Fonética en Español:</div>
+                                                                                        <%- aliyah.content_phonetic.replace(/\n/g, '<br>') %>
+                                                                                    </div>
+                                                                                <% } %>
+                                                                                <% if (hasSpanish) { %>
+                                                                                    <div class="p-3 rounded-3" style="background: #ffffff; border-left: 4px solid #27ae60; font-size: 1.05rem; line-height: 1.8; color: #333;">
+                                                                                        <div class="small fw-bold text-muted mb-1">🇪🇸 Traducción al Español:</div>
+                                                                                        <%- aliyah.content %>
+                                                                                    </div>
+                                                                                <% } %>
+                                                                            </div>
+                                                                        </div>
+                                                                    <% } %>
+                                                                </div>
+                                                            <% } else { %>
+                                                                <div class="aliyah-reading-content p-3 rounded-3" style="background: #faf8f5; border: 1px solid #efe8dd; font-size: 1.08rem; line-height: 1.9; color: #333; font-family: Georgia, serif;">
+                                                                    <%- aliyah.content %>
+                                                                </div>
+                                                            <% } %>
                                                         <% } else if (audiosList.length === 0) { %>
                                                             <div class="text-center py-4 text-muted">
                                                                 <i class="bi bi-hourglass-split fs-2 d-block mb-2" style="color: #d4a853;"></i>
