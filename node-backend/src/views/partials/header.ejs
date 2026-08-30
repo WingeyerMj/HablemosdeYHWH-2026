@@ -18,34 +18,41 @@
 
         <nav id="navmenu" class="navmenu">
             <ul>
-                <li><a href="/" class="<%= page === 'home' ? 'active' : '' %>"><i class="bi bi-house-door"></i>
-                        Inicio</a></li>
-                <li><a href="/calendar" class="<%= page === 'calendar' ? 'active' : '' %>"><i class="bi bi-calendar3"></i>
+                <li><a href="/calendar" class="<%= typeof page !== 'undefined' && page === 'calendar' ? 'active' : '' %>"><i class="bi bi-calendar3"></i>
                         Calendario</a></li>
-                <li><a href="/#services" class="<%= page === 'parashot' ? 'active' : '' %>"><i class="bi bi-journal-text"></i>
+                <li><a href="/#services" class="<%= typeof page !== 'undefined' && page === 'parashot' ? 'active' : '' %>"><i class="bi bi-journal-text"></i>
                         Parashot</a></li>
-                <li><a href="/#ensenanzas" class="<%= page === 'ensenanzas' ? 'active' : '' %>"><i class="bi bi-book"></i>
-                        Enseñanzas</a></li>
                 <li><a href="/semillas-de-torah" class="<%= typeof page !== 'undefined' && page === 'semillas-torah' ? 'active' : '' %>"><i class="bi bi-balloon-heart"></i>
                         Semillas de Torah</a></li>
 
+                <li class="dropdown">
+                    <a href="javascript:void(0);" class="<%= (typeof page !== 'undefined' && (page === 'ensenanzas' || page === 'about' || page === 'identidad')) || (typeof section !== 'undefined' && section && (section.slug === 'about' || section.slug === 'identidad' || section.slug === 'ensenanzas')) ? 'active' : '' %>">
+                        <span><i class="bi bi-people"></i> Sobre Nosotros</span>
+                        <i class="bi bi-chevron-down toggle-dropdown"></i>
+                    </a>
+                    <ul>
+                        <li><a href="/#about"><i class="bi bi-info-circle me-1"></i> Sobre Nosotros</a></li>
+                        <li><a href="/#section-identidad"><i class="bi bi-person-badge me-1"></i> Identidad</a></li>
+                        <li><a href="/#ensenanzas" class="<%= typeof page !== 'undefined' && page === 'ensenanzas' ? 'active' : '' %>"><i class="bi bi-book me-1"></i> Enseñanzas</a></li>
+                    </ul>
+                </li>
+
+                <li><a href="/blog" class="<%= typeof page !== 'undefined' && page === 'blog' ? 'active' : '' %>"><i class="bi bi-newspaper"></i>
+                        Blog</a></li>
+
                 <% if (typeof navbarDynamicSections !=='undefined' && navbarDynamicSections.length> 0) { %>
+                    <% 
+                        const excludedSlugs = ['hero', 'calendario', 'about', 'identidad', 'ensenanzas', 'blog', 'parashot', 'contact', 'contacto', 'inicio', 'home', 'semillas', 'semillas-de-torah'];
+                    %>
                     <% navbarDynamicSections.forEach(ds=> { %>
                         <% 
-                            if (ds.slug === 'hero' || ds.slug === 'calendario') return; 
+                            if (excludedSlugs.includes(ds.slug)) return; 
                             
                             let href = ds.section_type === 'inline' ? `/#section-${ds.slug}` : `/s/${ds.slug}`; 
-                            
-                            // Mapeo de slugs a secciones estáticas o rutas fijas
-                            if (ds.slug === 'about') href = '/#about'; 
-                            if (ds.slug === 'parashot') href = '/#services'; 
                             if (ds.slug === 'eventos') href = '/#portfolio'; 
-                            if (ds.slug === 'ensenanzas') href = '/#ensenanzas'; 
-                            if (ds.slug === 'blog') href = '/blog'; 
                             if (ds.slug === 'equipo') href = '/#team'; 
-                            if (ds.slug === 'calendario') href = '/calendar';
                             
-                            const isActive = (typeof section !== 'undefined' && section && section.slug === ds.slug) || (ds.slug === 'calendario' && page === 'calendar');
+                            const isActive = (typeof section !== 'undefined' && section && section.slug === ds.slug);
                         %>
                         <li>
                             <a href="<%= href %>" class="<%= isActive ? 'active' : '' %>">
@@ -55,11 +62,6 @@
                         </li>
                     <% }) %>
                 <% } %>
-
-                <li><a href="/blog" class="<%= page === 'blog' ? 'active' : '' %>"><i class="bi bi-newspaper"></i>
-                        Blog</a></li>
-
-                <li><a href="/#contact"><i class="bi bi-envelope"></i> Contacto</a></li>
 
                 <% if (user) { %>
                     <li><a href="/admin/dashboard" class="btn-admin-access"

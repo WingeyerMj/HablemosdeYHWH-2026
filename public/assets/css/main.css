@@ -264,18 +264,20 @@ h6 {
 
   .navmenu .dropdown ul {
     margin: 0;
-    padding: 10px 0;
-    background: var(--nav-dropdown-background-color);
+    padding: 8px 0;
+    background: #181818;
+    border: 1px solid rgba(212, 184, 149, 0.25);
     display: block;
     position: absolute;
     visibility: hidden;
-    left: 14px;
+    left: 0;
     top: 130%;
     opacity: 0;
-    transition: 0.3s;
-    border-radius: 4px;
+    transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 10px;
     z-index: 99;
-    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
   }
 
   .navmenu .dropdown ul li {
@@ -286,17 +288,24 @@ h6 {
     padding: 10px 20px;
     font-size: 15px;
     text-transform: none;
-    color: var(--nav-dropdown-color);
+    color: #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
   }
 
   .navmenu .dropdown ul a i {
-    font-size: 12px;
+    font-size: 14px;
+    color: var(--accent-color);
   }
 
   .navmenu .dropdown ul a:hover,
-  .navmenu .dropdown ul .active:hover,
+  .navmenu .dropdown ul .active,
   .navmenu .dropdown ul li:hover>a {
-    color: var(--nav-dropdown-hover-color);
+    color: #ffffff;
+    background-color: rgba(212, 184, 149, 0.15);
+    padding-left: 24px;
   }
 
   .navmenu .dropdown:hover>ul {
@@ -644,25 +653,38 @@ h6 {
   position: fixed;
   visibility: hidden;
   opacity: 0;
-  right: 15px;
-  bottom: 15px;
+  right: 25px;
+  bottom: 25px;
   z-index: 99999;
-  background-color: var(--accent-color);
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
-  transition: all 0.4s;
+  background: linear-gradient(135deg, #d4b895 0%, #b8860b 100%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .scroll-top i {
-  font-size: 24px;
-  color: var(--contrast-color);
+  font-size: 26px;
+  color: #1a1a1a;
   line-height: 0;
+  transition: transform 0.2s ease;
 }
 
 .scroll-top:hover {
-  background-color: color-mix(in srgb, var(--accent-color), transparent 20%);
-  color: var(--contrast-color);
+  background: linear-gradient(135deg, #f0d5b5 0%, #cfa025 100%);
+  transform: translateY(-4px) scale(1.06);
+  box-shadow: 0 8px 25px rgba(212, 184, 149, 0.55);
+}
+
+.scroll-top:hover i {
+  transform: translateY(-2px);
+  color: #000;
 }
 
 .scroll-top.active {
