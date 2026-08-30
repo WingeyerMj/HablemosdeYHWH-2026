@@ -351,6 +351,8 @@ CREATE TABLE IF NOT EXISTS aliyot (
     verses_reference VARCHAR(255),
     content LONGTEXT,
     audio_url VARCHAR(500),
+    reading_date DATE DEFAULT NULL,
+    is_published BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (parasha_id) REFERENCES parashot(id) ON DELETE CASCADE,

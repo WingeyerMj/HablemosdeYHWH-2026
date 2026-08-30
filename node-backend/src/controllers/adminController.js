@@ -1073,7 +1073,7 @@ const adminController = {
     saveAliyah: async (req, res) => {
         try {
             const Aliyah = require('../models/Aliyah');
-            const { parasha_id, aliyah_number, title, verses_reference, content, existing_audio_url, remove_audio } = req.body;
+            const { parasha_id, aliyah_number, title, verses_reference, content, existing_audio_url, remove_audio, reading_date, is_published } = req.body;
 
             let audio_url = existing_audio_url || '';
 
@@ -1087,13 +1087,17 @@ const adminController = {
                 audio_url = req.body.custom_audio_url.trim();
             }
 
+            const pub = (is_published === '1' || is_published === 1 || is_published === true);
+
             await Aliyah.upsert({
                 parasha_id: Number(parasha_id),
                 aliyah_number: Number(aliyah_number),
                 title: title || `Aliyá ${aliyah_number}`,
                 verses_reference: verses_reference || '',
                 content: content || '',
-                audio_url: audio_url
+                audio_url: audio_url,
+                reading_date: reading_date || null,
+                is_published: pub
             });
 
             res.redirect(`/admin/aliyot/edit/${parasha_id}?saved=${aliyah_number}`);
