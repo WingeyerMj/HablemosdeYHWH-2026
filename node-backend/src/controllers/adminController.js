@@ -1014,6 +1014,7 @@ const adminController = {
             const allAliyot = await Aliyah.getAllWithParasha();
 
             res.render('admin/aliyot', {
+                layout: 'admin/layout',
                 title: 'Gestión de Aliyot (Lecturas Diarias)',
                 activePage: 'aliyot',
                 parashot,
@@ -1070,6 +1071,7 @@ const adminController = {
             const parashot = await Parasha.getAll();
 
             res.render('admin/edit_aliyah_single', {
+                layout: 'admin/layout',
                 title: `Editar Aliyá - ${aliyah.title}`,
                 activePage: 'aliyot',
                 aliyah,
@@ -1169,6 +1171,7 @@ const adminController = {
             }
 
             res.render('admin/edit_aliyot', {
+                layout: 'admin/layout',
                 title: `Editar Aliyot: ${parasha.title}`,
                 activePage: 'aliyot',
                 parasha,
