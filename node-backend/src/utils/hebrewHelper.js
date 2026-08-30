@@ -20,7 +20,7 @@ const NIQQUD = {
     '\u05BD': '',   // Meteg (ֽ)
     '\u05BE': '-',  // Maqaf (־)
     '\u05BF': '',   // Rafe (ֿ)
-    '\u05C0': '|',  // Paseq (׀)
+    '\u05C0': ' ',  // Paseq (׀)
     '\u05C1': '',   // Shin Dot (ׁ)
     '\u05C2': '',   // Sin Dot (ׂ)
     '\u05C3': ':',  // Sof Pasuq (׃)
@@ -57,29 +57,21 @@ const CONSONANTS = {
     'ת': 't'
 };
 
-// Libros bíblicos de la Torá (español a Sefaria / Hebreo)
-const TORA_BOOKS = {
-    'genesis': 'Genesis',
-    'génesis': 'Genesis',
-    'gen': 'Genesis',
-    'bereshit': 'Genesis',
-    'exodo': 'Exodus',
-    'éxodo': 'Exodus',
-    'exo': 'Exodus',
-    'shemot': 'Exodus',
-    'levitico': 'Leviticus',
-    'levítico': 'Leviticus',
-    'lev': 'Leviticus',
-    'vayikra': 'Leviticus',
-    'vayikrá': 'Leviticus',
-    'numeros': 'Numbers',
-    'números': 'Numbers',
-    'num': 'Numbers',
-    'bemidbar': 'Numbers',
-    'deuteronomio': 'Deuteronomy',
-    'deut': 'Deuteronomy',
-    'dt': 'Deuteronomy',
-    'devarim': 'Deuteronomy'
+// Libros bíblicos de la Torá
+const TORA_BOOKS_NUM = {
+    'genesis': 1, 'génesis': 1, 'gen': 1, 'gn': 1, 'bereshit': 1,
+    'exodo': 2, 'éxodo': 2, 'exo': 2, 'ex': 2, 'shemot': 2,
+    'levitico': 3, 'levítico': 3, 'lev': 3, 'lv': 3, 'vayikra': 3, 'vayikrá': 3,
+    'numeros': 4, 'números': 4, 'num': 4, 'nm': 4, 'bemidbar': 4,
+    'deuteronomio': 5, 'deut': 5, 'dt': 5, 'devarim': 5
+};
+
+const TORA_BOOKS_SEFARIA = {
+    'genesis': 'Genesis', 'génesis': 'Genesis', 'gen': 'Genesis', 'bereshit': 'Genesis',
+    'exodo': 'Exodus', 'éxodo': 'Exodus', 'exo': 'Exodus', 'shemot': 'Exodus',
+    'levitico': 'Leviticus', 'levítico': 'Leviticus', 'lev': 'Leviticus', 'vayikra': 'Leviticus', 'vayikrá': 'Leviticus',
+    'numeros': 'Numbers', 'números': 'Numbers', 'num': 'Numbers', 'bemidbar': 'Numbers',
+    'deuteronomio': 'Deuteronomy', 'deut': 'Deuteronomy', 'dt': 'Deuteronomy', 'devarim': 'Deuteronomy'
 };
 
 /**
@@ -88,10 +80,8 @@ const TORA_BOOKS = {
 function transliterateHebrewToSpanish(text) {
     if (!text || typeof text !== 'string') return '';
 
-    // Si el texto tiene HTML, procesar línea por línea o preservar etiquetas
     const lines = text.split('\n');
     const translatedLines = lines.map(line => {
-        // Remover etiquetas HTML temporales si las hay para transliterar
         const clean = line.replace(/<[^>]*>/g, ' ');
         let result = '';
         let i = 0;
@@ -101,7 +91,13 @@ function transliterateHebrewToSpanish(text) {
             const nextChar = clean[i + 1] || '';
             const nextNextChar = clean[i + 2] || '';
 
-            // Revisar si es espacio o puntuación
+            // Signos de cantilación hebreos (U+0591 a U+05AF): ignorar
+            if (char >= '\u0591' && char <= '\u05AF') {
+                i++;
+                continue;
+            }
+
+            // Espacios y puntuaciones
             if (/[\s\.,;:\-\(\)\[\]]/.test(char)) {
                 result += char;
                 i++;
@@ -154,7 +150,7 @@ function transliterateHebrewToSpanish(text) {
                 continue;
             }
 
-            // Vav como consonante o vocal
+            // Vav
             if (char === 'ו') {
                 if (nextChar === '\u05BC') {
                     result += 'u';
@@ -190,7 +186,6 @@ function transliterateHebrewToSpanish(text) {
             i++;
         }
 
-        // Limpieza fonética para español
         return result
             .replace(/aa+/g, 'a')
             .replace(/ee+/g, 'e')
@@ -205,108 +200,131 @@ function transliterateHebrewToSpanish(text) {
 }
 
 /**
- * Normalizar cita bíblica para consulta a Sefaria
- * Ej: "Génesis 1:1 - 2:3" -> "Genesis.1.1-2.3"
+ * Normalizar cita bíblica
  */
-function parseBibleReference(refString) {
+function parseTorahReference(refString) {
     if (!refString) return null;
-    const clean = refString.toLowerCase().trim();
-    const parts = clean.split(/[\s]+/);
-    if (parts.length < 2) return null;
+    const clean = refString.toLowerCase().replace(/[\t\r\n]/g, ' ').trim();
 
-    const bookKey = parts[0].replace(/[^a-záéíóú]/g, '');
-    const sefariaBook = TORA_BOOKS[bookKey];
-    if (!sefariaBook) return null;
+    const match = clean.match(/^([a-záéíóú]+)[\s\.]*(\d+)[\s:\.,]+(\d+)(?:\s*[\-–—]\s*(\d+))?/i);
+    if (!match) return null;
 
-    const chapterVerse = parts.slice(1).join('').replace(/\s+/g, '');
-    return `${sefariaBook}.${chapterVerse.replace(':', '.')}`;
+    const bookKey = match[1].replace(/[^a-záéíóú]/g, '');
+    const bookNum = TORA_BOOKS_NUM[bookKey];
+    if (!bookNum) return null;
+
+    const chapter = parseInt(match[2], 10);
+    const startVerse = parseInt(match[3], 10);
+    const endVerse = match[4] ? parseInt(match[4], 10) : startVerse;
+
+    return {
+        bookNum,
+        sefariaBook: TORA_BOOKS_SEFARIA[bookKey] || 'Genesis',
+        chapter,
+        startVerse,
+        endVerse
+    };
 }
 
 /**
- * Consultar texto en Hebreo y Traducción al Español desde Sefaria API
+ * Consultar texto en Hebreo y Traducción al Español (Westminster Leningrad Codex Masorético + RV1960)
  */
 async function fetchVersesFromSefaria(refString) {
     try {
-        const sefariaRef = parseBibleReference(refString);
-        if (!sefariaRef) return null;
+        const parsed = parseTorahReference(refString);
+        if (!parsed) return null;
 
-        const url = `https://www.sefaria.org/api/texts/${encodeURIComponent(sefariaRef)}?context=0&commentary=0`;
-        const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-        if (!res.ok) return null;
+        const { bookNum, chapter, startVerse, endVerse, sefariaBook } = parsed;
 
-        const data = await res.json();
-        if (!data || !data.he) return null;
+        // 1. Intentar con Bolls Bible API (WLC = Texto Masorético Hebreo con Niqqud completo, RV1960 = Español)
+        try {
+            const [resHe, resEs] = await Promise.all([
+                fetch(`https://bolls.life/get-chapter/WLC/${bookNum}/${chapter}/`),
+                fetch(`https://bolls.life/get-chapter/RV1960/${bookNum}/${chapter}/`)
+            ]);
 
-        const cleanHebrew = (text) => {
-            if (!text) return '';
-            return text
-                .replace(/<sup[^>]*>.*?<\/sup>/gi, '')
-                .replace(/<i\s+class="footnote"[^>]*>.*?<\/i>/gi, '')
-                .replace(/<span\s+class="mam-spi-samekh"[^>]*>.*?<\/span>/gi, '')
-                .replace(/<[^>]*>/g, '')
-                .replace(/&thinsp;/g, ' ')
-                .replace(/&nbsp;/g, ' ')
-                .replace(/\s+/g, ' ')
-                .trim();
-        };
+            if (resHe.ok) {
+                const heData = await resHe.json();
+                const esData = resEs.ok ? await resEs.json() : [];
 
-        let hebrewArray = [];
-        if (Array.isArray(data.he)) {
-            hebrewArray = data.he.map(v => cleanHebrew(v));
-        } else {
-            hebrewArray = [cleanHebrew(data.he)];
-        }
+                if (Array.isArray(heData) && heData.length > 0) {
+                    const heFiltered = heData.filter(v => v.verse >= startVerse && v.verse <= endVerse);
+                    const esFiltered = Array.isArray(esData) ? esData.filter(v => v.verse >= startVerse && v.verse <= endVerse) : [];
 
-        const hebrewFormatted = hebrewArray
-            .map((v, i) => `<p><strong class="verse-num">(${i + 1})</strong> ${v}</p>`)
-            .join('\n');
+                    if (heFiltered.length > 0) {
+                        const cleanHe = (t) => t.replace(/<[^>]*>/g, '').replace(/[\u0591-\u05AF]/g, '').trim();
 
-        // Generar fonética
-        const phoneticText = transliterateHebrewToSpanish(hebrewArray.join('\n'));
+                        const hebrewFormatted = heFiltered
+                            .map(v => `<p><strong class="verse-num">(${v.verse})</strong> ${cleanHe(v.text)}</p>`)
+                            .join('\n');
 
-        // Obtener texto en inglés / original de Sefaria y traducirlo al Español
-        let rawTexts = [];
-        if (Array.isArray(data.text)) {
-            rawTexts = data.text.map(t => cleanHebrew(t));
-        } else if (data.text) {
-            rawTexts = [cleanHebrew(data.text)];
-        }
+                        const phoneticLines = heFiltered
+                            .map(v => `(${v.verse}) ${transliterateHebrewToSpanish(cleanHe(v.text))}`)
+                            .join('\n');
 
-        let spanishVerses = [];
-        if (rawTexts.length > 0) {
-            const combinedText = rawTexts.map((t, idx) => `(${idx + 1}) ${t}`).join(' ');
-            try {
-                const trUrl = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=es&dt=t&q=' + encodeURIComponent(combinedText);
-                const trRes = await fetch(trUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-                if (trRes.ok) {
-                    const trData = await trRes.json();
-                    if (trData && trData[0]) {
-                        const fullTranslated = trData[0].map(item => item[0]).join('');
-                        spanishVerses = fullTranslated.split(/(?=\(\d+\))/g).filter(s => s.trim().length > 0);
+                        let spanishFormatted = '';
+                        if (esFiltered.length > 0) {
+                            spanishFormatted = esFiltered
+                                .map(v => `<p><strong class="verse-num">(${v.verse})</strong> ${v.text.replace(/<[^>]*>/g, '').trim()}</p>`)
+                                .join('\n');
+                        } else {
+                            // Si no vino español directo, traducir versículo a versículo
+                            const translatedVerses = [];
+                            for (const v of heFiltered) {
+                                const trText = await translateSingleSpanishLine(v.text);
+                                translatedVerses.push(`<p><strong class="verse-num">(${v.verse})</strong> ${trText}</p>`);
+                            }
+                            spanishFormatted = translatedVerses.join('\n');
+                        }
+
+                        return {
+                            hebrew: hebrewFormatted,
+                            phonetic: phoneticLines,
+                            englishOrSpanish: spanishFormatted,
+                            hebrewRaw: heFiltered.map(v => `(${v.verse}) ${cleanHe(v.text)}`).join('\n')
+                        };
                     }
                 }
-            } catch(e) {
-                console.warn('Error al traducir versículos a español:', e.message);
+            }
+        } catch(e) {
+            console.warn('Fallo en Bolls API, intentando con Sefaria API:', e.message);
+        }
+
+        // 2. Fallback a Sefaria API
+        const sefariaRef = `${sefariaBook}.${chapter}.${startVerse}-${endVerse}`;
+        const url = `https://www.sefaria.org/api/texts/${encodeURIComponent(sefariaRef)}?context=0&commentary=0`;
+        const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+        if (res.ok) {
+            const data = await res.json();
+            if (data && data.he) {
+                const cleanHebrew = (text) => (text || '').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+                const heArray = Array.isArray(data.he) ? data.he.map(v => cleanHebrew(v)) : [cleanHebrew(data.he)];
+                
+                const hebrewFormatted = heArray
+                    .map((v, i) => `<p><strong class="verse-num">(${startVerse + i})</strong> ${v}</p>`)
+                    .join('\n');
+
+                const phoneticText = heArray
+                    .map((v, i) => `(${startVerse + i}) ${transliterateHebrewToSpanish(v)}`)
+                    .join('\n');
+
+                let rawTexts = Array.isArray(data.text) ? data.text.map(t => cleanHebrew(t)) : [cleanHebrew(data.text || '')];
+                const spanishLines = [];
+                for (let i = 0; i < rawTexts.length; i++) {
+                    const tr = await translateSingleSpanishLine(rawTexts[i]);
+                    spanishLines.push(`<p><strong class="verse-num">(${startVerse + i})</strong> ${tr || rawTexts[i]}</p>`);
+                }
+
+                return {
+                    hebrew: hebrewFormatted,
+                    phonetic: phoneticText,
+                    englishOrSpanish: spanishLines.join('\n'),
+                    hebrewRaw: heArray.join('\n')
+                };
             }
         }
 
-        let spanishFormatted = '';
-        if (spanishVerses.length > 0) {
-            spanishFormatted = spanishVerses
-                .map(v => `<p>${v.replace(/\((\d+)\)/, '<strong class="verse-num">($1)</strong>')}</p>`)
-                .join('\n');
-        } else if (rawTexts.length > 0) {
-            spanishFormatted = rawTexts
-                .map((v, i) => `<p><strong class="verse-num">(${i + 1})</strong> ${v}</p>`)
-                .join('\n');
-        }
-
-        return {
-            hebrew: hebrewFormatted,
-            phonetic: phoneticText,
-            englishOrSpanish: spanishFormatted,
-            hebrewRaw: hebrewArray.join('\n')
-        };
+        return null;
     } catch (e) {
         console.warn('Error fetchVersesFromSefaria:', e.message);
         return null;
@@ -314,63 +332,90 @@ async function fetchVersesFromSefaria(refString) {
 }
 
 /**
- * Traducir texto de Español a Hebreo y generar Fonética en español automáticamente
+ * Traducir una línea individual de texto
+ */
+async function translateSingleLine(text, from = 'es', to = 'he') {
+    if (!text || text.trim() === '') return '';
+    try {
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&q=${encodeURIComponent(text.trim())}`;
+        const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+        if (res.ok) {
+            const data = await res.json();
+            if (data && data[0] && Array.isArray(data[0])) {
+                return data[0].map(item => item[0]).join('');
+            }
+        }
+    } catch(e) {}
+
+    // Fallback a MyMemory
+    try {
+        const mmUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.substring(0, 450))}&langpair=${from}|${to}`;
+        const mmRes = await fetch(mmUrl);
+        if (mmRes.ok) {
+            const mmData = await mmRes.json();
+            if (mmData?.responseData?.translatedText) {
+                return mmData.responseData.translatedText;
+            }
+        }
+    } catch(e) {}
+
+    return text;
+}
+
+async function translateSingleSpanishLine(text) {
+    return translateSingleLine(text, 'en', 'es');
+}
+
+/**
+ * Traducir TODO el texto de Español a Hebreo y generar Fonética completa (sin límite de versículos)
  */
 async function translateSpanishToHebrewAndPhonetics(spanishText) {
     if (!spanishText || typeof spanishText !== 'string' || spanishText.trim() === '') {
         return { hebrew: '', phonetic: '' };
     }
 
-    // Remover tags HTML temporales para traducir el texto limpio
-    const cleanText = spanishText
+    // Dividir el texto pegado en párrafos o versículos individuales
+    const rawLines = spanishText
         .replace(/<p>/gi, '\n')
-        .replace(/<\/p>/gi, '')
+        .replace(/<\/p>/gi, '\n')
         .replace(/<br\s*[\/]?>/gi, '\n')
-        .replace(/<[^>]*>/g, '')
-        .trim();
+        .split('\n')
+        .map(l => l.replace(/<[^>]*>/g, '').trim())
+        .filter(l => l.length > 0);
 
-    if (!cleanText) {
+    if (rawLines.length === 0) {
         return { hebrew: '', phonetic: '' };
     }
 
-    let hebrewResult = '';
+    const hebrewLines = [];
+    const phoneticLines = [];
 
-    try {
-        // Intentar con Google Translate API público
-        const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=es&tl=he&dt=t&q=' + encodeURIComponent(cleanText);
-        const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-        if (res.ok) {
-            const data = await res.json();
-            if (data && data[0] && Array.isArray(data[0])) {
-                hebrewResult = data[0].map(item => item[0]).join('');
-            }
+    for (const line of rawLines) {
+        // Extraer número de versículo si lo tiene (ej: "(1)", "1.", "1 ")
+        const verseMatch = line.match(/^(\(?\d+\)?[\.:\-]?\s*)(.*)$/);
+        let prefix = '';
+        let contentToTranslate = line;
+
+        if (verseMatch) {
+            prefix = verseMatch[1].trim() + ' ';
+            contentToTranslate = verseMatch[2].trim();
         }
-    } catch(e) {
-        console.warn('Error en Google translate API:', e.message);
-    }
 
-    // Fallback a MyMemory si falló
-    if (!hebrewResult) {
-        try {
-            const myMemoryUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(cleanText.substring(0, 500))}&langpair=es|he`;
-            const mmRes = await fetch(myMemoryUrl);
-            if (mmRes.ok) {
-                const mmData = await mmRes.json();
-                if (mmData && mmData.responseData && mmData.responseData.translatedText) {
-                    hebrewResult = mmData.responseData.translatedText;
-                }
-            }
-        } catch(e) {
-            console.warn('Error en MyMemory translation:', e.message);
+        if (contentToTranslate.length > 0) {
+            const translatedHebrew = await translateSingleLine(contentToTranslate, 'es', 'he');
+            const cleanHe = translatedHebrew.trim();
+            
+            const fullHeLine = prefix ? `${prefix}${cleanHe}` : cleanHe;
+            hebrewLines.push(fullHeLine);
+
+            const linePhonetic = transliterateHebrewToSpanish(cleanHe);
+            const fullPhoneticLine = prefix ? `${prefix}${linePhonetic}` : linePhonetic;
+            phoneticLines.push(fullPhoneticLine);
         }
     }
 
-    if (!hebrewResult) {
-        throw new Error('No se pudo completar la traducción automática al hebreo.');
-    }
-
-    // Generar la pronunciación fonética en español
-    const phoneticResult = transliterateHebrewToSpanish(hebrewResult);
+    const hebrewResult = hebrewLines.join('\n\n');
+    const phoneticResult = phoneticLines.join('\n\n');
 
     return {
         hebrew: hebrewResult,
@@ -381,6 +426,6 @@ async function translateSpanishToHebrewAndPhonetics(spanishText) {
 module.exports = {
     transliterateHebrewToSpanish,
     fetchVersesFromSefaria,
-    parseBibleReference,
+    parseBibleReference: parseTorahReference,
     translateSpanishToHebrewAndPhonetics
 };
