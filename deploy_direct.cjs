@@ -79,6 +79,8 @@ conn.on('ready', () => {
         echo "=== Instalando dependencias de Node.js ===" &&
         cd "${REMOTE_DIR}/node-backend" &&
         npm install &&
+        echo "=== Ejecutando migraciones de base de datos ===" &&
+        node src/scripts/migrate_aliyot.js &&
         echo "=== Reiniciando servicio PM2 ===" &&
         pm2 restart hablemos-web &&
         echo "=== PM2 Status ===" &&
