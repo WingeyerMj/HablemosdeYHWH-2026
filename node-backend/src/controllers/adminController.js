@@ -1042,7 +1042,7 @@ const adminController = {
                 const titles = Array.isArray(rawTitles) ? rawTitles : (rawTitles ? [rawTitles] : []);
                 newFiles.forEach((file, idx) => {
                     const rawTitle = titles[idx];
-                    const cleanTitle = (rawTitle && rawTitle.trim() !== '') ? rawTitle.trim() : (file.originalname ? file.originalname.replace(/\.[^/.]+$/, '') : `Audio ${audiosList.length + 1}`);
+                    const cleanTitle = (rawTitle && rawTitle.trim() !== '') ? rawTitle.trim() : `Audio ${audiosList.length + 1}`;
                     audiosList.push({
                         title: cleanTitle,
                         url: '/uploads/audios/' + file.filename
@@ -1130,7 +1130,7 @@ const adminController = {
                 const titles = Array.isArray(rawTitles) ? rawTitles : (rawTitles ? [rawTitles] : []);
                 newFiles.forEach((file, idx) => {
                     const rawTitle = titles[idx];
-                    const cleanTitle = (rawTitle && rawTitle.trim() !== '') ? rawTitle.trim() : (file.originalname ? file.originalname.replace(/\.[^/.]+$/, '') : `Audio ${audiosList.length + 1}`);
+                    const cleanTitle = (rawTitle && rawTitle.trim() !== '') ? rawTitle.trim() : `Audio ${audiosList.length + 1}`;
                     audiosList.push({
                         title: cleanTitle,
                         url: '/uploads/audios/' + file.filename

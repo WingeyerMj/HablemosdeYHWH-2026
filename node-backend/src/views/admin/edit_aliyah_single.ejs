@@ -109,7 +109,7 @@ select option:checked, select option:hover {
                                                     <div class="d-flex align-items-center gap-3">
                                                         <span class="badge bg-secondary">#<%= idx + 1 %></span>
                                                         <div>
-                                                            <div class="text-white small fw-bold"><%= audio.title || `Audio ${idx + 1}` %></div>
+                                                            <div class="text-white small fw-bold">Audio <%= idx + 1 %></div>
                                                             <audio controls class="mt-1" style="height: 30px; max-width: 250px;">
                                                                 <source src="<%= audio.url %>" type="audio/mpeg">
                                                             </audio>
