@@ -1352,6 +1352,18 @@ const adminController = {
             console.error('Error apiFetchVerses:', e);
             res.status(500).json({ success: false, error: e.message });
         }
+    },
+
+    apiTranslateSpanishToHebrew: async (req, res) => {
+        try {
+            const { translateSpanishToHebrewAndPhonetics } = require('../utils/hebrewHelper');
+            const { text } = req.body;
+            const result = await translateSpanishToHebrewAndPhonetics(text || '');
+            res.json({ success: true, ...result });
+        } catch (e) {
+            console.error('Error apiTranslateSpanishToHebrew:', e);
+            res.status(500).json({ success: false, error: e.message });
+        }
     }
 };
 

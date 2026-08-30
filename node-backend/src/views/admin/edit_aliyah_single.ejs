@@ -176,7 +176,10 @@ select option:checked, select option:hover {
                                             <i class="bi bi-book me-1" style="color: var(--primary-color, #d4b895);"></i>
                                             Lectura en 3 Versiones: Español, Hebreo y Fonética
                                         </label>
-                                        <div class="d-flex gap-2">
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <button type="button" id="btnTranslateSpanishEdit" class="btn btn-sm btn-success d-flex align-items-center gap-1 shadow-sm" title="Traduce automáticamente el texto pegado en Español a Hebreo y genera la Fonética">
+                                                <i class="bi bi-translate"></i> <strong>✨ Traducir Español ➔ Hebreo + Fonética</strong>
+                                            </button>
                                             <button type="button" id="btnAutoFetchVersesEdit" class="btn btn-sm btn-outline-info d-flex align-items-center gap-1" title="Obtener texto en hebreo y traducción según la cita bíblica">
                                                 <i class="bi bi-cloud-arrow-down"></i> Auto-Obtener Versículos
                                             </button>
@@ -416,6 +419,46 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
+    }
+
+    // Traducir automáticamente de Español a Hebreo y Fonética (Edición)
+    const btnTranslateEdit = document.getElementById('btnTranslateSpanishEdit');
+    if (btnTranslateEdit) {
+        btnTranslateEdit.addEventListener('click', async function() {
+            const spanishText = quill ? quill.getText().trim() : '';
+
+            if (!spanishText) {
+                alert('Por favor escribe o pega primero el texto en la pestaña Español (Traducción).');
+                document.getElementById('edit-tab-es').click();
+                return;
+            }
+
+            const originalBtnText = this.innerHTML;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Traduciendo...';
+            this.disabled = true;
+
+            try {
+                const res = await fetch('/admin/aliyot/api/translate-spanish', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: spanishText })
+                });
+                const data = await res.json();
+                if (data.success && data.hebrew) {
+                    document.getElementById('editHebrewContent').value = data.hebrew;
+                    document.getElementById('editPhoneticContent').value = data.phonetic || '';
+                    alert('¡Traducción completada con éxito! El texto en Hebreo y la Fonética se han generado automáticamente.');
+                    document.getElementById('edit-tab-he').click();
+                } else {
+                    alert(data.error || 'No se pudo realizar la traducción automática.');
+                }
+            } catch(e) {
+                alert('Error al traducir: ' + e.message);
+            } finally {
+                this.innerHTML = originalBtnText;
+                this.disabled = false;
+            }
+        });
     }
 
     // Auto-Transliterar Hebreo a Fonética en Edición

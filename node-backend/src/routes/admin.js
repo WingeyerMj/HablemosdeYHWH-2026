@@ -77,6 +77,7 @@ router.post('/aliyot/save', isAuthenticated, isAdmin, upload.fields([
 router.get('/aliyot/delete-audio/:id/:parashaId/:aliyahNumber', isAuthenticated, isAdmin, adminController.deleteAliyahAudio);
 router.post('/aliyot/api/transliterate', isAuthenticated, isAdmin, adminController.apiTransliterateHebrew);
 router.post('/aliyot/api/fetch-verses', isAuthenticated, isAdmin, adminController.apiFetchVerses);
+router.post('/aliyot/api/translate-spanish', isAuthenticated, isAdmin, adminController.apiTranslateSpanishToHebrew);
 
 // Eventos (Portfolio) - Admin y Editor
 router.post('/portfolio/create', isAuthenticated, upload.single('image_file'), adminController.createPortfolio);

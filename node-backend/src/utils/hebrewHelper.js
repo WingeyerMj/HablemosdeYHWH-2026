@@ -266,8 +266,74 @@ async function fetchVersesFromSefaria(refString) {
     }
 }
 
+/**
+ * Traducir texto de Español a Hebreo y generar Fonética en español automáticamente
+ */
+async function translateSpanishToHebrewAndPhonetics(spanishText) {
+    if (!spanishText || typeof spanishText !== 'string' || spanishText.trim() === '') {
+        return { hebrew: '', phonetic: '' };
+    }
+
+    // Remover tags HTML temporales para traducir el texto limpio
+    const cleanText = spanishText
+        .replace(/<p>/gi, '\n')
+        .replace(/<\/p>/gi, '')
+        .replace(/<br\s*[\/]?>/gi, '\n')
+        .replace(/<[^>]*>/g, '')
+        .trim();
+
+    if (!cleanText) {
+        return { hebrew: '', phonetic: '' };
+    }
+
+    let hebrewResult = '';
+
+    try {
+        // Intentar con Google Translate API público
+        const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=es&tl=he&dt=t&q=' + encodeURIComponent(cleanText);
+        const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+        if (res.ok) {
+            const data = await res.json();
+            if (data && data[0] && Array.isArray(data[0])) {
+                hebrewResult = data[0].map(item => item[0]).join('');
+            }
+        }
+    } catch(e) {
+        console.warn('Error en Google translate API:', e.message);
+    }
+
+    // Fallback a MyMemory si falló
+    if (!hebrewResult) {
+        try {
+            const myMemoryUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(cleanText.substring(0, 500))}&langpair=es|he`;
+            const mmRes = await fetch(myMemoryUrl);
+            if (mmRes.ok) {
+                const mmData = await mmRes.json();
+                if (mmData && mmData.responseData && mmData.responseData.translatedText) {
+                    hebrewResult = mmData.responseData.translatedText;
+                }
+            }
+        } catch(e) {
+            console.warn('Error en MyMemory translation:', e.message);
+        }
+    }
+
+    if (!hebrewResult) {
+        throw new Error('No se pudo completar la traducción automática al hebreo.');
+    }
+
+    // Generar la pronunciación fonética en español
+    const phoneticResult = transliterateHebrewToSpanish(hebrewResult);
+
+    return {
+        hebrew: hebrewResult,
+        phonetic: phoneticResult
+    };
+}
+
 module.exports = {
     transliterateHebrewToSpanish,
     fetchVersesFromSefaria,
-    parseBibleReference
+    parseBibleReference,
+    translateSpanishToHebrewAndPhonetics
 };
