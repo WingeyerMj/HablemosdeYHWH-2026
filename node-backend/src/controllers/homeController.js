@@ -195,9 +195,43 @@ const homeController = {
 
     parashaDetail: async (req, res, next) => {
         try {
+            const Aliyah = require('../models/Aliyah');
             const parasha = await Parasha.getById(req.params.id);
             if (!parasha) return next();
-            res.render('parasha_detail', { title: parasha.title + ' - Hablemos de YHWH', page: 'parashot', parasha, layout: false });
+            const aliyot = await Aliyah.getByParashaId(parasha.id);
+            res.render('parasha_detail', { 
+                title: parasha.title + ' - Hablemos de YHWH', 
+                page: 'parashot', 
+                parasha, 
+                aliyot,
+                layout: false 
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    aliyotPage: async (req, res, next) => {
+        try {
+            const Aliyah = require('../models/Aliyah');
+            const parashot = await Parasha.getAll();
+            const selectedParashaId = req.query.parasha || (parashot.length > 0 ? parashot[0].id : null);
+            let selectedParasha = null;
+            let aliyot = [];
+
+            if (selectedParashaId) {
+                selectedParasha = await Parasha.getById(selectedParashaId);
+                aliyot = await Aliyah.getByParashaId(selectedParashaId);
+            }
+
+            res.render('aliyot', {
+                title: 'Aliyot - Lecturas Diarias de la Torá - Hablemos de YHWH',
+                page: 'aliyot',
+                parashot,
+                selectedParasha,
+                aliyot,
+                layout: false
+            });
         } catch (error) {
             next(error);
         }

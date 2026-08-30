@@ -28,6 +28,7 @@ router.use((req, res, next) => {
         // Determinar activePage basado en la URL
         const path = req.path;
         if (path === '/dashboard') res.locals.activePage = 'dashboard';
+        else if (path.includes('/aliyot')) res.locals.activePage = 'aliyot';
         else if (path.includes('/dynamic-sections')) res.locals.activePage = 'dynamic-sections';
         else if (path.includes('/sections')) res.locals.activePage = 'sections';
         else if (path.includes('/entity/footer_links')) res.locals.activePage = 'footer';
@@ -54,6 +55,14 @@ router.post('/parashot/update', isAuthenticated, isAdmin, upload.fields([
     { name: 'pdf_upload', maxCount: 1 }
 ]), adminController.updateParasha);
 router.get('/parashot/delete/:id', isAuthenticated, isAdmin, adminController.deleteParasha);
+
+// Aliyot (Lecturas Diarias por Parashá - Solo Admin)
+router.get('/aliyot', isAuthenticated, isAdmin, adminController.aliyotIndex);
+router.get('/aliyot/edit/:parashaId', isAuthenticated, isAdmin, adminController.editAliyotPage);
+router.post('/aliyot/save', isAuthenticated, isAdmin, upload.fields([
+    { name: 'audio_file', maxCount: 1 }
+]), adminController.saveAliyah);
+router.get('/aliyot/delete-audio/:id/:parashaId/:aliyahNumber', isAuthenticated, isAdmin, adminController.deleteAliyahAudio);
 
 // Eventos (Portfolio) - Admin y Editor
 router.post('/portfolio/create', isAuthenticated, upload.single('image_file'), adminController.createPortfolio);

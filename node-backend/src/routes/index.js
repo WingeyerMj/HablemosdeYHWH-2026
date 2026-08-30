@@ -10,6 +10,7 @@ router.get('/blog/:id', homeController.blogDetail);
 router.get('/calendar', homeController.calendar);
 router.get('/parashot', homeController.parashot);
 router.get('/parashot/:id', homeController.parashaDetail);
+router.get('/aliyot', homeController.aliyotPage);
 router.get('/eventos', homeController.eventosPage);
 router.get('/eventos/:id', homeController.eventDetail);
 router.get('/ensenanzas', homeController.ensenanzasPage);

@@ -1002,6 +1002,119 @@ const adminController = {
             console.error('Error deleteSubscriber:', error);
             res.redirect('/admin/dashboard#pills-subscribers');
         }
+    },
+
+    // --- GESTIÓN DE ALIYOT (Lecturas Diarias de la Torá) ---
+    aliyotIndex: async (req, res) => {
+        try {
+            const Aliyah = require('../models/Aliyah');
+            const parashot = await Aliyah.getParashotOverview();
+            res.render('admin/aliyot', {
+                title: 'Gestión de Aliyot (Lecturas Diarias)',
+                activePage: 'aliyot',
+                parashot
+            });
+        } catch (error) {
+            console.error('Error aliyotIndex:', error);
+            res.status(500).send('Error al cargar Aliyot: ' + error.message);
+        }
+    },
+
+    editAliyotPage: async (req, res) => {
+        try {
+            const Parasha = require('../models/Parasha');
+            const Aliyah = require('../models/Aliyah');
+            const parashaId = req.params.parashaId;
+            const parasha = await Parasha.getById(parashaId);
+            if (!parasha) {
+                return res.redirect('/admin/aliyot');
+            }
+
+            const aliyotRows = await Aliyah.getByParashaId(parashaId);
+            
+            const dayNames = [
+                '1ª Aliyá (Domingo - Día 1)',
+                '2ª Aliyá (Lunes - Día 2)',
+                '3ª Aliyá (Martes - Día 3)',
+                '4ª Aliyá (Miércoles - Día 4)',
+                '5ª Aliyá (Jueves - Día 5)',
+                '6ª Aliyá (Viernes - Día 6)',
+                '7ª Aliyá (Shabat - Día 7)'
+            ];
+
+            const aliyotMap = {};
+            for (let i = 1; i <= 7; i++) {
+                const found = aliyotRows.find(a => Number(a.aliyah_number) === i);
+                aliyotMap[i] = found || {
+                    id: null,
+                    parasha_id: parasha.id,
+                    aliyah_number: i,
+                    title: dayNames[i - 1],
+                    verses_reference: '',
+                    content: '',
+                    audio_url: ''
+                };
+            }
+
+            res.render('admin/edit_aliyot', {
+                title: `Editar Aliyot: ${parasha.title}`,
+                activePage: 'aliyot',
+                parasha,
+                aliyotMap,
+                dayNames,
+                savedDay: req.query.saved || '1'
+            });
+        } catch (error) {
+            console.error('Error editAliyotPage:', error);
+            res.status(500).send('Error al cargar editor de Aliyot: ' + error.message);
+        }
+    },
+
+    saveAliyah: async (req, res) => {
+        try {
+            const Aliyah = require('../models/Aliyah');
+            const { parasha_id, aliyah_number, title, verses_reference, content, existing_audio_url, remove_audio } = req.body;
+
+            let audio_url = existing_audio_url || '';
+
+            if (remove_audio === '1') {
+                audio_url = '';
+            }
+
+            if (req.files && req.files['audio_file'] && req.files['audio_file'][0]) {
+                audio_url = '/uploads/audios/' + req.files['audio_file'][0].filename;
+            } else if (req.body.custom_audio_url && req.body.custom_audio_url.trim() !== '') {
+                audio_url = req.body.custom_audio_url.trim();
+            }
+
+            await Aliyah.upsert({
+                parasha_id: Number(parasha_id),
+                aliyah_number: Number(aliyah_number),
+                title: title || `Aliyá ${aliyah_number}`,
+                verses_reference: verses_reference || '',
+                content: content || '',
+                audio_url: audio_url
+            });
+
+            res.redirect(`/admin/aliyot/edit/${parasha_id}?saved=${aliyah_number}`);
+        } catch (error) {
+            console.error('Error saveAliyah:', error);
+            res.redirect(`/admin/aliyot/edit/${req.body.parasha_id}?error=1`);
+        }
+    },
+
+    deleteAliyahAudio: async (req, res) => {
+        try {
+            const Aliyah = require('../models/Aliyah');
+            const { id, parashaId, aliyahNumber } = req.params;
+            if (id && id !== 'null') {
+                await Aliyah.removeAudio(id);
+            }
+            res.redirect(`/admin/aliyot/edit/${parashaId}?saved=${aliyahNumber}`);
+        } catch (error) {
+            console.error('Error deleteAliyahAudio:', error);
+            res.redirect('/admin/aliyot');
+        }
     }
 };
 

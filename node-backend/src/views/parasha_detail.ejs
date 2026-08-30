@@ -68,10 +68,149 @@
                                         <%- parasha.content || parasha.description %>
                                     </div>
 
+                                    <!-- ============================================== -->
+                                    <!-- SECCIÓN DE ALIYOT (LECTURAS DIARIAS DE LA TORÁ) -->
+                                    <!-- ============================================== -->
+                                    <div id="seccion-aliyot" class="aliyot-section mt-5 pt-4 border-top no-print">
+                                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+                                            <div>
+                                                <h3 class="mb-1 fw-bold text-dark d-flex align-items-center gap-2" style="font-size: 1.6rem;">
+                                                    <i class="bi bi-mic-fill" style="color: #d4a853;"></i>
+                                                    Aliyot (Lecturas Diarias)
+                                                </h3>
+                                                <p class="text-muted small mb-0">Escucha los audios diarios y lee los versículos de cada una de las 7 porciones de la semana.</p>
+                                            </div>
+                                            <span class="badge px-3 py-2 rounded-pill" style="background: linear-gradient(135deg, #d4a853, #b8860b); color: #fff; font-size: 0.85rem;">
+                                                7 Lecturas Semanales
+                                            </span>
+                                        </div>
+
+                                        <!-- Pestañas de los 7 Días -->
+                                        <% 
+                                            const daysNames = [
+                                                { num: 1, name: '1ª Aliyá', day: 'Domingo' },
+                                                { num: 2, name: '2ª Aliyá', day: 'Lunes' },
+                                                { num: 3, name: '3ª Aliyá', day: 'Martes' },
+                                                { num: 4, name: '4ª Aliyá', day: 'Miércoles' },
+                                                { num: 5, name: '5ª Aliyá', day: 'Jueves' },
+                                                { num: 6, name: '6ª Aliyá', day: 'Viernes' },
+                                                { num: 7, name: '7ª Aliyá', day: 'Shabat' }
+                                            ];
+                                            const aliyotList = (typeof aliyot !== 'undefined' && aliyot) ? aliyot : [];
+                                        %>
+
+                                        <div class="aliyot-tabs-nav mb-4">
+                                            <ul class="nav nav-pills gap-2 flex-wrap" id="aliyotPills" role="tablist">
+                                                <% daysNames.forEach((d, idx) => { 
+                                                    const aliyahData = aliyotList.find(a => Number(a.aliyah_number) === d.num);
+                                                    const hasAudio = aliyahData && aliyahData.audio_url && aliyahData.audio_url.trim() !== '';
+                                                %>
+                                                    <li class="nav-item flex-grow-1 text-center" role="presentation">
+                                                        <button class="nav-link w-100 <%= idx === 0 ? 'active' : '' %> py-2 px-3 position-relative" 
+                                                                id="pills-aliyah-<%= d.num %>-tab" 
+                                                                data-bs-toggle="pill" 
+                                                                data-bs-target="#pills-aliyah-<%= d.num %>" 
+                                                                type="button" 
+                                                                role="tab"
+                                                                style="border-radius: 12px; border: 1px solid #e0d6c2; transition: all 0.25s ease;">
+                                                            <div class="fw-bold fs-6"><%= d.name %></div>
+                                                            <div class="small text-muted day-subtitle" style="font-size: 0.78rem;"><%= d.day %></div>
+                                                            <% if (hasAudio) { %>
+                                                                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-light rounded-circle" title="Audio disponible"></span>
+                                                            <% } %>
+                                                        </button>
+                                                    </li>
+                                                <% }) %>
+                                            </ul>
+                                        </div>
+
+                                        <!-- Contenido de las 7 Aliyot -->
+                                        <div class="tab-content" id="aliyotPillsContent">
+                                            <% daysNames.forEach((d, idx) => { 
+                                                const aliyah = aliyotList.find(a => Number(a.aliyah_number) === d.num) || {};
+                                                const hasAudio = aliyah.audio_url && aliyah.audio_url.trim() !== '';
+                                                const hasContent = aliyah.content && aliyah.content.trim() !== '';
+                                            %>
+                                                <div class="tab-pane fade <%= idx === 0 ? 'show active' : '' %>" id="pills-aliyah-<%= d.num %>" role="tabpanel">
+                                                    <div class="aliyah-card p-4 rounded-4 shadow-sm" style="background: #ffffff; border: 1px solid #e8e1d5;">
+                                                        <!-- Cabecera de la Aliyá -->
+                                                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 pb-3 mb-3 border-bottom">
+                                                            <div>
+                                                                <span class="badge mb-2 px-2 py-1" style="background: #f4ece1; color: #8c6a2d; font-size: 0.8rem; font-weight: 600;">
+                                                                    <%= d.name %> &bull; <%= d.day %>
+                                                                </span>
+                                                                <h4 class="fw-bold mb-1" style="color: #222;">
+                                                                    <%= aliyah.title || `${d.name} (${d.day})` %>
+                                                                </h4>
+                                                                <% if (aliyah.verses_reference) { %>
+                                                                    <div class="text-muted fw-semibold small d-flex align-items-center gap-1" style="color: #d4a853 !important;">
+                                                                        <i class="bi bi-bookmark-fill"></i> <%= aliyah.verses_reference %>
+                                                                    </div>
+                                                                <% } %>
+                                                            </div>
+
+                                                            <!-- Botones de Compartir -->
+                                                            <div class="d-flex gap-2 align-items-center">
+                                                                <% 
+                                                                    const shareTitle = `Lectura de Toráh: ${parasha.title} - ${d.name} (${d.day})`;
+                                                                    const shareRef = aliyah.verses_reference ? `\n📖 Versículos: ${aliyah.verses_reference}` : '';
+                                                                    const shareUrl = `https://www.hablemosdeyhwh.com/parashot/${parasha.id}#seccion-aliyot`;
+                                                                    const waText = encodeURIComponent(`*${shareTitle}*${shareRef}\n\nEscucha y lee la porción completa aquí:\n${shareUrl}`);
+                                                                %>
+                                                                <a href="https://api.whatsapp.com/send?text=<%= waText %>" target="_blank" rel="noopener noreferrer" 
+                                                                   class="btn btn-sm btn-outline-success rounded-pill d-inline-flex align-items-center gap-1 px-3 py-1 fw-bold"
+                                                                   title="Compartir en WhatsApp">
+                                                                    <i class="bi bi-whatsapp"></i> Compartir
+                                                                </a>
+                                                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 btn-copy-link" 
+                                                                        data-copy-url="<%= shareUrl %>" title="Copiar enlace">
+                                                                    <i class="bi bi-link-45deg"></i> Copiar
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- REPRODUCTOR DE AUDIO -->
+                                                        <% if (hasAudio) { %>
+                                                            <div class="audio-player-box p-3 mb-4 rounded-3 d-flex flex-column gap-2" 
+                                                                 style="background: linear-gradient(135deg, #1c1c1c 0%, #2a251f 100%); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+                                                                <div class="d-flex align-items-center justify-content-between">
+                                                                    <div class="d-flex align-items-center gap-2">
+                                                                        <span class="pulse-icon text-warning"><i class="bi bi-soundwave fs-4"></i></span>
+                                                                        <span class="small text-white-50">Audio de la Lectura Diaria</span>
+                                                                    </div>
+                                                                    <a href="<%= aliyah.audio_url %>" download target="_blank" class="text-white-50 text-decoration-none small hover-white" title="Descargar Audio">
+                                                                        <i class="bi bi-download me-1"></i> Descargar
+                                                                    </a>
+                                                                </div>
+                                                                <audio controls class="w-100 mt-1" style="height: 40px; border-radius: 8px;">
+                                                                    <source src="<%= aliyah.audio_url %>" type="audio/mpeg">
+                                                                    Tu navegador no soporta el reproductor de audio HTML5.
+                                                                </audio>
+                                                            </div>
+                                                        <% } %>
+
+                                                        <!-- LECTOR DE VERSÍCULOS / TEXTO -->
+                                                        <% if (hasContent) { %>
+                                                            <div class="aliyah-reading-content p-3 rounded-3" 
+                                                                 style="background: #faf8f5; border: 1px solid #efe8dd; font-size: 1.08rem; line-height: 1.9; color: #333; font-family: Georgia, serif;">
+                                                                <%- aliyah.content %>
+                                                            </div>
+                                                        <% } else if (!hasAudio) { %>
+                                                            <div class="text-center py-4 text-muted">
+                                                                <i class="bi bi-hourglass-split fs-2 d-block mb-2" style="color: #d4a853;"></i>
+                                                                <p class="mb-0 small">El audio y los versículos de esta Aliyá se publicarán en el día correspondiente.</p>
+                                                            </div>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            <% }) %>
+                                        </div>
+                                    </div>
+
                                     <!-- Botón Descargar PDF -->
                                     <div class="text-center mt-5 mb-4 no-print">
                                         <button onclick="window.print()" class="btn btn-lg d-inline-flex align-items-center gap-2 shadow-sm" 
-                                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 14px 35px; border-radius: 30px; font-weight: 600; transition: all 0.3s ease;">
+                                                style="background: linear-gradient(135deg, #d4a853 0%, #b8860b 100%); color: white; border: none; padding: 14px 35px; border-radius: 30px; font-weight: 600; transition: all 0.3s ease;">
                                             <i class="bi bi-file-earmark-pdf" style="font-size: 1.4rem;"></i>
                                             <span>Descargar Parashá como PDF</span>
                                         </button>
@@ -82,6 +221,13 @@
                                     <% if (parasha.image_url) { %>
                                         <div class="post-img p-2" style="background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: sticky; top: 100px;">
                                             <img src="<%= parasha.image_url %>" alt="<%= parasha.title %>" class="img-fluid rounded" style="width: 100%; height: auto; object-fit: contain;">
+                                            
+                                            <!-- Acceso rápido a las Aliyot -->
+                                            <div class="mt-3 p-3 text-center border-top">
+                                                <a href="#seccion-aliyot" class="btn btn-sm w-100 rounded-pill fw-bold" style="background: #f4ece1; color: #8c6a2d;">
+                                                    <i class="bi bi-headphones me-1"></i> Ir a las 7 Aliyot Diarias
+                                                </a>
+                                            </div>
                                         </div>
                                     <% } %>
                                 </div>
@@ -95,6 +241,61 @@
             </main>
 
             <%- include('partials/footer') %>
+
+    <!-- Script para copiar enlaces de Aliyot -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.btn-copy-link').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const url = this.getAttribute('data-copy-url') || window.location.href;
+                navigator.clipboard.writeText(url).then(() => {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="bi bi-check-lg text-success"></i> ¡Copiado!';
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                    }, 2000);
+                }).catch(err => {
+                    prompt('Copia este enlace:', url);
+                });
+            });
+        });
+    });
+    </script>
+
+    <!-- Estilos específicos para la sección de Aliyot -->
+    <style>
+        .aliyot-tabs-nav .nav-pills .nav-link {
+            color: #555;
+            background: #fbf9f6;
+        }
+        .aliyot-tabs-nav .nav-pills .nav-link:hover {
+            background: #f0e9dc;
+            color: #222;
+        }
+        .aliyot-tabs-nav .nav-pills .nav-link.active {
+            background: linear-gradient(135deg, #d4a853, #b8860b) !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(212,168,83,0.35);
+            border-color: #d4a853 !important;
+        }
+        .aliyot-tabs-nav .nav-pills .nav-link.active .day-subtitle {
+            color: rgba(255,255,255,0.85) !important;
+        }
+        .aliyah-reading-content p {
+            margin-bottom: 1.2rem;
+        }
+        .aliyah-reading-content p:last-child {
+            margin-bottom: 0;
+        }
+        .pulse-icon {
+            animation: pulse-wave 1.5s infinite;
+        }
+        @keyframes pulse-wave {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+    </style>
 
     <!-- Estilos para impresión / PDF -->
     <style>

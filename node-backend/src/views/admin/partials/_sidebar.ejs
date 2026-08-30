@@ -13,6 +13,7 @@
     <div class="nav-label mt-3">Gestión de Contenido</div>
     <% if (role === 'admin') { %>
         <a href="/admin/dashboard#pills-services"><i class="bi bi-journal-text"></i> Parashot</a>
+        <a href="/admin/aliyot" class="<%= (typeof activePage !== 'undefined' && activePage === 'aliyot') ? 'active' : '' %>"><i class="bi bi-mic"></i> Aliyot (Lecturas)</a>
         <a href="/admin/dashboard#pills-ensenanzas"><i class="bi bi-book"></i> Enseñanzas</a>
     <% } %>
     <a href="/admin/dashboard#pills-blog"><i class="bi bi-newspaper"></i> Blog</a>

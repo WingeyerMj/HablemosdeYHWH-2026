@@ -10,6 +10,7 @@ const uploadDirs = [
     path.join(__dirname, '../../public/uploads/blog'),
     path.join(__dirname, '../../public/uploads/team'),
     path.join(__dirname, '../../public/uploads/pdf'),
+    path.join(__dirname, '../../public/uploads/audios'),
     path.join(__dirname, '../../public/uploads/general'),
     path.join(__dirname, '../../public/uploads/semillas'),
     path.join(__dirname, '../../public/uploads/entity')
@@ -29,7 +30,8 @@ const storage = multer.diskStorage({
         if (req.originalUrl.includes('/parashot')) {
             folder = 'parashot';
             base = '../../public/assets/';
-        } else if (req.originalUrl.includes('/portfolio')) folder = 'portfolio';
+        } else if (req.originalUrl.includes('/aliyot')) folder = 'audios';
+        else if (req.originalUrl.includes('/portfolio')) folder = 'portfolio';
         else if (req.originalUrl.includes('/ensenanzas')) folder = 'ensenanzas';
         else if (req.originalUrl.includes('/semillas')) folder = 'semillas';
         else if (req.originalUrl.includes('/blog')) folder = 'blog';
@@ -38,6 +40,8 @@ const storage = multer.diskStorage({
 
         // Si es PDF, va a la carpeta de PDFs
         if (file.mimetype === 'application/pdf') folder = 'pdf';
+        // Si es Audio, va a la carpeta de Audios
+        if (file.mimetype && file.mimetype.startsWith('audio/')) folder = 'audios';
 
         const dest = path.join(__dirname, base, folder);
         cb(null, dest);
@@ -50,11 +54,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
     storage: storage,
-    limits: { fileSize: 100 * 1024 * 1024 }, // Límite de 100MB para videos
+    limits: { fileSize: 150 * 1024 * 1024 }, // Límite de 150MB para videos/audios
     fileFilter: (req, file, cb) => {
-        // Permitir imágenes, videos y PDFs
+        // Permitir imágenes, videos, audios y PDFs
         const imageTypes = /jpeg|jpg|png|webp|gif|svg/;
         const videoTypes = /mp4|webm|ogg|mov|avi|mkv/;
+        const audioTypes = /mp3|m4a|wav|aac|ogg|wma|flac|opus|audio/;
         const pdfType = /pdf/;
         
         const extname = path.extname(file.originalname).toLowerCase().replace('.', '');
@@ -62,13 +67,16 @@ const upload = multer({
         if (imageTypes.test(extname) || imageTypes.test(file.mimetype)) {
             return cb(null, true);
         }
-        if (videoTypes.test(extname) || videoTypes.test(file.mimetype) || file.mimetype.includes('video/')) {
+        if (audioTypes.test(extname) || (file.mimetype && file.mimetype.startsWith('audio/'))) {
+            return cb(null, true);
+        }
+        if (videoTypes.test(extname) || videoTypes.test(file.mimetype) || (file.mimetype && file.mimetype.includes('video/'))) {
             return cb(null, true);
         }
         if (pdfType.test(extname) || file.mimetype === 'application/pdf') {
             return cb(null, true);
         }
-        cb(new Error("Solo se permiten imágenes, videos y PDFs"));
+        cb(new Error("Solo se permiten imágenes, audios, videos y PDFs"));
     }
 });
 

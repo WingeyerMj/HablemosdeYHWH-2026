@@ -1,0 +1,237 @@
+<%- include('partials/_sidebar', { activePage: 'aliyot' }) %>
+
+<main class="col-md-10 main-content p-4">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge" style="background: var(--primary-color, #d4b895); color: #000; font-weight: 700;">
+                    <%= parasha.parasha_number ? `Parashá Nº ${parasha.parasha_number}` : 'Parashá' %>
+                </span>
+                <h1 class="h2 text-white mb-0"><%= parasha.title %></h1>
+            </div>
+            <p class="text-white-50 mb-0">Carga los audios diarios y los versículos para cada uno de los 7 días de la semana.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/parashot/<%= parasha.id %>" target="_blank" class="btn btn-outline-info btn-sm d-flex align-items-center gap-1">
+                <i class="bi bi-eye"></i> Ver en la Web
+            </a>
+            <a href="/admin/aliyot" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                <i class="bi bi-arrow-left"></i> Volver a Aliyot
+            </a>
+        </div>
+    </div>
+
+    <!-- Pestañas de los 7 Días / 7 Aliyot -->
+    <ul class="nav nav-pills mb-4 gap-2 flex-wrap" id="aliyotTabs" role="tablist">
+        <% for (let i = 1; i <= 7; i++) { 
+            const item = aliyotMap[i];
+            const hasAudio = item && item.audio_url && item.audio_url.trim() !== '';
+            const hasText = item && item.content && item.content.trim() !== '';
+            const isSavedActive = (savedDay == i);
+        %>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link <%= isSavedActive ? 'active' : '' %> d-flex align-items-center gap-2 border border-secondary" 
+                        id="tab-aliyah-<%= i %>" 
+                        data-bs-toggle="pill" 
+                        data-bs-target="#content-aliyah-<%= i %>" 
+                        type="button" 
+                        role="tab"
+                        style="border-radius: 10px; font-weight: 600;">
+                    <span><%= i %>ª Aliyá</span>
+                    <% if (hasAudio) { %>
+                        <i class="bi bi-volume-up-fill text-success" title="Audio cargado"></i>
+                    <% } %>
+                    <% if (hasText) { %>
+                        <i class="bi bi-file-text-fill" style="color: var(--primary-color, #d4b895);" title="Texto cargado"></i>
+                    <% } %>
+                </button>
+            </li>
+        <% } %>
+    </ul>
+
+    <!-- Contenido de cada pestaña -->
+    <div class="tab-content" id="aliyotTabContent">
+        <% for (let i = 1; i <= 7; i++) { 
+            const aliyah = aliyotMap[i];
+            const isSavedActive = (savedDay == i);
+            const defaultDays = ['Domingo (Día 1)', 'Lunes (Día 2)', 'Martes (Día 3)', 'Miércoles (Día 4)', 'Jueves (Día 5)', 'Viernes (Día 6)', 'Shabat (Día 7)'];
+        %>
+            <div class="tab-pane fade <%= isSavedActive ? 'show active' : '' %>" id="content-aliyah-<%= i %>" role="tabpanel">
+                <div class="card bg-dark text-white border-secondary shadow-sm" style="border-radius: 14px;">
+                    <div class="card-header border-secondary bg-black bg-opacity-25 d-flex justify-content-between align-items-center py-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge fs-6" style="background: var(--primary-color, #d4b895); color: #000;">
+                                <%= i %>ª Aliyá
+                            </span>
+                            <span class="text-white fw-bold fs-5"><%= defaultDays[i - 1] %></span>
+                        </div>
+                        <% if (aliyah.updated_at) { %>
+                            <small class="text-white-50"><i class="bi bi-clock-history me-1"></i> Actualizado: <%= new Date(aliyah.updated_at).toLocaleString('es-ES') %></small>
+                        <% } %>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <form action="/admin/aliyot/save" method="POST" enctype="multipart/form-data" class="aliyah-form" data-aliyah-id="<%= i %>">
+                            <input type="hidden" name="parasha_id" value="<%= parasha.id %>">
+                            <input type="hidden" name="aliyah_number" value="<%= i %>">
+                            <input type="hidden" name="existing_audio_url" value="<%= aliyah.audio_url || '' %>">
+
+                            <div class="row g-3">
+                                <!-- Título de la Aliyá -->
+                                <div class="col-md-6">
+                                    <label class="form-label small text-white-50 fw-bold">Título de la Aliyá</label>
+                                    <input type="text" name="title" class="form-control bg-black bg-opacity-50 text-white border-secondary" 
+                                           value="<%= aliyah.title || `${i}ª Aliyá - ${defaultDays[i - 1]}` %>" required>
+                                </div>
+
+                                <!-- Cita / Referencia de Versículos -->
+                                <div class="col-md-6">
+                                    <label class="form-label small text-white-50 fw-bold">Referencia de Versículos (Ej: Génesis 1:1 - 2:3)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-bookmark"></i></span>
+                                        <input type="text" name="verses_reference" class="form-control bg-black bg-opacity-50 text-white border-secondary" 
+                                               value="<%= aliyah.verses_reference || '' %>" placeholder="Ej: Génesis 1:1 - 2:3">
+                                    </div>
+                                </div>
+
+                                <!-- SECCIÓN DE AUDIO -->
+                                <div class="col-12">
+                                    <div class="p-3 rounded border border-secondary" style="background: rgba(255, 255, 255, 0.03);">
+                                        <label class="form-label fw-bold text-white d-flex align-items-center gap-2 mb-2">
+                                            <i class="bi bi-soundwave" style="color: var(--primary-color, #d4b895); font-size: 1.2rem;"></i>
+                                            Audio de la Lectura
+                                        </label>
+
+                                        <% if (aliyah.audio_url && aliyah.audio_url.trim() !== '') { %>
+                                            <div class="p-3 mb-3 rounded bg-black bg-opacity-50 border border-success d-flex flex-wrap align-items-center justify-content-between gap-3">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <div class="rounded-circle bg-success bg-opacity-25 p-2 text-success d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                                                        <i class="bi bi-file-earmark-music fs-4"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="text-white small fw-bold">Audio actual cargado</div>
+                                                        <audio controls class="mt-1" style="height: 34px; max-width: 320px;">
+                                                            <source src="<%= aliyah.audio_url %>" type="audio/mpeg">
+                                                            Tu navegador no soporta el reproductor de audio.
+                                                        </audio>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex gap-2">
+                                                    <a href="<%= aliyah.audio_url %>" target="_blank" download class="btn btn-sm btn-outline-light" title="Descargar">
+                                                        <i class="bi bi-download"></i>
+                                                    </a>
+                                                    <a href="/admin/aliyot/delete-audio/<%= aliyah.id || 'null' %>/<%= parasha.id %>/<%= i %>" 
+                                                       onclick="return confirm('¿Seguro que deseas eliminar el audio de esta Aliyá?');" 
+                                                       class="btn btn-sm btn-outline-danger" title="Eliminar Audio">
+                                                        <i class="bi bi-trash"></i> Eliminar Audio
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        <% } %>
+
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label small text-white-50">Subir archivo de audio (.mp3, .m4a, .wav, .aac)</label>
+                                                <input type="file" name="audio_file" class="form-control bg-black bg-opacity-50 text-white border-secondary" accept="audio/*">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label small text-white-50">O enlace directo de audio (opcional)</label>
+                                                <input type="text" name="custom_audio_url" class="form-control bg-black bg-opacity-50 text-white border-secondary" 
+                                                       placeholder="https://.../audio.mp3" value="<%= (aliyah.audio_url && !aliyah.audio_url.startsWith('/uploads/')) ? aliyah.audio_url : '' %>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECCIÓN DE VERSÍCULOS / TEXTO COMPLETO -->
+                                <div class="col-12">
+                                    <label class="form-label small text-white-50 fw-bold">
+                                        <i class="bi bi-fonts me-1"></i> Versículos y Contenido de la Lectura
+                                    </label>
+                                    <div id="editor-aliyah-<%= i %>" class="quill-editor-container" style="height: 350px; background: #ffffff; color: #111; border-radius: 6px;"></div>
+                                    <input type="hidden" name="content" id="content-input-<%= i %>">
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end align-items-center gap-3 mt-4 pt-3 border-top border-secondary">
+                                <span class="text-white-50 small"><i class="bi bi-info-circle me-1"></i> Recuerda guardar cada Aliyá tras editarla.</span>
+                                <button type="submit" class="btn px-4 fw-bold d-flex align-items-center gap-2" style="background: var(--primary-color, #d4b895); color: #1a1a1a;">
+                                    <i class="bi bi-check2-circle fs-5"></i> Guardar <%= i %>ª Aliyá
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</main>
+
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Almacén de instancias de Quill para cada una de las 7 Aliyot
+    const quills = {};
+
+    <% for (let i = 1; i <= 7; i++) { 
+        const item = aliyotMap[i];
+    %>
+        quills[<%= i %>] = new Quill('#editor-aliyah-<%= i %>', {
+            theme: 'snow',
+            modules: { 
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    ['link', 'blockquote', 'code-block'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['clean']
+                ] 
+            }
+        });
+
+        // Cargar contenido existente
+        quills[<%= i %>].root.innerHTML = `<%- (item && item.content ? item.content : '').replace(/`/g, '\\`').replace(/\\/g, '\\\\') %>`;
+    <% } %>
+
+    // Interceptar envíos de formularios para sincronizar Quill
+    document.querySelectorAll('.aliyah-form').forEach(form => {
+        form.onsubmit = function() {
+            const aliyahId = this.getAttribute('data-aliyah-id');
+            if (quills[aliyahId]) {
+                document.getElementById('content-input-' + aliyahId).value = quills[aliyahId].root.innerHTML;
+            }
+            return true;
+        };
+    });
+});
+</script>
+
+<style>
+.nav-pills .nav-link {
+    color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.05);
+    transition: all 0.2s ease;
+}
+.nav-pills .nav-link:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.12);
+}
+.nav-pills .nav-link.active {
+    background: var(--primary-color, #d4b895) !important;
+    color: #1a1a1a !important;
+    box-shadow: 0 4px 15px rgba(212,184,149,0.3);
+}
+.ql-toolbar.ql-snow {
+    background: #f8f9fa;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+.ql-container.ql-snow {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+</style>

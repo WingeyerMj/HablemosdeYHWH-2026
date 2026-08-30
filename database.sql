@@ -342,5 +342,20 @@ VALUES
 '<p>¡Prepara junto a tus papás una hermosa manualidad para recibir el día de reposo con gozo y alegría!</p>', 
 '/assets/img/pagina/semillas_torah_logo.png', '', TRUE);
 
+-- Tabla para Aliyot (Lecturas Diarias de la Torá por Parashá)
+CREATE TABLE IF NOT EXISTS aliyot (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    parasha_id INT NOT NULL,
+    aliyah_number INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    verses_reference VARCHAR(255),
+    content LONGTEXT,
+    audio_url VARCHAR(500),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (parasha_id) REFERENCES parashot(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_parasha_aliyah (parasha_id, aliyah_number)
+);
+
 
 
