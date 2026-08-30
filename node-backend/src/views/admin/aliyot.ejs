@@ -78,15 +78,22 @@
                                     <% allAliyot.forEach(a => { 
                                         const defaultDays = ['1ª Aliyá (Dom)', '2ª Aliyá (Lun)', '3ª Aliyá (Mar)', '4ª Aliyá (Mié)', '5ª Aliyá (Jue)', '6ª Aliyá (Vie)', '7ª Aliyá (Shab)'];
                                     %>
-                                        <tr class="aliyah-table-row" data-search="<%= (a.title + ' ' + (a.parasha_title || '') + ' ' + (a.verses_reference || '')).toLowerCase() %>">
+                                        <tr class="aliyah-table-row" data-search="<%= (a.title + ' ' + (a.parasha_title || 'sin parashá') + ' ' + (a.verses_reference || '')).toLowerCase() %>">
                                             <td>
                                                 <span class="badge" style="background: var(--primary-color, #d4b895); color: #000; font-weight: 700;">
                                                     <%= a.aliyah_number %>ª Aliyá
                                                 </span>
                                             </td>
                                             <td>
-                                                <div class="fw-bold text-white"><%= a.parasha_title %></div>
-                                                <small class="text-white-50"><%= a.parasha_subtitle || '' %></small>
+                                                <% if (a.parasha_title) { %>
+                                                    <div class="fw-bold text-white"><%= a.parasha_title %></div>
+                                                    <small class="text-white-50"><%= a.parasha_subtitle || '' %></small>
+                                                <% } else { %>
+                                                    <button type="button" class="btn btn-sm btn-outline-warning rounded-pill py-0 px-2 fw-semibold btn-quick-link" 
+                                                            data-aliyahid="<%= a.id %>" data-aliyahtitle="<%= a.title %>" title="Haz clic para vincular a una Parashá">
+                                                        <i class="bi bi-link-45deg me-1"></i> Vincular a Parashá
+                                                    </button>
+                                                <% } %>
                                             </td>
                                             <td>
                                                 <div class="text-white fw-semibold"><%= a.title %></div>
@@ -111,12 +118,21 @@
                                                 <% } %>
                                             </td>
                                             <td class="text-end">
+                                                <!-- Botón Vincular Rápido (si ya tiene, también se puede cambiar) -->
+                                                <button type="button" class="btn btn-sm btn-outline-warning me-1 btn-quick-link"
+                                                        data-aliyahid="<%= a.id %>"
+                                                        data-aliyahtitle="<%= a.title %>"
+                                                        data-currentparasha="<%= a.parasha_id || '' %>"
+                                                        title="Cambiar/Vincular Parashá">
+                                                    <i class="bi bi-link-45deg"></i>
+                                                </button>
+
                                                 <!-- Botón Compartir en Redes -->
                                                 <button type="button" class="btn btn-sm btn-outline-success me-1 btn-open-share"
                                                         data-title="<%= a.title %>"
-                                                        data-parasha="<%= a.parasha_title %>"
+                                                        data-parasha="<%= a.parasha_title || 'Lectura Semanal' %>"
                                                         data-ref="<%= a.verses_reference || '' %>"
-                                                        data-parashaid="<%= a.parasha_id %>"
+                                                        data-parashaid="<%= a.parasha_id || '' %>"
                                                         title="Compartir en Redes">
                                                     <i class="bi bi-share-fill"></i>
                                                 </button>
@@ -224,7 +240,8 @@
                         <!-- Parashá Asociada -->
                         <div class="col-md-6">
                             <label class="form-label small text-white-50 fw-bold">Parashá Asociada</label>
-                            <select name="parasha_id" class="form-select bg-black bg-opacity-50 text-white border-secondary" required>
+                            <select name="parasha_id" class="form-select bg-black bg-opacity-50 text-white border-secondary">
+                                <option value="">-- Sin vincular (Asignar cuando se suba la Parashá) --</option>
                                 <% if (typeof parashot !== 'undefined' && parashot.length > 0) { %>
                                     <% parashot.forEach(p => { %>
                                         <option value="<%= p.id %>">
@@ -370,6 +387,50 @@
     </div>
 </div>
 
+<!-- ============================================== -->
+<!-- MODAL: VINCULAR ALIYÁ A UNA PARASHÁ -->
+<!-- ============================================== -->
+<div class="modal fade" id="linkParashaModal" tabindex="-1" aria-labelledby="linkParashaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary" style="border-radius: 14px;">
+            <div class="modal-header border-secondary bg-black bg-opacity-25">
+                <h5 class="modal-title" id="linkParashaModalLabel"><i class="bi bi-link-45deg text-warning me-2"></i>Vincular Aliyá a una Parashá</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form action="/admin/aliyot/link" method="POST" id="linkParashaForm">
+                    <input type="hidden" name="aliyah_id" id="linkModalAliyahId">
+
+                    <p class="text-white-50 small mb-3">
+                        Asigna la lectura <strong class="text-white" id="linkModalAliyahTitle"></strong> a la Parashá correspondiente una vez que haya sido creada:
+                    </p>
+
+                    <div class="mb-3">
+                        <label class="form-label small text-white-50 fw-bold">Seleccionar Parashá</label>
+                        <select name="parasha_id" class="form-select bg-black bg-opacity-50 text-white border-secondary" id="linkModalParashaSelect" required>
+                            <option value="">-- Seleccionar Parashá --</option>
+                            <% if (typeof parashot !== 'undefined' && parashot.length > 0) { %>
+                                <% parashot.forEach(p => { %>
+                                    <option value="<%= p.id %>">
+                                        <%= p.parasha_number ? `Nº ${p.parasha_number} - ` : '' %><%= p.title %>
+                                    </option>
+                                <% }) %>
+                            <% } %>
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top border-secondary">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-warning fw-bold px-4">
+                            <i class="bi bi-check-lg me-1"></i> Vincular Ahora
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
@@ -411,7 +472,28 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 3. Modal de Compartir en Redes
+    // 3. Modal de Vinculación Rápida a Parashá
+    document.querySelectorAll('.btn-quick-link').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const aliyahId = this.getAttribute('data-aliyahid');
+            const aliyahTitle = this.getAttribute('data-aliyahtitle');
+            const currentParasha = this.getAttribute('data-currentparasha');
+
+            document.getElementById('linkModalAliyahId').value = aliyahId;
+            document.getElementById('linkModalAliyahTitle').innerText = aliyahTitle;
+            
+            if (currentParasha) {
+                document.getElementById('linkModalParashaSelect').value = currentParasha;
+            } else {
+                document.getElementById('linkModalParashaSelect').value = '';
+            }
+
+            const linkModal = new bootstrap.Modal(document.getElementById('linkParashaModal'));
+            linkModal.show();
+        });
+    });
+
+    // 4. Modal de Compartir en Redes
     let currentShareUrl = '';
     let currentFullMsg = '';
 
@@ -426,7 +508,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('modalShareParasha').innerText = 'Parashá: ' + parasha;
             document.getElementById('modalShareRef').innerText = ref ? '📖 ' + ref : '';
 
-            currentShareUrl = `https://www.hablemosdeyhwh.com/aliyot?parasha=${parashaId}`;
+            currentShareUrl = parashaId ? `https://www.hablemosdeyhwh.com/aliyot?parasha=${parashaId}` : `https://www.hablemosdeyhwh.com/aliyot`;
             currentFullMsg = `*Lectura de Toráh: ${parasha} - ${title}*` + (ref ? `\n📖 Versículos: ${ref}` : '') + `\n\nEscucha el audio y lee la porción aquí:\n${currentShareUrl}`;
 
             const waText = encodeURIComponent(currentFullMsg);

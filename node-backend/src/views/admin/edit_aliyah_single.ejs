@@ -34,7 +34,8 @@
                             <!-- Parashá asociada -->
                             <div class="col-md-6">
                                 <label class="form-label small text-white-50 fw-bold">Parashá Asociada</label>
-                                <select name="parasha_id" class="form-select bg-black bg-opacity-50 text-white border-secondary" required>
+                                <select name="parasha_id" class="form-select bg-black bg-opacity-50 text-white border-secondary">
+                                    <option value="" <%= (!aliyah.parasha_id) ? 'selected' : '' %>>-- Sin vincular aún (Asignar después) --</option>
                                     <% parashot.forEach(p => { %>
                                         <option value="<%= p.id %>" <%= (aliyah.parasha_id == p.id) ? 'selected' : '' %>>
                                             <%= p.parasha_number ? `Nº ${p.parasha_number} - ` : '' %><%= p.title %>

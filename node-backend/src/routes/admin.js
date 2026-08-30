@@ -65,6 +65,7 @@ router.get('/aliyot/edit-item/:id', isAuthenticated, isAdmin, adminController.ed
 router.post('/aliyot/update-item', isAuthenticated, isAdmin, upload.fields([
     { name: 'audio_file', maxCount: 1 }
 ]), adminController.updateAliyahSingle);
+router.post('/aliyot/link', isAuthenticated, isAdmin, adminController.linkAliyahToParasha);
 router.get('/aliyot/delete-item/:id', isAuthenticated, isAdmin, adminController.deleteAliyahSingle);
 router.get('/aliyot/edit/:parashaId', isAuthenticated, isAdmin, adminController.editAliyotPage);
 router.post('/aliyot/save', isAuthenticated, isAdmin, upload.fields([

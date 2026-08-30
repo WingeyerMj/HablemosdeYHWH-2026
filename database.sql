@@ -345,7 +345,7 @@ VALUES
 -- Tabla para Aliyot (Lecturas Diarias de la Torá por Parashá)
 CREATE TABLE IF NOT EXISTS aliyot (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    parasha_id INT NOT NULL,
+    parasha_id INT NULL DEFAULT NULL,
     aliyah_number INT NOT NULL,
     title VARCHAR(255) NOT NULL,
     verses_reference VARCHAR(255),
@@ -355,8 +355,8 @@ CREATE TABLE IF NOT EXISTS aliyot (
     is_published BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (parasha_id) REFERENCES parashot(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_parasha_aliyah (parasha_id, aliyah_number)
+    FOREIGN KEY (parasha_id) REFERENCES parashot(id) ON DELETE SET NULL,
+    INDEX idx_parasha_aliyah (parasha_id, aliyah_number)
 );
 
 

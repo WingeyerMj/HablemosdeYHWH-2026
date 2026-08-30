@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 class Aliyah {
     /**
-     * Obtener todas las Aliyot con datos de la Parashá para el listado del CRUD
+     * Obtener todas las Aliyot con datos de la Parashá (o NULL si no está vinculada aún)
      */
     static async getAllWithParasha() {
         const sql = `
@@ -13,7 +13,7 @@ class Aliyah {
                 p.parasha_number as parasha_number,
                 p.image_url as parasha_image_url
             FROM aliyot a
-            JOIN parashot p ON a.parasha_id = p.id
+            LEFT JOIN parashot p ON a.parasha_id = p.id
             ORDER BY a.created_at DESC, a.aliyah_number ASC
         `;
         const [rows] = await db.query(sql);
@@ -34,6 +34,15 @@ class Aliyah {
     }
 
     /**
+     * Obtener Aliyot pendientes de vincular (sin parashá asignada)
+     */
+    static async getUnlinked() {
+        const sql = `SELECT * FROM aliyot WHERE parasha_id IS NULL ORDER BY created_at DESC`;
+        const [rows] = await db.query(sql);
+        return rows;
+    }
+
+    /**
      * Obtener las Aliyot más recientes
      */
     static async getRecentAliyot(limit = 7) {
@@ -45,7 +54,7 @@ class Aliyah {
                 p.parasha_number as parasha_number,
                 p.image_url as parasha_image_url
             FROM aliyot a
-            JOIN parashot p ON a.parasha_id = p.id
+            LEFT JOIN parashot p ON a.parasha_id = p.id
             WHERE a.is_published = TRUE
             ORDER BY a.updated_at DESC, a.aliyah_number ASC
             LIMIT ?
@@ -77,7 +86,7 @@ class Aliyah {
                 p.parasha_number as parasha_number,
                 p.image_url as parasha_image_url
             FROM aliyot a
-            JOIN parashot p ON a.parasha_id = p.id
+            LEFT JOIN parashot p ON a.parasha_id = p.id
             WHERE a.id = ?
         `;
         const [rows] = await db.query(sql, [id]);
@@ -85,26 +94,19 @@ class Aliyah {
     }
 
     /**
-     * Crear una nueva Aliyá
+     * Crear una nueva Aliyá (parasha_id puede ser null)
      */
     static async create(data) {
         const { parasha_id, aliyah_number, title, verses_reference, content, audio_url, reading_date, is_published } = data;
+        const pId = (parasha_id && parasha_id !== '' && parasha_id !== 'null') ? Number(parasha_id) : null;
         const pub = (is_published !== undefined && is_published !== null) ? Boolean(is_published) : true;
         const rDate = reading_date || null;
 
         const sql = `
             INSERT INTO aliyot (parasha_id, aliyah_number, title, verses_reference, content, audio_url, reading_date, is_published)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-                title = VALUES(title),
-                verses_reference = VALUES(verses_reference),
-                content = VALUES(content),
-                audio_url = VALUES(audio_url),
-                reading_date = VALUES(reading_date),
-                is_published = VALUES(is_published),
-                updated_at = CURRENT_TIMESTAMP
         `;
-        return await db.query(sql, [parasha_id, aliyah_number, title, verses_reference || '', content || '', audio_url || '', rDate, pub]);
+        return await db.query(sql, [pId, aliyah_number, title, verses_reference || '', content || '', audio_url || '', rDate, pub]);
     }
 
     /**
@@ -112,6 +114,7 @@ class Aliyah {
      */
     static async update(id, data) {
         const { parasha_id, aliyah_number, title, verses_reference, content, audio_url, reading_date, is_published } = data;
+        const pId = (parasha_id && parasha_id !== '' && parasha_id !== 'null') ? Number(parasha_id) : null;
         const pub = (is_published !== undefined && is_published !== null) ? Boolean(is_published) : true;
         const rDate = reading_date || null;
 
@@ -119,7 +122,7 @@ class Aliyah {
             UPDATE aliyot 
             SET parasha_id = ?, aliyah_number = ?, title = ?, verses_reference = ?, content = ?, reading_date = ?, is_published = ?
         `;
-        const params = [parasha_id, aliyah_number, title, verses_reference || '', content || '', rDate, pub];
+        const params = [pId, aliyah_number, title, verses_reference || '', content || '', rDate, pub];
 
         if (audio_url !== undefined) {
             sql += `, audio_url = ?`;
@@ -133,9 +136,28 @@ class Aliyah {
     }
 
     /**
+     * Vincular una Aliyá existente a una Parashá
+     */
+    static async linkToParasha(aliyahId, parashaId) {
+        const pId = (parashaId && parashaId !== '' && parashaId !== 'null') ? Number(parashaId) : null;
+        return await db.query('UPDATE aliyot SET parasha_id = ? WHERE id = ?', [pId, aliyahId]);
+    }
+
+    /**
      * Guardar o actualizar una Aliyá (Upsert por parasha_id y aliyah_number)
      */
     static async upsert(data) {
+        const { parasha_id, aliyah_number, title, verses_reference, content, audio_url, reading_date, is_published } = data;
+        const pId = (parasha_id && parasha_id !== '' && parasha_id !== 'null') ? Number(parasha_id) : null;
+        const pub = (is_published !== undefined && is_published !== null) ? Boolean(is_published) : true;
+        const rDate = reading_date || null;
+
+        if (pId) {
+            const [existing] = await db.query('SELECT id FROM aliyot WHERE parasha_id = ? AND aliyah_number = ?', [pId, aliyah_number]);
+            if (existing && existing.length > 0) {
+                return await this.update(existing[0].id, data);
+            }
+        }
         return await this.create(data);
     }
 

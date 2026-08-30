@@ -1132,6 +1132,18 @@ const adminController = {
         }
     },
 
+    linkAliyahToParasha: async (req, res) => {
+        try {
+            const Aliyah = require('../models/Aliyah');
+            const { aliyah_id, parasha_id } = req.body;
+            await Aliyah.linkToParasha(aliyah_id, parasha_id);
+            res.redirect('/admin/aliyot?linked=1');
+        } catch (error) {
+            console.error('Error linkAliyahToParasha:', error);
+            res.redirect('/admin/aliyot?error=' + encodeURIComponent(error.message));
+        }
+    },
+
     editAliyotPage: async (req, res) => {
         try {
             const Parasha = require('../models/Parasha');
