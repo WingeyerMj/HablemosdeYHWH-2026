@@ -136,7 +136,7 @@
         .form-control, .form-select {
             background: rgba(255, 255, 255, 0.08) !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            color: #fff !important;
+            color: #ffffff !important;
             transition: all 0.3s ease;
         }
 
@@ -144,7 +144,25 @@
             background: rgba(255, 255, 255, 0.12) !important;
             border-color: var(--primary-color) !important;
             box-shadow: 0 0 0 0.2rem rgba(212, 184, 149, 0.2) !important;
-            color: white !important;
+            color: #ffffff !important;
+        }
+
+        /* Opciones desplegables visibles con fondo oscuro y texto claro legible */
+        select option,
+        select optgroup,
+        .form-select option,
+        .form-select optgroup,
+        .form-control option {
+            background-color: #181818 !important;
+            color: #ffffff !important;
+            padding: 8px 12px !important;
+        }
+
+        select option:checked,
+        .form-select option:checked {
+            background-color: #332a1e !important;
+            color: #f0c987 !important;
+            font-weight: bold;
         }
 
         .form-control::placeholder {
