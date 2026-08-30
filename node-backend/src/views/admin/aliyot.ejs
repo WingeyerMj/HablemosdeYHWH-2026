@@ -3,116 +3,488 @@
 <main class="col-md-10 main-content p-4">
     <div class="page-header d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary">
         <div>
-            <h1 class="h2 text-white"><i class="bi bi-mic me-2" style="color: var(--primary-color);"></i>Gestión de Aliyot (Lecturas Diarias)</h1>
-            <p class="text-white-50 mb-0">Administrá las 7 lecturas diarias de la Torá por cada Parashá, subí sus audios y editá los versículos.</p>
+            <h1 class="h2 text-white"><i class="bi bi-mic me-2" style="color: var(--primary-color, #d4b895);"></i>Gestión de Aliyot (Lecturas Diarias)</h1>
+            <p class="text-white-50 mb-0">Carga y administra los audios diarios, versículos y compártelos en redes sociales vinculadas.</p>
         </div>
-        <div>
-            <a href="/admin/dashboard#pills-services" class="btn btn-outline-secondary"><i class="bi bi-journal-text me-1"></i> Ir a Parashot</a>
-        </div>
-    </div>
-
-    <!-- Buscador rápido -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="input-group">
-                <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-search"></i></span>
-                <input type="text" id="searchParasha" class="form-control bg-dark text-white border-secondary" placeholder="Buscar Parashá por nombre, número o cita...">
-            </div>
-        </div>
-        <div class="col-md-6 d-flex align-items-center justify-content-md-end mt-2 mt-md-0">
-            <span class="badge bg-secondary p-2 fs-6">
-                Total Parashot: <strong><%= parashot.length %></strong>
-            </span>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-success fw-bold d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#createAliyahModal">
+                <i class="bi bi-plus-circle fs-5"></i> Cargar Nueva Aliyá
+            </button>
+            <a href="/aliyot" target="_blank" class="btn btn-outline-info d-flex align-items-center gap-1">
+                <i class="bi bi-eye"></i> Ver en la Web
+            </a>
         </div>
     </div>
 
-    <!-- Grilla de Parashot -->
-    <div class="row g-4" id="parashotGrid">
-        <% if (typeof parashot !== 'undefined' && parashot.length > 0) { %>
-            <% parashot.forEach(p => { %>
-                <div class="col-lg-4 col-md-6 parasha-card-item" data-title="<%= (p.title + ' ' + (p.subtitle || '') + ' ' + (p.parasha_number || '')).toLowerCase() %>">
-                    <div class="card bg-dark text-white border-secondary h-100 shadow-sm" style="border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;">
-                        <div class="card-header border-secondary d-flex justify-content-between align-items-center bg-black bg-opacity-25 py-2">
-                            <span class="badge" style="background: var(--primary-color, #d4b895); color: #000; font-weight: 700;">
-                                <%= p.parasha_number ? `Nº ${p.parasha_number}` : 'Parashá' %>
-                            </span>
-                            <div class="d-flex gap-2">
-                                <span class="badge bg-dark border border-secondary text-white-50" title="Aliyot cargadas">
-                                    <i class="bi bi-book me-1"></i> <%= p.total_aliyot || 0 %>/7
-                                </span>
-                                <span class="badge <%= (p.audios_count && p.audios_count > 0) ? 'bg-success' : 'bg-secondary' %>" title="Audios subidos">
-                                    <i class="bi bi-volume-up me-1"></i> <%= p.audios_count || 0 %>/7
-                                </span>
-                            </div>
-                        </div>
-                        <div class="card-body d-flex flex-column">
-                            <div class="d-flex align-items-center gap-3 mb-2">
-                                <% if (p.image_url) { %>
-                                    <img src="<%= p.image_url %>" alt="<%= p.title %>" style="width: 55px; height: 55px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1);">
-                                <% } else { %>
-                                    <div class="d-flex align-items-center justify-content-center bg-black bg-opacity-50" style="width: 55px; height: 55px; border-radius: 8px; border: 1px dashed rgba(255,255,255,0.2);">
-                                        <i class="bi bi-journal-text fs-4 text-white-50"></i>
-                                    </div>
-                                <% } %>
-                                <div class="overflow-hidden">
-                                    <h5 class="card-title mb-1 text-truncate" style="color: #fff; font-weight: 600;"><%= p.title %></h5>
-                                    <% if (p.subtitle) { %>
-                                        <p class="card-text text-white-50 small mb-0 text-truncate"><%= p.subtitle %></p>
-                                    <% } %>
-                                </div>
-                            </div>
+    <% if (typeof created !== 'undefined' && created) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> ¡Lectura de Aliyá creada exitosamente!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (typeof updated !== 'undefined' && updated) { %>
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i> ¡Lectura de Aliyá actualizada correctamente!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (typeof deleted !== 'undefined' && deleted) { %>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="bi bi-trash-fill me-2"></i> Lectura de Aliyá eliminada.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
 
-                            <!-- Barra de progreso de 7 Aliyot -->
-                            <div class="mt-2 mb-3">
-                                <div class="d-flex justify-content-between small text-white-50 mb-1" style="font-size: 0.78rem;">
-                                    <span>Completado:</span>
-                                    <span><%= Math.round(((p.total_aliyot || 0) / 7) * 100) %>%</span>
-                                </div>
-                                <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.1);">
-                                    <div class="progress-bar" role="progressbar" 
-                                         style="width: <%= ((p.total_aliyot || 0) / 7) * 100 %>%; background-color: var(--primary-color, #d4b895);" 
-                                         aria-valuenow="<%= p.total_aliyot || 0 %>" aria-valuemin="0" aria-valuemax="7"></div>
-                                </div>
-                            </div>
+    <!-- Pestañas de Vista: Listado General vs Por Parashá -->
+    <ul class="nav nav-pills mb-4 gap-2" id="aliyotMainTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-bold border border-secondary" id="tab-all-aliyot" data-bs-toggle="pill" data-bs-target="#content-all-aliyot" type="button" role="tab">
+                <i class="bi bi-list-task me-1"></i> Todas las Aliyot Cargadas (<%= (typeof allAliyot !== 'undefined' && allAliyot) ? allAliyot.length : 0 %>)
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold border border-secondary" id="tab-by-parasha" data-bs-toggle="pill" data-bs-target="#content-by-parasha" type="button" role="tab">
+                <i class="bi bi-journal-album me-1"></i> Organizar por Parashá (7 Días)
+            </button>
+        </li>
+    </ul>
 
-                            <div class="mt-auto pt-2 border-top border-secondary d-flex gap-2">
-                                <a href="/admin/aliyot/edit/<%= p.id %>" class="btn btn-sm w-100 fw-bold d-flex align-items-center justify-content-center gap-1" style="background: var(--primary-color, #d4b895); color: #1a1a1a;">
-                                    <i class="bi bi-pencil-square"></i> Cargar 7 Aliyot
-                                </a>
-                                <a href="/parashot/<%= p.id %>" target="_blank" class="btn btn-sm btn-outline-secondary" title="Ver en la Web">
-                                    <i class="bi bi-box-arrow-up-right"></i>
-                                </a>
-                            </div>
-                        </div>
+    <div class="tab-content" id="aliyotMainTabContent">
+        
+        <!-- PESTAÑA 1: LISTADO GENERAL DE ALIYOT (CRUD COMPLETO) -->
+        <div class="tab-pane fade show active" id="content-all-aliyot" role="tabpanel">
+            <div class="card bg-dark text-white border-secondary shadow-sm mb-4" style="border-radius: 12px;">
+                <div class="card-header border-secondary bg-black bg-opacity-25 d-flex justify-content-between align-items-center py-3 flex-wrap gap-2">
+                    <h5 class="mb-0 text-white"><i class="bi bi-headphones me-2" style="color: var(--primary-color, #d4b895);"></i>Listado de Lecturas Diarias</h5>
+                    <div class="d-flex gap-2">
+                        <input type="text" id="filterAliyotInput" class="form-control form-control-sm bg-black bg-opacity-50 text-white border-secondary" placeholder="Filtrar por parashá o versículo..." style="min-width: 250px;">
                     </div>
                 </div>
-            <% }) %>
-        <% } else { %>
-            <div class="col-12 text-center py-5 text-white-50">
-                <i class="bi bi-journal-x fs-1 mb-2 d-block"></i>
-                <p>No se encontraron Parashot registradas. Crea primero las Parashot en el Dashboard.</p>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0" id="aliyotTable">
+                            <thead class="table-black border-secondary" style="border-bottom: 2px solid rgba(255,255,255,0.1);">
+                                <tr>
+                                    <th style="width: 100px;">Día</th>
+                                    <th>Parashá</th>
+                                    <th>Título & Cita</th>
+                                    <th>Audio</th>
+                                    <th>Estado</th>
+                                    <th class="text-end" style="min-width: 220px;">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (typeof allAliyot !== 'undefined' && allAliyot.length > 0) { %>
+                                    <% allAliyot.forEach(a => { 
+                                        const defaultDays = ['1ª Aliyá (Dom)', '2ª Aliyá (Lun)', '3ª Aliyá (Mar)', '4ª Aliyá (Mié)', '5ª Aliyá (Jue)', '6ª Aliyá (Vie)', '7ª Aliyá (Shab)'];
+                                    %>
+                                        <tr class="aliyah-table-row" data-search="<%= (a.title + ' ' + (a.parasha_title || '') + ' ' + (a.verses_reference || '')).toLowerCase() %>">
+                                            <td>
+                                                <span class="badge" style="background: var(--primary-color, #d4b895); color: #000; font-weight: 700;">
+                                                    <%= a.aliyah_number %>ª Aliyá
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="fw-bold text-white"><%= a.parasha_title %></div>
+                                                <small class="text-white-50"><%= a.parasha_subtitle || '' %></small>
+                                            </td>
+                                            <td>
+                                                <div class="text-white fw-semibold"><%= a.title %></div>
+                                                <% if (a.verses_reference) { %>
+                                                    <small class="text-warning"><i class="bi bi-bookmark me-1"></i><%= a.verses_reference %></small>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (a.audio_url && a.audio_url.trim() !== '') { %>
+                                                    <audio controls style="height: 32px; max-width: 180px;">
+                                                        <source src="<%= a.audio_url %>" type="audio/mpeg">
+                                                    </audio>
+                                                <% } else { %>
+                                                    <span class="badge bg-secondary">Sin audio</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (a.is_published) { %>
+                                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Publicado</span>
+                                                <% } else { %>
+                                                    <span class="badge bg-secondary"><i class="bi bi-clock me-1"></i> Borrador</span>
+                                                <% } %>
+                                            </td>
+                                            <td class="text-end">
+                                                <!-- Botón Compartir en Redes -->
+                                                <button type="button" class="btn btn-sm btn-outline-success me-1 btn-open-share"
+                                                        data-title="<%= a.title %>"
+                                                        data-parasha="<%= a.parasha_title %>"
+                                                        data-ref="<%= a.verses_reference || '' %>"
+                                                        data-parashaid="<%= a.parasha_id %>"
+                                                        title="Compartir en Redes">
+                                                    <i class="bi bi-share-fill"></i>
+                                                </button>
+
+                                                <!-- Editar -->
+                                                <a href="/admin/aliyot/edit-item/<%= a.id %>" class="btn btn-sm btn-primary me-1" title="Editar Aliyá">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+
+                                                <!-- Eliminar -->
+                                                <a href="/admin/aliyot/delete-item/<%= a.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas eliminar esta Aliyá?');" title="Eliminar">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" class="text-center py-5 text-white-50">
+                                            <i class="bi bi-mic fs-1 d-block mb-2 text-warning"></i>
+                                            <p class="mb-2">No hay Aliyot cargadas individualmente todavía.</p>
+                                            <button type="button" class="btn btn-sm btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#createAliyahModal">
+                                                <i class="bi bi-plus-circle me-1"></i> Cargar Primera Aliyá
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-        <% } %>
+        </div>
+
+        <!-- PESTAÑA 2: ORGANIZAR POR PARASHÁ (7 DÍAS) -->
+        <div class="tab-pane fade" id="content-by-parasha" role="tabpanel">
+            <div class="row g-4">
+                <% if (typeof parashotOverview !== 'undefined' && parashotOverview.length > 0) { %>
+                    <% parashotOverview.forEach(p => { %>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card bg-dark text-white border-secondary h-100 shadow-sm" style="border-radius: 12px; overflow: hidden;">
+                                <div class="card-header border-secondary d-flex justify-content-between align-items-center bg-black bg-opacity-25 py-2">
+                                    <span class="badge" style="background: var(--primary-color, #d4b895); color: #000; font-weight: 700;">
+                                        <%= p.parasha_number ? `Nº ${p.parasha_number}` : 'Parashá' %>
+                                    </span>
+                                    <div class="d-flex gap-2">
+                                        <span class="badge bg-dark border border-secondary text-white-50">
+                                            <i class="bi bi-book me-1"></i> <%= p.total_aliyot || 0 %>/7
+                                        </span>
+                                        <span class="badge <%= (p.audios_count && p.audios_count > 0) ? 'bg-success' : 'bg-secondary' %>">
+                                            <i class="bi bi-volume-up me-1"></i> <%= p.audios_count || 0 %>/7
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title mb-1 text-truncate" style="color: #fff; font-weight: 600;"><%= p.title %></h5>
+                                    <% if (p.subtitle) { %>
+                                        <p class="card-text text-white-50 small mb-2 text-truncate"><%= p.subtitle %></p>
+                                    <% } %>
+
+                                    <div class="mt-2 mb-3">
+                                        <div class="d-flex justify-content-between small text-white-50 mb-1" style="font-size: 0.78rem;">
+                                            <span>Completado:</span>
+                                            <span><%= Math.round(((p.total_aliyot || 0) / 7) * 100) %>%</span>
+                                        </div>
+                                        <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.1);">
+                                            <div class="progress-bar" role="progressbar" 
+                                                 style="width: <%= ((p.total_aliyot || 0) / 7) * 100 %>%; background-color: var(--primary-color, #d4b895);" 
+                                                 aria-valuenow="<%= p.total_aliyot || 0 %>" aria-valuemin="0" aria-valuemax="7"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-auto pt-2 border-top border-secondary d-flex gap-2">
+                                        <a href="/admin/aliyot/edit/<%= p.id %>" class="btn btn-sm w-100 fw-bold d-flex align-items-center justify-content-center gap-1" style="background: var(--primary-color, #d4b895); color: #1a1a1a;">
+                                            <i class="bi bi-pencil-square"></i> Cargar 7 Aliyot
+                                        </a>
+                                        <a href="/parashot/<%= p.id %>" target="_blank" class="btn btn-sm btn-outline-secondary" title="Ver en la Web">
+                                            <i class="bi bi-box-arrow-up-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } %>
+            </div>
+        </div>
+
     </div>
 </main>
 
+<!-- ============================================== -->
+<!-- MODAL: CREAR NUEVA ALIYÁ (LECTURA DIARIA) -->
+<!-- ============================================== -->
+<div class="modal fade" id="createAliyahModal" tabindex="-1" aria-labelledby="createAliyahModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content bg-dark text-white border-secondary" style="border-radius: 14px;">
+            <div class="modal-header border-secondary bg-black bg-opacity-25">
+                <h5 class="modal-title" id="createAliyahModalLabel"><i class="bi bi-plus-circle text-success me-2"></i>Cargar Nueva Aliyá (Lectura Diaria)</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form action="/admin/aliyot/create" method="POST" enctype="multipart/form-data" id="createAliyahModalForm">
+                    <div class="row g-3">
+                        <!-- Parashá Asociada -->
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50 fw-bold">Parashá Asociada</label>
+                            <select name="parasha_id" class="form-select bg-black bg-opacity-50 text-white border-secondary" required>
+                                <% if (typeof parashot !== 'undefined' && parashot.length > 0) { %>
+                                    <% parashot.forEach(p => { %>
+                                        <option value="<%= p.id %>">
+                                            <%= p.parasha_number ? `Nº ${p.parasha_number} - ` : '' %><%= p.title %>
+                                        </option>
+                                    <% }) %>
+                                <% } %>
+                            </select>
+                        </div>
+
+                        <!-- Número de Aliyá / Día -->
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50 fw-bold">Día de la Lectura</label>
+                            <select name="aliyah_number" class="form-select bg-black bg-opacity-50 text-white border-secondary" required>
+                                <option value="1">1ª Aliyá (Domingo - Día 1)</option>
+                                <option value="2">2ª Aliyá (Lunes - Día 2)</option>
+                                <option value="3">3ª Aliyá (Martes - Día 3)</option>
+                                <option value="4">4ª Aliyá (Miércoles - Día 4)</option>
+                                <option value="5">5ª Aliyá (Jueves - Día 5)</option>
+                                <option value="6">6ª Aliyá (Viernes - Día 6)</option>
+                                <option value="7">7ª Aliyá (Shabat - Día 7)</option>
+                            </select>
+                        </div>
+
+                        <!-- Título -->
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50 fw-bold">Título de la Aliyá</label>
+                            <input type="text" name="title" class="form-control bg-black bg-opacity-50 text-white border-secondary" placeholder="Ej: 1ª Aliyá - Domingo" required>
+                        </div>
+
+                        <!-- Referencia de Versículos -->
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50 fw-bold">Referencia de Versículos (Cita Bíblica)</label>
+                            <input type="text" name="verses_reference" class="form-control bg-black bg-opacity-50 text-white border-secondary" placeholder="Ej: Génesis 1:1 - 2:3">
+                        </div>
+
+                        <!-- SECCIÓN DE AUDIO -->
+                        <div class="col-12">
+                            <div class="p-3 rounded border border-secondary" style="background: rgba(255, 255, 255, 0.03);">
+                                <label class="form-label fw-bold text-white d-flex align-items-center gap-2 mb-2">
+                                    <i class="bi bi-soundwave" style="color: var(--primary-color, #d4b895); font-size: 1.2rem;"></i>
+                                    Subir Archivo de Audio
+                                </label>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label small text-white-50">Archivo de audio (.mp3, .m4a, .wav, .aac)</label>
+                                        <input type="file" name="audio_file" class="form-control bg-black bg-opacity-50 text-white border-secondary" accept="audio/*">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small text-white-50">O enlace de audio externo</label>
+                                        <input type="text" name="custom_audio_url" class="form-control bg-black bg-opacity-50 text-white border-secondary" placeholder="https://.../audio.mp3">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- EDITOR DE VERSÍCULOS / TEXTO -->
+                        <div class="col-12">
+                            <label class="form-label small text-white-50 fw-bold">
+                                <i class="bi bi-fonts me-1"></i> Versículos y Contenido de la Lectura
+                            </label>
+                            <div id="modal-quill-editor" style="height: 250px; background: #ffffff; color: #111; border-radius: 6px;"></div>
+                            <input type="hidden" name="content" id="modalAliyahContent">
+                        </div>
+
+                        <!-- FECHA Y ESTADO -->
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Fecha de lectura:</label>
+                            <input type="date" name="reading_date" class="form-control bg-black bg-opacity-50 text-white border-secondary">
+                        </div>
+                        <div class="col-md-6 d-flex align-items-center mt-md-4 pt-md-2">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="is_published" value="1" id="modalPublish" checked>
+                                <label class="form-check-label text-white small fw-bold" for="modalPublish">
+                                    Publicar inmediatamente en la web
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end align-items-center gap-2 mt-4 pt-3 border-top border-secondary">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-success fw-bold px-4">
+                            <i class="bi bi-check-circle me-1"></i> Guardar Aliyá
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================== -->
+<!-- MODAL: COMPARTIR EN REDES SOCIALES -->
+<!-- ============================================== -->
+<div class="modal fade" id="shareSocialModal" tabindex="-1" aria-labelledby="shareSocialModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary" style="border-radius: 14px;">
+            <div class="modal-header border-secondary bg-black bg-opacity-25">
+                <h5 class="modal-title" id="shareSocialModalLabel"><i class="bi bi-share text-success me-2"></i>Compartir Lectura Diaria</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="p-3 mb-3 rounded bg-black bg-opacity-50 border border-secondary">
+                    <h6 class="text-warning mb-1" id="modalShareTitle">Título de la Aliyá</h6>
+                    <small class="text-white-50 d-block" id="modalShareParasha">Parashá</small>
+                    <small class="text-white-50" id="modalShareRef">Versículos</small>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <a href="#" id="btnShareWhatsApp" target="_blank" rel="noopener noreferrer" 
+                       class="btn btn-success d-flex align-items-center justify-content-center gap-2 py-2 fw-bold" style="background-color: #25D366; border: none;">
+                        <i class="bi bi-whatsapp fs-5"></i> Compartir en WhatsApp
+                    </a>
+
+                    <a href="#" id="btnShareTelegram" target="_blank" rel="noopener noreferrer" 
+                       class="btn btn-info d-flex align-items-center justify-content-center gap-2 py-2 fw-bold text-white" style="background-color: #0088cc; border: none;">
+                        <i class="bi bi-telegram fs-5"></i> Compartir en Telegram
+                    </a>
+
+                    <a href="#" id="btnShareFacebook" target="_blank" rel="noopener noreferrer" 
+                       class="btn btn-primary d-flex align-items-center justify-content-center gap-2 py-2 fw-bold" style="background-color: #1877F2; border: none;">
+                        <i class="bi bi-facebook fs-5"></i> Compartir en Facebook
+                    </a>
+
+                    <a href="#" id="btnShareTwitter" target="_blank" rel="noopener noreferrer" 
+                       class="btn btn-dark d-flex align-items-center justify-content-center gap-2 py-2 fw-bold border border-secondary">
+                        <i class="bi bi-twitter-x fs-5"></i> Compartir en X (Twitter)
+                    </a>
+
+                    <hr class="border-secondary my-2">
+
+                    <button type="button" class="btn btn-outline-light d-flex align-items-center justify-content-center gap-2 py-2" id="btnCopyDirectLink">
+                        <i class="bi bi-link-45deg fs-5"></i> Copiar Enlace Directo
+                    </button>
+
+                    <button type="button" class="btn btn-outline-warning d-flex align-items-center justify-content-center gap-2 py-2" id="btnCopyFormattedMsg">
+                        <i class="bi bi-clipboard-check fs-5"></i> Copiar Mensaje Completo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchParasha');
-    const cards = document.querySelectorAll('.parasha-card-item');
+    // 1. Inicializar Quill en el Modal de Creación
+    const modalQuill = new Quill('#modal-quill-editor', {
+        theme: 'snow',
+        modules: { 
+            toolbar: [
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline'],
+                [{ 'color': [] }],
+                ['link', 'blockquote'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                ['clean']
+            ] 
+        }
+    });
 
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
+    document.getElementById('createAliyahModalForm').onsubmit = function() {
+        document.getElementById('modalAliyahContent').value = modalQuill.root.innerHTML;
+        return true;
+    };
+
+    // 2. Filtro en vivo para la tabla
+    const filterInput = document.getElementById('filterAliyotInput');
+    if (filterInput) {
+        filterInput.addEventListener('input', function() {
             const query = this.value.toLowerCase().trim();
-            cards.forEach(card => {
-                const title = card.getAttribute('data-title') || '';
-                if (title.includes(query)) {
-                    card.style.display = 'block';
+            document.querySelectorAll('.aliyah-table-row').forEach(row => {
+                const searchData = row.getAttribute('data-search') || '';
+                if (searchData.includes(query)) {
+                    row.style.display = '';
                 } else {
-                    card.style.display = 'none';
+                    row.style.display = 'none';
                 }
             });
         });
     }
+
+    // 3. Modal de Compartir en Redes
+    let currentShareUrl = '';
+    let currentFullMsg = '';
+
+    document.querySelectorAll('.btn-open-share').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const title = this.getAttribute('data-title');
+            const parasha = this.getAttribute('data-parasha');
+            const ref = this.getAttribute('data-ref');
+            const parashaId = this.getAttribute('data-parashaid');
+
+            document.getElementById('modalShareTitle').innerText = title;
+            document.getElementById('modalShareParasha').innerText = 'Parashá: ' + parasha;
+            document.getElementById('modalShareRef').innerText = ref ? '📖 ' + ref : '';
+
+            currentShareUrl = `https://www.hablemosdeyhwh.com/aliyot?parasha=${parashaId}`;
+            currentFullMsg = `*Lectura de Toráh: ${parasha} - ${title}*` + (ref ? `\n📖 Versículos: ${ref}` : '') + `\n\nEscucha el audio y lee la porción aquí:\n${currentShareUrl}`;
+
+            const waText = encodeURIComponent(currentFullMsg);
+            const tgText = encodeURIComponent(`Lectura de Toráh: ${parasha} - ${title}\n` + (ref ? `📖 Versículos: ${ref}` : ''));
+            const xText = encodeURIComponent(`Lectura de Toráh: ${parasha} - ${title} ${ref}`);
+
+            document.getElementById('btnShareWhatsApp').href = `https://api.whatsapp.com/send?text=${waText}`;
+            document.getElementById('btnShareTelegram').href = `https://t.me/share/url?url=${encodeURIComponent(currentShareUrl)}&text=${tgText}`;
+            document.getElementById('btnShareFacebook').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentShareUrl)}`;
+            document.getElementById('btnShareTwitter').href = `https://twitter.com/intent/tweet?text=${xText}&url=${encodeURIComponent(currentShareUrl)}`;
+
+            const shareModal = new bootstrap.Modal(document.getElementById('shareSocialModal'));
+            shareModal.show();
+        });
+    });
+
+    // Copiar enlace directo en el modal
+    document.getElementById('btnCopyDirectLink').addEventListener('click', function() {
+        navigator.clipboard.writeText(currentShareUrl).then(() => {
+            const prev = this.innerHTML;
+            this.innerHTML = '<i class="bi bi-check-lg text-success fs-5"></i> ¡Enlace Copiado!';
+            setTimeout(() => { this.innerHTML = prev; }, 2000);
+        });
+    });
+
+    // Copiar mensaje completo en el modal
+    document.getElementById('btnCopyFormattedMsg').addEventListener('click', function() {
+        navigator.clipboard.writeText(currentFullMsg).then(() => {
+            const prev = this.innerHTML;
+            this.innerHTML = '<i class="bi bi-check-lg text-success fs-5"></i> ¡Mensaje Copiado!';
+            setTimeout(() => { this.innerHTML = prev; }, 2000);
+        });
+    });
 });
 </script>
+
+<style>
+.nav-pills .nav-link {
+    color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.05);
+    transition: all 0.2s ease;
+}
+.nav-pills .nav-link:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.12);
+}
+.nav-pills .nav-link.active {
+    background: var(--primary-color, #d4b895) !important;
+    color: #1a1a1a !important;
+    box-shadow: 0 4px 15px rgba(212,184,149,0.3);
+}
+.ql-toolbar.ql-snow {
+    background: #f8f9fa;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+.ql-container.ql-snow {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+</style>

@@ -2,6 +2,25 @@ const db = require('../config/db');
 
 class Aliyah {
     /**
+     * Obtener todas las Aliyot con datos de la Parashá para el listado del CRUD
+     */
+    static async getAllWithParasha() {
+        const sql = `
+            SELECT 
+                a.*,
+                p.title as parasha_title,
+                p.subtitle as parasha_subtitle,
+                p.parasha_number as parasha_number,
+                p.image_url as parasha_image_url
+            FROM aliyot a
+            JOIN parashot p ON a.parasha_id = p.id
+            ORDER BY a.created_at DESC, a.aliyah_number ASC
+        `;
+        const [rows] = await db.query(sql);
+        return rows;
+    }
+
+    /**
      * Obtener todas las Aliyot de una Parashá (ordenadas 1 a 7)
      */
     static async getByParashaId(parashaId, onlyPublished = false) {
@@ -15,7 +34,7 @@ class Aliyah {
     }
 
     /**
-     * Obtener las Aliyot más recientes o de la semana actual con datos de su Parashá
+     * Obtener las Aliyot más recientes
      */
     static async getRecentAliyot(limit = 7) {
         const sql = `
@@ -66,41 +85,58 @@ class Aliyah {
     }
 
     /**
-     * Guardar o actualizar una Aliyá (Upsert por parasha_id y aliyah_number)
+     * Crear una nueva Aliyá
      */
-    static async upsert(data) {
+    static async create(data) {
         const { parasha_id, aliyah_number, title, verses_reference, content, audio_url, reading_date, is_published } = data;
         const pub = (is_published !== undefined && is_published !== null) ? Boolean(is_published) : true;
         const rDate = reading_date || null;
 
+        const sql = `
+            INSERT INTO aliyot (parasha_id, aliyah_number, title, verses_reference, content, audio_url, reading_date, is_published)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+                title = VALUES(title),
+                verses_reference = VALUES(verses_reference),
+                content = VALUES(content),
+                audio_url = VALUES(audio_url),
+                reading_date = VALUES(reading_date),
+                is_published = VALUES(is_published),
+                updated_at = CURRENT_TIMESTAMP
+        `;
+        return await db.query(sql, [parasha_id, aliyah_number, title, verses_reference || '', content || '', audio_url || '', rDate, pub]);
+    }
+
+    /**
+     * Actualizar una Aliyá por su ID
+     */
+    static async update(id, data) {
+        const { parasha_id, aliyah_number, title, verses_reference, content, audio_url, reading_date, is_published } = data;
+        const pub = (is_published !== undefined && is_published !== null) ? Boolean(is_published) : true;
+        const rDate = reading_date || null;
+
+        let sql = `
+            UPDATE aliyot 
+            SET parasha_id = ?, aliyah_number = ?, title = ?, verses_reference = ?, content = ?, reading_date = ?, is_published = ?
+        `;
+        const params = [parasha_id, aliyah_number, title, verses_reference || '', content || '', rDate, pub];
+
         if (audio_url !== undefined) {
-            const sql = `
-                INSERT INTO aliyot (parasha_id, aliyah_number, title, verses_reference, content, audio_url, reading_date, is_published)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE
-                    title = VALUES(title),
-                    verses_reference = VALUES(verses_reference),
-                    content = VALUES(content),
-                    audio_url = VALUES(audio_url),
-                    reading_date = VALUES(reading_date),
-                    is_published = VALUES(is_published),
-                    updated_at = CURRENT_TIMESTAMP
-            `;
-            return await db.query(sql, [parasha_id, aliyah_number, title, verses_reference || '', content || '', audio_url, rDate, pub]);
-        } else {
-            const sql = `
-                INSERT INTO aliyot (parasha_id, aliyah_number, title, verses_reference, content, reading_date, is_published)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE
-                    title = VALUES(title),
-                    verses_reference = VALUES(verses_reference),
-                    content = VALUES(content),
-                    reading_date = VALUES(reading_date),
-                    is_published = VALUES(is_published),
-                    updated_at = CURRENT_TIMESTAMP
-            `;
-            return await db.query(sql, [parasha_id, aliyah_number, title, verses_reference || '', content || '', rDate, pub]);
+            sql += `, audio_url = ?`;
+            params.push(audio_url);
         }
+
+        sql += ` WHERE id = ?`;
+        params.push(id);
+
+        return await db.query(sql, params);
+    }
+
+    /**
+     * Guardar o actualizar una Aliyá (Upsert por parasha_id y aliyah_number)
+     */
+    static async upsert(data) {
+        return await this.create(data);
     }
 
     /**

@@ -1007,16 +1007,126 @@ const adminController = {
     // --- GESTIÓN DE ALIYOT (Lecturas Diarias de la Torá) ---
     aliyotIndex: async (req, res) => {
         try {
+            const Parasha = require('../models/Parasha');
             const Aliyah = require('../models/Aliyah');
-            const parashot = await Aliyah.getParashotOverview();
+            const parashot = await Parasha.getAll();
+            const parashotOverview = await Aliyah.getParashotOverview();
+            const allAliyot = await Aliyah.getAllWithParasha();
+
             res.render('admin/aliyot', {
                 title: 'Gestión de Aliyot (Lecturas Diarias)',
                 activePage: 'aliyot',
-                parashot
+                parashot,
+                parashotOverview,
+                allAliyot,
+                created: req.query.created || null,
+                updated: req.query.updated || null,
+                deleted: req.query.deleted || null
             });
         } catch (error) {
             console.error('Error aliyotIndex:', error);
             res.status(500).send('Error al cargar Aliyot: ' + error.message);
+        }
+    },
+
+    createAliyahSingle: async (req, res) => {
+        try {
+            const Aliyah = require('../models/Aliyah');
+            const { parasha_id, aliyah_number, title, verses_reference, content, custom_audio_url, reading_date, is_published } = req.body;
+
+            let audio_url = custom_audio_url ? custom_audio_url.trim() : '';
+
+            if (req.files && req.files['audio_file'] && req.files['audio_file'][0]) {
+                audio_url = '/uploads/audios/' + req.files['audio_file'][0].filename;
+            }
+
+            const pub = (is_published === '1' || is_published === 1 || is_published === true || is_published === 'on');
+
+            await Aliyah.create({
+                parasha_id: Number(parasha_id),
+                aliyah_number: Number(aliyah_number),
+                title: title || `Aliyá ${aliyah_number}`,
+                verses_reference: verses_reference || '',
+                content: content || '',
+                audio_url: audio_url,
+                reading_date: reading_date || null,
+                is_published: pub
+            });
+
+            res.redirect('/admin/aliyot?created=1');
+        } catch (error) {
+            console.error('Error createAliyahSingle:', error);
+            res.redirect('/admin/aliyot?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    editAliyahSinglePage: async (req, res) => {
+        try {
+            const Parasha = require('../models/Parasha');
+            const Aliyah = require('../models/Aliyah');
+            const { id } = req.params;
+            const aliyah = await Aliyah.getById(id);
+            if (!aliyah) return res.redirect('/admin/aliyot');
+            const parashot = await Parasha.getAll();
+
+            res.render('admin/edit_aliyah_single', {
+                title: `Editar Aliyá - ${aliyah.title}`,
+                activePage: 'aliyot',
+                aliyah,
+                parashot
+            });
+        } catch (error) {
+            console.error('Error editAliyahSinglePage:', error);
+            res.redirect('/admin/aliyot');
+        }
+    },
+
+    updateAliyahSingle: async (req, res) => {
+        try {
+            const Aliyah = require('../models/Aliyah');
+            const { id, parasha_id, aliyah_number, title, verses_reference, content, existing_audio_url, custom_audio_url, remove_audio, reading_date, is_published } = req.body;
+
+            let audio_url = existing_audio_url || '';
+
+            if (remove_audio === '1') {
+                audio_url = '';
+            }
+
+            if (req.files && req.files['audio_file'] && req.files['audio_file'][0]) {
+                audio_url = '/uploads/audios/' + req.files['audio_file'][0].filename;
+            } else if (custom_audio_url && custom_audio_url.trim() !== '') {
+                audio_url = custom_audio_url.trim();
+            }
+
+            const pub = (is_published === '1' || is_published === 1 || is_published === true || is_published === 'on');
+
+            await Aliyah.update(id, {
+                parasha_id: Number(parasha_id),
+                aliyah_number: Number(aliyah_number),
+                title: title || `Aliyá ${aliyah_number}`,
+                verses_reference: verses_reference || '',
+                content: content || '',
+                audio_url: audio_url,
+                reading_date: reading_date || null,
+                is_published: pub
+            });
+
+            res.redirect('/admin/aliyot?updated=1');
+        } catch (error) {
+            console.error('Error updateAliyahSingle:', error);
+            res.redirect('/admin/aliyot?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    deleteAliyahSingle: async (req, res) => {
+        try {
+            const Aliyah = require('../models/Aliyah');
+            const { id } = req.params;
+            await Aliyah.delete(id);
+            res.redirect('/admin/aliyot?deleted=1');
+        } catch (error) {
+            console.error('Error deleteAliyahSingle:', error);
+            res.redirect('/admin/aliyot');
         }
     },
 
@@ -1052,7 +1162,9 @@ const adminController = {
                     title: dayNames[i - 1],
                     verses_reference: '',
                     content: '',
-                    audio_url: ''
+                    audio_url: '',
+                    reading_date: null,
+                    is_published: true
                 };
             }
 
