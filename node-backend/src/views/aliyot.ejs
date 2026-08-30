@@ -140,14 +140,24 @@
                                                     <% } %>
                                                 </div>
 
-                                                <!-- Botones de Compartir -->
-                                                <div class="d-flex gap-2 align-items-center">
+                                                <!-- Botones de Compartir y Descargar PDF / Imprimir -->
+                                                <div class="d-flex flex-wrap gap-2 align-items-center">
                                                     <% 
                                                         const shareTitle = `Lectura de Toráh: ${selectedParasha.title} - ${d.name} (${d.day})`;
                                                         const shareRef = aliyah.verses_reference ? `\n📖 Versículos: ${aliyah.verses_reference}` : '';
                                                         const shareUrl = `https://www.hablemosdeyhwh.com/aliyot?parasha=${selectedParasha.id}`;
                                                         const waText = encodeURIComponent(`*${shareTitle}*${shareRef}\n\nEscucha y lee la porción completa aquí:\n${shareUrl}`);
                                                     %>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-1 px-3 py-1 fw-bold btn-print-single-aliyah"
+                                                            data-parasha="<%= selectedParasha.title %>"
+                                                            data-aliyah="<%= aliyah.title || `${d.name} (${d.day})` %>"
+                                                            data-ref="<%= aliyah.verses_reference || '' %>"
+                                                            data-content-es="<%= encodeURIComponent(aliyah.content || '') %>"
+                                                            data-content-he="<%= encodeURIComponent(aliyah.content_hebrew || '') %>"
+                                                            data-content-fo="<%= encodeURIComponent(aliyah.content_phonetic || '') %>"
+                                                            title="Descargar en PDF o Imprimir esta Aliyá">
+                                                        <i class="bi bi-file-earmark-pdf"></i> Imprimir / PDF
+                                                    </button>
                                                     <a href="https://api.whatsapp.com/send?text=<%= waText %>" target="_blank" rel="noopener noreferrer" 
                                                        class="btn btn-sm btn-outline-success rounded-pill d-inline-flex align-items-center gap-1 px-3 py-1 fw-bold"
                                                        title="Compartir en WhatsApp">
@@ -316,7 +326,103 @@
     <%- include('partials/footer') %>
 
     <script>
+    function printAliyahCard(parasha, aliyahTitle, ref, contentEs, contentHe, contentFo) {
+        const printWindow = window.open('', '_blank', 'width=900,height=800');
+        if (!printWindow) {
+            alert('Por favor permite las ventanas emergentes para imprimir o descargar en PDF.');
+            return;
+        }
+
+        const doc = printWindow.document;
+        doc.open();
+        doc.write(`
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8">
+                <title>${parasha} - ${aliyahTitle} | Hablemos de YHWH</title>
+                <link href="https://fonts.googleapis.com/css2?family=David+Libre:wght@400;700&family=Frank+Ruhl+Libre:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+                <style>
+                    @page { size: A4; margin: 1.5cm; }
+                    body { font-family: 'Inter', sans-serif; color: #111; line-height: 1.6; padding: 20px; background: #fff; }
+                    .header { border-bottom: 2px solid #b8860b; padding-bottom: 12px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-end; }
+                    .site-name { font-size: 1.2rem; font-weight: 700; color: #b8860b; letter-spacing: 1px; }
+                    .meta-badge { font-size: 0.85rem; color: #666; }
+                    h1 { font-size: 1.6rem; margin: 0 0 5px 0; color: #1a1a1a; }
+                    .reference { font-size: 1.05rem; font-weight: 600; color: #b8860b; margin-bottom: 20px; }
+                    .section-box { margin-bottom: 22px; padding: 16px; border-radius: 8px; border: 1px solid #e0e0e0; background: #fdfdfd; page-break-inside: avoid; }
+                    .section-title { font-size: 0.95rem; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px dashed #ccc; }
+                    .hebrew-text { font-family: 'David Libre', 'Frank Ruhl Libre', serif; font-size: 1.5rem; line-height: 2.1; direction: rtl; text-align: right; color: #111; }
+                    .phonetic-text { font-size: 1.05rem; font-style: italic; color: #2c3e50; line-height: 1.8; }
+                    .spanish-text { font-size: 1.05rem; color: #222; line-height: 1.8; }
+                    .verse-num { font-weight: bold; color: #b8860b; }
+                    .footer { margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; font-size: 0.8rem; color: #888; text-align: center; }
+                    @media print { body { padding: 0; } .no-print { display: none; } }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <div>
+                        <div class="site-name">HABLEMOS DE YHWH</div>
+                        <div class="meta-badge">Estudio de las Lecturas Semanales de la Toráh</div>
+                    </div>
+                    <div class="meta-badge" style="text-align: right;">
+                        <strong>Parashá:</strong> ${parasha}
+                    </div>
+                </div>
+
+                <h1>${aliyahTitle}</h1>
+                ${ref ? `<div class="reference">📖 ${ref}</div>` : ''}
+
+                ${contentHe ? `
+                    <div class="section-box" style="border-right: 4px solid #b8860b; background: #fffcf5;">
+                        <div class="section-title" style="color: #b8860b;">🇮🇱 Texto en Hebreo (עברית)</div>
+                        <div class="hebrew-text">${contentHe.replace(/\n/g, '<br>')}</div>
+                    </div>
+                ` : ''}
+
+                ${contentFo ? `
+                    <div class="section-box" style="border-left: 4px solid #3498db; background: #f8fbff;">
+                        <div class="section-title" style="color: #2980b9;">🗣️ Fonética en Español</div>
+                        <div class="phonetic-text">${contentFo.replace(/\n/g, '<br>')}</div>
+                    </div>
+                ` : ''}
+
+                ${contentEs ? `
+                    <div class="section-box" style="border-left: 4px solid #27ae60; background: #f9fdfa;">
+                        <div class="section-title" style="color: #27ae60;">🇪🇸 Traducción al Español</div>
+                        <div class="spanish-text">${contentEs}</div>
+                    </div>
+                ` : ''}
+
+                <div class="footer">
+                    www.hablemosdeyhwh.com &bull; Porciones semanales y Aliyot de la Toráh
+                </div>
+
+                <script>
+                    window.onload = function() {
+                        window.print();
+                    };
+                <\/script>
+            </body>
+            </html>
+        `);
+        doc.close();
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.btn-print-single-aliyah').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const parasha = this.getAttribute('data-parasha') || '';
+                const aliyah = this.getAttribute('data-aliyah') || '';
+                const ref = this.getAttribute('data-ref') || '';
+                const contentEs = decodeURIComponent(this.getAttribute('data-content-es') || '');
+                const contentHe = decodeURIComponent(this.getAttribute('data-content-he') || '');
+                const contentFo = decodeURIComponent(this.getAttribute('data-content-fo') || '');
+                printAliyahCard(parasha, aliyah, ref, contentEs, contentHe, contentFo);
+            });
+        });
+
         document.querySelectorAll('.btn-copy-link').forEach(btn => {
             btn.addEventListener('click', function() {
                 const url = this.getAttribute('data-copy-url') || window.location.href;
