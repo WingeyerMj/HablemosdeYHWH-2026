@@ -75,123 +75,197 @@ const TORA_BOOKS_SEFARIA = {
 };
 
 /**
- * Transliterar texto en hebreo (con o sin Niqqud) a fonética en español
+ * Transliterar texto en hebreo (con o sin Niqqud) a fonética natural y vocalizada en español
  */
 function transliterateHebrewToSpanish(text) {
     if (!text || typeof text !== 'string') return '';
 
+    const sacredMap = {
+        'יְהוָה': 'Yehováh',
+        'יְהוָ֣ה': 'Yehováh',
+        'יְהוָ֛ה': 'Yehováh',
+        'יְהוָ֥ה': 'Yehováh',
+        'יְהֹוָה': 'Yehováh',
+        'יהוה': 'Yehováh',
+        'אֱלֹהֶיךָ': 'Eloheyja',
+        'אֱלֹהֵינוּ': 'Eloheynu',
+        'אֱלֹהִים': 'Elohim',
+        'יִשְׂרָאֵל': 'Yisrael',
+        'בְּרֵאשִׁית': 'Bereshit',
+        'שַׂר': 'sar',
+        'שָׂרָה': 'Sarah',
+        'אַבְרָהָם': 'Avraham'
+    };
+
     const lines = text.split('\n');
     const translatedLines = lines.map(line => {
-        const clean = line.replace(/<[^>]*>/g, ' ');
-        let result = '';
-        let i = 0;
+        const clean = line
+            .replace(/<[^>]*>/g, ' ')
+            .replace(/[\u0591-\u05AF]/g, '')
+            .replace(/\s+[ספ]\s*$/gm, '')
+            .replace(/׃/g, '.');
 
-        while (i < clean.length) {
-            const char = clean[i];
-            const nextChar = clean[i + 1] || '';
-            const nextNextChar = clean[i + 2] || '';
+        const tokens = clean.split(/([\s\-\–\—\.,:\(\)\[\]]+)/);
 
-            // Signos de cantilación hebreos (U+0591 a U+05AF): ignorar
-            if (char >= '\u0591' && char <= '\u05AF') {
-                i++;
-                continue;
+        const resultTokens = tokens.map(w => {
+            if (!w || /^[0-9\s\-\–\—\.,:\(\)\[\]]+$/.test(w)) return w;
+
+            const bare = w.replace(/[.,:;!\?]/g, '');
+            if (sacredMap[bare]) {
+                return sacredMap[bare];
             }
 
-            // Espacios y puntuaciones
-            if (/[\s\.,;:\-\(\)\[\]]/.test(char)) {
-                result += char;
-                i++;
-                continue;
-            }
+            let out = '';
+            let i = 0;
+            const len = w.length;
 
-            // Detección de Shin vs Sin
-            if (char === 'ש') {
-                if (nextChar === '\u05C1' || nextNextChar === '\u05C1') {
-                    result += 'sh';
-                } else if (nextChar === '\u05C2' || nextNextChar === '\u05C2') {
-                    result += 's';
-                } else {
-                    result += 'sh';
-                }
-                i++;
-                continue;
-            }
+            while (i < len) {
+                const ch = w[i];
+                const n1 = w[i+1] || '';
+                const n2 = w[i+2] || '';
 
-            // Bet / Vet con dagesh
-            if (char === 'ב') {
-                if (nextChar === '\u05BC' || nextNextChar === '\u05BC') {
-                    result += 'b';
-                } else {
-                    result += 'v';
-                }
-                i++;
-                continue;
-            }
-
-            // Kaf / Jaf con dagesh
-            if (char === 'כ' || char === 'ך') {
-                if (nextChar === '\u05BC' || nextNextChar === '\u05BC') {
-                    result += 'k';
-                } else {
-                    result += 'j';
-                }
-                i++;
-                continue;
-            }
-
-            // Pe / Fe con dagesh
-            if (char === 'פ' || char === 'ף') {
-                if (nextChar === '\u05BC' || nextNextChar === '\u05BC') {
-                    result += 'p';
-                } else {
-                    result += 'f';
-                }
-                i++;
-                continue;
-            }
-
-            // Vav
-            if (char === 'ו') {
-                if (nextChar === '\u05BC') {
-                    result += 'u';
+                // Holam Male: Vav + Holam (וֹ) o Holam + Vav (ֹו)
+                if (ch === 'ו' && (n1 === '\u05B9' || n1 === '\u05BA')) {
+                    out += 'o';
                     i += 2;
                     continue;
-                } else if (nextChar === '\u05B9') {
-                    result += 'o';
+                }
+                if ((ch === '\u05B9' || ch === '\u05BA') && n1 === 'ו') {
+                    out += 'o';
                     i += 2;
                     continue;
-                } else {
-                    result += 'v';
+                }
+
+                // Shuruk: Vav + Dagesh (וּ)
+                if (ch === 'ו' && n1 === '\u05BC') {
+                    out += 'u';
+                    i += 2;
+                    continue;
+                }
+
+                // Hiriq Yod: Hiriq + Yod (ִ + י)
+                if (ch === '\u05B4' && n1 === 'י') {
+                    out += 'i';
+                    i += 2;
+                    continue;
+                }
+
+                // Tsere Yod: Tsere + Yod (ֵ + י)
+                if (ch === '\u05B5' && n1 === 'י') {
+                    out += 'ei';
+                    i += 2;
+                    continue;
+                }
+
+                // Segol Yod: Segol + Yod (ֶ + י)
+                if (ch === '\u05B6' && n1 === 'י') {
+                    out += 'ei';
+                    i += 2;
+                    continue;
+                }
+
+                // Patach / Qamats Yod: (ַ / ָ + י)
+                if ((ch === '\u05B7' || ch === '\u05B8') && n1 === 'י') {
+                    out += 'ai';
+                    i += 2;
+                    continue;
+                }
+
+                // Shin / Sin con punto
+                if (ch === 'ש') {
+                    if (n1 === '\u05C1' || n2 === '\u05C1') {
+                        out += 'sh';
+                        i += (n1 === '\u05C1' ? 2 : (n2 === '\u05C1' ? 3 : 1));
+                        continue;
+                    } else if (n1 === '\u05C2' || n2 === '\u05C2') {
+                        out += 's';
+                        i += (n1 === '\u05C2' ? 2 : (n2 === '\u05C2' ? 3 : 1));
+                        continue;
+                    } else {
+                        out += 'sh';
+                        i++;
+                        continue;
+                    }
+                }
+
+                // Bet (b / v)
+                if (ch === 'ב') {
+                    if (n1 === '\u05BC') { out += 'b'; i += 2; }
+                    else { out += 'v'; i++; }
+                    continue;
+                }
+
+                // Kaf / Jaf (k / j)
+                if (ch === 'כ' || ch === 'ך') {
+                    if (n1 === '\u05BC') { out += 'k'; i += 2; }
+                    else { out += 'j'; i += (n1 === '\u05B0' && (i + 2 >= len) ? 2 : 1); }
+                    continue;
+                }
+
+                // Pe / Fe (p / f)
+                if (ch === 'פ' || ch === 'ף') {
+                    if (n1 === '\u05BC') { out += 'p'; i += 2; }
+                    else { out += 'f'; i++; }
+                    continue;
+                }
+
+                // Sheva Naj (mudo) al final de palabra o antes de sufijo -ta
+                if (ch === '\u05B0') {
+                    const restOfWord = w.substring(i + 1);
+                    if (/^[ת]\u05BC?[ַָ]/.test(restOfWord) || i + 1 >= len) {
+                        i++;
+                        continue;
+                    }
+                    out += 'e';
                     i++;
                     continue;
                 }
-            }
 
-            // Consonante estándar
-            if (CONSONANTS[char] !== undefined) {
-                result += CONSONANTS[char];
+                // Consonantes
+                const consMap = {
+                    'א': '', 'ג': 'g', 'ד': 'd', 'ה': 'h', 'ו': 'v', 'ז': 'z',
+                    'ח': 'j', 'ט': 't', 'י': 'y', 'ל': 'l', 'מ': 'm', 'ם': 'm',
+                    'נ': 'n', 'ן': 'n', 'ס': 's', 'ע': '', 'צ': 'tz', 'ץ': 'tz',
+                    'ק': 'k', 'ר': 'r', 'ת': 't'
+                };
+
+                if (consMap[ch] !== undefined) {
+                    out += consMap[ch];
+                    i++;
+                    continue;
+                }
+
+                // Vocales Niqqud (a, e, i, o, u)
+                const vMap = {
+                    '\u05B1': 'e', '\u05B2': 'a', '\u05B3': 'o',
+                    '\u05B4': 'i', '\u05B5': 'e', '\u05B6': 'e', '\u05B7': 'a',
+                    '\u05B8': 'a', '\u05B9': 'o', '\u05BA': 'o', '\u05BB': 'u',
+                    '\u05BE': '-'
+                };
+
+                if (vMap[ch] !== undefined) {
+                    out += vMap[ch];
+                    i++;
+                    continue;
+                }
+
+                if (!/[\u05BC\u05BD\u05BF\u05C0\u05C3]/.test(ch)) {
+                    out += ch;
+                }
                 i++;
-                continue;
             }
 
-            // Niqqud / Vocal
-            if (NIQQUD[char] !== undefined) {
-                result += NIQQUD[char];
-                i++;
-                continue;
-            }
+            return out
+                .replace(/aa+/g, 'a')
+                .replace(/ee+/g, 'e')
+                .replace(/ii+/g, 'i')
+                .replace(/oo+/g, 'o')
+                .replace(/uu+/g, 'u')
+                .replace(/j+/g, 'j');
+        });
 
-            // Cualquier otro carácter (números, letras latinas)
-            result += char;
-            i++;
-        }
-
-        return result
-            .replace(/aa+/g, 'a')
-            .replace(/ee+/g, 'e')
-            .replace(/ii+/g, 'i')
-            .replace(/oo+/g, 'o')
-            .replace(/uu+/g, 'u')
+        return resultTokens.join('')
+            .replace(/\s+\./g, '.')
             .replace(/\s+/g, ' ')
             .trim();
     });
