@@ -8,12 +8,18 @@ const isAuthenticated = (req, res, next) => {
     if (req.session.userId) {
         return next();
     }
+    if (req.xhr || req.headers.accept?.includes('application/json') || req.path.includes('/api/')) {
+        return res.status(401).json({ success: false, error: 'Tu sesión ha expirado. Por favor inicia sesión nuevamente en otra pestaña o recarga la página.' });
+    }
     res.redirect('/admin/login');
 };
 
 const isAdmin = (req, res, next) => {
-    if (req.session.role === 'admin') {
+    if (req.session.role === 'admin' || req.session.role === 'editor') {
         return next();
+    }
+    if (req.xhr || req.headers.accept?.includes('application/json') || req.path.includes('/api/')) {
+        return res.status(403).json({ success: false, error: 'Acceso denegado: Se requieren permisos de Administrador o Editor.' });
     }
     res.status(403).send('Acceso denegado: Se requieren permisos de Administrador.');
 };

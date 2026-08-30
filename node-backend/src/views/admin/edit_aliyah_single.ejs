@@ -433,9 +433,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnTranslateEdit = document.getElementById('btnTranslateSpanishEdit');
     if (btnTranslateEdit) {
         btnTranslateEdit.addEventListener('click', async function() {
-            const spanishText = quill ? quill.getText().trim() : '';
+            const spanishText = quill ? (quill.root.innerHTML || quill.getText()).trim() : '';
 
-            if (!spanishText) {
+            if (!spanishText || spanishText === '<p><br></p>') {
                 alert('Por favor escribe o pega primero el texto en la pestaña Español (Traducción).');
                 document.getElementById('edit-tab-es').click();
                 return;
@@ -448,9 +448,23 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 const res = await fetch('/admin/aliyot/api/translate-spanish', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify({ text: spanishText })
                 });
+
+                if (res.status === 401) {
+                    alert('Tu sesión ha expirado por inactividad. Por favor abre otra pestaña, inicia sesión en el panel y vuelve a presionar Traducir sin perder tus cambios.');
+                    return;
+                }
+
+                const contentType = res.headers.get('content-type') || '';
+                if (!contentType.includes('application/json')) {
+                    throw new Error('La sesión ha expirado o el servidor respondió de forma inesperada. Por favor recarga e inicia sesión.');
+                }
+
                 const data = await res.json();
                 if (data.success && data.hebrew) {
                     document.getElementById('editHebrewContent').value = data.hebrew;
@@ -486,9 +500,23 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 const res = await fetch('/admin/aliyot/api/transliterate', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify({ text: hebrewText })
                 });
+
+                if (res.status === 401) {
+                    alert('Tu sesión ha expirado por inactividad. Inicia sesión nuevamente en otra pestaña.');
+                    return;
+                }
+
+                const contentType = res.headers.get('content-type') || '';
+                if (!contentType.includes('application/json')) {
+                    throw new Error('Sesión expirada o respuesta inválida.');
+                }
+
                 const data = await res.json();
                 if (data.success && data.phonetic) {
                     document.getElementById('editPhoneticContent').value = data.phonetic;
@@ -523,9 +551,23 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const res = await fetch('/admin/aliyot/api/fetch-verses', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
                 body: JSON.stringify({ ref })
             });
+
+            if (res.status === 401) {
+                alert('Tu sesión ha expirado por inactividad. Inicia sesión en otra pestaña.');
+                return;
+            }
+
+            const contentType = res.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+                throw new Error('Sesión expirada o respuesta inválida del servidor.');
+            }
+
             const data = await res.json();
             if (data.success) {
                 if (data.hebrew) document.getElementById('editHebrewContent').value = data.hebrew.replace(/<[^>]*>/g, '');
@@ -536,7 +578,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert(data.message || 'No se pudieron obtener los versículos automáticamente para la referencia indicada.');
             }
         } catch(e) {
-            alert('Error de conexión al obtener versículos: ' + e.message);
+            alert('Error al obtener versículos: ' + e.message);
         } finally {
             triggerBtn.innerHTML = originalBtnText;
             triggerBtn.disabled = false;
