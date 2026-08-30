@@ -211,31 +211,31 @@
                                                 <% if (isMultiVersion) { %>
                                                     <!-- Selector de versiones -->
                                                     <div class="mb-3">
-                                                        <ul class="nav nav-pills gap-2 p-1 rounded-3" style="background: #f4ece1;" id="pills-public-aliyah-<%= d.idx %>" role="tablist">
+                                                        <ul class="nav nav-pills gap-2 p-1 rounded-3" style="background: #f4ece1;" id="pills-public-aliyah-<%= d.num %>" role="tablist">
                                                             <% if (hasSpanish) { %>
                                                                 <li class="nav-item" role="presentation">
-                                                                    <button class="nav-link active py-1 px-3 small fw-bold" id="tab-pub-es-<%= d.idx %>" data-bs-toggle="pill" data-bs-target="#pane-pub-es-<%= d.idx %>" type="button" role="tab">
+                                                                    <button class="nav-link active py-1 px-3 small fw-bold" id="tab-pub-es-<%= d.num %>" data-bs-toggle="pill" data-bs-target="#pane-pub-es-<%= d.num %>" type="button" role="tab">
                                                                         🇪🇸 Español
                                                                     </button>
                                                                 </li>
                                                             <% } %>
                                                             <% if (hasHebrew) { %>
                                                                 <li class="nav-item" role="presentation">
-                                                                    <button class="nav-link <%= !hasSpanish ? 'active' : '' %> py-1 px-3 small fw-bold" id="tab-pub-he-<%= d.idx %>" data-bs-toggle="pill" data-bs-target="#pane-pub-he-<%= d.idx %>" type="button" role="tab">
+                                                                    <button class="nav-link <%= !hasSpanish ? 'active' : '' %> py-1 px-3 small fw-bold" id="tab-pub-he-<%= d.num %>" data-bs-toggle="pill" data-bs-target="#pane-pub-he-<%= d.num %>" type="button" role="tab">
                                                                         🇮🇱 Hebreo (עברית)
                                                                     </button>
                                                                 </li>
                                                             <% } %>
                                                             <% if (hasPhonetic) { %>
                                                                 <li class="nav-item" role="presentation">
-                                                                    <button class="nav-link <%= (!hasSpanish && !hasHebrew) ? 'active' : '' %> py-1 px-3 small fw-bold" id="tab-pub-fo-<%= d.idx %>" data-bs-toggle="pill" data-bs-target="#pane-pub-fo-<%= d.idx %>" type="button" role="tab">
+                                                                    <button class="nav-link <%= (!hasSpanish && !hasHebrew) ? 'active' : '' %> py-1 px-3 small fw-bold" id="tab-pub-fo-<%= d.num %>" data-bs-toggle="pill" data-bs-target="#pane-pub-fo-<%= d.num %>" type="button" role="tab">
                                                                         🗣️ Fonética
                                                                     </button>
                                                                 </li>
                                                             <% } %>
                                                             <% if (hasSpanish && hasHebrew) { %>
                                                                 <li class="nav-item" role="presentation">
-                                                                    <button class="nav-link py-1 px-3 small fw-bold" id="tab-pub-tri-<%= d.idx %>" data-bs-toggle="pill" data-bs-target="#pane-pub-tri-<%= d.idx %>" type="button" role="tab">
+                                                                    <button class="nav-link py-1 px-3 small fw-bold" id="tab-pub-tri-<%= d.num %>" data-bs-toggle="pill" data-bs-target="#pane-pub-tri-<%= d.num %>" type="button" role="tab">
                                                                         📖 Vista Interlineal (3 en 1)
                                                                     </button>
                                                                 </li>
@@ -245,7 +245,7 @@
 
                                                     <div class="tab-content">
                                                         <% if (hasSpanish) { %>
-                                                            <div class="tab-pane fade show active" id="pane-pub-es-<%= d.idx %>" role="tabpanel">
+                                                            <div class="tab-pane fade show active" id="pane-pub-es-<%= d.num %>" role="tabpanel">
                                                                 <div class="aliyah-reading-content p-3 rounded-3" style="background: #faf8f5; border: 1px solid #efe8dd; font-size: 1.08rem; line-height: 1.9; color: #333; font-family: Georgia, serif;">
                                                                     <%- aliyah.content %>
                                                                 </div>
@@ -253,7 +253,7 @@
                                                         <% } %>
 
                                                         <% if (hasHebrew) { %>
-                                                            <div class="tab-pane fade <%= !hasSpanish ? 'show active' : '' %>" id="pane-pub-he-<%= d.idx %>" role="tabpanel">
+                                                            <div class="tab-pane fade <%= !hasSpanish ? 'show active' : '' %>" id="pane-pub-he-<%= d.num %>" role="tabpanel">
                                                                 <div class="aliyah-reading-content p-4 rounded-3 text-end" dir="rtl" style="background: #fbf9f4; border: 1px solid #e8dfd0; font-size: 1.55rem; line-height: 2.2; color: #1a1a1a; font-family: 'David Libre', 'Frank Ruhl Libre', serif;">
                                                                     <%- aliyah.content_hebrew.replace(/\n/g, '<br>') %>
                                                                 </div>
@@ -261,7 +261,7 @@
                                                         <% } %>
 
                                                         <% if (hasPhonetic) { %>
-                                                            <div class="tab-pane fade <%= (!hasSpanish && !hasHebrew) ? 'show active' : '' %>" id="pane-pub-fo-<%= d.idx %>" role="tabpanel">
+                                                            <div class="tab-pane fade <%= (!hasSpanish && !hasHebrew) ? 'show active' : '' %>" id="pane-pub-fo-<%= d.num %>" role="tabpanel">
                                                                 <div class="aliyah-reading-content p-3 rounded-3" style="background: #faf8f5; border: 1px solid #efe8dd; font-size: 1.12rem; line-height: 1.9; color: #2c3e50; font-family: 'Segoe UI', serif; font-style: italic;">
                                                                     <%- aliyah.content_phonetic.replace(/\n/g, '<br>') %>
                                                                 </div>
@@ -269,7 +269,7 @@
                                                         <% } %>
 
                                                         <% if (hasSpanish && hasHebrew) { %>
-                                                            <div class="tab-pane fade" id="pane-pub-tri-<%= d.idx %>" role="tabpanel">
+                                                            <div class="tab-pane fade" id="pane-pub-tri-<%= d.num %>" role="tabpanel">
                                                                 <div class="p-3 rounded-3 d-flex flex-column gap-3" style="background: #faf8f5; border: 1px solid #efe8dd;">
                                                                     <% if (hasHebrew) { %>
                                                                         <div class="p-3 rounded-3 text-end" dir="rtl" style="background: #ffffff; border-right: 4px solid #b8860b; font-size: 1.45rem; line-height: 2.1; font-family: 'David Libre', 'Frank Ruhl Libre', serif; color: #111;">
