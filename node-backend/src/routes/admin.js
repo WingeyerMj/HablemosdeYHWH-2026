@@ -59,20 +59,20 @@ router.get('/parashot/delete/:id', isAuthenticated, isAdmin, adminController.del
 // Aliyot (Lecturas Diarias por Parashá - Solo Admin)
 router.get('/aliyot', isAuthenticated, isAdmin, adminController.aliyotIndex);
 router.post('/aliyot/create', isAuthenticated, isAdmin, upload.fields([
-    { name: 'audio_file', maxCount: 5 },
-    { name: 'audio_files', maxCount: 10 }
+    { name: 'audio_file', maxCount: 10 },
+    { name: 'audio_files', maxCount: 20 }
 ]), adminController.createAliyahSingle);
 router.get('/aliyot/edit-item/:id', isAuthenticated, isAdmin, adminController.editAliyahSinglePage);
 router.post('/aliyot/update-item', isAuthenticated, isAdmin, upload.fields([
-    { name: 'audio_file', maxCount: 5 },
-    { name: 'audio_files', maxCount: 10 }
+    { name: 'audio_file', maxCount: 10 },
+    { name: 'audio_files', maxCount: 20 }
 ]), adminController.updateAliyahSingle);
 router.post('/aliyot/link', isAuthenticated, isAdmin, adminController.linkAliyahToParasha);
 router.get('/aliyot/delete-item/:id', isAuthenticated, isAdmin, adminController.deleteAliyahSingle);
 router.get('/aliyot/edit/:parashaId', isAuthenticated, isAdmin, adminController.editAliyotPage);
 router.post('/aliyot/save', isAuthenticated, isAdmin, upload.fields([
-    { name: 'audio_file', maxCount: 5 },
-    { name: 'audio_files', maxCount: 10 }
+    { name: 'audio_file', maxCount: 10 },
+    { name: 'audio_files', maxCount: 20 }
 ]), adminController.saveAliyah);
 router.get('/aliyot/delete-audio/:id/:parashaId/:aliyahNumber', isAuthenticated, isAdmin, adminController.deleteAliyahAudio);
 

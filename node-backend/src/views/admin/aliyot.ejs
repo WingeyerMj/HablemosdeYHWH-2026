@@ -299,27 +299,54 @@ select option:checked, select option:hover {
                             <input type="text" name="verses_reference" class="form-control bg-black bg-opacity-50 text-white border-secondary" placeholder="Ej: Génesis 1:1 - 2:3">
                         </div>
 
-                        <!-- SECCIÓN DE AUDIOS (Múltiples archivos permitidos) -->
+                        <!-- SECCIÓN DE AUDIOS DINÁMICA (Múltiples archivos y notas de voz) -->
                         <div class="col-12">
                             <div class="p-3 rounded border border-secondary" style="background: rgba(255, 255, 255, 0.03);">
-                                <label class="form-label fw-bold text-white d-flex align-items-center justify-content-between mb-2">
-                                    <span class="d-flex align-items-center gap-2">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <label class="form-label fw-bold text-white d-flex align-items-center gap-2 mb-0">
                                         <i class="bi bi-soundwave" style="color: var(--primary-color, #d4b895); font-size: 1.2rem;"></i>
-                                        Audios de la Lectura
+                                        Archivos de Audio de la Aliyá
+                                    </label>
+                                    <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-50">
+                                        WhatsApp, MP3, OGG, M4A, WAV
                                     </span>
-                                    <small class="text-white-50">Puedes seleccionar varios audios a la vez</small>
-                                </label>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label small text-white-50">Archivos de audio (.mp3, .m4a, .wav) - Selección múltiple</label>
-                                        <input type="file" name="audio_files" class="form-control bg-black bg-opacity-50 text-white border-secondary" accept="audio/*" multiple>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label small text-white-50">O enlace directo externo</label>
-                                        <div class="input-group">
-                                            <input type="text" name="custom_audio_title" class="form-control bg-black bg-opacity-50 text-white border-secondary" placeholder="Título" style="max-width: 120px;">
-                                            <input type="text" name="custom_audio_url" class="form-control bg-black bg-opacity-50 text-white border-secondary" placeholder="https://.../audio.mp3">
+                                </div>
+                                <p class="text-white-50 small mb-3">Puedes cargar uno o varios audios a la vez (lectura, comentarios, notas de voz de WhatsApp).</p>
+
+                                <!-- Contenedor de filas de audios -->
+                                <div id="modalAudioRowsContainer" class="d-flex flex-column gap-2">
+                                    <div class="audio-input-row p-2 rounded bg-black bg-opacity-50 border border-secondary">
+                                        <div class="row g-2 align-items-center">
+                                            <div class="col-md-6">
+                                                <label class="form-label small text-white-50 mb-1">Archivo 1</label>
+                                                <input type="file" name="audio_files" class="form-control form-control-sm bg-dark text-white border-secondary aliyah-file-input" accept="audio/*,.mp3,.ogg,.oga,.opus,.m4a,.wav,.aac" multiple>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <label class="form-label small text-white-50 mb-1">Título / Nombre (opcional)</label>
+                                                <input type="text" name="audio_titles[]" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Ej: Audio 1 / Lectura del día">
+                                            </div>
+                                            <div class="col-md-1 text-center pt-3">
+                                                <button type="button" class="btn btn-sm btn-outline-danger btn-remove-row d-none" title="Eliminar fila">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3 pt-2 border-top border-secondary">
+                                    <button type="button" id="btnAddAudioInputRow" class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1">
+                                        <i class="bi bi-plus-circle-fill"></i> + Agregar otro archivo de audio
+                                    </button>
+                                    <small class="text-white-50">Puedes presionar el botón para añadir más audios por separado</small>
+                                </div>
+
+                                <!-- Audio externo opcional -->
+                                <div class="mt-3 pt-2 border-top border-secondary">
+                                    <label class="form-label small text-white-50 fw-bold mb-1">O enlace de audio externo (opcional)</label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" name="custom_audio_title" class="form-control bg-black bg-opacity-50 text-white border-secondary" placeholder="Título (Ej: Reflexión)" style="max-width: 140px;">
+                                        <input type="text" name="custom_audio_url" class="form-control bg-black bg-opacity-50 text-white border-secondary" placeholder="https://.../audio.mp3">
                                     </div>
                                 </div>
                             </div>
@@ -569,6 +596,61 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => { this.innerHTML = prev; }, 2000);
         });
     });
+
+    // 5. Agregar más filas de archivos de audio dinámicamente
+    const btnAddAudioRow = document.getElementById('btnAddAudioInputRow');
+    const audioContainer = document.getElementById('modalAudioRowsContainer');
+
+    if (btnAddAudioRow && audioContainer) {
+        btnAddAudioRow.addEventListener('click', function() {
+            const rowsCount = audioContainer.querySelectorAll('.audio-input-row').length + 1;
+            const newRow = document.createElement('div');
+            newRow.className = 'audio-input-row p-2 rounded bg-black bg-opacity-50 border border-secondary';
+            newRow.innerHTML = `
+                <div class="row g-2 align-items-center">
+                    <div class="col-md-6">
+                        <label class="form-label small text-white-50 mb-1">Archivo ${rowsCount}</label>
+                        <input type="file" name="audio_files" class="form-control form-control-sm bg-dark text-white border-secondary aliyah-file-input" accept="audio/*,.mp3,.ogg,.oga,.opus,.m4a,.wav,.aac" multiple>
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label small text-white-50 mb-1">Título / Nombre (opcional)</label>
+                        <input type="text" name="audio_titles[]" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Ej: Audio ${rowsCount} / Comentario">
+                    </div>
+                    <div class="col-md-1 text-center pt-3">
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-remove-row" title="Eliminar fila">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            audioContainer.appendChild(newRow);
+
+            // Asignar evento eliminar fila
+            newRow.querySelector('.btn-remove-row').addEventListener('click', function() {
+                newRow.remove();
+            });
+
+            // Asignar auto-completar título si está vacío
+            const fileInput = newRow.querySelector('.aliyah-file-input');
+            const titleInput = newRow.querySelector('input[type="text"]');
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0] && !titleInput.value) {
+                    titleInput.value = this.files[0].name.replace(/\.[^/.]+$/, '');
+                }
+            });
+        });
+
+        // Evento auto-completar título para la primera fila
+        const initialFileInput = audioContainer.querySelector('.aliyah-file-input');
+        const initialTitleInput = audioContainer.querySelector('input[name="audio_titles[]"]');
+        if (initialFileInput && initialTitleInput) {
+            initialFileInput.addEventListener('change', function() {
+                if (this.files && this.files[0] && !initialTitleInput.value) {
+                    initialTitleInput.value = this.files[0].name.replace(/\.[^/.]+$/, '');
+                }
+            });
+        }
+    }
 });
 </script>
 

@@ -1038,12 +1038,13 @@ const adminController = {
             let audiosList = [];
             if (req.files) {
                 const newFiles = (req.files['audio_files'] || []).concat(req.files['audio_file'] || []);
-                const titles = req.body.audio_titles || [];
+                const rawTitles = req.body.audio_titles || [];
+                const titles = Array.isArray(rawTitles) ? rawTitles : (rawTitles ? [rawTitles] : []);
                 newFiles.forEach((file, idx) => {
-                    const defaultTitle = `Audio ${audiosList.length + 1}`;
-                    const customTitle = Array.isArray(titles) ? (titles[idx] || defaultTitle) : (titles || defaultTitle);
+                    const rawTitle = titles[idx];
+                    const cleanTitle = (rawTitle && rawTitle.trim() !== '') ? rawTitle.trim() : (file.originalname ? file.originalname.replace(/\.[^/.]+$/, '') : `Audio ${audiosList.length + 1}`);
                     audiosList.push({
-                        title: customTitle || defaultTitle,
+                        title: cleanTitle,
                         url: '/uploads/audios/' + file.filename
                     });
                 });
@@ -1123,12 +1124,13 @@ const adminController = {
             // Append newly uploaded files
             if (req.files) {
                 const newFiles = (req.files['audio_files'] || []).concat(req.files['audio_file'] || []);
-                const titles = req.body.audio_titles || [];
+                const rawTitles = req.body.audio_titles || [];
+                const titles = Array.isArray(rawTitles) ? rawTitles : (rawTitles ? [rawTitles] : []);
                 newFiles.forEach((file, idx) => {
-                    const defaultTitle = `Audio ${audiosList.length + 1}`;
-                    const customTitle = Array.isArray(titles) ? (titles[idx] || defaultTitle) : (titles || defaultTitle);
+                    const rawTitle = titles[idx];
+                    const cleanTitle = (rawTitle && rawTitle.trim() !== '') ? rawTitle.trim() : (file.originalname ? file.originalname.replace(/\.[^/.]+$/, '') : `Audio ${audiosList.length + 1}`);
                     audiosList.push({
-                        title: customTitle || defaultTitle,
+                        title: cleanTitle,
                         url: '/uploads/audios/' + file.filename
                     });
                 });

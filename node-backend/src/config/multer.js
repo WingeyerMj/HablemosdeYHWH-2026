@@ -24,14 +24,22 @@ uploadDirs.forEach(dir => {
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        // Determinar carpeta según la ruta
+        // Determinar carpeta según la ruta o tipo de archivo
         let base = '../../public/uploads/';
         let folder = 'general';
-        if (req.originalUrl.includes('/parashot')) {
+        const ext = path.extname(file.originalname).toLowerCase().replace('.', '');
+        const isAudio = file.mimetype.startsWith('audio/') || 
+                        /mp3|m4a|wav|aac|ogg|oga|opus|wma|flac|webm/.test(ext) ||
+                        file.mimetype.includes('ogg') || 
+                        file.mimetype.includes('opus') || 
+                        req.originalUrl.includes('/aliyot');
+
+        if (isAudio) {
+            folder = 'audios';
+        } else if (req.originalUrl.includes('/parashot')) {
             folder = 'parashot';
             base = '../../public/assets/';
-        } else if (req.originalUrl.includes('/aliyot')) folder = 'audios';
-        else if (req.originalUrl.includes('/portfolio')) folder = 'portfolio';
+        } else if (req.originalUrl.includes('/portfolio')) folder = 'portfolio';
         else if (req.originalUrl.includes('/ensenanzas')) folder = 'ensenanzas';
         else if (req.originalUrl.includes('/semillas')) folder = 'semillas';
         else if (req.originalUrl.includes('/blog')) folder = 'blog';
@@ -39,9 +47,7 @@ const storage = multer.diskStorage({
         else if (req.originalUrl.includes('/entity')) folder = 'entity';
 
         // Si es PDF, va a la carpeta de PDFs
-        if (file.mimetype === 'application/pdf') folder = 'pdf';
-        // Si es Audio, va a la carpeta de Audios
-        if (file.mimetype && file.mimetype.startsWith('audio/')) folder = 'audios';
+        if (file.mimetype === 'application/pdf' || ext === 'pdf') folder = 'pdf';
 
         const dest = path.join(__dirname, base, folder);
         cb(null, dest);
@@ -54,12 +60,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
     storage: storage,
-    limits: { fileSize: 150 * 1024 * 1024 }, // Límite de 150MB para videos/audios
+    limits: { fileSize: 250 * 1024 * 1024 }, // Límite de 250MB para audios/videos
     fileFilter: (req, file, cb) => {
-        // Permitir imágenes, videos, audios y PDFs
         const imageTypes = /jpeg|jpg|png|webp|gif|svg/;
-        const videoTypes = /mp4|webm|ogg|mov|avi|mkv/;
-        const audioTypes = /mp3|m4a|wav|aac|ogg|wma|flac|opus|audio/;
+        const videoTypes = /mp4|webm|mov|avi|mkv/;
+        const audioTypes = /mp3|m4a|wav|aac|ogg|oga|opus|wma|flac|audio/;
         const pdfType = /pdf/;
         
         const extname = path.extname(file.originalname).toLowerCase().replace('.', '');
@@ -67,7 +72,7 @@ const upload = multer({
         if (imageTypes.test(extname) || imageTypes.test(file.mimetype)) {
             return cb(null, true);
         }
-        if (audioTypes.test(extname) || (file.mimetype && file.mimetype.startsWith('audio/'))) {
+        if (audioTypes.test(extname) || (file.mimetype && (file.mimetype.startsWith('audio/') || file.mimetype.includes('ogg') || file.mimetype.includes('opus')))) {
             return cb(null, true);
         }
         if (videoTypes.test(extname) || videoTypes.test(file.mimetype) || (file.mimetype && file.mimetype.includes('video/'))) {
@@ -76,7 +81,8 @@ const upload = multer({
         if (pdfType.test(extname) || file.mimetype === 'application/pdf') {
             return cb(null, true);
         }
-        cb(new Error("Solo se permiten imágenes, audios, videos y PDFs"));
+        // Permitir en caso de duda
+        return cb(null, true);
     }
 });
 
