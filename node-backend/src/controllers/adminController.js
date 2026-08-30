@@ -1009,7 +1009,7 @@ const adminController = {
         try {
             const Parasha = require('../models/Parasha');
             const Aliyah = require('../models/Aliyah');
-            const parashot = await Parasha.getAll();
+            const parashot = await Parasha.getAllAsc();
             const parashotOverview = await Aliyah.getParashotOverview();
             const allAliyot = await Aliyah.getAllWithParasha();
 
@@ -1084,7 +1084,7 @@ const adminController = {
             const { id } = req.params;
             const aliyah = await Aliyah.getById(id);
             if (!aliyah) return res.redirect('/admin/aliyot');
-            const parashot = await Parasha.getAll();
+            const parashot = await Parasha.getAllAsc();
 
             res.render('admin/edit_aliyah_single', {
                 layout: 'admin/layout',

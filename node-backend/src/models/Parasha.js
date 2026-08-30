@@ -11,6 +11,11 @@ class Parasha {
         return rows;
     }
 
+    static async getAllAsc() {
+        const [rows] = await db.query('SELECT * FROM parashot ORDER BY parasha_number ASC, id ASC');
+        return rows;
+    }
+
     static async getPublished() {
         const [rows] = await db.query('SELECT * FROM parashot WHERE is_published = TRUE ORDER BY parasha_number DESC, id DESC');
         return rows;
