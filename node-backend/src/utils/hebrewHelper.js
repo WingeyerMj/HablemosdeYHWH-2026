@@ -223,7 +223,7 @@ function parseBibleReference(refString) {
 }
 
 /**
- * Consultar texto en Hebreo y Traducción desde Sefaria API
+ * Consultar texto en Hebreo y Traducción al Español desde Sefaria API
  */
 async function fetchVersesFromSefaria(refString) {
     try {
@@ -231,34 +231,81 @@ async function fetchVersesFromSefaria(refString) {
         if (!sefariaRef) return null;
 
         const url = `https://www.sefaria.org/api/texts/${encodeURIComponent(sefariaRef)}?context=0&commentary=0`;
-        const res = await fetch(url, { headers: { 'User-Agent': 'HablemosDeYHWH-App' } });
+        const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
         if (!res.ok) return null;
 
         const data = await res.json();
         if (!data || !data.he) return null;
 
-        let hebrewText = '';
-        let englishOrSpanish = '';
+        const cleanHebrew = (text) => {
+            if (!text) return '';
+            return text
+                .replace(/<sup[^>]*>.*?<\/sup>/gi, '')
+                .replace(/<i\s+class="footnote"[^>]*>.*?<\/i>/gi, '')
+                .replace(/<span\s+class="mam-spi-samekh"[^>]*>.*?<\/span>/gi, '')
+                .replace(/<[^>]*>/g, '')
+                .replace(/&thinsp;/g, ' ')
+                .replace(/&nbsp;/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        };
 
+        let hebrewArray = [];
         if (Array.isArray(data.he)) {
-            hebrewText = data.he.map((v, i) => `<p><strong class="verse-num">(${i + 1})</strong> ${v}</p>`).join('\n');
+            hebrewArray = data.he.map(v => cleanHebrew(v));
         } else {
-            hebrewText = `<p>${data.he}</p>`;
+            hebrewArray = [cleanHebrew(data.he)];
         }
 
-        if (Array.isArray(data.text)) {
-            englishOrSpanish = data.text.map((v, i) => `<p><strong class="verse-num">(${i + 1})</strong> ${v}</p>`).join('\n');
-        } else {
-            englishOrSpanish = `<p>${data.text || ''}</p>`;
-        }
+        const hebrewFormatted = hebrewArray
+            .map((v, i) => `<p><strong class="verse-num">(${i + 1})</strong> ${v}</p>`)
+            .join('\n');
 
         // Generar fonética
-        const phoneticText = transliterateHebrewToSpanish(data.he.join ? data.he.join('\n') : data.he);
+        const phoneticText = transliterateHebrewToSpanish(hebrewArray.join('\n'));
+
+        // Obtener texto en inglés / original de Sefaria y traducirlo al Español
+        let rawTexts = [];
+        if (Array.isArray(data.text)) {
+            rawTexts = data.text.map(t => cleanHebrew(t));
+        } else if (data.text) {
+            rawTexts = [cleanHebrew(data.text)];
+        }
+
+        let spanishVerses = [];
+        if (rawTexts.length > 0) {
+            const combinedText = rawTexts.map((t, idx) => `(${idx + 1}) ${t}`).join(' ');
+            try {
+                const trUrl = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=es&dt=t&q=' + encodeURIComponent(combinedText);
+                const trRes = await fetch(trUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+                if (trRes.ok) {
+                    const trData = await trRes.json();
+                    if (trData && trData[0]) {
+                        const fullTranslated = trData[0].map(item => item[0]).join('');
+                        spanishVerses = fullTranslated.split(/(?=\(\d+\))/g).filter(s => s.trim().length > 0);
+                    }
+                }
+            } catch(e) {
+                console.warn('Error al traducir versículos a español:', e.message);
+            }
+        }
+
+        let spanishFormatted = '';
+        if (spanishVerses.length > 0) {
+            spanishFormatted = spanishVerses
+                .map(v => `<p>${v.replace(/\((\d+)\)/, '<strong class="verse-num">($1)</strong>')}</p>`)
+                .join('\n');
+        } else if (rawTexts.length > 0) {
+            spanishFormatted = rawTexts
+                .map((v, i) => `<p><strong class="verse-num">(${i + 1})</strong> ${v}</p>`)
+                .join('\n');
+        }
 
         return {
-            hebrew: hebrewText,
+            hebrew: hebrewFormatted,
             phonetic: phoneticText,
-            englishOrSpanish: englishOrSpanish
+            englishOrSpanish: spanishFormatted,
+            hebrewRaw: hebrewArray.join('\n')
         };
     } catch (e) {
         console.warn('Error fetchVersesFromSefaria:', e.message);

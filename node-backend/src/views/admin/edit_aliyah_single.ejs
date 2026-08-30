@@ -78,8 +78,16 @@ select option:checked, select option:hover {
 
                             <!-- Referencia de versículos -->
                             <div class="col-md-6">
-                                <label class="form-label small text-white-50 fw-bold">Referencia de Versículos</label>
-                                <input type="text" name="verses_reference" class="form-control bg-black bg-opacity-50 text-white border-secondary" value="<%= aliyah.verses_reference || '' %>" placeholder="Ej: Génesis 1:1 - 2:3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label class="form-label small text-white-50 fw-bold mb-0">Referencia de Versículos</label>
+                                    <span class="badge bg-warning bg-opacity-25 text-warning small">Ej: DEUTERONOMIO 26:1-11</span>
+                                </div>
+                                <div class="input-group">
+                                    <input type="text" name="verses_reference" id="editVersesRefInput" class="form-control bg-black bg-opacity-50 text-white border-secondary fw-bold" value="<%= aliyah.verses_reference || '' %>" placeholder="Ej: DEUTERONOMIO 26:1-11">
+                                    <button type="button" id="btnAutoFetchFromRefEdit" class="btn btn-warning fw-bold d-flex align-items-center gap-1 shadow-sm" title="Cargar automáticamente el texto en Español, Hebreo y Fonética según esta cita bíblica">
+                                        <i class="bi bi-cloud-arrow-down-fill"></i> <strong>Cargar Versículos</strong>
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- SECCIÓN DE AUDIOS (Soporta múltiples archivos) -->
@@ -497,41 +505,52 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Auto-Obtener Versículos en Edición (Sefaria)
+    // Función común para auto-obtener versículos por referencia en Edición
+    async function loadVersesFromRefEdit(triggerBtn) {
+        const refInput = document.getElementById('editVersesRefInput') || document.querySelector('#editAliyahSingleForm input[name="verses_reference"]');
+        const ref = refInput ? refInput.value.trim() : '';
+
+        if (!ref) {
+            alert('Por favor ingresa primero la Referencia de Versículos (Ej: DEUTERONOMIO 26:1-11).');
+            if (refInput) refInput.focus();
+            return;
+        }
+
+        const originalBtnText = triggerBtn.innerHTML;
+        triggerBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Cargando versículos...';
+        triggerBtn.disabled = true;
+
+        try {
+            const res = await fetch('/admin/aliyot/api/fetch-verses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ref })
+            });
+            const data = await res.json();
+            if (data.success) {
+                if (data.hebrew) document.getElementById('editHebrewContent').value = data.hebrew.replace(/<[^>]*>/g, '');
+                if (data.phonetic) document.getElementById('editPhoneticContent').value = data.phonetic;
+                if (data.englishOrSpanish && quill) quill.root.innerHTML = data.englishOrSpanish;
+                alert('¡Versículos cargados con éxito en Español, Hebreo y Fonética! Puedes verlos y editarlos en las 3 pestañas.');
+            } else {
+                alert(data.message || 'No se pudieron obtener los versículos automáticamente para la referencia indicada.');
+            }
+        } catch(e) {
+            alert('Error de conexión al obtener versículos: ' + e.message);
+        } finally {
+            triggerBtn.innerHTML = originalBtnText;
+            triggerBtn.disabled = false;
+        }
+    }
+
     const btnAutoFetchEdit = document.getElementById('btnAutoFetchVersesEdit');
     if (btnAutoFetchEdit) {
-        btnAutoFetchEdit.addEventListener('click', async function() {
-            const ref = document.querySelector('#editAliyahSingleForm input[name="verses_reference"]').value.trim();
-            if (!ref) {
-                alert('Por favor ingresa la Referencia de Versículos (Ej: Génesis 1:1-5) primero.');
-                return;
-            }
-            const originalBtnText = this.innerHTML;
-            this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Buscando...';
-            this.disabled = true;
+        btnAutoFetchEdit.addEventListener('click', function() { loadVersesFromRefEdit(this); });
+    }
 
-            try {
-                const res = await fetch('/admin/aliyot/api/fetch-verses', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ref })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    if (data.hebrew) document.getElementById('editHebrewContent').value = data.hebrew.replace(/<[^>]*>/g, '');
-                    if (data.phonetic) document.getElementById('editPhoneticContent').value = data.phonetic;
-                    if (data.englishOrSpanish && quill) quill.root.innerHTML = data.englishOrSpanish;
-                    alert('¡Versículos y Fonética cargados con éxito! Puedes revisarlos en las 3 pestañas.');
-                } else {
-                    alert(data.message || 'No se pudieron obtener los versículos automáticamente.');
-                }
-            } catch(e) {
-                alert('Error de conexión al obtener versículos: ' + e.message);
-            } finally {
-                this.innerHTML = originalBtnText;
-                this.disabled = false;
-            }
-        });
+    const btnAutoFetchFromRefEdit = document.getElementById('btnAutoFetchFromRefEdit');
+    if (btnAutoFetchFromRefEdit) {
+        btnAutoFetchFromRefEdit.addEventListener('click', function() { loadVersesFromRefEdit(this); });
     }
 });
 </script>
