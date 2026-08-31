@@ -422,10 +422,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnTranslateEdit = document.getElementById('btnTranslateSpanishEdit');
     if (btnTranslateEdit) {
         btnTranslateEdit.addEventListener('click', async function() {
+            const refVal = (document.getElementById('editVersesRefInput') || {}).value || '';
             const spanishText = quill ? (quill.root.innerHTML || quill.getText()).trim() : '';
 
-            if (!spanishText || spanishText === '<p><br></p>') {
-                alert('Por favor escribe o pega primero el texto en la pestaña Español (Traducción).');
+            if ((!spanishText || spanishText === '<p><br></p>') && !refVal) {
+                alert('Por favor escribe o pega primero el texto en la pestaña Español (Traducción) o ingresa la Referencia de Versículos.');
                 document.getElementById('edit-tab-es').click();
                 return;
             }
@@ -441,7 +442,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify({ text: spanishText })
+                    body: JSON.stringify({ 
+                        text: spanishText,
+                        ref: refVal 
+                    })
                 });
 
                 if (res.status === 401) {
@@ -458,6 +462,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success && data.hebrew) {
                     document.getElementById('editHebrewContent').value = data.hebrew;
                     document.getElementById('editPhoneticContent').value = data.phonetic || '';
+                    if (data.spanish && data.spanish !== spanishText && quill) {
+                        quill.root.innerHTML = data.spanish;
+                    }
                     alert('¡Traducción completada con éxito! El texto en Hebreo y la Fonética se han generado automáticamente.');
                     document.getElementById('edit-tab-he').click();
                 } else {

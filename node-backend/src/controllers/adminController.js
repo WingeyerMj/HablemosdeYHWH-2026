@@ -1357,8 +1357,8 @@ const adminController = {
     apiTranslateSpanishToHebrew: async (req, res) => {
         try {
             const { translateSpanishToHebrewAndPhonetics } = require('../utils/hebrewHelper');
-            const { text } = req.body;
-            const result = await translateSpanishToHebrewAndPhonetics(text || '');
+            const { text, ref } = req.body;
+            const result = await translateSpanishToHebrewAndPhonetics(text || '', ref || '');
             res.json({ success: true, ...result });
         } catch (e) {
             console.error('Error apiTranslateSpanishToHebrew:', e);

@@ -575,10 +575,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnTranslateModal = document.getElementById('btnTranslateSpanishModal');
     if (btnTranslateModal) {
         btnTranslateModal.addEventListener('click', async function() {
+            const refVal = (document.getElementById('modalVersesRefInput') || {}).value || '';
             const spanishText = modalQuill ? (modalQuill.root.innerHTML || modalQuill.getText()).trim() : '';
 
-            if (!spanishText || spanishText === '<p><br></p>') {
-                alert('Por favor escribe o pega primero el texto en la pestaña Español (Traducción).');
+            if ((!spanishText || spanishText === '<p><br></p>') && !refVal) {
+                alert('Por favor escribe o pega primero el texto en la pestaña Español (Traducción) o ingresa la Referencia de Versículos.');
                 document.getElementById('modal-tab-es').click();
                 return;
             }
@@ -594,7 +595,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify({ text: spanishText })
+                    body: JSON.stringify({ 
+                        text: spanishText,
+                        ref: refVal 
+                    })
                 });
 
                 if (res.status === 401) {
@@ -611,6 +615,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success && data.hebrew) {
                     document.getElementById('modalHebrewContent').value = data.hebrew;
                     document.getElementById('modalPhoneticContent').value = data.phonetic || '';
+                    if (data.spanish && data.spanish !== spanishText && modalQuill) {
+                        modalQuill.root.innerHTML = data.spanish;
+                    }
                     alert('¡Traducción completada con éxito! El texto en Hebreo y la Fonética se han generado automáticamente.');
                     document.getElementById('modal-tab-he').click();
                 } else {

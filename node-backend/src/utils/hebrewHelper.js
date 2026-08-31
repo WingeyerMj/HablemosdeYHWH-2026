@@ -441,15 +441,38 @@ async function translateSingleSpanishLine(text) {
 }
 
 /**
- * Traducir TODO el texto de Español a Hebreo y generar Fonética completa (sin límite de versículos)
+ * Traducir texto de Español a Hebreo y generar Fonética completa.
+ * Si se ingresa una cita bíblica (ej: Deuteronomio 26:1-11), obtiene automáticamente todos los versículos en Hebreo con Niqqud, Español y Fonética.
  */
-async function translateSpanishToHebrewAndPhonetics(spanishText) {
-    if (!spanishText || typeof spanishText !== 'string' || spanishText.trim() === '') {
-        return { hebrew: '', phonetic: '' };
+async function translateSpanishToHebrewAndPhonetics(spanishText, referenceHint = '') {
+    if ((!spanishText || typeof spanishText !== 'string' || spanishText.trim() === '') && !referenceHint) {
+        return { hebrew: '', phonetic: '', spanish: '' };
     }
 
-    // Dividir el texto pegado en párrafos o versículos individuales
-    const rawLines = spanishText
+    const cleanInput = (spanishText || '').replace(/<[^>]*>/g, ' ').trim();
+    const candidateRef = referenceHint || cleanInput;
+
+    // 1. Verificar si el texto ingresado es una cita bíblica de la Torá (ej: "Deuteronomio 26:1-11")
+    const parsedRef = parseTorahReference(candidateRef) || parseTorahReference(cleanInput.split('\n')[0]);
+    
+    // Si es una cita bíblica y no contiene ya un texto largo de más de 300 caracteres con versículos
+    if (parsedRef && cleanInput.length < 350) {
+        try {
+            const bibleResult = await fetchVersesFromSefaria(candidateRef || cleanInput);
+            if (bibleResult && bibleResult.hebrewRaw) {
+                return {
+                    hebrew: bibleResult.hebrewRaw,
+                    phonetic: bibleResult.phonetic,
+                    spanish: bibleResult.englishOrSpanish || spanishText
+                };
+            }
+        } catch(e) {
+            console.warn('Fallo auto-fetch por cita bíblica:', e.message);
+        }
+    }
+
+    // 2. Si es texto o versículos completos en español pegados, traducir línea a línea / versículo a versículo
+    const rawLines = (spanishText || '')
         .replace(/<p>/gi, '\n')
         .replace(/<\/p>/gi, '\n')
         .replace(/<br\s*[\/]?>/gi, '\n')
@@ -458,7 +481,7 @@ async function translateSpanishToHebrewAndPhonetics(spanishText) {
         .filter(l => l.length > 0);
 
     if (rawLines.length === 0) {
-        return { hebrew: '', phonetic: '' };
+        return { hebrew: '', phonetic: '', spanish: '' };
     }
 
     const hebrewLines = [];
@@ -477,7 +500,7 @@ async function translateSpanishToHebrewAndPhonetics(spanishText) {
 
         if (contentToTranslate.length > 0) {
             const translatedHebrew = await translateSingleLine(contentToTranslate, 'es', 'he');
-            const cleanHe = translatedHebrew.trim();
+            const cleanHe = (translatedHebrew || contentToTranslate).trim();
             
             const fullHeLine = prefix ? `${prefix}${cleanHe}` : cleanHe;
             hebrewLines.push(fullHeLine);
@@ -493,7 +516,8 @@ async function translateSpanishToHebrewAndPhonetics(spanishText) {
 
     return {
         hebrew: hebrewResult,
-        phonetic: phoneticResult
+        phonetic: phoneticResult,
+        spanish: spanishText
     };
 }
 
