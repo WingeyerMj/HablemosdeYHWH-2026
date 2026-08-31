@@ -100,12 +100,14 @@ router.get('/ensenanzas/delete/:id', isAuthenticated, isAdmin, adminController.d
 // Semillas de Torah (Infantil) - Admin y Editor
 router.post('/semillas/create', isAuthenticated, upload.fields([
     { name: 'image_file', maxCount: 1 },
-    { name: 'pdf_upload', maxCount: 1 }
+    { name: 'pdf_upload', maxCount: 1 },
+    { name: 'video_upload', maxCount: 1 }
 ]), adminController.createSemillas);
 router.get('/semillas/edit/:id', isAuthenticated, adminController.editSemillasPage);
 router.post('/semillas/update', isAuthenticated, upload.fields([
     { name: 'image_file', maxCount: 1 },
-    { name: 'pdf_upload', maxCount: 1 }
+    { name: 'pdf_upload', maxCount: 1 },
+    { name: 'video_upload', maxCount: 1 }
 ]), adminController.updateSemillas);
 router.get('/semillas/delete/:id', isAuthenticated, adminController.deleteSemillas);
 

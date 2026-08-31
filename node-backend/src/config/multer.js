@@ -13,6 +13,7 @@ const uploadDirs = [
     path.join(__dirname, '../../public/uploads/audios'),
     path.join(__dirname, '../../public/uploads/general'),
     path.join(__dirname, '../../public/uploads/semillas'),
+    path.join(__dirname, '../../public/uploads/videos'),
     path.join(__dirname, '../../public/uploads/entity')
 ];
 
@@ -48,6 +49,9 @@ const storage = multer.diskStorage({
 
         // Si es PDF, va a la carpeta de PDFs
         if (file.mimetype === 'application/pdf' || ext === 'pdf') folder = 'pdf';
+
+        // Si es video, va a la carpeta de videos
+        if (file.mimetype && file.mimetype.startsWith('video/')) folder = 'videos';
 
         const dest = path.join(__dirname, base, folder);
         cb(null, dest);

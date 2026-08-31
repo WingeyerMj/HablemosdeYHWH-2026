@@ -215,13 +215,16 @@
                                 <td><span class="small text-white"><i class="bi bi-person me-1 text-muted"></i><%= item.author || 'Elva Avila' %></span></td>
                                 <td>
                                     <div class="d-flex gap-1 flex-wrap">
+                                        <% if (item.video_file) { %>
+                                            <a href="<%= item.video_file %>" target="_blank" class="badge bg-primary text-decoration-none" title="Video propio subido"><i class="bi bi-camera-video"></i> Video</a>
+                                        <% } %>
+                                        <% if (item.youtube_link) { %>
+                                            <a href="<%= item.youtube_link %>" target="_blank" class="badge bg-danger text-decoration-none" title="Video de YouTube"><i class="bi bi-youtube"></i> YouTube</a>
+                                        <% } %>
                                         <% if (item.pdf_file) { %>
                                             <a href="<%= item.pdf_file %>" target="_blank" class="badge bg-success text-decoration-none" title="PDF / Actividad imprimible"><i class="bi bi-file-pdf"></i> PDF</a>
                                         <% } %>
-                                        <% if (item.youtube_link) { %>
-                                            <a href="<%= item.youtube_link %>" target="_blank" class="badge bg-danger text-decoration-none" title="Video de YouTube"><i class="bi bi-youtube"></i> Video</a>
-                                        <% } %>
-                                        <% if (!item.pdf_file && !item.youtube_link) { %>
+                                        <% if (!item.pdf_file && !item.youtube_link && !item.video_file) { %>
                                             <span class="text-white-50 small">-</span>
                                         <% } %>
                                     </div>

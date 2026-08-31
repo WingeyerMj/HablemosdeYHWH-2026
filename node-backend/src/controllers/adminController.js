@@ -327,7 +327,7 @@ const adminController = {
     // ==================== SEMILLAS DE TORAH ====================
     createSemillas: async (req, res) => {
         try {
-            let { title, subtitle, category, author, description, content, youtube_link, is_published, image_url, pdf_file } = req.body;
+            let { title, subtitle, category, author, description, content, youtube_link, is_published, image_url, pdf_file, video_file } = req.body;
             
             if (req.files) {
                 if (req.files['image_file'] && req.files['image_file'][0]) {
@@ -335,6 +335,9 @@ const adminController = {
                 }
                 if (req.files['pdf_upload'] && req.files['pdf_upload'][0]) {
                     pdf_file = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
+                }
+                if (req.files['video_upload'] && req.files['video_upload'][0]) {
+                    video_file = '/uploads/videos/' + req.files['video_upload'][0].filename;
                 }
             } else if (req.file) {
                 image_url = '/uploads/semillas/' + req.file.filename;
@@ -349,6 +352,7 @@ const adminController = {
                 description: description || '',
                 content: content || '',
                 youtube_link: youtube_link || '',
+                video_file: video_file || '',
                 image_url: image_url || '',
                 pdf_file: pdf_file || '',
                 is_published: is_published !== '0' && is_published !== false
@@ -374,7 +378,7 @@ const adminController = {
 
     updateSemillas: async (req, res) => {
         try {
-            let { id, title, subtitle, category, author, description, content, youtube_link, is_published, image_url, pdf_file } = req.body;
+            let { id, title, subtitle, category, author, description, content, youtube_link, is_published, image_url, pdf_file, video_file } = req.body;
             
             if (req.files) {
                 if (req.files['image_file'] && req.files['image_file'][0]) {
@@ -382,6 +386,9 @@ const adminController = {
                 }
                 if (req.files['pdf_upload'] && req.files['pdf_upload'][0]) {
                     pdf_file = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
+                }
+                if (req.files['video_upload'] && req.files['video_upload'][0]) {
+                    video_file = '/uploads/videos/' + req.files['video_upload'][0].filename;
                 }
             } else if (req.file) {
                 image_url = '/uploads/semillas/' + req.file.filename;
@@ -396,6 +403,7 @@ const adminController = {
                 description: description || '',
                 content: content || '',
                 youtube_link: youtube_link || '',
+                video_file: video_file !== undefined ? video_file : '',
                 image_url: image_url || '',
                 pdf_file: pdf_file || '',
                 is_published: is_published !== '0' && is_published !== false

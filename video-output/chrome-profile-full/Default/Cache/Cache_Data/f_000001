@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W1TPC79ZG3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-W1TPC79ZG3');
+    </script>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>
+        Hablemos de YHWH
+    </title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+
+    <!-- Favicons -->
+    <link href="/assets/img/pagina/logo1.svg" rel="icon" type="image/svg+xml">
+    <link href="/assets/img/pagina/logo1.svg" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="/assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link href="/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="/assets/css/main.css" rel="stylesheet">
+
+    
+</head>
+
+    <body class="index-page">
+
+        <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="container-fluid position-relative d-flex align-items-center justify-content-between">
+        
+        
+
+        <a href="/" class="logo d-flex align-items-center me-auto me-xl-0">
+            <img src="/assets/img/pagina/logo.svg" alt="YHWH Logo" class="logo-spin"
+                style="border-radius: 50%; object-fit: cover; aspect-ratio: 1/1; max-height: 40px;">
+            <h1 class="sitename ms-2 mb-0" style="font-size: 24px;">Hablemos de YHWH</h1>
+        </a>
+
+        <nav id="navmenu" class="navmenu">
+            <ul>
+                <li><a href="/calendar" class=""><i class="bi bi-calendar3"></i>
+                        Calendario</a></li>
+                <li><a href="/aliyot" class=""><i class="bi bi-mic"></i>
+                        Aliyot</a></li>
+                <li><a href="/#services" class=""><i class="bi bi-journal-text"></i>
+                        Parashot</a></li>
+                <li><a href="/semillas-de-torah" class=""><i class="bi bi-balloon-heart"></i>
+                        Semillas de Torah</a></li>
+
+                <li class="dropdown">
+                    <a href="javascript:void(0);" class="">
+                        <span><i class="bi bi-people"></i> Sobre Nosotros</span>
+                        <i class="bi bi-chevron-down toggle-dropdown"></i>
+                    </a>
+                    <ul>
+                        <li><a href="/#about"><i class="bi bi-info-circle me-1"></i> Sobre Nosotros</a></li>
+                        <li><a href="/#section-identidad"><i class="bi bi-person-badge me-1"></i> Identidad</a></li>
+                        <li><a href="/#ensenanzas" class=""><i class="bi bi-book me-1"></i> Enseñanzas</a></li>
+                    </ul>
+                </li>
+
+                <li><a href="/blog" class=""><i class="bi bi-newspaper"></i>
+                        Blog</a></li>
+
+                
+                    
+                    
+                        
+                        
+                        
+                        
+                
+
+                
+                    <li><a href="/admin/login" class="btn-admin-access"
+                            style="border: 1px solid #d4b895; border-radius: 5px; padding: 5px 15px; margin-left: 10px;">Ingresar</a>
+                    </li>
+                
+            </ul>
+            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+
+        <div class="header-social-links">
+            
+            
+                <a href="https://www.youtube.com/@hablemosdeYHWH" target="_blank" rel="noopener noreferrer" title="YouTube"><i class="bi bi-youtube"></i></a>
+            
+            
+                <a href="https://www.facebook.com/hablemos.yhwh/" target="_blank" rel="noopener noreferrer" title="Facebook"><i class="bi bi-facebook"></i></a>
+            
+            
+                <a href="https://www.instagram.com/hablemosyhwh/" target="_blank" rel="noopener noreferrer" title="Instagram"><i class="bi bi-instagram"></i></a>
+            
+            
+                <a href="https://chat.whatsapp.com/IAiMKUyvdjYC94r2LbeL8P" target="_blank" rel="noopener noreferrer" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+            
+        </div>
+
+    </div>
+</header>
+
+            <main class="main">
+
+                <!-- Hero Section -->
+                <section id="hero" class="hero section dark-background" style="background: url(&#39;https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&amp;fit=crop&amp;q=80&amp;w=1920&#39;) center center / cover no-repeat !important;">
+                    <div class="container text-center">
+                        <div class="row justify-content-center" data-aos="zoom-out">
+                            <div class="col-lg-8">
+                                <img src="/assets/img/pagina/logo.svg" alt="YHWH Hero Logo" class="img-fluid mb-3 logo-spin"
+                                    style="max-height: 350px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;">
+                                <h2>
+                                    Hablemos de YHWH
+                                </h2>
+                                <p>
+                                    Descubre las ra├â┬¡ces hebreas de tu fe
+                                </p>
+                                <a href="#about" class="btn-get-started">Comencemos!!!</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="about" class="about section">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2>
+                            Hablemos de YHWH
+                        </h2>
+                        <p>
+                            En un mundo lleno de ruido, incertidumbre y b├â┬║squedas sin respuesta, nace un espacio dedicado a lo esencial: volver a la Palabra, al Nombre y a la Presencia del Eterno. Hablemos de YHWH es un lugar para detenernos, respirar y reencontrarnos con la verdad que transforma, gu├â┬¡a y sostiene. Aqu├â┬¡ exploramos la Escritura con respeto, claridad y prop├â┬│sito, reconociendo que cada conversaci├â┬│n sobre el Creador es un acto de acercamiento, un paso hacia la luz y la comprensi├â┬│n.  Este proyecto surge del deseo profundo de compartir, aprender y crecer, no desde la imposici├â┬│n, sino desde la apertura y el di├â┬ílogo. Porque hablar de YHWH es hablar de vida, de prop├â┬│sito y de identidad.
+                        </p>
+                    </div>
+                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                        <div class="row gy-4">
+                            <div class="col-lg-6">
+                                <img src="/assets/img/about.png"
+                                    class="img-fluid" alt="">
+                            </div>
+                            <div class="col-lg-6 content">
+                                <h3>Qui├â┬®nes somos</h3>
+                                <p>
+                                    Somos una comunidad de buscadores, aprendices y servidores que anhelan conocer m├â┬ís al Eterno y caminar conforme a Su voluntad.
+No somos una instituci├â┬│n ni una denominaci├â┬│n: somos un espacio de estudio, reflexi├â┬│n y encuentro, donde cada persona puede acercarse a la Escritura desde la autenticidad y el respeto.
+
+Creemos en una fe viva, consciente y fundamentada.
+Creemos en la importancia de volver a las ra├â┬¡ces, al significado profundo del Nombre y a la esencia del mensaje divino.
+Y creemos que cada conversaci├â┬│n sincera sobre YHWH tiene el poder de despertar, sanar y transformar.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Torah Viviente Slider Section -->
+                <section id="torah-viviente" class="torah-viviente section dark-background" style="position: relative; overflow: hidden; padding: 60px 0;">
+                    <style>
+                        #torah-viviente .swiper-slide {
+                            width: 85%; /* Anchura de la diapositiva central */
+                            max-width: 1200px;
+                            opacity: 0.3; /* Diapositivas inactivas se ven más oscuras */
+                            transition: opacity 0.5s ease, transform 1.5s ease;
+                            -webkit-box-reflect: below 5px linear-gradient(transparent, transparent 80%, rgba(0,0,0,0.3));
+                        }
+                        #torah-viviente .swiper-slide-active {
+                            opacity: 1; /* Diapositiva central totalmente visible */
+                        }
+                    </style>
+                    <div class="container" data-aos="fade-up">
+                        <div class="section-title text-center mb-4">
+                            <h2 style="color: #d4a853; font-weight: 700;">Torah Viviente</h2>
+                            <p style="color: #ccc;">Biblia de Estudio Hebreo — Disponible para descargar</p>
+                        </div>
+                        <div class="swiper init-swiper" style="padding-bottom: 60px;">
+                            <script type="application/json" class="swiper-config">
+                            {
+                                "loop": true,
+                                "speed": 1000,
+                                "autoplay": { "delay": 3000, "disableOnInteraction": false },
+                                "effect": "coverflow",
+                                "grabCursor": true,
+                                "centeredSlides": true,
+                                "slidesPerView": "auto",
+                                "coverflowEffect": {
+                                    "rotate": 0,
+                                    "stretch": -20,
+                                    "depth": 300,
+                                    "modifier": 1.5,
+                                    "slideShadows": true
+                                },
+                                "pagination": { "el": ".swiper-pagination-tv", "type": "bullets", "clickable": true }
+                            }
+                            </script>
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide" style="border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.6);">
+                                    <img src="/assets/img/toraviviente/slide1.png" alt="Torah Viviente - Fuentes Textuales" style="width: 100%; height: auto; display: block;">
+                                </div>
+                                <div class="swiper-slide" style="border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.6);">
+                                    <img src="/assets/img/toraviviente/slide2.png" alt="Torah Viviente - Brit Hadasha" style="width: 100%; height: auto; display: block;">
+                                </div>
+                                <div class="swiper-slide" style="border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.6);">
+                                    <img src="/assets/img/toraviviente/slide3.png" alt="Torah Viviente - Bereshit" style="width: 100%; height: auto; display: block;">
+                                </div>
+                            </div>
+                            <div class="swiper-pagination swiper-pagination-tv" style="bottom: 0;"></div>
+                        </div>
+
+                        <!-- Download Button -->
+                        <div class="text-center mt-4" data-aos="zoom-in" data-aos-delay="200">
+                            <p style="color: #e0d6c2; font-size: 1.1rem; margin-bottom: 16px;">
+                                <i class="bi bi-download" style="margin-right: 6px;"></i>
+                                ¿Deseas descargar la aplicación Torah Viviente?
+                            </p>
+                            <a href="http://torahviviente.com" target="_blank" rel="noopener noreferrer"
+                               class="torah-viviente-btn"
+                               onclick="if(typeof gtag === 'function') gtag('event', 'click_descargar_torah', { 'event_category': 'Botones', 'event_label': 'Descargar Torah Viviente' });"
+                               style="display: inline-block; transition: transform 0.3s ease, box-shadow 0.3s ease; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(212,168,83,0.4);">
+                                <img src="/assets/img/toraviviente/boton.png" alt="Descargar Torah Viviente"
+                                     style="height: 70px; display: block;">
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="services" class="services section">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2>Parashot</h2>
+                        <p>Lo que ofrecemos</p>
+                    </div>
+                    <div class="container">
+                        <div class="row gy-4">
+                            
+                                <div class="col-lg-6 " data-aos="fade-up" data-aos-delay="100">
+                                    <div class="service-item d-flex align-items-center justify-content-center py-2 px-3 shadow-sm" style="position: relative; background: #ffffff; border-radius: 15px; border: 1px solid #f0f0f0;">
+                                        <div class="row g-2 align-items-center w-100 flex-nowrap">
+                                            <!-- Columna 1: Icono -->
+                                            <div class="col-auto d-none d-md-flex">
+                                                <div class="icon flex-shrink-0" style="width: 50px; height: 50px; background: #f8f9fa; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #eee;">
+                                                    <i class="bi bi-journal-text" style="font-size: 1.2rem;"></i>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Columna 2: Texto (Título + Subtítulo + Descripción) -->
+                                            <div class="col text-start ps-2 overflow-hidden">
+                                                <h4 class="title mb-0" style="font-size: 1.2rem; font-weight: 700; white-space: nowrap;">
+                                                    <a href="/parashot/25" class="stretched-link" style="color: #222;">
+                                                        22. Vayak&#39;hel
+                                                    </a>
+                                                </h4>
+                                                
+                                                    <div class="subtitle mb-0" style="color: var(--primary-color); font-size: 0.85rem; font-weight: 600; line-height: 1.2;">
+                                                        ├ëxodo 35:1 al 38:20
+                                                    </div>
+                                                
+                                                <p class="description mb-0 text-truncate" style="color: #666; font-size: 0.8rem; opacity: 0.8;">
+                                                    El congreg├│
+                                                </p>
+                                            </div>
+
+                                            <!-- Columna 3: Imagen o Proximamente -->
+                                            <div class="col-auto">
+                                                
+                                                    <div class="parasha-cover-mini" style="width: 150px; height: 100px; border-radius: 10px; overflow: hidden; background: #1a1a1a; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center;">
+                                                        <img src="/assets/parashot/1780323648680-622333138.png" alt="Vayak&#39;hel" style="width: 100%; height: 100%; object-fit: contain;">
+                                                    </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-6 " data-aos="fade-up" data-aos-delay="200">
+                                    <div class="service-item d-flex align-items-center justify-content-center py-2 px-3 shadow-sm" style="position: relative; background: #ffffff; border-radius: 15px; border: 1px solid #f0f0f0;">
+                                        <div class="row g-2 align-items-center w-100 flex-nowrap">
+                                            <!-- Columna 1: Icono -->
+                                            <div class="col-auto d-none d-md-flex">
+                                                <div class="icon flex-shrink-0" style="width: 50px; height: 50px; background: #f8f9fa; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #eee;">
+                                                    <i class="bi bi-journal-text" style="font-size: 1.2rem;"></i>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Columna 2: Texto (Título + Subtítulo + Descripción) -->
+                                            <div class="col text-start ps-2 overflow-hidden">
+                                                <h4 class="title mb-0" style="font-size: 1.2rem; font-weight: 700; white-space: nowrap;">
+                                                    <a href="/parashot/24" class="stretched-link" style="color: #222;">
+                                                        21. Ki Tisa
+                                                    </a>
+                                                </h4>
+                                                
+                                                    <div class="subtitle mb-0" style="color: var(--primary-color); font-size: 0.85rem; font-weight: 600; line-height: 1.2;">
+                                                        ├âÔÇ░xodo 30:11 al 34:35
+                                                    </div>
+                                                
+                                                <p class="description mb-0 text-truncate" style="color: #666; font-size: 0.8rem; opacity: 0.8;">
+                                                    Cuenado hagas un censo
+                                                </p>
+                                            </div>
+
+                                            <!-- Columna 3: Imagen o Proximamente -->
+                                            <div class="col-auto">
+                                                
+                                                    <div class="parasha-cover-mini" style="width: 150px; height: 100px; border-radius: 10px; overflow: hidden; background: #1a1a1a; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center;">
+                                                        <img src="/assets/parashot/1780322925985-581376289.jpg" alt="Ki Tisa" style="width: 100%; height: 100%; object-fit: contain;">
+                                                    </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-6 " data-aos="fade-up" data-aos-delay="300">
+                                    <div class="service-item d-flex align-items-center justify-content-center py-2 px-3 shadow-sm" style="position: relative; background: #ffffff; border-radius: 15px; border: 1px solid #f0f0f0;">
+                                        <div class="row g-2 align-items-center w-100 flex-nowrap">
+                                            <!-- Columna 1: Icono -->
+                                            <div class="col-auto d-none d-md-flex">
+                                                <div class="icon flex-shrink-0" style="width: 50px; height: 50px; background: #f8f9fa; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #eee;">
+                                                    <i class="bi bi-journal-text" style="font-size: 1.2rem;"></i>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Columna 2: Texto (Título + Subtítulo + Descripción) -->
+                                            <div class="col text-start ps-2 overflow-hidden">
+                                                <h4 class="title mb-0" style="font-size: 1.2rem; font-weight: 700; white-space: nowrap;">
+                                                    <a href="/parashot/23" class="stretched-link" style="color: #222;">
+                                                        20. Tetzaveh
+                                                    </a>
+                                                </h4>
+                                                
+                                                    <div class="subtitle mb-0" style="color: var(--primary-color); font-size: 0.85rem; font-weight: 600; line-height: 1.2;">
+                                                        ├âÔÇ░xodo 27:20 al 30:10
+                                                    </div>
+                                                
+                                                <p class="description mb-0 text-truncate" style="color: #666; font-size: 0.8rem; opacity: 0.8;">
+                                                    Mandar├â┬ís
+                                                </p>
+                                            </div>
+
+                                            <!-- Columna 3: Imagen o Proximamente -->
+                                            <div class="col-auto">
+                                                
+                                                    <div class="parasha-cover-mini" style="width: 150px; height: 100px; border-radius: 10px; overflow: hidden; background: #1a1a1a; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center;">
+                                                        <img src="/assets/parashot/1780322546741-444926158.png" alt="Tetzaveh" style="width: 100%; height: 100%; object-fit: contain;">
+                                                    </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-6 " data-aos="fade-up" data-aos-delay="400">
+                                    <div class="service-item d-flex align-items-center justify-content-center py-2 px-3 shadow-sm" style="position: relative; background: #ffffff; border-radius: 15px; border: 1px solid #f0f0f0;">
+                                        <div class="row g-2 align-items-center w-100 flex-nowrap">
+                                            <!-- Columna 1: Icono -->
+                                            <div class="col-auto d-none d-md-flex">
+                                                <div class="icon flex-shrink-0" style="width: 50px; height: 50px; background: #f8f9fa; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #eee;">
+                                                    <i class="bi bi-journal-text" style="font-size: 1.2rem;"></i>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Columna 2: Texto (Título + Subtítulo + Descripción) -->
+                                            <div class="col text-start ps-2 overflow-hidden">
+                                                <h4 class="title mb-0" style="font-size: 1.2rem; font-weight: 700; white-space: nowrap;">
+                                                    <a href="/parashot/22" class="stretched-link" style="color: #222;">
+                                                        19. Terumah
+                                                    </a>
+                                                </h4>
+                                                
+                                                    <div class="subtitle mb-0" style="color: var(--primary-color); font-size: 0.85rem; font-weight: 600; line-height: 1.2;">
+                                                        ├âÔÇ░xodo 25:1 al 27:19
+                                                    </div>
+                                                
+                                                <p class="description mb-0 text-truncate" style="color: #666; font-size: 0.8rem; opacity: 0.8;">
+                                                    Ofrenda elevada
+                                                </p>
+                                            </div>
+
+                                            <!-- Columna 3: Imagen o Proximamente -->
+                                            <div class="col-auto">
+                                                
+                                                    <div class="parasha-cover-mini" style="width: 150px; height: 100px; border-radius: 10px; overflow: hidden; background: #1a1a1a; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center;">
+                                                        <img src="/assets/parashot/1780322402404-953219958.png" alt="Terumah" style="width: 100%; height: 100%; object-fit: contain;">
+                                                    </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-6 " data-aos="fade-up" data-aos-delay="500">
+                                    <div class="service-item d-flex align-items-center justify-content-center py-2 px-3 shadow-sm" style="position: relative; background: #ffffff; border-radius: 15px; border: 1px solid #f0f0f0;">
+                                        <div class="row g-2 align-items-center w-100 flex-nowrap">
+                                            <!-- Columna 1: Icono -->
+                                            <div class="col-auto d-none d-md-flex">
+                                                <div class="icon flex-shrink-0" style="width: 50px; height: 50px; background: #f8f9fa; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #eee;">
+                                                    <i class="bi bi-journal-text" style="font-size: 1.2rem;"></i>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Columna 2: Texto (Título + Subtítulo + Descripción) -->
+                                            <div class="col text-start ps-2 overflow-hidden">
+                                                <h4 class="title mb-0" style="font-size: 1.2rem; font-weight: 700; white-space: nowrap;">
+                                                    <a href="/parashot/21" class="stretched-link" style="color: #222;">
+                                                        18. Mishpatim
+                                                    </a>
+                                                </h4>
+                                                
+                                                    <div class="subtitle mb-0" style="color: var(--primary-color); font-size: 0.85rem; font-weight: 600; line-height: 1.2;">
+                                                        ├âÔÇ░xodo 21:1 al 24:18
+                                                    </div>
+                                                
+                                                <p class="description mb-0 text-truncate" style="color: #666; font-size: 0.8rem; opacity: 0.8;">
+                                                    Preseptos
+                                                </p>
+                                            </div>
+
+                                            <!-- Columna 3: Imagen o Proximamente -->
+                                            <div class="col-auto">
+                                                
+                                                    <div class="parasha-cover-mini" style="width: 150px; height: 100px; border-radius: 10px; overflow: hidden; background: #1a1a1a; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center;">
+                                                        <img src="/assets/parashot/1780011460960-906690417.jpg" alt="Mishpatim" style="width: 100%; height: 100%; object-fit: contain;">
+                                                    </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-6 " data-aos="fade-up" data-aos-delay="600">
+                                    <div class="service-item d-flex align-items-center justify-content-center py-2 px-3 shadow-sm" style="position: relative; background: #ffffff; border-radius: 15px; border: 1px solid #f0f0f0;">
+                                        <div class="row g-2 align-items-center w-100 flex-nowrap">
+                                            <!-- Columna 1: Icono -->
+                                            <div class="col-auto d-none d-md-flex">
+                                                <div class="icon flex-shrink-0" style="width: 50px; height: 50px; background: #f8f9fa; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #eee;">
+                                                    <i class="bi bi-journal-text" style="font-size: 1.2rem;"></i>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Columna 2: Texto (Título + Subtítulo + Descripción) -->
+                                            <div class="col text-start ps-2 overflow-hidden">
+                                                <h4 class="title mb-0" style="font-size: 1.2rem; font-weight: 700; white-space: nowrap;">
+                                                    <a href="/parashot/20" class="stretched-link" style="color: #222;">
+                                                        17. Itro
+                                                    </a>
+                                                </h4>
+                                                
+                                                    <div class="subtitle mb-0" style="color: var(--primary-color); font-size: 0.85rem; font-weight: 600; line-height: 1.2;">
+                                                        ├âÔÇ░xodo 18:1 al 20:23
+                                                    </div>
+                                                
+                                                <p class="description mb-0 text-truncate" style="color: #666; font-size: 0.8rem; opacity: 0.8;">
+                                                    Jetro
+                                                </p>
+                                            </div>
+
+                                            <!-- Columna 3: Imagen o Proximamente -->
+                                            <div class="col-auto">
+                                                
+                                                    <div class="parasha-cover-mini" style="width: 150px; height: 100px; border-radius: 10px; overflow: hidden; background: #1a1a1a; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center;">
+                                                        <img src="/assets/parashot/1779963508803-480871648.jpg" alt="Itro" style="width: 100%; height: 100%; object-fit: contain;">
+                                                    </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                        </div>
+                        <div class="text-center mt-4" data-aos="fade-up">
+                            <a href="/parashot"
+                                style="background-color: #d4b895; color: #fff; padding: 12px 40px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600;">Ver
+                                todas</a>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="portfolio" class="portfolio section">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2>Eventos</h2>
+                        <p>Próximos eventos programados</p>
+                    </div>
+                    <div class="container">
+                        
+
+                        <!-- Botones de Filtro por Categoría -->
+                        <div class="d-flex justify-content-center mb-4" data-aos="fade-up" data-aos-delay="100">
+                            <div class="event-filter-container">
+                                <ul class="portfolio-filters isotope-filters event-filter-list mb-0 p-0 d-flex flex-wrap justify-content-center gap-2 list-unstyled">
+                                    <li data-filter="*" class="filter-active event-filter-btn">
+                                        <i class="bi bi-grid-fill me-1"></i> Todos
+                                        <span class="badge-count ms-1">3</span>
+                                    </li>
+                                    
+                                        <li data-filter=".cat-moedim" class="event-filter-btn">
+                                            <i class="bi bi-tag-fill me-1"></i> Moedim
+                                            <span class="badge-count ms-1">3</span>
+                                        </li>
+                                    
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="row gy-4 isotope-container" id="eventos-cards-grid" data-aos="fade-up" data-aos-delay="200">
+                            
+                                
+                                    
+                                    <div class="col-lg-3 col-md-6 portfolio-item isotope-item cat-moedim filter-app moedin ">
+                                        <a href="/eventos/3" class="evento-card-link" style="text-decoration: none; color: inherit; display: block; height: 100%;">
+                                            <div class="evento-card" style="background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: transform 0.3s ease, box-shadow 0.3s ease; height: 100%; display: flex; flex-direction: column;">
+                                                <div style="width: 100%; height: 200px; overflow: hidden; background: #1a1a1a; position: relative;">
+                                                    
+                                                        <img src="/uploads/portfolio/1780324452480-841690316.png" alt="Rosh Jodesh Mes 4"
+                                                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+                                                    
+                                                    <span style="position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.75); color: #d4a853; border: 1px solid rgba(212,168,83,0.6); font-size: 0.72rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                                                        Moedim
+                                                    </span>
+                                                </div>
+                                                <div style="padding: 16px; flex-grow: 1; display: flex; flex-direction: column;">
+                                                    <h5 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; color: #222; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">Rosh Jodesh Mes 4</h5>
+                                                    
+                                                        <p style="font-size: 0.8rem; color: #c49545; font-weight: 600; margin-bottom: 6px;">
+                                                            <i class="bi bi-calendar3 me-1"></i>
+                                                            15 de junio de 2026
+                                                        </p>
+                                                    
+                                                    
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                
+                                    
+                                    <div class="col-lg-3 col-md-6 portfolio-item isotope-item cat-moedim filter-app moedin ">
+                                        <a href="/eventos/2" class="evento-card-link" style="text-decoration: none; color: inherit; display: block; height: 100%;">
+                                            <div class="evento-card" style="background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: transform 0.3s ease, box-shadow 0.3s ease; height: 100%; display: flex; flex-direction: column;">
+                                                <div style="width: 100%; height: 200px; overflow: hidden; background: #1a1a1a; position: relative;">
+                                                    
+                                                        <img src="/uploads/portfolio/1779969163919-366739135.png" alt="Shavuot"
+                                                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+                                                    
+                                                    <span style="position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.75); color: #d4a853; border: 1px solid rgba(212,168,83,0.6); font-size: 0.72rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                                                        Moedim
+                                                    </span>
+                                                </div>
+                                                <div style="padding: 16px; flex-grow: 1; display: flex; flex-direction: column;">
+                                                    <h5 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; color: #222; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">Shavuot</h5>
+                                                    
+                                                        <p style="font-size: 0.8rem; color: #c49545; font-weight: 600; margin-bottom: 6px;">
+                                                            <i class="bi bi-calendar3 me-1"></i>
+                                                            24 de mayo de 2026
+                                                        </p>
+                                                    
+                                                    
+                                                        <p style="font-size: 0.8rem; color: #777; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">Lev├â┬¡ticos 23:17</p>
+                                                    
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                
+                                    
+                                    <div class="col-lg-3 col-md-6 portfolio-item isotope-item cat-moedim filter-app moedin ">
+                                        <a href="/eventos/1" class="evento-card-link" style="text-decoration: none; color: inherit; display: block; height: 100%;">
+                                            <div class="evento-card" style="background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: transform 0.3s ease, box-shadow 0.3s ease; height: 100%; display: flex; flex-direction: column;">
+                                                <div style="width: 100%; height: 200px; overflow: hidden; background: #1a1a1a; position: relative;">
+                                                    
+                                                        <img src="/uploads/portfolio/1778596426490-462990542.png" alt="Rosh Jodesh Mes 3"
+                                                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+                                                    
+                                                    <span style="position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.75); color: #d4a853; border: 1px solid rgba(212,168,83,0.6); font-size: 0.72rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                                                        Moedim
+                                                    </span>
+                                                </div>
+                                                <div style="padding: 16px; flex-grow: 1; display: flex; flex-direction: column;">
+                                                    <h5 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; color: #222; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">Rosh Jodesh Mes 3</h5>
+                                                    
+                                                        <p style="font-size: 0.8rem; color: #c49545; font-weight: 600; margin-bottom: 6px;">
+                                                            <i class="bi bi-calendar3 me-1"></i>
+                                                            16 de mayo de 2026
+                                                        </p>
+                                                    
+                                                    
+                                                        <p style="font-size: 0.8rem; color: #777; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">Comienzo del mes tercero</p>
+                                                    
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                
+                            
+                        </div>
+
+                        <!-- Mensaje cuando una categoría no tiene eventos -->
+                        <div id="no-events-category-msg" class="text-center py-5" style="display: none;">
+                            <i class="bi bi-calendar-x text-muted" style="font-size: 2.5rem;"></i>
+                            <p class="text-muted mt-2 mb-0">No se encontraron eventos en esta categoría.</p>
+                        </div>
+
+                        <div class="text-center mt-4" data-aos="fade-up">
+                            <a href="/eventos"
+                                style="background: linear-gradient(135deg, #d4a853, #c49545); color: #fff; padding: 12px 40px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600; box-shadow: 0 4px 15px rgba(212,168,83,0.3); transition: all 0.3s ease;">Ver
+                                más</a>
+                        </div>
+                    </div>
+
+                    <style>
+                        .event-filter-container {
+                            background: #f8f6f2;
+                            padding: 6px 8px;
+                            border-radius: 50px;
+                            border: 1px solid #ebdccb;
+                            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+                            display: inline-block;
+                        }
+                        .event-filter-btn {
+                            cursor: pointer;
+                            padding: 8px 20px;
+                            border-radius: 30px;
+                            font-size: 0.88rem;
+                            font-weight: 600;
+                            color: #6b5847;
+                            background: transparent;
+                            transition: all 0.25s ease-in-out;
+                            user-select: none;
+                            display: inline-flex;
+                            align-items: center;
+                            border: 1px solid transparent;
+                        }
+                        .event-filter-btn:hover {
+                            background: #ede3d7;
+                            color: #2b231d;
+                            transform: translateY(-1px);
+                        }
+                        .event-filter-btn.filter-active {
+                            background: linear-gradient(135deg, #d4a853, #b8860b) !important;
+                            color: #fff !important;
+                            border-color: transparent !important;
+                            box-shadow: 0 4px 12px rgba(212, 168, 83, 0.4) !important;
+                        }
+                        .event-filter-btn .badge-count {
+                            background: rgba(0, 0, 0, 0.08);
+                            color: inherit;
+                            font-size: 0.75rem;
+                            padding: 2px 8px;
+                            border-radius: 12px;
+                            font-weight: 700;
+                            transition: background 0.2s ease;
+                        }
+                        .event-filter-btn.filter-active .badge-count {
+                            background: rgba(255, 255, 255, 0.28);
+                            color: #fff;
+                        }
+                        .evento-card:hover {
+                            transform: translateY(-6px) !important;
+                            box-shadow: 0 12px 30px rgba(0,0,0,0.15) !important;
+                        }
+                        .evento-card:hover img {
+                            transform: scale(1.08);
+                        }
+                    </style>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const filterBtns = document.querySelectorAll('#portfolio .event-filter-btn');
+                            const eventCards = document.querySelectorAll('#portfolio .portfolio-item');
+                            const emptyMsg = document.getElementById('no-events-category-msg');
+
+                            filterBtns.forEach(btn => {
+                                btn.addEventListener('click', function(e) {
+                                    filterBtns.forEach(b => b.classList.remove('filter-active'));
+                                    this.classList.add('filter-active');
+
+                                    const targetFilter = this.getAttribute('data-filter');
+                                    let matchCount = 0;
+
+                                    eventCards.forEach(card => {
+                                        if (targetFilter === '*' || card.matches(targetFilter)) {
+                                            card.style.display = '';
+                                            matchCount++;
+                                        } else {
+                                            card.style.display = 'none';
+                                        }
+                                    });
+
+                                    if (emptyMsg) {
+                                        emptyMsg.style.display = (matchCount === 0) ? 'block' : 'none';
+                                    }
+                                });
+                            });
+                        });
+                    </script>
+                </section>
+
+                <!-- Sección de Enseñanzas (Resumen con imagen) -->
+                <!-- Sección de Enseñanzas (Resumen con imagen) -->
+                <section id="ensenanzas" class="ensenanzas section">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2>Enseñanzas</h2>
+                        <p>Estudios profundos de las Sagradas Escrituras</p>
+                    </div>
+                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                        
+                            <div class="row gy-4 justify-content-center">
+                                
+                                    <div class="col-lg-3 col-md-6 col-12" data-aos="fade-up" data-aos-delay="100">
+                                        <a href="/ensenanzas/1" class="text-decoration-none text-reset d-block h-100">
+                                            <div class="ensenanza-card h-100 shadow-sm" style="background: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #eee; transition: all 0.35s ease; display: flex; flex-direction: column;">
+                                                <div class="ensenanza-img-box" style="position: relative; width: 100%; height: 210px; overflow: hidden; background: #1a1a1a;">
+                                                    
+                                                        <img src="https://images.unsplash.com/photo-1507692049790-de58290a4334?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="La Importancia del Shabat" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+                                                    
+                                                    <div class="ensenanza-hover-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%); opacity: 0; transition: opacity 0.3s ease;"></div>
+                                                </div>
+                                                <div class="p-3 d-flex flex-column flex-grow-1">
+                                                    <h5 class="fw-bold mb-2" style="font-size: 1.05rem; color: #222; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                                        La Importancia del Shabat
+                                                    </h5>
+                                                    
+                                                        <div class="mb-2" style="color: #d4a853; font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                                                            Fundamentos Bíblicos
+                                                        </div>
+                                                    
+                                                    
+                                                        <p class="text-muted mb-0" style="font-size: 0.85rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                                            Un estudio completo acerca del día de reposo y su significado profético e histórico.
+                                                        </p>
+                                                    
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                
+                            </div>
+                            <div class="text-center mt-5" data-aos="fade-up">
+                                <a href="/ensenanzas"
+                                    style="background: linear-gradient(135deg, #d4a853, #b8860b); color: #fff; padding: 12px 40px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600; box-shadow: 0 4px 15px rgba(212,168,83,0.35); transition: all 0.3s ease;">
+                                    Ver todas las enseñanzas <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        
+                    </div>
+                </section>
+                <style>
+                    .ensenanza-card:hover {
+                        transform: translateY(-6px);
+                        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12) !important;
+                        border-color: #d4a853 !important;
+                    }
+                    .ensenanza-card:hover .ensenanza-img-box img {
+                        transform: scale(1.06);
+                    }
+                    .ensenanza-card:hover .ensenanza-hover-overlay {
+                        opacity: 1;
+                    }
+                </style>
+
+                <!-- Semillas de Torah Section -->
+                <section id="semillas-torah" class="section py-5" style="background: linear-gradient(180deg, #ffffff 0%, #faf5ff 100%);">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2><i class="bi bi-balloon-heart-fill text-purple me-2" style="color: #6b21a8;"></i>Semillas de Torah</h2>
+                        <p>Sembrando la Palabra, cosechando vida 💚 — By Elva Avila</p>
+                    </div>
+                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                        <div class="row align-items-center gy-4 p-4 p-md-5 rounded-4 shadow-sm" style="background: #ffffff; border: 1px solid #f3e8ff;">
+                            <div class="col-lg-6" data-aos="fade-right">
+                                <span class="badge px-3 py-2 mb-3 rounded-pill" style="background: #f3e8ff; color: #6b21a8; font-weight: 700; font-size: 0.85rem;">
+                                    🌱 Ministerio Infantil & Familiar
+                                </span>
+                                <h3 class="fw-bold mb-3" style="color: #2e1065; font-size: 1.85rem; line-height: 1.35;">
+                                    Enseñando la Toráh a las nuevas generaciones
+                                </h3>
+                                <p class="text-muted mb-4" style="font-size: 1.05rem; line-height: 1.7;">
+                                    Un espacio coordinado por <strong>Elva Avila</strong> con historias bíblicas ilustradas, hojas de actividades didácticas, alabanzas infantiles y la porción de la Toráh explicada de forma clara y alegre para los niños.
+                                </p>
+                                <div class="d-flex flex-wrap gap-3">
+                                    <a href="/semillas-de-torah" class="btn px-4 py-2 rounded-pill fw-bold text-white shadow-sm d-inline-flex align-items-center gap-2" style="background: #6b21a8; border: none; font-size: 0.95rem;">
+                                        <i class="bi bi-balloon-heart"></i> Explorar Sección Infantil
+                                    </a>
+                                    <a href="https://www.facebook.com/profile.php?id=61592294939779" target="_blank" rel="noopener noreferrer" class="btn px-4 py-2 rounded-pill fw-bold text-white shadow-sm d-inline-flex align-items-center gap-2" style="background: #1877F2; border: none; font-size: 0.95rem;">
+                                        <i class="bi bi-facebook"></i> Facebook Oficial
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-6" data-aos="fade-left">
+                                <div class="position-relative overflow-hidden rounded-4 shadow" style="max-height: 380px; border: 3px solid #f3e8ff;">
+                                    <a href="/semillas-de-torah">
+                                        <img src="/assets/img/pagina/semillas_torah_banner.png" alt="Semillas de Torah - By Elva Avila" class="img-fluid w-100" style="object-fit: cover; height: 100%; transition: transform 0.4s ease;">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Testimonials Section -->
+                <section id="testimonials" class="testimonials section dark-background">
+                    <img src="/assets/img/testimonials-bg.jpg" class="testimonials-bg" alt="">
+                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                        <div class="swiper init-swiper">
+                            <script type="application/json" class="swiper-config">
+            {
+              "loop": true,
+              "speed": 600,
+              "autoplay": { "delay": 5000 },
+              "slidesPerView": "auto",
+              "pagination": { "el": ".swiper-pagination", "type": "bullets", "clickable": true }
+            }
+          </script>
+                            <div class="swiper-wrapper">
+                                
+                            </div>
+                            <div class="swiper-pagination"></div>
+                        </div>
+                    </div>
+                </section>
+
+
+
+                <section id="team" class="team section">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2>Equipo</h2>
+                        <p>Conoce a los encargados</p>
+                    </div>
+                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                        <div class="row gy-4 justify-content-center">
+                            
+                                <div class="col-6 col-md-4 col-lg-3 col-xl-2 text-center d-flex justify-content-center">
+                                    <div class="team-member-card" style="padding: 10px; width: 100%;">
+                                        <div style="width: 100%; max-width: 180px; aspect-ratio: 1/1; margin: 0 auto 12px; border-radius: 50%; overflow: hidden; border: 3px solid #d4b895; box-shadow: 0 4px 15px rgba(212,184,149,0.3);">
+                                            <img src="/uploads/team/1778597981589-654668347.png" alt="Ivana Orme├â┬▒o"
+                                                style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
+                                        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; color: #222;">Ivana Orme├â┬▒o</h4>
+                                        <span style="font-size: 0.8rem; color: #d4b895; font-weight: 600;">Morah   ├ù┼¥├ùÔÇó├ù┬¿├ùÔÇØ</span>
+                                    </div>
+                                </div>
+                            
+                                <div class="col-6 col-md-4 col-lg-3 col-xl-2 text-center d-flex justify-content-center">
+                                    <div class="team-member-card" style="padding: 10px; width: 100%;">
+                                        <div style="width: 100%; max-width: 180px; aspect-ratio: 1/1; margin: 0 auto 12px; border-radius: 50%; overflow: hidden; border: 3px solid #d4b895; box-shadow: 0 4px 15px rgba(212,184,149,0.3);">
+                                            <img src="/uploads/team/1778597286773-301692308.png" alt="Marcelo Wingeyer"
+                                                style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
+                                        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; color: #222;">Marcelo Wingeyer</h4>
+                                        <span style="font-size: 0.8rem; color: #d4b895; font-weight: 600;">Moreh  ├ù┼¥├ùÔÇó├ù┬¿├ùÔÇØ</span>
+                                    </div>
+                                </div>
+                            
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Blog & Noticias Section -->
+                <section id="blog" class="blog-home section" style="background-color: #faf9f6; padding: 70px 0;">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2>Blog &amp; Noticias</h2>
+                        <p>Reflexiones, artículos y novedades de nuestra comunidad</p>
+                    </div>
+                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                        
+                            <div class="text-center py-4">
+                                <p class="text-muted">Próximamente compartiremos nuevas publicaciones y noticias.</p>
+                                <a href="/blog" class="btn btn-outline-dark btn-sm rounded-pill px-4">Ir a la sección de Blog</a>
+                            </div>
+                        
+                    </div>
+                </section>
+                <style>
+                    .blog-card:hover {
+                        transform: translateY(-8px);
+                        box-shadow: 0 16px 35px rgba(0, 0, 0, 0.12) !important;
+                        border-color: #d4a853 !important;
+                    }
+                    .blog-card:hover .blog-img-box img {
+                        transform: scale(1.08);
+                    }
+                    .hover-gold-title:hover {
+                        color: #d4a853 !important;
+                    }
+                    .btn-read-more:hover {
+                        transform: translateX(4px);
+                    }
+                </style>
+
+                <!-- Secciones Dinámicas Inline -->
+                
+                    
+                        <section id="section-identidad"
+                            class="section ">
+                            <div class="container section-title" data-aos="fade-up">
+                                <h2><i class="bi bi-file-text"></i>
+                                    Identidad
+                                </h2>
+                                
+                                    <p>Instroduccion a descrubri nuestra identidad conforme a la voluntad de YHWH, y lo que las escrituras nos revelan</p>
+                                
+                            </div>
+                            <div class="container" data-aos="fade-up" data-aos-delay="100">
+                                
+                                    <div class="row mb-4">
+                                        <div class="col-12">
+                                            La serie completa enseña que la identidad del creyente no se construye desde emociones, cultura, religión o experiencias personales, sino desde lo que YHWH declara en Su Palabra. A lo largo de los cuatro videos, se muestra que la humanidad perdió su identidad original al separarse del Creador, y que Yeshua es quien la restaura, devolviendo propósito, dirección y sentido.
+
+La serie revela que muchas personas viven desde identidades distorsionadas —marcadas por heridas, etiquetas humanas, expectativas sociales o patrones mentales antiguos— y por eso experimentan confusión, inseguridad o falta de propósito. La verdadera identidad se recupera cuando el creyente renueva su mente, escucha la voz del Creador por encima de las voces externas y se alinea con la perspectiva bíblica original.
+
+Finalmente, la identidad en Yeshua no es un concepto teórico, sino una forma de vida práctica: se recibe, se aprende, se vive y se expresa en decisiones, carácter, obediencia y comunidad. La serie concluye afirmando que caminar en la identidad restaurada es un proceso continuo que transforma cada área de la vida y permite al creyente reflejar la naturaleza de YHWH en el mundo.
+                                        </div>
+                                    </div>
+                                
+
+                                
+                                    <div class="row gy-4">
+                                        
+                                            <div class="col-lg-3 col-md-6 col-6" data-aos="fade-up" data-aos-delay="100">
+                                                <a href="/s/identidad" class="text-decoration-none" style="display: block;">
+                                                    <div class="card h-100 shadow-sm border-0 dynamic-card-hover" style="border-radius: 15px; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer;">
+                                                        
+                                                        
+                                                            <div style="height: 200px; overflow: hidden; position: relative;">
+                                                                <img src="/uploads/entity/1781882128971-670646096.png" class="card-img-top" alt="Identidad Parte # 3" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+                                                                <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%); opacity: 0; transition: opacity 0.3s ease;" class="card-overlay"></div>
+                                                                <div style="position: absolute; bottom: 12px; left: 0; right: 0; text-align: center; opacity: 0; transition: opacity 0.3s ease; transform: translateY(5px); transition: opacity 0.3s ease, transform 0.3s ease;" class="card-play-icon">
+                                                                    <i class="bi bi-play-circle-fill" style="font-size: 2.5rem; color: #fff; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));"></i>
+                                                                </div>
+                                                            </div>
+                                                        
+                                                        <div class="card-body p-3">
+                                                            <h6 class="card-title fw-bold mb-1" style="color: #222; font-size: 0.95rem;">Identidad Parte # 3</h6>
+                                                            
+                                                                <p class="card-text text-muted mb-0" style="font-size: 0.8rem;">Redenci├│n y Retorno: El Pacto Renovado y la Restauraci├│n d...</p>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        
+                                            <div class="col-lg-3 col-md-6 col-6" data-aos="fade-up" data-aos-delay="200">
+                                                <a href="/s/identidad" class="text-decoration-none" style="display: block;">
+                                                    <div class="card h-100 shadow-sm border-0 dynamic-card-hover" style="border-radius: 15px; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer;">
+                                                        
+                                                        
+                                                            <div style="height: 200px; overflow: hidden; position: relative;">
+                                                                <img src="/uploads/entity/1781881973661-729784546.png" class="card-img-top" alt="Identidad Parte # 4" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+                                                                <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%); opacity: 0; transition: opacity 0.3s ease;" class="card-overlay"></div>
+                                                                <div style="position: absolute; bottom: 12px; left: 0; right: 0; text-align: center; opacity: 0; transition: opacity 0.3s ease; transform: translateY(5px); transition: opacity 0.3s ease, transform 0.3s ease;" class="card-play-icon">
+                                                                    <i class="bi bi-play-circle-fill" style="font-size: 2.5rem; color: #fff; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));"></i>
+                                                                </div>
+                                                            </div>
+                                                        
+                                                        <div class="card-body p-3">
+                                                            <h6 class="card-title fw-bold mb-1" style="color: #222; font-size: 0.95rem;">Identidad Parte # 4</h6>
+                                                            
+                                                                <p class="card-text text-muted mb-0" style="font-size: 0.8rem;">Redescubriendo el diseño original: De la dispersión de las n...</p>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        
+                                    </div>
+                                    <style>
+                                        .dynamic-card-hover:hover {
+                                            transform: translateY(-6px) !important;
+                                            box-shadow: 0 12px 30px rgba(0,0,0,0.15) !important;
+                                        }
+                                        .dynamic-card-hover:hover img {
+                                            transform: scale(1.08);
+                                        }
+                                        .dynamic-card-hover:hover .card-overlay {
+                                            opacity: 1 !important;
+                                        }
+                                        .dynamic-card-hover:hover .card-play-icon {
+                                            opacity: 1 !important;
+                                            transform: translateY(0) !important;
+                                        }
+                                    </style>
+                                
+
+                                <div class="text-center mt-5">
+                                    <a href="/s/identidad" class="btn-get-started"
+                                        style="background-color: #d4b895; color: #fff; padding: 12px 40px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600;">
+                                        Ver Identidad completo <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </section>
+                    
+                
+
+                <section id="contact" class="contact section">
+                                    <div class="container section-title" data-aos="fade-up">
+                                        <h2>Contacto</h2>
+                                        <p>Mantente en comunicación con nosotros</p>
+                                    </div>
+                                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                                        <div class="row gy-4">
+                                            <div class="col-lg-4">
+                                                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
+                                                    <i class="bi bi-geo-alt flex-shrink-0"></i>
+                                                    <div>
+                                                        <h3>Dirección</h3>
+                                                        <p>Caucete, San Juan, Argentina</p>
+                                                    </div>
+                                                </div>
+                                                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+                                                    <i class="bi bi-telephone flex-shrink-0"></i>
+                                                    <div>
+                                                        <h3>Llámanos</h3>
+                                                        <p>+549 264 5758367</p>
+                                                    </div>
+                                                </div>
+                                                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
+                                                    <i class="bi bi-envelope flex-shrink-0"></i>
+                                                    <div>
+                                                        <h3>Email</h3>
+                                                        <p>hablemosdeyhwh2024@gmail.com</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <form id="contactForm" data-aos="fade-up" data-aos-delay="200">
+                                                    <div class="row gy-4">
+                                                        <div class="col-md-6">
+                                                            <input type="text" name="name" class="form-control"
+                                                                placeholder="Tu Nombre" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input type="email" class="form-control" name="email"
+                                                                placeholder="Tu Email" required>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <input type="text" class="form-control" name="subject"
+                                                                placeholder="Asunto" required>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <textarea class="form-control" name="message" rows="6"
+                                                                placeholder="Mensaje" required></textarea>
+                                                        </div>
+                                                        <div class="col-md-12 text-center">
+                                                            <div id="contactMsg" style="display:none; margin-bottom: 12px; padding: 10px; border-radius: 8px;"></div>
+                                                            <button type="submit" id="contactBtn" style="background: var(--accent-color); color: var(--contrast-color); border: 0; padding: 10px 30px; transition: 0.4s; border-radius: 50px;">Enviar Mensaje</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                                <script>
+                                                document.getElementById('contactForm').addEventListener('submit', async function(e) {
+                                                    e.preventDefault();
+                                                    const btn = document.getElementById('contactBtn');
+                                                    const msg = document.getElementById('contactMsg');
+                                                    btn.disabled = true;
+                                                    btn.textContent = 'Enviando...';
+                                                    msg.style.display = 'none';
+                                                    try {
+                                                        const formData = new FormData(this);
+                                                        const data = Object.fromEntries(formData);
+                                                        const res = await fetch('/api/contact', {
+                                                            method: 'POST',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify(data)
+                                                        });
+                                                        const result = await res.json();
+                                                        msg.style.display = 'block';
+                                                        if (result.ok) {
+                                                            msg.style.background = '#d4edda';
+                                                            msg.style.color = '#155724';
+                                                            msg.textContent = '¡Mensaje enviado correctamente!';
+                                                            this.reset();
+                                                        } else {
+                                                            msg.style.background = '#f8d7da';
+                                                            msg.style.color = '#721c24';
+                                                            msg.textContent = result.error || 'Error al enviar el mensaje.';
+                                                        }
+                                                    } catch (err) {
+                                                        msg.style.display = 'block';
+                                                        msg.style.background = '#f8d7da';
+                                                        msg.style.color = '#721c24';
+                                                        msg.textContent = 'Error de conexión. Intenta nuevamente.';
+                                                    }
+                                                    btn.disabled = false;
+                                                    btn.textContent = 'Enviar Mensaje';
+                                                });
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+            </main>
+
+            <footer id="footer" class="footer dark-background">
+
+    <div class="footer-newsletter">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-6">
+                    <h4>Suscríbete a Nuestro Boletín</h4>
+                    <p>¡Recibe las últimas noticias y novedades sobre nuestros estudios y eventos!</p>
+                    <form id="newsletterForm">
+                        <div class="newsletter-form"><input type="email" name="email" placeholder="Ingresa tu email" required><input type="submit"
+                                value="Suscribirse"></div>
+                        <div id="newsletterMsg" style="display:none; margin-top: 10px; padding: 8px; border-radius: 8px; font-size: 0.9rem;"></div>
+                    </form>
+                    <script>
+                    document.getElementById('newsletterForm').addEventListener('submit', async function(e) {
+                        e.preventDefault();
+                        const msg = document.getElementById('newsletterMsg');
+                        const btn = this.querySelector('input[type="submit"]');
+                        const input = this.querySelector('input[type="email"]');
+                        btn.disabled = true;
+                        btn.value = 'Enviando...';
+                        msg.style.display = 'none';
+                        try {
+                            const email = input.value.trim();
+                            const res = await fetch('/api/newsletter', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ email })
+                            });
+                            const result = await res.json();
+                            msg.style.display = 'block';
+                            if (result.ok) {
+                                msg.style.background = '#d4edda';
+                                msg.style.color = '#155724';
+                                msg.style.border = '1px solid #c3e6cb';
+                                msg.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> ' + (result.message || '¡Te has suscrito correctamente al boletín!');
+                                input.value = '';
+                            } else {
+                                msg.style.background = '#f8d7da';
+                                msg.style.color = '#721c24';
+                                msg.style.border = '1px solid #f5c6cb';
+                                msg.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-1"></i> ' + (result.error || 'Error al suscribirse.');
+                            }
+                        } catch (err) {
+                            msg.style.display = 'block';
+                            msg.style.background = '#f8d7da';
+                            msg.style.color = '#721c24';
+                            msg.style.border = '1px solid #f5c6cb';
+                            msg.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-1"></i> Error de conexión. Intenta nuevamente.';
+                        }
+                        btn.disabled = false;
+                        btn.value = 'Suscribirse';
+                    });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container footer-top">
+        <div class="row gy-4">
+            <div class="col-lg-4 col-md-6 footer-about">
+                <a href="/" class="d-flex align-items-center">
+                    <img src="/assets/img/pagina/logo.svg" alt="YHWH Footer Logo"
+                        style="max-height: 40px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;">
+                </a>
+                <div class="footer-contact pt-3">
+                    <h4 class="mb-2">Hablemos de YHWH</h4>
+                    <p>Nuestro objetivo es el estudio de las ra├â┬Øces hebreas.</p>
+                    <p>Estudio profundo de las escrituras.</p>
+                </div>
+            </div>
+
+            
+                
+                    <div class="col-lg-2 col-md-3 footer-links">
+                        <h4>Recursos</h4>
+                        <ul>
+                            
+                                <li><i class="bi bi-chevron-right"></i> <a href="/calendar">Calendario</a></li>
+                            
+                                <li><i class="bi bi-chevron-right"></i> <a href="/#portfolio">Eventos</a></li>
+                            
+                                <li><i class="bi bi-chevron-right"></i> <a href="/semillas-de-torah">Semillas de Torah</a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="col-lg-2 col-md-3 footer-links">
+                        <h4>Enlaces ├Ütiles</h4>
+                        <ul>
+                            
+                                <li><i class="bi bi-chevron-right"></i> <a href="/#about">Sobre Nosotros</a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="col-lg-2 col-md-3 footer-links">
+                        <h4>Enlaces ├â┼ítiles</h4>
+                        <ul>
+                            
+                                <li><i class="bi bi-chevron-right"></i> <a href="/parashot">Parashot</a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="col-lg-2 col-md-3 footer-links">
+                        <h4>Enlaces Útiles</h4>
+                        <ul>
+                            
+                                <li><i class="bi bi-chevron-right"></i> <a href="/ensenanzas">Enseñanzas</a></li>
+                            
+                        </ul>
+                    </div>
+                
+            
+
+            <div class="col-lg-2 col-md-12">
+                <h4>Síganos</h4>
+                <div class="social-links d-flex">
+                    
+                    
+                        <a href="https://www.youtube.com/@hablemosdeYHWH" target="_blank" rel="noopener noreferrer" title="YouTube"><i class="bi bi-youtube"></i></a>
+                    
+                    
+                        <a href="https://www.facebook.com/hablemos.yhwh/" target="_blank" rel="noopener noreferrer" title="Facebook"><i class="bi bi-facebook"></i></a>
+                    
+                    
+                        <a href="https://www.instagram.com/hablemosyhwh/" target="_blank" rel="noopener noreferrer" title="Instagram"><i class="bi bi-instagram"></i></a>
+                    
+                    
+                        <a href="https://chat.whatsapp.com/IAiMKUyvdjYC94r2LbeL8P" target="_blank" rel="noopener noreferrer" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                    
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container copyright text-center mt-4">
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">Hablemos de YHWH</strong> <span>All Rights
+                Reserved</span></p>
+        <div class="credits">
+            Designed by mjwproduccion
+        </div>
+    </div>
+
+</footer>
+
+<!-- Scroll Top -->
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+
+<!-- Preloader -->
+<div id="preloader"></div>
+
+<!-- Vendor JS Files -->
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/php-email-form/validate.js"></script>
+<script src="/assets/vendor/aos/aos.js"></script>
+<script src="/assets/vendor/swiper/swiper-bundle.min.js"></script>
+<script src="/assets/vendor/glightbox/js/glightbox.min.js"></script>
+<script src="/assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+<script src="/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+
+<!-- Main JS File -->
+<script type="module" src="/assets/js/main.js"></script>
+
+    </body>
+
+</html>

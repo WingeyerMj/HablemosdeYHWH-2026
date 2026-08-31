@@ -75,6 +75,47 @@ const TORA_BOOKS_SEFARIA = {
 };
 
 /**
+ * Verificar si el texto hebreo contiene vocales Niqqud
+ */
+function hasNiqqud(text) {
+    if (!text) return false;
+    return /[\u05B0-\u05BD]/.test(text);
+}
+
+/**
+ * Para hebreo sin Niqqud (ej: de Google Translate), insertar vocales por defecto
+ * entre consonantes para que la transliteración sea legible en español.
+ * Esto es una aproximación fonética, no perfecta, pero mucho más legible que solo consonantes.
+ */
+function addDefaultVowels(hebrewText) {
+    if (!hebrewText) return '';
+    
+    const consonants = new Set('אבגדהוזחטיכךלמםנןסעפףצץקרשת');
+    const result = [];
+    const chars = [...hebrewText];
+    
+    for (let i = 0; i < chars.length; i++) {
+        const ch = chars[i];
+        result.push(ch);
+        
+        // Si es consonante y la siguiente también es consonante (sin vocal entre ellas)
+        if (consonants.has(ch)) {
+            const next = chars[i + 1];
+            if (next && consonants.has(next)) {
+                // No insertar vocal antes de letra final (ם, ן, ך, ף, ץ)
+                const finals = new Set('םןךףץ');
+                if (finals.has(next)) continue;
+                
+                // Insertar Sheva (ְ) como vocal por defecto entre consonantes
+                result.push('\u05B0'); // Sheva → se transliterará como 'e'
+            }
+        }
+    }
+    
+    return result.join('');
+}
+
+/**
  * Transliterar texto en hebreo (con o sin Niqqud) a fonética natural y vocalizada en español
  */
 function transliterateHebrewToSpanish(text) {
@@ -274,98 +315,151 @@ function transliterateHebrewToSpanish(text) {
 }
 
 /**
- * Normalizar cita bíblica
+ * Normalizar cita bíblica (soporta rangos de un solo capítulo y multi-capítulo)
+ * Ej: "Deuteronomio 27:11-28:5", "Deuteronomio 27:11 al 28:5", "Deut 27:11-26"
  */
 function parseTorahReference(refString) {
     if (!refString) return null;
     const clean = refString.toLowerCase().replace(/[\t\r\n]/g, ' ').trim();
 
-    const match = clean.match(/^([a-záéíóú]+)[\s\.]*(\d+)[\s:\.,]+(\d+)(?:\s*[\-–—]\s*(\d+))?/i);
-    if (!match) return null;
+    // 1. Caso multi-capítulo:
+    // Ej: "Deuteronomio 27:11 - 28:5", "Deuteronomio 27:11 al Deuteronomio 28:5", "Deut 27:11 a 28:5"
+    const multiChapterRegex = /^([a-záéíóú]+)[\s\.]*(\d+)[\s:\.,]+(\d+)\s*(?:[\-–—]|al?|hasta)\s*(?:[a-záéíóú]+[\s\.]*)?(\d+)[\s:\.,]+(\d+)/i;
+    const multiMatch = clean.match(multiChapterRegex);
 
-    const bookKey = match[1].replace(/[^a-záéíóú]/g, '');
-    const bookNum = TORA_BOOKS_NUM[bookKey];
-    if (!bookNum) return null;
+    if (multiMatch) {
+        const bookKey = multiMatch[1].replace(/[^a-záéíóú]/g, '');
+        const bookNum = TORA_BOOKS_NUM[bookKey];
+        if (bookNum) {
+            return {
+                bookNum,
+                sefariaBook: TORA_BOOKS_SEFARIA[bookKey] || 'Genesis',
+                startChapter: parseInt(multiMatch[2], 10),
+                startVerse: parseInt(multiMatch[3], 10),
+                endChapter: parseInt(multiMatch[4], 10),
+                endVerse: parseInt(multiMatch[5], 10)
+            };
+        }
+    }
 
-    const chapter = parseInt(match[2], 10);
-    const startVerse = parseInt(match[3], 10);
-    const endVerse = match[4] ? parseInt(match[4], 10) : startVerse;
+    // 2. Caso de un solo capítulo:
+    // Ej: "Deuteronomio 27:11-26", "Deut 27:11"
+    const singleChapterRegex = /^([a-záéíóú]+)[\s\.]*(\d+)[\s:\.,]+(\d+)(?:\s*(?:[\-–—]|al?|hasta)\s*(\d+))?/i;
+    const singleMatch = clean.match(singleChapterRegex);
+    if (singleMatch) {
+        const bookKey = singleMatch[1].replace(/[^a-záéíóú]/g, '');
+        const bookNum = TORA_BOOKS_NUM[bookKey];
+        if (bookNum) {
+            const chapter = parseInt(singleMatch[2], 10);
+            const startVerse = parseInt(singleMatch[3], 10);
+            const endVerse = singleMatch[4] ? parseInt(singleMatch[4], 10) : startVerse;
+            return {
+                bookNum,
+                sefariaBook: TORA_BOOKS_SEFARIA[bookKey] || 'Genesis',
+                startChapter: chapter,
+                startVerse,
+                endChapter: chapter,
+                endVerse
+            };
+        }
+    }
 
-    return {
-        bookNum,
-        sefariaBook: TORA_BOOKS_SEFARIA[bookKey] || 'Genesis',
-        chapter,
-        startVerse,
-        endVerse
-    };
+    return null;
 }
 
 /**
  * Consultar texto en Hebreo y Traducción al Español (Westminster Leningrad Codex Masorético + RV1960)
+ * Soporta rangos que abarcan uno o múltiples capítulos.
  */
 async function fetchVersesFromSefaria(refString) {
     try {
         const parsed = parseTorahReference(refString);
         if (!parsed) return null;
 
-        const { bookNum, chapter, startVerse, endVerse, sefariaBook } = parsed;
+        const { bookNum, startChapter, startVerse, endChapter, endVerse, sefariaBook } = parsed;
+        const isMulti = startChapter !== endChapter;
 
         // 1. Intentar con Bolls Bible API (WLC = Texto Masorético Hebreo con Niqqud completo, RV1960 = Español)
         try {
-            const [resHe, resEs] = await Promise.all([
-                fetch(`https://bolls.life/get-chapter/WLC/${bookNum}/${chapter}/`),
-                fetch(`https://bolls.life/get-chapter/RV1960/${bookNum}/${chapter}/`)
-            ]);
+            const allHeVerses = [];
+            const allEsVerses = [];
 
-            if (resHe.ok) {
-                const heData = await resHe.json();
-                const esData = resEs.ok ? await resEs.json() : [];
+            for (let chap = startChapter; chap <= endChapter; chap++) {
+                const [resHe, resEs] = await Promise.all([
+                    fetch(`https://bolls.life/get-chapter/WLC/${bookNum}/${chap}/`),
+                    fetch(`https://bolls.life/get-chapter/RV1960/${bookNum}/${chap}/`)
+                ]);
 
-                if (Array.isArray(heData) && heData.length > 0) {
-                    const heFiltered = heData.filter(v => v.verse >= startVerse && v.verse <= endVerse);
-                    const esFiltered = Array.isArray(esData) ? esData.filter(v => v.verse >= startVerse && v.verse <= endVerse) : [];
+                if (resHe.ok) {
+                    const heData = await resHe.json();
+                    const esData = resEs.ok ? await resEs.json() : [];
 
-                    if (heFiltered.length > 0) {
-                        const cleanHe = (t) => t.replace(/<[^>]*>/g, '').replace(/[\u0591-\u05AF]/g, '').trim();
+                    if (Array.isArray(heData) && heData.length > 0) {
+                        const fromV = (chap === startChapter) ? startVerse : 1;
+                        const toV = (chap === endChapter) ? endVerse : 999;
 
-                        const hebrewFormatted = heFiltered
-                            .map(v => `<p><strong class="verse-num">(${v.verse})</strong> ${cleanHe(v.text)}</p>`)
-                            .join('\n');
+                        const heFiltered = heData.filter(v => v.verse >= fromV && v.verse <= toV).map(v => ({ ...v, chapter: chap }));
+                        const esFiltered = (Array.isArray(esData) ? esData : []).filter(v => v.verse >= fromV && v.verse <= toV).map(v => ({ ...v, chapter: chap }));
 
-                        const phoneticLines = heFiltered
-                            .map(v => `(${v.verse}) ${transliterateHebrewToSpanish(cleanHe(v.text))}`)
-                            .join('\n');
-
-                        let spanishFormatted = '';
-                        if (esFiltered.length > 0) {
-                            spanishFormatted = esFiltered
-                                .map(v => `<p><strong class="verse-num">(${v.verse})</strong> ${v.text.replace(/<[^>]*>/g, '').trim()}</p>`)
-                                .join('\n');
-                        } else {
-                            // Si no vino español directo, traducir versículo a versículo
-                            const translatedVerses = [];
-                            for (const v of heFiltered) {
-                                const trText = await translateSingleSpanishLine(v.text);
-                                translatedVerses.push(`<p><strong class="verse-num">(${v.verse})</strong> ${trText}</p>`);
-                            }
-                            spanishFormatted = translatedVerses.join('\n');
-                        }
-
-                        return {
-                            hebrew: hebrewFormatted,
-                            phonetic: phoneticLines,
-                            englishOrSpanish: spanishFormatted,
-                            hebrewRaw: heFiltered.map(v => `(${v.verse}) ${cleanHe(v.text)}`).join('\n')
-                        };
+                        allHeVerses.push(...heFiltered);
+                        allEsVerses.push(...esFiltered);
                     }
                 }
+            }
+
+            if (allHeVerses.length > 0) {
+                const cleanHe = (t) => t.replace(/<[^>]*>/g, '').replace(/[\u0591-\u05AF]/g, '').trim();
+
+                const hebrewFormatted = allHeVerses
+                    .map(v => {
+                        const numLabel = isMulti ? `${v.chapter}:${v.verse}` : `${v.verse}`;
+                        return `<p><strong class="verse-num">(${numLabel})</strong> ${cleanHe(v.text)}</p>`;
+                    })
+                    .join('\n');
+
+                const phoneticLines = allHeVerses
+                    .map(v => {
+                        const numLabel = isMulti ? `${v.chapter}:${v.verse}` : `${v.verse}`;
+                        return `(${numLabel}) ${transliterateHebrewToSpanish(cleanHe(v.text))}`;
+                    })
+                    .join('\n');
+
+                let spanishFormatted = '';
+                if (allEsVerses.length > 0) {
+                    spanishFormatted = allEsVerses
+                        .map(v => {
+                            const numLabel = isMulti ? `${v.chapter}:${v.verse}` : `${v.verse}`;
+                            return `<p><strong class="verse-num">(${numLabel})</strong> ${v.text.replace(/<[^>]*>/g, '').trim()}</p>`;
+                        })
+                        .join('\n');
+                } else {
+                    const translatedVerses = [];
+                    for (const v of allHeVerses) {
+                        const trText = await translateSingleSpanishLine(v.text);
+                        const numLabel = isMulti ? `${v.chapter}:${v.verse}` : `${v.verse}`;
+                        translatedVerses.push(`<p><strong class="verse-num">(${numLabel})</strong> ${trText}</p>`);
+                    }
+                    spanishFormatted = translatedVerses.join('\n');
+                }
+
+                return {
+                    hebrew: hebrewFormatted,
+                    phonetic: phoneticLines,
+                    englishOrSpanish: spanishFormatted,
+                    hebrewRaw: allHeVerses.map(v => {
+                        const numLabel = isMulti ? `${v.chapter}:${v.verse}` : `${v.verse}`;
+                        return `(${numLabel}) ${cleanHe(v.text)}`;
+                    }).join('\n')
+                };
             }
         } catch(e) {
             console.warn('Fallo en Bolls API, intentando con Sefaria API:', e.message);
         }
 
         // 2. Fallback a Sefaria API
-        const sefariaRef = `${sefariaBook}.${chapter}.${startVerse}-${endVerse}`;
+        const sefariaRef = isMulti 
+            ? `${sefariaBook}.${startChapter}.${startVerse}-${endChapter}.${endVerse}`
+            : `${sefariaBook}.${startChapter}.${startVerse}-${endVerse}`;
         const url = `https://www.sefaria.org/api/texts/${encodeURIComponent(sefariaRef)}?context=0&commentary=0`;
         const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
         if (res.ok) {
@@ -455,8 +549,9 @@ async function translateSpanishToHebrewAndPhonetics(spanishText, referenceHint =
     // 1. Verificar si el texto ingresado es una cita bíblica de la Torá (ej: "Deuteronomio 26:1-11")
     const parsedRef = parseTorahReference(candidateRef) || parseTorahReference(cleanInput.split('\n')[0]);
     
-    // Si es una cita bíblica y no contiene ya un texto largo de más de 300 caracteres con versículos
-    if (parsedRef && cleanInput.length < 350) {
+    // Si se detecta una referencia bíblica válida, siempre usar la API bíblica
+    // (prioridad: referenceHint, luego primera línea del texto)
+    if (parsedRef) {
         try {
             const bibleResult = await fetchVersesFromSefaria(candidateRef || cleanInput);
             if (bibleResult && bibleResult.hebrewRaw) {
@@ -505,7 +600,10 @@ async function translateSpanishToHebrewAndPhonetics(spanishText, referenceHint =
             const fullHeLine = prefix ? `${prefix}${cleanHe}` : cleanHe;
             hebrewLines.push(fullHeLine);
 
-            const linePhonetic = transliterateHebrewToSpanish(cleanHe);
+            // Si el hebreo no tiene Niqqud (ej: Google Translate), insertar vocales por defecto
+            // para que la fonética sea legible en español
+            const heForPhonetic = hasNiqqud(cleanHe) ? cleanHe : addDefaultVowels(cleanHe);
+            const linePhonetic = transliterateHebrewToSpanish(heForPhonetic);
             const fullPhoneticLine = prefix ? `${prefix}${linePhonetic}` : linePhonetic;
             phoneticLines.push(fullPhoneticLine);
         }

@@ -1,0 +1,86 @@
+[
+  {
+    "name": "01_inicio",
+    "selector": "#hero",
+    "captured": true,
+    "y": 0,
+    "title": "Hablemos de YHWH"
+  },
+  {
+    "name": "02_quienes_somos",
+    "selector": "#about",
+    "captured": true,
+    "y": 995,
+    "title": "Hablemos de YHWH"
+  },
+  {
+    "name": "03_torah_viviente",
+    "selector": "#torah-viviente",
+    "captured": true,
+    "y": 1877,
+    "title": "Hablemos de YHWH"
+  },
+  {
+    "name": "04_calendario",
+    "selector": "#services",
+    "captured": true,
+    "y": 2746,
+    "title": "Hablemos de YHWH"
+  },
+  {
+    "name": "05_parashot",
+    "selector": "#portfolio",
+    "captured": true,
+    "y": 3467,
+    "title": "Hablemos de YHWH"
+  },
+  {
+    "name": "06_ensenanzas",
+    "selector": "#ensenanzas",
+    "captured": true,
+    "y": 4177,
+    "title": "Hablemos de YHWH"
+  },
+  {
+    "name": "07_semillas",
+    "selector": "#semillas-torah",
+    "captured": true,
+    "y": 4873,
+    "title": "Hablemos de YHWH"
+  },
+  {
+    "name": "08_testimonios",
+    "selector": "#testimonials",
+    "captured": true,
+    "y": 5538,
+    "title": "Hablemos de YHWH"
+  },
+  {
+    "name": "09_comunidad",
+    "selector": "#team",
+    "captured": true,
+    "y": 5698,
+    "title": "Hablemos de YHWH"
+  },
+  {
+    "name": "10_novedades",
+    "selector": "#blog",
+    "captured": true,
+    "y": 6210,
+    "title": "Hablemos de YHWH"
+  },
+  {
+    "name": "11_contacto",
+    "selector": "#contact",
+    "captured": true,
+    "y": 7932,
+    "title": "Hablemos de YHWH"
+  },
+  {
+    "name": "12_footer",
+    "selector": "#footer",
+    "captured": true,
+    "y": 8135,
+    "title": "Hablemos de YHWH"
+  }
+]

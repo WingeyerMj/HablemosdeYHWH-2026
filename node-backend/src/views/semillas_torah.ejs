@@ -133,8 +133,11 @@
                                             <% if (item.pdf_file) { %>
                                                 <span class="badge bg-success shadow-sm" title="Tiene PDF descargable"><i class="bi bi-file-pdf"></i> PDF</span>
                                             <% } %>
+                                            <% if (item.video_file) { %>
+                                                <span class="badge bg-primary shadow-sm" title="Tiene Video / Aliyá Infantil"><i class="bi bi-camera-video"></i> Video</span>
+                                            <% } %>
                                             <% if (item.youtube_link) { %>
-                                                <span class="badge bg-danger shadow-sm" title="Tiene Video de YouTube"><i class="bi bi-youtube"></i> Video</span>
+                                                <span class="badge bg-danger shadow-sm" title="Tiene Video de YouTube"><i class="bi bi-youtube"></i> YouTube</span>
                                             <% } %>
                                         </div>
                                     </div>

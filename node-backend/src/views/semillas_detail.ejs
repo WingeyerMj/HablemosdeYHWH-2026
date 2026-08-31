@@ -57,6 +57,20 @@
                                 </div>
                             </div>
 
+                            <!-- Subida de Video Propio (HTML5 Player) -->
+                            <% if (item.video_file && item.video_file.trim() !== '') { %>
+                                <div class="mb-4 rounded-4 overflow-hidden shadow-sm" style="background: #000;">
+                                    <div class="p-2 bg-dark text-white d-flex align-items-center justify-content-between px-3">
+                                        <span class="small fw-semibold"><i class="bi bi-camera-reels-fill text-danger me-2"></i>Video / Aliyá Infantil</span>
+                                        <a href="<%= item.video_file %>" download class="btn btn-sm btn-outline-light py-0 px-2 small" title="Descargar video"><i class="bi bi-download"></i></a>
+                                    </div>
+                                    <video controls style="width: 100%; max-height: 480px; display: block;" playsinline poster="<%= item.image_url || '' %>">
+                                        <source src="<%= item.video_file %>" type="video/mp4">
+                                        Tu navegador no soporta reproducción de videos HTML5.
+                                    </video>
+                                </div>
+                            <% } %>
+
                             <!-- YouTube Video Player if present -->
                             <% if (item.youtube_link && item.youtube_link.trim() !== '') { 
                                 let videoId = '';
@@ -73,7 +87,7 @@
                             <% } %>
 
                             <!-- Cover Image if present and no video (or alongside video) -->
-                            <% if (item.image_url && item.image_url.trim() !== '' && (!item.youtube_link || item.youtube_link.trim() === '')) { %>
+                            <% if (item.image_url && item.image_url.trim() !== '' && (!item.youtube_link || item.youtube_link.trim() === '') && (!item.video_file || item.video_file.trim() === '')) { %>
                                 <div class="mb-4 text-center rounded-4 overflow-hidden shadow-sm" style="max-height: 440px;">
                                     <img src="<%= item.image_url %>" alt="<%= item.title %>" class="img-fluid w-100" style="object-fit: cover;">
                                 </div>
