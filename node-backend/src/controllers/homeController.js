@@ -280,15 +280,32 @@ const homeController = {
     semillasTorah: async (req, res, next) => {
         try {
             const SemillasTorah = require('../models/SemillasTorah');
-            const items = await SemillasTorah.getPublished();
-            const categories = await SemillasTorah.getCategories();
-            const siteSettings = await SiteSettings.getMap();
+            const Aliyah = require('../models/Aliyah');
+            let items = [], categories = [], siteSettings = {};
+            let recentAliyot = [], parashotOverview = [], parashot = [];
+
+            try { items = await SemillasTorah.getPublished(); } catch (e) { items = []; }
+            try { categories = await SemillasTorah.getCategories(); } catch (e) { categories = []; }
+            try { siteSettings = await SiteSettings.getMap(); } catch (e) { siteSettings = {}; }
+
+            // Cargar datos de Aliyot para el apartado de Lecturas Diarias
+            try {
+                recentAliyot = await Aliyah.getRecentAliyot(14);
+                parashotOverview = await Aliyah.getParashotOverview();
+                parashot = await Parasha.getAll();
+            } catch (e) {
+                console.warn('⚠️ No se pudieron cargar datos de Aliyot para Semillas:', e.message);
+            }
+
             res.render('semillas_torah', {
                 title: 'Semillas de Torah - Enseñanza Bíblica Infantil',
                 page: 'semillas-torah',
                 items,
                 categories,
                 siteSettings,
+                recentAliyot,
+                parashotOverview,
+                parashot,
                 layout: false
             });
         } catch (error) {
