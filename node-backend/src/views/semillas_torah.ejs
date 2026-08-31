@@ -182,6 +182,7 @@
                                                     </a>
                                                 </h4>
 
+<<<<<<< Updated upstream
                                                 <% if (item.description) { %>
                                                     <p class="text-muted mb-4 small" style="line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
                                                         <%= item.description %>
@@ -195,6 +196,19 @@
                                                     </a>
                                                 </div>
                                             </div>
+=======
+                                        <!-- Video / PDF Badges -->
+                                        <div class="position-absolute bottom-0 end-0 m-3 d-flex gap-1">
+                                            <% if (item.pdf_file) { %>
+                                                <span class="badge bg-success shadow-sm" title="Tiene PDF descargable"><i class="bi bi-file-pdf"></i> PDF</span>
+                                            <% } %>
+                                            <% if (item.video_file) { %>
+                                                <span class="badge bg-primary shadow-sm" title="Tiene Video / Aliyá Infantil"><i class="bi bi-camera-video"></i> Video</span>
+                                            <% } %>
+                                            <% if (item.youtube_link) { %>
+                                                <span class="badge bg-danger shadow-sm" title="Tiene Video de YouTube"><i class="bi bi-youtube"></i> YouTube</span>
+                                            <% } %>
+>>>>>>> Stashed changes
                                         </div>
                                     </div>
                                 <% }) %>
