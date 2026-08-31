@@ -576,13 +576,28 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnTranslateModal) {
         btnTranslateModal.addEventListener('click', async function() {
             const refVal = (document.getElementById('modalVersesRefInput') || {}).value || '';
-            const spanishText = modalQuill ? (modalQuill.root.innerHTML || modalQuill.getText()).trim() : '';
+            let spanishText = modalQuill ? (modalQuill.root.innerHTML || modalQuill.getText()).trim() : '';
+            const hebrewBox = document.getElementById('modalHebrewContent');
+            const hebrewVal = hebrewBox ? hebrewBox.value.trim() : '';
 
-            if ((!spanishText || spanishText === '<p><br></p>') && !refVal) {
+            // Detección: si el usuario pegó el texto en español dentro de la pestaña Hebreo
+            const hasHebrewChars = /[\u0590-\u05FF]/.test(hebrewVal);
+            const hasLatinChars = /[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(hebrewVal);
+
+            if ((!spanishText || spanishText === '<p><br></p>') && hasLatinChars && !hasHebrewChars) {
+                // El usuario pegó español en la pestaña de Hebreo
+                spanishText = hebrewVal;
+                if (modalQuill) modalQuill.root.innerHTML = `<p>${hebrewVal.replace(/\n/g, '<br>')}</p>`;
+                hebrewBox.value = '';
+            }
+
+            if ((!spanishText || spanishText === '<p><br></p>') && !refVal && !hebrewVal) {
                 alert('Por favor escribe o pega primero el texto en la pestaña Español (Traducción) o ingresa la Referencia de Versículos.');
                 document.getElementById('modal-tab-es').click();
                 return;
             }
+
+            const textToSend = (spanishText && spanishText !== '<p><br></p>') ? spanishText : (hebrewVal || refVal);
 
             const originalBtnText = this.innerHTML;
             this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Traduciendo...';
@@ -596,7 +611,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify({ 
-                        text: spanishText,
+                        text: textToSend,
                         ref: refVal 
                     })
                 });
@@ -615,7 +630,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success && data.hebrew) {
                     document.getElementById('modalHebrewContent').value = data.hebrew;
                     document.getElementById('modalPhoneticContent').value = data.phonetic || '';
-                    if (data.spanish && data.spanish !== spanishText && modalQuill) {
+                    if (data.spanish && modalQuill && (!spanishText || spanishText.length < 50)) {
                         modalQuill.root.innerHTML = data.spanish;
                     }
                     alert('¡Traducción completada con éxito! El texto en Hebreo y la Fonética se han generado automáticamente.');
@@ -636,12 +651,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnAutoTrans = document.getElementById('btnAutoTransliterateModal');
     if (btnAutoTrans) {
         btnAutoTrans.addEventListener('click', async function() {
-            const hebrewText = document.getElementById('modalHebrewContent').value.trim();
+            const hebrewBox = document.getElementById('modalHebrewContent');
+            const hebrewText = hebrewBox ? hebrewBox.value.trim() : '';
+
             if (!hebrewText) {
+                if (btnTranslateModal) {
+                    btnTranslateModal.click();
+                    return;
+                }
                 alert('Por favor escribe o pega primero el texto en la pestaña Hebreo (עברית).');
-                document.getElementById('modal-tab-he').click();
+                document.getElementById('modal-tab-es').click();
                 return;
             }
+
+            // Si el texto en la caja de Hebreo está en Español (letras latinas y sin letras hebreas)
+            const hasHebrewChars = /[\u0590-\u05FF]/.test(hebrewText);
+            const hasLatinChars = /[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(hebrewText);
+
+            if (hasLatinChars && !hasHebrewChars) {
+                if (btnTranslateModal) {
+                    btnTranslateModal.click();
+                    return;
+                }
+            }
+
             const originalBtnText = this.innerHTML;
             this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Convirtiendo...';
             this.disabled = true;

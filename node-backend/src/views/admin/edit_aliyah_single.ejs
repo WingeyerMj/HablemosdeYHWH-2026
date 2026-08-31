@@ -423,13 +423,28 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnTranslateEdit) {
         btnTranslateEdit.addEventListener('click', async function() {
             const refVal = (document.getElementById('editVersesRefInput') || {}).value || '';
-            const spanishText = quill ? (quill.root.innerHTML || quill.getText()).trim() : '';
+            let spanishText = quill ? (quill.root.innerHTML || quill.getText()).trim() : '';
+            const hebrewBox = document.getElementById('editHebrewContent');
+            const hebrewVal = hebrewBox ? hebrewBox.value.trim() : '';
 
-            if ((!spanishText || spanishText === '<p><br></p>') && !refVal) {
-                alert('Por favor escribe o pega primero el texto en la pestaña Español (Traducción) o ingresa la Referencia de Versículos.');
+            // Detección: si el usuario pegó el texto en español dentro de la pestaña Hebreo
+            const hasHebrewChars = /[\u0590-\u05FF]/.test(hebrewVal);
+            const hasLatinChars = /[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(hebrewVal);
+
+            if ((!spanishText || spanishText === '<p><br></p>') && hasLatinChars && !hasHebrewChars) {
+                // El usuario pegó español en la pestaña de Hebreo
+                spanishText = hebrewVal;
+                if (quill) quill.root.innerHTML = `<p>${hebrewVal.replace(/\n/g, '<br>')}</p>`;
+                hebrewBox.value = '';
+            }
+
+            if ((!spanishText || spanishText === '<p><br></p>') && !refVal && !hebrewVal) {
+                alert('Por favor escribe o pega primero el texto en la pestaña Español (Traducción) o escribe la cita bíblica (Ej: Deuteronomio 26:1-11).');
                 document.getElementById('edit-tab-es').click();
                 return;
             }
+
+            const textToSend = (spanishText && spanishText !== '<p><br></p>') ? spanishText : (hebrewVal || refVal);
 
             const originalBtnText = this.innerHTML;
             this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Traduciendo...';
@@ -443,7 +458,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify({ 
-                        text: spanishText,
+                        text: textToSend,
                         ref: refVal 
                     })
                 });
@@ -462,7 +477,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success && data.hebrew) {
                     document.getElementById('editHebrewContent').value = data.hebrew;
                     document.getElementById('editPhoneticContent').value = data.phonetic || '';
-                    if (data.spanish && data.spanish !== spanishText && quill) {
+                    if (data.spanish && quill && (!spanishText || spanishText.length < 50)) {
                         quill.root.innerHTML = data.spanish;
                     }
                     alert('¡Traducción completada con éxito! El texto en Hebreo y la Fonética se han generado automáticamente.');
@@ -483,12 +498,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnAutoTransEdit = document.getElementById('btnAutoTransliterateEdit');
     if (btnAutoTransEdit) {
         btnAutoTransEdit.addEventListener('click', async function() {
-            const hebrewText = document.getElementById('editHebrewContent').value.trim();
+            const hebrewBox = document.getElementById('editHebrewContent');
+            const hebrewText = hebrewBox ? hebrewBox.value.trim() : '';
+
             if (!hebrewText) {
-                alert('Por favor escribe o pega primero el texto en la pestaña Hebreo (עברית).');
-                document.getElementById('edit-tab-he').click();
+                // Si la caja de hebreo está vacía, intentar traducir desde español
+                if (btnTranslateEdit) {
+                    btnTranslateEdit.click();
+                    return;
+                }
+                alert('Por favor escribe o pega primero el texto en la pestaña Hebreo (עברית) o Español.');
+                document.getElementById('edit-tab-es').click();
                 return;
             }
+
+            // Si el texto en la caja de Hebreo está en Español (letras latinas y sin letras hebreas)
+            const hasHebrewChars = /[\u0590-\u05FF]/.test(hebrewText);
+            const hasLatinChars = /[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(hebrewText);
+
+            if (hasLatinChars && !hasHebrewChars) {
+                // Redirigir a traducir español -> hebreo automáticamente
+                if (btnTranslateEdit) {
+                    btnTranslateEdit.click();
+                    return;
+                }
+            }
+
             const originalBtnText = this.innerHTML;
             this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Convirtiendo...';
             this.disabled = true;
