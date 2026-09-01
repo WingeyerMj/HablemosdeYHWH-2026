@@ -248,10 +248,18 @@ CREATE TABLE IF NOT EXISTS ensenanzas (
     content LONGTEXT,
     image_url VARCHAR(500),
     youtube_link VARCHAR(500),
+    author VARCHAR(150) DEFAULT 'Moréh Kaleb',
+    author_role VARCHAR(150) DEFAULT 'Moréh',
+    author_img VARCHAR(500) DEFAULT '/assets/img/team/kaleb.jpg',
     is_published BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+-- Migraciones seguras para ensenanzas
+ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS author VARCHAR(150) DEFAULT 'Moréh Kaleb' AFTER youtube_link;
+ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS author_role VARCHAR(150) DEFAULT 'Moréh' AFTER author;
+ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS author_img VARCHAR(500) DEFAULT '/assets/img/team/kaleb.jpg' AFTER author_role;
 
 -- Tabla para sección Enseñanzas del Home
 CREATE TABLE IF NOT EXISTS home_section_ensenanzas (

@@ -119,7 +119,7 @@
                 </div>
                 <div class="table-responsive">
                     <table class="table table-dark table-hover">
-                        <thead><tr><th>Imagen</th><th>Título</th><th>Subtítulo</th><th>Video YouTube</th><th>Acciones</th></tr></thead>
+                        <thead><tr><th>Imagen</th><th>Título</th><th>Expositor</th><th>Subtítulo</th><th>Video YouTube</th><th>Acciones</th></tr></thead>
                         <tbody>
                             <% if (typeof ensenanzas !== 'undefined' && ensenanzas && ensenanzas.length > 0) { %>
                                 <% ensenanzas.forEach(item => { %>
@@ -132,6 +132,15 @@
                                         <% } %>
                                     </td>
                                     <td><strong><%= item.title %></strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #d4a853;">
+                                            <div>
+                                                <div class="small fw-semibold text-white"><%= item.author || 'Moréh Kaleb' %></div>
+                                                <div class="text-white-50" style="font-size: 0.72rem;"><%= item.author_role || 'Moréh' %></div>
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td><span class="text-truncate d-inline-block text-white-50" style="max-width:180px;"><%= item.subtitle || '-' %></span></td>
                                     <td>
                                         <% if (item.youtube_link) { %>
@@ -148,6 +157,9 @@
                                             data-description="<%= item.description || '' %>"
                                             data-image="<%= item.image_url || '' %>"
                                             data-youtube="<%= item.youtube_link || '' %>"
+                                            data-author="<%= item.author || 'Moréh Kaleb' %>"
+                                            data-author_role="<%= item.author_role || 'Moréh' %>"
+                                            data-author_img="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>"
                                             data-content='<%= item.content ? item.content.replace(/'/g, "&#39;") : "" %>'>Editar</button>
                                         <a href="/admin/ensenanzas/edit/<%= item.id %>" class="btn btn-sm btn-outline-light me-1" title="Editor completo"><i class="bi bi-pencil-square"></i></a>
                                         <a href="/admin/ensenanzas/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta Enseñanza?')">Eliminar</a>
@@ -155,7 +167,7 @@
                                 </tr>
                                 <% }) %>
                             <% } else { %>
-                                <tr><td colspan="5" class="text-center text-white-50">No hay enseñanzas registradas</td></tr>
+                                <tr><td colspan="6" class="text-center text-white-50">No hay enseñanzas registradas</td></tr>
                             <% } %>
                         </tbody>
                     </table>

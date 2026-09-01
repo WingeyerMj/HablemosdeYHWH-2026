@@ -263,7 +263,7 @@ const adminController = {
     // ==================== ENSEÑANZAS ====================
     createEnsenanza: async (req, res) => {
         try {
-            let { title, subtitle, description, content, youtube_link, image_url } = req.body;
+            let { title, subtitle, description, content, youtube_link, image_url, author, author_role, author_img } = req.body;
             if (req.file) {
                 image_url = '/uploads/ensenanzas/' + req.file.filename;
             }
@@ -275,7 +275,10 @@ const adminController = {
                 description: description || '',
                 content: content || '',
                 youtube_link: youtube_link || '',
-                image_url: image_url || ''
+                image_url: image_url || '',
+                author: author || 'Moréh Kaleb',
+                author_role: author_role || 'Moréh',
+                author_img: author_img || '/assets/img/team/kaleb.jpg'
             });
             res.redirect('/admin/dashboard#pills-ensenanzas');
         } catch (error) {
@@ -287,9 +290,16 @@ const adminController = {
     editEnsenanzaPage: async (req, res) => {
         try {
             const Ensenanza = require('../models/Ensenanza');
+            const Team = require('../models/Team');
             const ensenanza = await Ensenanza.getById(req.params.id);
             if (!ensenanza) return res.redirect('/admin/dashboard#pills-ensenanzas');
-            res.render('admin/edit_ensenanza', { layout: 'admin/layout', ensenanza });
+            
+            let team = [];
+            try {
+                team = await Team.getAll();
+            } catch(e) {}
+
+            res.render('admin/edit_ensenanza', { layout: 'admin/layout', ensenanza, team });
         } catch (error) {
             console.error('Error editEnsenanzaPage:', error);
             res.redirect('/admin/dashboard#pills-ensenanzas');
@@ -298,7 +308,7 @@ const adminController = {
 
     updateEnsenanza: async (req, res) => {
         try {
-            let { id, title, subtitle, description, content, youtube_link, image_url } = req.body;
+            let { id, title, subtitle, description, content, youtube_link, image_url, author, author_role, author_img } = req.body;
             if (req.file) {
                 image_url = '/uploads/ensenanzas/' + req.file.filename;
             }
@@ -310,7 +320,10 @@ const adminController = {
                 description: description || '',
                 content: content || '',
                 youtube_link: youtube_link || '',
-                image_url: image_url || ''
+                image_url: image_url || '',
+                author: author || 'Moréh Kaleb',
+                author_role: author_role || 'Moréh',
+                author_img: author_img || '/assets/img/team/kaleb.jpg'
             });
             res.redirect('/admin/dashboard#pills-ensenanzas');
         } catch (error) {

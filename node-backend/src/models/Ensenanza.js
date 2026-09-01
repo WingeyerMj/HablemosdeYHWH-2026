@@ -17,18 +17,41 @@ class Ensenanza {
     }
 
     static async create(data) {
-        const { title, subtitle, description, content, image_url, youtube_link, is_published } = data;
+        const { title, subtitle, description, content, image_url, youtube_link, author, author_role, author_img, is_published } = data;
         return await db.query(
-            'INSERT INTO ensenanzas (title, subtitle, description, content, image_url, youtube_link, is_published) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [title, subtitle || '', description || '', content || '', image_url || '', youtube_link || '', is_published !== undefined ? is_published : true]
+            'INSERT INTO ensenanzas (title, subtitle, description, content, image_url, youtube_link, author, author_role, author_img, is_published) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+                title,
+                subtitle || '',
+                description || '',
+                content || '',
+                image_url || '',
+                youtube_link || '',
+                author || 'Moréh Kaleb',
+                author_role || 'Moréh',
+                author_img || '/assets/img/team/kaleb.jpg',
+                is_published !== undefined ? is_published : true
+            ]
         );
     }
 
     static async update(id, data) {
-        const { title, subtitle, description, content, image_url, youtube_link, is_published } = data;
+        const { title, subtitle, description, content, image_url, youtube_link, author, author_role, author_img, is_published } = data;
         return await db.query(
-            'UPDATE ensenanzas SET title = ?, subtitle = ?, description = ?, content = ?, image_url = ?, youtube_link = ?, is_published = ? WHERE id = ?',
-            [title, subtitle || '', description || '', content || '', image_url || '', youtube_link || '', is_published !== undefined ? is_published : true, id]
+            'UPDATE ensenanzas SET title = ?, subtitle = ?, description = ?, content = ?, image_url = ?, youtube_link = ?, author = ?, author_role = ?, author_img = ?, is_published = ? WHERE id = ?',
+            [
+                title,
+                subtitle || '',
+                description || '',
+                content || '',
+                image_url || '',
+                youtube_link || '',
+                author || 'Moréh Kaleb',
+                author_role || 'Moréh',
+                author_img || '/assets/img/team/kaleb.jpg',
+                is_published !== undefined ? is_published : true,
+                id
+            ]
         );
     }
 

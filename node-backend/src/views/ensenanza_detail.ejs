@@ -39,16 +39,26 @@
 
                             <div class="row gy-4">
                                 <div class="col-lg-8">
-                                    <% if (ensenanza.subtitle) { %>
-                                        <div class="meta-top mb-4">
-                                            <ul class="list-unstyled">
-                                                <li class="d-flex align-items-center">
-                                                    <i class="bi bi-bookmark-star me-2" style="color: #d4a853; font-size: 1.2rem;"></i> 
-                                                    <span class="badge px-3 py-2 fs-6" style="background-color: #d4a853; color: #fff;"><%= ensenanza.subtitle %></span>
-                                                </li>
-                                            </ul>
+                                    <!-- Banner de Expositor / Autor -->
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 p-3 mb-4 rounded-4 shadow-sm" style="background: linear-gradient(135deg, #ffffff 0%, #faf8f5 100%); border: 1px solid #ede8df; border-left: 5px solid #d4a853 !important;">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="position-relative">
+                                                <img src="<%= ensenanza.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= ensenanza.author || 'Moréh Kaleb' %>" style="width: 58px; height: 58px; border-radius: 50%; object-fit: cover; border: 3px solid #d4a853; box-shadow: 0 4px 12px rgba(212,168,83,0.25);">
+                                            </div>
+                                            <div>
+                                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                    <span class="text-muted small fw-semibold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">Enseñanza impartida por:</span>
+                                                    <span class="badge rounded-pill px-2 py-1" style="background: #fdf6e7; color: #b8860b; border: 1px solid #f2e3be; font-size: 0.72rem; font-weight: 700;">
+                                                        <i class="bi bi-person-badge me-1"></i><%= ensenanza.author_role || 'Moréh' %>
+                                                    </span>
+                                                </div>
+                                                <h5 class="fw-bold mb-0" style="color: #2b231d; font-size: 1.15rem;"><%= ensenanza.author || 'Moréh Kaleb' %></h5>
+                                            </div>
                                         </div>
-                                    <% } %>
+                                        <% if (ensenanza.subtitle) { %>
+                                            <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #d4a853; color: #fff; font-size: 0.85rem;"><%= ensenanza.subtitle %></span>
+                                        <% } %>
+                                    </div>
 
                                     <!-- Video de YouTube si existe -->
                                     <% if (ensenanza.youtube_link && ensenanza.youtube_link.trim() !== '') { 
@@ -103,21 +113,43 @@
                                     </div>
                                 </div>
 
-                                <!-- Columna Lateral con Imagen -->
+                                <!-- Columna Lateral con Expositor y Portada -->
                                 <div class="col-lg-4">
-                                    <% if (ensenanza.image_url && ensenanza.image_url.trim() !== '') { %>
-                                        <div class="post-img p-2 sticky-top" style="top: 100px; z-index: 1;">
-                                            <div class="card border-0 shadow-sm" style="border-radius: 16px; overflow: hidden; background: #fff;">
-                                                <img src="<%= ensenanza.image_url %>" alt="<%= ensenanza.title %>" class="img-fluid rounded-top" style="width: 100%; height: auto; max-height: 380px; object-fit: cover;">
+                                    <div class="sticky-top" style="top: 100px; z-index: 1;">
+                                        <!-- Card del Expositor / Maestro -->
+                                        <div class="card border-0 shadow-sm mb-4 rounded-4 overflow-hidden" style="background: #ffffff; border: 1px solid #ede8df;">
+                                            <div class="p-4 text-center" style="background: linear-gradient(135deg, #2b231d 0%, #1a1614 100%); color: #fff; position: relative;">
+                                                <div class="position-relative d-inline-block mb-3">
+                                                    <img src="<%= ensenanza.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= ensenanza.author || 'Moréh Kaleb' %>" class="img-fluid rounded-circle shadow" style="width: 110px; height: 110px; object-fit: cover; border: 4px solid #d4a853;">
+                                                    <span class="position-absolute bottom-0 end-0 badge rounded-pill p-2 bg-warning text-dark border border-2 border-white shadow" title="<%= ensenanza.author_role || 'Moréh' %>">
+                                                        <i class="bi bi-mic-fill"></i>
+                                                    </span>
+                                                </div>
+                                                <h5 class="fw-bold mb-1 text-white"><%= ensenanza.author || 'Moréh Kaleb' %></h5>
+                                                <span class="badge px-3 py-1 rounded-pill" style="background: rgba(212,168,83,0.2); color: #d4a853; border: 1px solid #d4a853; font-size: 0.8rem; font-weight: 600;">
+                                                    <%= ensenanza.author_role || 'Moréh' %>
+                                                </span>
+                                            </div>
+                                            <div class="p-3 text-center bg-light border-top">
+                                                <p class="text-muted small mb-0">
+                                                    <i class="bi bi-book-half text-warning me-1"></i> Docente y expositor bíblico en la congregación.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Portada de la Enseñanza si existe -->
+                                        <% if (ensenanza.image_url && ensenanza.image_url.trim() !== '') { %>
+                                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background: #fff; border: 1px solid #ede8df;">
+                                                <img src="<%= ensenanza.image_url %>" alt="<%= ensenanza.title %>" class="img-fluid" style="width: 100%; height: auto; max-height: 320px; object-fit: cover;">
                                                 <div class="p-3 text-center">
-                                                    <h6 class="fw-bold mb-1"><%= ensenanza.title %></h6>
+                                                    <h6 class="fw-bold mb-1" style="font-size: 0.95rem;"><%= ensenanza.title %></h6>
                                                     <% if (ensenanza.subtitle) { %>
                                                         <small class="text-muted"><%= ensenanza.subtitle %></small>
                                                     <% } %>
                                                 </div>
                                             </div>
-                                        </div>
-                                    <% } %>
+                                        <% } %>
+                                    </div>
                                 </div>
                             </div>
 

@@ -22,6 +22,33 @@
                 <input type="text" name="subtitle" class="form-control" value="<%= ensenanza.subtitle || '' %>">
             </div>
 
+            <!-- Expositor / Docente -->
+            <div class="col-md-4">
+                <label class="form-label small text-white-50">Expositor / Docente</label>
+                <input type="text" name="author" id="page_edit_ens_author" class="form-control" value="<%= ensenanza.author || 'Moréh Kaleb' %>" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small text-white-50">Rol del Expositor</label>
+                <input type="text" name="author_role" id="page_edit_ens_author_role" class="form-control" value="<%= ensenanza.author_role || 'Moréh' %>">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small text-white-50">Foto del Expositor (URL)</label>
+                <input type="text" name="author_img" id="page_edit_ens_author_img" class="form-control" value="<%= ensenanza.author_img || '/assets/img/team/kaleb.jpg' %>">
+            </div>
+            <% if (typeof team !== 'undefined' && team && team.length > 0) { %>
+                <div class="col-12">
+                    <span class="small text-white-50 me-2"><i class="bi bi-people me-1"></i>Seleccionar rápido del equipo:</span>
+                    <div class="d-inline-flex gap-2 flex-wrap">
+                        <% team.forEach(m => { %>
+                            <button type="button" class="btn btn-sm btn-outline-warning rounded-pill py-0 px-2" style="font-size: 0.78rem;" 
+                                    onclick="document.getElementById('page_edit_ens_author').value='<%= m.name %>'; document.getElementById('page_edit_ens_author_role').value='<%= m.role %>'; document.getElementById('page_edit_ens_author_img').value='<%= m.img %>';">
+                                <%= m.name %> (<%= m.role %>)
+                            </button>
+                        <% }) %>
+                    </div>
+                </div>
+            <% } %>
+
             <div class="col-md-12">
                 <label class="form-label small text-white-50">Resumen Breve</label>
                 <textarea name="description" class="form-control" rows="2"><%= ensenanza.description || '' %></textarea>
