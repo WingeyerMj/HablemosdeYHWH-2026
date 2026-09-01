@@ -3,16 +3,16 @@ const { Client } = require('ssh2');
 const conn = new Client();
 conn.on('ready', () => {
   console.log('Client :: ready');
-  const cmd = `mysql -u yhwh -pFuerza2024! hablemos_yhwh -e "SELECT id, title, slug, data_table FROM dynamic_sections WHERE slug='identidad' OR title='Identidad';"`;
+  const cmd = `pm2 restart hablemos-web && pm2 list`;
   
   conn.exec(cmd, (err, stream) => {
     if (err) throw err;
     stream.on('close', (code, signal) => {
       conn.end();
     }).on('data', (data) => {
-      console.log('STDOUT: ' + data);
+      console.log('STDOUT:\n' + data);
     }).stderr.on('data', (data) => {
-      console.log('STDERR: ' + data);
+      console.log('STDERR:\n' + data);
     });
   });
 }).on('keyboard-interactive', (name, instructions, instructionsLang, prompts, finish) => {
