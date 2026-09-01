@@ -280,11 +280,13 @@ const homeController = {
     semillasTorah: async (req, res, next) => {
         try {
             const SemillasTorah = require('../models/SemillasTorah');
+            const SemillasShort = require('../models/SemillasShort');
             const Aliyah = require('../models/Aliyah');
-            let items = [], categories = [], siteSettings = {};
+            let items = [], categories = [], siteSettings = {}, shorts = [];
             let recentAliyot = [], parashotOverview = [], parashot = [];
 
             try { items = await SemillasTorah.getPublished(); } catch (e) { items = []; }
+            try { shorts = await SemillasShort.getPublished(); } catch (e) { shorts = []; }
             try { categories = await SemillasTorah.getCategories(); } catch (e) { categories = []; }
             try { siteSettings = await SiteSettings.getMap(); } catch (e) { siteSettings = {}; }
 
@@ -301,6 +303,7 @@ const homeController = {
                 title: 'Semillas de Torah - Enseñanza Bíblica Infantil',
                 page: 'semillas-torah',
                 items,
+                shorts,
                 categories,
                 siteSettings,
                 recentAliyot,

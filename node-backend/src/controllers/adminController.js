@@ -52,6 +52,11 @@ const adminController = {
                     const SemillasTorah = require('../models/SemillasTorah');
                     semillas = await SemillasTorah.getAll(); 
                 } catch(e) { semillas = []; }
+                let semillasShorts = [];
+                try {
+                    const SemillasShort = require('../models/SemillasShort');
+                    semillasShorts = await SemillasShort.getAll();
+                } catch(e) { semillasShorts = []; }
                 team = await Team.getAll();
                 testimonials = await Testimonial.getAll();
                 pricing = await Pricing.getAll();
@@ -119,6 +124,7 @@ const adminController = {
                 ensenanzas,
                 blogs,
                 semillas,
+                semillasShorts: typeof semillasShorts !== 'undefined' ? semillasShorts : [],
                 team,
                 testimonials,
                 pricing,
@@ -422,6 +428,98 @@ const adminController = {
             res.redirect('/admin/dashboard#pills-semillas');
         } catch (error) {
             console.error('Error deleteSemillas:', error);
+            res.redirect('/admin/dashboard#pills-semillas');
+        }
+    },
+
+    // ==================== SEMILLAS SHORTS / ALIYOT CON NIÑOS ====================
+    createSemillasShort: async (req, res) => {
+        try {
+            let { title, child_name, parasha_name, aliyah_number, verses_reference, youtube_short_url, description, is_highlight, is_published, thumbnail_url, video_url } = req.body;
+            
+            if (req.files) {
+                if (req.files['thumbnail_file'] && req.files['thumbnail_file'][0]) {
+                    thumbnail_url = '/uploads/semillas/' + req.files['thumbnail_file'][0].filename;
+                }
+                if (req.files['video_upload'] && req.files['video_upload'][0]) {
+                    video_url = '/uploads/videos/' + req.files['video_upload'][0].filename;
+                }
+            }
+
+            const SemillasShort = require('../models/SemillasShort');
+            await SemillasShort.create({
+                title,
+                child_name: child_name || '',
+                parasha_name: parasha_name || '',
+                aliyah_number: aliyah_number || 1,
+                verses_reference: verses_reference || '',
+                video_url: video_url || '',
+                youtube_short_url: youtube_short_url || '',
+                thumbnail_url: thumbnail_url || '',
+                description: description || '',
+                is_highlight: is_highlight === '1' || is_highlight === true || is_highlight === 'on',
+                is_published: is_published !== '0' && is_published !== false
+            });
+            res.redirect('/admin/dashboard#pills-semillas');
+        } catch (error) {
+            console.error('Error createSemillasShort:', error);
+            res.redirect('/admin/dashboard#pills-semillas');
+        }
+    },
+
+    editSemillasShortPage: async (req, res) => {
+        try {
+            const SemillasShort = require('../models/SemillasShort');
+            const item = await SemillasShort.getById(req.params.id);
+            if (!item) return res.redirect('/admin/dashboard#pills-semillas');
+            res.render('admin/edit_semillas_short', { layout: 'admin/layout', item });
+        } catch (error) {
+            console.error('Error editSemillasShortPage:', error);
+            res.redirect('/admin/dashboard#pills-semillas');
+        }
+    },
+
+    updateSemillasShort: async (req, res) => {
+        try {
+            let { id, title, child_name, parasha_name, aliyah_number, verses_reference, youtube_short_url, description, is_highlight, is_published, thumbnail_url, video_url } = req.body;
+            
+            if (req.files) {
+                if (req.files['thumbnail_file'] && req.files['thumbnail_file'][0]) {
+                    thumbnail_url = '/uploads/semillas/' + req.files['thumbnail_file'][0].filename;
+                }
+                if (req.files['video_upload'] && req.files['video_upload'][0]) {
+                    video_url = '/uploads/videos/' + req.files['video_upload'][0].filename;
+                }
+            }
+
+            const SemillasShort = require('../models/SemillasShort');
+            await SemillasShort.update(id, {
+                title,
+                child_name: child_name || '',
+                parasha_name: parasha_name || '',
+                aliyah_number: aliyah_number || 1,
+                verses_reference: verses_reference || '',
+                video_url: video_url !== undefined ? video_url : '',
+                youtube_short_url: youtube_short_url || '',
+                thumbnail_url: thumbnail_url || '',
+                description: description || '',
+                is_highlight: is_highlight === '1' || is_highlight === true || is_highlight === 'on',
+                is_published: is_published !== '0' && is_published !== false
+            });
+            res.redirect('/admin/dashboard#pills-semillas');
+        } catch (error) {
+            console.error('Error updateSemillasShort:', error);
+            res.redirect('/admin/dashboard#pills-semillas');
+        }
+    },
+
+    deleteSemillasShort: async (req, res) => {
+        try {
+            const SemillasShort = require('../models/SemillasShort');
+            await SemillasShort.delete(req.params.id);
+            res.redirect('/admin/dashboard#pills-semillas');
+        } catch (error) {
+            console.error('Error deleteSemillasShort:', error);
             res.redirect('/admin/dashboard#pills-semillas');
         }
     },

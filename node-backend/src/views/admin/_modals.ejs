@@ -554,6 +554,102 @@
     </div>
 </div>
 
+<!-- MODAL: NUEVO SHORT / ALIYÁ INFANTIL (NOVEDADES) -->
+<div class="modal fade" id="createSemillasShortModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-white">
+                    <i class="bi bi-camera-reels-fill me-2" style="color: #38bdf8;"></i>Añadir Aliyá Infantil / Short (Novedades)
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/semillas-shorts/create" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label small text-white-50">Título del Short / Aliyá *</label>
+                            <input type="text" name="title" class="form-control" required placeholder="Ej: 1ª Aliyá de Bereshit con Lucas">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Niño(s) Participante(s)</label>
+                            <input type="text" name="child_name" class="form-control" placeholder="Ej: Lucas (6 años)">
+                        </div>
+
+                        <div class="col-md-5">
+                            <label class="form-label small text-white-50">Parashá Relacionada</label>
+                            <input type="text" name="parasha_name" class="form-control" placeholder="Ej: Bereshit, Noaj, etc.">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-white-50">Nº de Aliyá (1-7)</label>
+                            <select name="aliyah_number" class="form-select bg-dark text-white border-secondary">
+                                <option value="1">1ª Aliyá (Domingo)</option>
+                                <option value="2">2ª Aliyá (Lunes)</option>
+                                <option value="3">3ª Aliyá (Martes)</option>
+                                <option value="4">4ª Aliyá (Miércoles)</option>
+                                <option value="5">5ª Aliyá (Jueves)</option>
+                                <option value="6">6ª Aliyá (Viernes)</option>
+                                <option value="7">7ª Aliyá (Shabat)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Cita Bíblica / Versículos</label>
+                            <input type="text" name="verses_reference" class="form-control" placeholder="Ej: Génesis 1:1 - 1:5">
+                        </div>
+
+                        <!-- Video Source -->
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subir Video (MP4 / WebM Vertical o Normal)</label>
+                            <input type="file" name="video_upload" class="form-control bg-dark text-white border-secondary" accept="video/*">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">O Link de YouTube Short / Video</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-youtube text-danger"></i></span>
+                                <input type="text" name="youtube_short_url" class="form-control" placeholder="https://youtube.com/shorts/... o video URL">
+                            </div>
+                        </div>
+
+                        <!-- Thumbnail -->
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subir Miniatura / Portada (Foto Vertical)</label>
+                            <input type="file" name="thumbnail_file" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">O URL de Miniatura</label>
+                            <input type="text" name="thumbnail_url" class="form-control" placeholder="https://...">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Descripción / Mensaje / Enseñanza</label>
+                            <textarea name="description" class="form-control" rows="3" placeholder="Breve mensaje sobre la lectura del niño o reflexión..."></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="is_highlight" value="1" id="short_is_highlight">
+                                <label class="form-check-label text-warning small fw-bold" for="short_is_highlight">
+                                    <i class="bi bi-star-fill me-1"></i> Destacar como Novedad Principal
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="is_published" value="1" id="short_is_published" checked>
+                                <label class="form-check-label text-white small" for="short_is_published">Publicar de inmediato</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary px-4"><i class="bi bi-upload me-1"></i>Publicar Short / Novedad</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- MODAL: NUEVO MIEMBRO -->
 <div class="modal fade" id="createTeamModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">

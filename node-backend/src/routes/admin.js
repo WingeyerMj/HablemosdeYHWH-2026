@@ -111,6 +111,18 @@ router.post('/semillas/update', isAuthenticated, upload.fields([
 ]), adminController.updateSemillas);
 router.get('/semillas/delete/:id', isAuthenticated, adminController.deleteSemillas);
 
+// Semillas Shorts / Aliyot con Niños (Novedades)
+router.post('/semillas-shorts/create', isAuthenticated, upload.fields([
+    { name: 'thumbnail_file', maxCount: 1 },
+    { name: 'video_upload', maxCount: 1 }
+]), adminController.createSemillasShort);
+router.get('/semillas-shorts/edit/:id', isAuthenticated, adminController.editSemillasShortPage);
+router.post('/semillas-shorts/update', isAuthenticated, upload.fields([
+    { name: 'thumbnail_file', maxCount: 1 },
+    { name: 'video_upload', maxCount: 1 }
+]), adminController.updateSemillasShort);
+router.get('/semillas-shorts/delete/:id', isAuthenticated, adminController.deleteSemillasShort);
+
 // Blog / Artículos - Admin y Editor
 router.post('/blog/create', isAuthenticated, upload.single('image_file'), adminController.createBlogPost);
 router.get('/blog/edit/:id', isAuthenticated, adminController.editBlogPostPage);
