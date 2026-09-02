@@ -244,6 +244,7 @@ CREATE TABLE IF NOT EXISTS ensenanzas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     subtitle VARCHAR(255),
+    teaching_date DATE DEFAULT (CURRENT_DATE),
     description TEXT,
     content LONGTEXT,
     image_url VARCHAR(500),
@@ -257,6 +258,7 @@ CREATE TABLE IF NOT EXISTS ensenanzas (
 );
 
 -- Migraciones seguras para ensenanzas
+ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS teaching_date DATE DEFAULT (CURRENT_DATE) AFTER subtitle;
 ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS author VARCHAR(150) DEFAULT 'Moréh Kaleb' AFTER youtube_link;
 ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS author_role VARCHAR(150) DEFAULT 'Moréh' AFTER author;
 ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS author_img VARCHAR(500) DEFAULT '/assets/img/team/kaleb.jpg' AFTER author_role;

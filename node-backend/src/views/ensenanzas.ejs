@@ -65,11 +65,30 @@
                                                 <!-- Columna Contenido -->
                                                 <div class="col-sm-7 d-flex flex-column p-4">
                                                     <div>
-                                                        <% if (item.subtitle) { %>
-                                                            <div class="badge-sub text-uppercase mb-1" style="color: #d4a853; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px;">
-                                                                <%= item.subtitle %>
-                                                            </div>
-                                                        <% } %>
+                                                        <%
+                                                            let dateFormatted = '';
+                                                            if (item.teaching_date) {
+                                                                const dObj = new Date(item.teaching_date);
+                                                                dateFormatted = dObj.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+                                                            } else if (item.created_at) {
+                                                                const dObj = new Date(item.created_at);
+                                                                dateFormatted = dObj.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+                                                            }
+                                                        %>
+                                                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                                                            <% if (item.subtitle) { %>
+                                                                <span class="badge-sub text-uppercase" style="color: #b8860b; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px;">
+                                                                    <%= item.subtitle %>
+                                                                </span>
+                                                            <% } else { %>
+                                                                <span></span>
+                                                            <% } %>
+                                                            <% if (dateFormatted) { %>
+                                                                <span class="badge rounded-pill px-2 py-1" style="background: #fdf6e7; color: #8c6a2d; border: 1px solid #ebdccb; font-size: 0.75rem; font-weight: 600;">
+                                                                    <i class="bi bi-calendar3 me-1 text-warning"></i> <%= dateFormatted %>
+                                                                </span>
+                                                            <% } %>
+                                                        </div>
                                                         <h4 class="card-title fw-bold mb-2" style="font-size: 1.25rem; color: #222; line-height: 1.35;">
                                                             <a href="/ensenanzas/<%= item.id %>" class="text-decoration-none text-dark hover-gold">
                                                                 <%= item.title %>

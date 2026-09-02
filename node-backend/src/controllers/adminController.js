@@ -268,7 +268,7 @@ const adminController = {
     // ==================== ENSEÑANZAS ====================
     createEnsenanza: async (req, res) => {
         try {
-            let { title, subtitle, description, content, youtube_link, image_url, author, author_role, author_img } = req.body;
+            let { title, subtitle, teaching_date, description, content, youtube_link, image_url, author, author_role, author_img } = req.body;
             if (req.file) {
                 image_url = '/uploads/ensenanzas/' + req.file.filename;
             }
@@ -277,6 +277,7 @@ const adminController = {
             await Ensenanza.create({
                 title,
                 subtitle: subtitle || '',
+                teaching_date: teaching_date || new Date().toISOString().split('T')[0],
                 description: description || '',
                 content: content || '',
                 youtube_link: youtube_link || '',
@@ -313,7 +314,7 @@ const adminController = {
 
     updateEnsenanza: async (req, res) => {
         try {
-            let { id, title, subtitle, description, content, youtube_link, image_url, author, author_role, author_img } = req.body;
+            let { id, title, subtitle, teaching_date, description, content, youtube_link, image_url, author, author_role, author_img } = req.body;
             if (req.file) {
                 image_url = '/uploads/ensenanzas/' + req.file.filename;
             }
@@ -322,6 +323,7 @@ const adminController = {
             await Ensenanza.update(id, {
                 title,
                 subtitle: subtitle || '',
+                teaching_date: teaching_date || new Date().toISOString().split('T')[0],
                 description: description || '',
                 content: content || '',
                 youtube_link: youtube_link || '',

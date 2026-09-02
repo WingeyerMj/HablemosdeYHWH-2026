@@ -13,13 +13,20 @@
     <form action="/admin/ensenanzas/update" method="POST" enctype="multipart/form-data" id="editEnsenanzaPageForm">
         <input type="hidden" name="id" value="<%= ensenanza.id %>">
         <div class="row g-3">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label class="form-label small text-white-50">Título</label>
                 <input type="text" name="title" class="form-control" required value="<%= ensenanza.title %>">
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label class="form-label small text-white-50">Subtítulo / Tema</label>
                 <input type="text" name="subtitle" class="form-control" value="<%= ensenanza.subtitle || '' %>">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small text-warning fw-bold"><i class="bi bi-calendar3 me-1"></i>Fecha en que se dictó</label>
+                <% 
+                    const curDate = ensenanza.teaching_date ? new Date(ensenanza.teaching_date).toISOString().split('T')[0] : (ensenanza.created_at ? new Date(ensenanza.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
+                %>
+                <input type="date" name="teaching_date" class="form-control border-warning" required value="<%= curDate %>">
             </div>
 
             <!-- Expositor / Docente -->

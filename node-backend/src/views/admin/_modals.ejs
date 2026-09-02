@@ -185,26 +185,44 @@
             <form action="/admin/ensenanzas/create" method="POST" enctype="multipart/form-data" id="createEnsenanzaForm">
                 <div class="modal-body">
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label small text-white-50">Título</label>
                             <input type="text" name="title" class="form-control" required placeholder="Ej: Las Raíces de la Fe">
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label small text-white-50">Subtítulo / Tema</label>
                             <input type="text" name="subtitle" class="form-control" placeholder="Ej: Estudio Bíblico Profundo">
                         </div>
                         <div class="col-md-4">
+                            <label class="form-label small text-warning fw-bold"><i class="bi bi-calendar3 me-1"></i>Fecha en que se dictó</label>
+                            <input type="date" name="teaching_date" class="form-control border-warning" required value="<%= new Date().toISOString().split('T')[0] %>">
+                        </div>
+                        <div class="col-md-4">
                             <label class="form-label small text-white-50">Expositor / Docente</label>
-                            <input type="text" name="author" class="form-control" value="Moréh Kaleb" placeholder="Ej: Moréh Kaleb">
+                            <input type="text" name="author" id="create_ens_author" class="form-control" value="Moréh Kaleb" placeholder="Ej: Moréh Kaleb" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small text-white-50">Rol del Expositor</label>
-                            <input type="text" name="author_role" class="form-control" value="Moréh" placeholder="Ej: Moréh / Moráh">
+                            <input type="text" name="author_role" id="create_ens_author_role" class="form-control" value="Moréh" placeholder="Ej: Moréh / Moráh">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small text-white-50">Foto del Expositor (URL)</label>
-                            <input type="text" name="author_img" class="form-control" value="/assets/img/team/kaleb.jpg" placeholder="/assets/img/team/kaleb.jpg">
+                            <input type="text" name="author_img" id="create_ens_author_img" class="form-control" value="/assets/img/team/kaleb.jpg" placeholder="/assets/img/team/kaleb.jpg">
                         </div>
+
+                        <% if (typeof team !== 'undefined' && team && team.length > 0) { %>
+                            <div class="col-12">
+                                <span class="small text-white-50 me-2"><i class="bi bi-people me-1"></i>Asignar quién la dictó:</span>
+                                <div class="d-inline-flex gap-2 flex-wrap">
+                                    <% team.forEach(m => { %>
+                                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill py-0 px-2" style="font-size: 0.78rem;" 
+                                                onclick="document.getElementById('create_ens_author').value='<%= m.name %>'; document.getElementById('create_ens_author_role').value='<%= m.role %>'; document.getElementById('create_ens_author_img').value='<%= m.img %>';">
+                                            <%= m.name %> (<%= m.role %>)
+                                        </button>
+                                    <% }) %>
+                                </div>
+                            </div>
+                        <% } %>
                         <div class="col-md-12">
                             <label class="form-label small text-white-50">Resumen Breve (para tarjetas y listados)</label>
                             <textarea name="description" class="form-control" rows="2" placeholder="Breve introducción o descripción..."></textarea>
@@ -257,17 +275,21 @@
                 <input type="hidden" name="id" id="edit_ens_id">
                 <div class="modal-body">
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label small text-white-50">Título</label>
                             <input type="text" name="title" id="edit_ens_title" class="form-control" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label small text-white-50">Subtítulo / Tema</label>
                             <input type="text" name="subtitle" id="edit_ens_subtitle" class="form-control">
                         </div>
                         <div class="col-md-4">
+                            <label class="form-label small text-warning fw-bold"><i class="bi bi-calendar3 me-1"></i>Fecha en que se dictó</label>
+                            <input type="date" name="teaching_date" id="edit_ens_date" class="form-control border-warning" required>
+                        </div>
+                        <div class="col-md-4">
                             <label class="form-label small text-white-50">Expositor / Docente</label>
-                            <input type="text" name="author" id="edit_ens_author" class="form-control" placeholder="Ej: Moréh Kaleb">
+                            <input type="text" name="author" id="edit_ens_author" class="form-control" placeholder="Ej: Moréh Kaleb" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small text-white-50">Rol del Expositor</label>
@@ -277,6 +299,20 @@
                             <label class="form-label small text-white-50">Foto del Expositor (URL)</label>
                             <input type="text" name="author_img" id="edit_ens_author_img" class="form-control" placeholder="/assets/img/team/kaleb.jpg">
                         </div>
+
+                        <% if (typeof team !== 'undefined' && team && team.length > 0) { %>
+                            <div class="col-12">
+                                <span class="small text-white-50 me-2"><i class="bi bi-people me-1"></i>Asignar quién la dictó:</span>
+                                <div class="d-inline-flex gap-2 flex-wrap">
+                                    <% team.forEach(m => { %>
+                                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill py-0 px-2" style="font-size: 0.78rem;" 
+                                                onclick="document.getElementById('edit_ens_author').value='<%= m.name %>'; document.getElementById('edit_ens_author_role').value='<%= m.role %>'; document.getElementById('edit_ens_author_img').value='<%= m.img %>';">
+                                            <%= m.name %> (<%= m.role %>)
+                                        </button>
+                                    <% }) %>
+                                </div>
+                            </div>
+                        <% } %>
                         <div class="col-md-12">
                             <label class="form-label small text-white-50">Resumen Breve</label>
                             <textarea name="description" id="edit_ens_description" class="form-control" rows="2"></textarea>
@@ -1168,6 +1204,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('edit_ens_id').value=d.id;
             document.getElementById('edit_ens_title').value=d.title;
             document.getElementById('edit_ens_subtitle').value=d.subtitle || '';
+            document.getElementById('edit_ens_date').value=d.date || '';
             document.getElementById('edit_ens_author').value=d.author || 'Moréh Kaleb';
             document.getElementById('edit_ens_author_role').value=d.author_role || 'Moréh';
             document.getElementById('edit_ens_author_img').value=d.author_img || '/assets/img/team/kaleb.jpg';

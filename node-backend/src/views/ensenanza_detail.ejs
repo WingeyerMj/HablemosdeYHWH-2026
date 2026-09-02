@@ -55,9 +55,26 @@
                                                 <h5 class="fw-bold mb-0" style="color: #2b231d; font-size: 1.15rem;"><%= ensenanza.author || 'Moréh Kaleb' %></h5>
                                             </div>
                                         </div>
-                                        <% if (ensenanza.subtitle) { %>
-                                            <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #d4a853; color: #fff; font-size: 0.85rem;"><%= ensenanza.subtitle %></span>
-                                        <% } %>
+                                        <%
+                                            let detailDate = '';
+                                            if (ensenanza.teaching_date) {
+                                                const dObj = new Date(ensenanza.teaching_date);
+                                                detailDate = dObj.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+                                            } else if (ensenanza.created_at) {
+                                                const dObj = new Date(ensenanza.created_at);
+                                                detailDate = dObj.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+                                            }
+                                        %>
+                                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                                            <% if (detailDate) { %>
+                                                <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #2b231d; color: #fff; font-size: 0.82rem;">
+                                                    <i class="bi bi-calendar3 me-1 text-warning"></i> <%= detailDate %>
+                                                </span>
+                                            <% } %>
+                                            <% if (ensenanza.subtitle) { %>
+                                                <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #d4a853; color: #fff; font-size: 0.82rem;"><%= ensenanza.subtitle %></span>
+                                            <% } %>
+                                        </div>
                                     </div>
 
                                     <!-- Video de YouTube si existe -->

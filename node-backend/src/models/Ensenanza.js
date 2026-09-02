@@ -2,27 +2,30 @@ const db = require('../config/db');
 
 class Ensenanza {
     static async getAll() {
-        const [rows] = await db.query('SELECT * FROM ensenanzas ORDER BY id DESC');
+        const [rows] = await db.query('SELECT * FROM ensenanzas ORDER BY COALESCE(teaching_date, DATE(created_at)) ASC, id ASC');
         return rows;
     }
 
     static async getLatest(limit = 4) {
-        const [rows] = await db.query('SELECT * FROM ensenanzas WHERE is_published = TRUE ORDER BY id DESC LIMIT ?', [limit]);
+        const [rows] = await db.query('SELECT * FROM ensenanzas WHERE is_published = TRUE ORDER BY COALESCE(teaching_date, DATE(created_at)) ASC, id ASC LIMIT ?', [limit]);
         return rows;
     }
 
     static async getPublished() {
-        const [rows] = await db.query('SELECT * FROM ensenanzas WHERE is_published = TRUE ORDER BY id DESC');
+        const [rows] = await db.query('SELECT * FROM ensenanzas WHERE is_published = TRUE ORDER BY COALESCE(teaching_date, DATE(created_at)) ASC, id ASC');
         return rows;
     }
 
     static async create(data) {
-        const { title, subtitle, description, content, image_url, youtube_link, author, author_role, author_img, is_published } = data;
+        const { title, subtitle, teaching_date, description, content, image_url, youtube_link, author, author_role, author_img, is_published } = data;
+        const finalDate = teaching_date && teaching_date.trim() !== '' ? teaching_date : new Date().toISOString().split('T')[0];
         return await db.query(
-            'INSERT INTO ensenanzas (title, subtitle, description, content, image_url, youtube_link, author, author_role, author_img, is_published) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            `INSERT INTO ensenanzas (title, subtitle, teaching_date, description, content, image_url, youtube_link, author, author_role, author_img, is_published) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 title,
                 subtitle || '',
+                finalDate,
                 description || '',
                 content || '',
                 image_url || '',
@@ -36,12 +39,26 @@ class Ensenanza {
     }
 
     static async update(id, data) {
-        const { title, subtitle, description, content, image_url, youtube_link, author, author_role, author_img, is_published } = data;
+        const { title, subtitle, teaching_date, description, content, image_url, youtube_link, author, author_role, author_img, is_published } = data;
+        const finalDate = teaching_date && teaching_date.trim() !== '' ? teaching_date : new Date().toISOString().split('T')[0];
         return await db.query(
-            'UPDATE ensenanzas SET title = ?, subtitle = ?, description = ?, content = ?, image_url = ?, youtube_link = ?, author = ?, author_role = ?, author_img = ?, is_published = ? WHERE id = ?',
+            `UPDATE ensenanzas SET 
+                title = ?, 
+                subtitle = ?, 
+                teaching_date = ?, 
+                description = ?, 
+                content = ?, 
+                image_url = ?, 
+                youtube_link = ?, 
+                author = ?, 
+                author_role = ?, 
+                author_img = ?, 
+                is_published = ? 
+             WHERE id = ?`,
             [
                 title,
                 subtitle || '',
+                finalDate,
                 description || '',
                 content || '',
                 image_url || '',
