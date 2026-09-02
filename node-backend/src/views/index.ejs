@@ -594,13 +594,27 @@
                                                             <%= item.description %>
                                                         </p>
                                                     <% } %>
-                                                    <div class="mt-auto pt-2 border-top d-flex align-items-center gap-2">
-                                                        <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= item.author || 'Moréh Kaleb' %>" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853;">
-                                                        <div class="min-width-0">
-                                                            <div class="fw-bold text-truncate" style="font-size: 0.82rem; color: #222;"><%= item.author || 'Moréh Kaleb' %></div>
-                                                            <div class="text-muted" style="font-size: 0.72rem; line-height: 1;"><%= item.author_role || 'Moréh' %></div>
+                                                    <% if (item.authors_list && item.authors_list.length > 1) { %>
+                                                        <div class="mt-auto pt-2 border-top d-flex align-items-center gap-2">
+                                                            <div class="d-flex" style="margin-left: 2px;">
+                                                                <% item.authors_list.forEach((auth, aIdx) => { %>
+                                                                    <img src="<%= auth.img || '/assets/img/team/kaleb.jpg' %>" alt="<%= auth.name %>" title="<%= auth.name %> (<%= auth.role %>)" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853; margin-left: <%= aIdx === 0 ? '0' : '-10px' %>; position: relative; z-index: <%= 10 - aIdx %>;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                                <% }) %>
+                                                            </div>
+                                                            <div class="min-width-0">
+                                                                <div class="fw-bold text-truncate" style="font-size: 0.82rem; color: #222;"><%= item.authors_display %></div>
+                                                                <div class="text-muted" style="font-size: 0.72rem; line-height: 1;"><%= item.authors_list.length %> expositores</div>
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                    <% } else { %>
+                                                        <div class="mt-auto pt-2 border-top d-flex align-items-center gap-2">
+                                                            <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= item.author || 'Moréh Kaleb' %>" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                            <div class="min-width-0">
+                                                                <div class="fw-bold text-truncate" style="font-size: 0.82rem; color: #222;"><%= item.author || 'Moréh Kaleb' %></div>
+                                                                <div class="text-muted" style="font-size: 0.72rem; line-height: 1;"><%= item.author_role || 'Moréh' %></div>
+                                                            </div>
+                                                        </div>
+                                                    <% } %>
                                                 </div>
                                             </div>
                                         </a>

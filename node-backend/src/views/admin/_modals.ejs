@@ -197,32 +197,39 @@
                             <label class="form-label small text-warning fw-bold"><i class="bi bi-calendar3 me-1"></i>Fecha en que se dictó</label>
                             <input type="date" name="teaching_date" class="form-control border-warning" required value="<%= new Date().toISOString().split('T')[0] %>">
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label small text-white-50">Expositor / Servidor</label>
-                            <input type="text" name="author" id="create_ens_author" class="form-control" value="Moréh Kaleb" placeholder="Ej: Moréh Kaleb" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small text-white-50">Rol del Expositor</label>
-                            <input type="text" name="author_role" id="create_ens_author_role" class="form-control" value="Moréh" placeholder="Ej: Moréh / Moráh">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small text-white-50">Foto del Expositor (URL)</label>
-                            <input type="text" name="author_img" id="create_ens_author_img" class="form-control" value="/assets/img/team/kaleb.jpg" placeholder="/assets/img/team/kaleb.jpg">
-                        </div>
-
-                        <% if (typeof team !== 'undefined' && team && team.length > 0) { %>
-                            <div class="col-12">
-                                <span class="small text-white-50 me-2"><i class="bi bi-people me-1"></i>Asignar quién la dictó:</span>
-                                <div class="d-inline-flex gap-2 flex-wrap">
-                                    <% team.forEach(m => { %>
-                                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill py-0 px-2" style="font-size: 0.78rem;" 
-                                                onclick="document.getElementById('create_ens_author').value='<%= m.name %>'; document.getElementById('create_ens_author_role').value='<%= m.role %>'; document.getElementById('create_ens_author_img').value='<%= m.img %>';">
-                                            <%= m.name %> (<%= m.role %>)
-                                        </button>
-                                    <% }) %>
+                        <!-- Expositores Múltiples / Servidores -->
+                        <div class="col-12">
+                            <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);">
+                                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                                    <label class="form-label mb-0 small text-warning fw-bold">
+                                        <i class="bi bi-people-fill me-1"></i>Expositor(es) / Servidor(es)
+                                    </label>
+                                    <button type="button" class="btn btn-sm btn-outline-warning rounded-pill" id="btn-add-create-author">
+                                        <i class="bi bi-plus-circle me-1"></i>Añadir otro expositor
+                                    </button>
                                 </div>
+
+                                <% if (typeof team !== 'undefined' && team && team.length > 0) { %>
+                                    <div class="mb-2 d-flex align-items-center gap-1 flex-wrap">
+                                        <span class="small text-white-50 me-1" style="font-size: 0.75rem;">Añadir del equipo con 1 clic:</span>
+                                        <% team.forEach(m => { %>
+                                            <button type="button" class="btn btn-sm btn-dark border-secondary rounded-pill py-0 px-2 text-warning quick-add-team-create" 
+                                                    style="font-size: 0.75rem;" 
+                                                    data-name="<%= m.name %>" 
+                                                    data-role="<%= m.role %>" 
+                                                    data-img="<%= m.img %>">
+                                                + <%= m.name %> (<%= m.role %>)
+                                            </button>
+                                        <% }) %>
+                                    </div>
+                                <% } %>
+
+                                <div id="create-authors-container" class="d-flex flex-column gap-2 mt-2">
+                                    <!-- Filas dinámicas de expositores -->
+                                </div>
+                                <input type="hidden" name="authors_json" id="create_ens_authors_json">
                             </div>
-                        <% } %>
+                        </div>
                         <div class="col-md-12">
                             <label class="form-label small text-white-50">Resumen Breve (para tarjetas y listados)</label>
                             <textarea name="description" class="form-control" rows="2" placeholder="Breve introducción o descripción..."></textarea>
@@ -287,32 +294,39 @@
                             <label class="form-label small text-warning fw-bold"><i class="bi bi-calendar3 me-1"></i>Fecha en que se dictó</label>
                             <input type="date" name="teaching_date" id="edit_ens_date" class="form-control border-warning" required>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label small text-white-50">Expositor / Servidor</label>
-                            <input type="text" name="author" id="edit_ens_author" class="form-control" placeholder="Ej: Moréh Kaleb" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small text-white-50">Rol del Expositor</label>
-                            <input type="text" name="author_role" id="edit_ens_author_role" class="form-control" placeholder="Ej: Moréh">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small text-white-50">Foto del Expositor (URL)</label>
-                            <input type="text" name="author_img" id="edit_ens_author_img" class="form-control" placeholder="/assets/img/team/kaleb.jpg">
-                        </div>
-
-                        <% if (typeof team !== 'undefined' && team && team.length > 0) { %>
-                            <div class="col-12">
-                                <span class="small text-white-50 me-2"><i class="bi bi-people me-1"></i>Asignar quién la dictó:</span>
-                                <div class="d-inline-flex gap-2 flex-wrap">
-                                    <% team.forEach(m => { %>
-                                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill py-0 px-2" style="font-size: 0.78rem;" 
-                                                onclick="document.getElementById('edit_ens_author').value='<%= m.name %>'; document.getElementById('edit_ens_author_role').value='<%= m.role %>'; document.getElementById('edit_ens_author_img').value='<%= m.img %>';">
-                                            <%= m.name %> (<%= m.role %>)
-                                        </button>
-                                    <% }) %>
+                        <!-- Expositores Múltiples / Servidores -->
+                        <div class="col-12">
+                            <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);">
+                                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                                    <label class="form-label mb-0 small text-warning fw-bold">
+                                        <i class="bi bi-people-fill me-1"></i>Expositor(es) / Servidor(es)
+                                    </label>
+                                    <button type="button" class="btn btn-sm btn-outline-warning rounded-pill" id="btn-add-edit-author">
+                                        <i class="bi bi-plus-circle me-1"></i>Añadir otro expositor
+                                    </button>
                                 </div>
+
+                                <% if (typeof team !== 'undefined' && team && team.length > 0) { %>
+                                    <div class="mb-2 d-flex align-items-center gap-1 flex-wrap">
+                                        <span class="small text-white-50 me-1" style="font-size: 0.75rem;">Añadir del equipo con 1 clic:</span>
+                                        <% team.forEach(m => { %>
+                                            <button type="button" class="btn btn-sm btn-dark border-secondary rounded-pill py-0 px-2 text-warning quick-add-team-edit" 
+                                                    style="font-size: 0.75rem;" 
+                                                    data-name="<%= m.name %>" 
+                                                    data-role="<%= m.role %>" 
+                                                    data-img="<%= m.img %>">
+                                                + <%= m.name %> (<%= m.role %>)
+                                            </button>
+                                        <% }) %>
+                                    </div>
+                                <% } %>
+
+                                <div id="edit-authors-container" class="d-flex flex-column gap-2 mt-2">
+                                    <!-- Filas dinámicas de expositores -->
+                                </div>
+                                <input type="hidden" name="authors_json" id="edit_ens_authors_json">
                             </div>
-                        <% } %>
+                        </div>
                         <div class="col-md-12">
                             <label class="form-label small text-white-50">Resumen Breve</label>
                             <textarea name="description" id="edit_ens_description" class="form-control" rows="2"></textarea>
@@ -1196,6 +1210,127 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     });
 
+    // Author Repeater Helpers for Ensenanzas
+    function renderAuthorRow(containerId, author = { name: '', role: 'Moréh', img: '/assets/img/team/kaleb.jpg' }) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const row = document.createElement('div');
+        row.className = 'author-row d-flex align-items-center gap-2 p-2 rounded bg-black bg-opacity-25 border border-secondary border-opacity-25';
+        row.innerHTML = `
+            <div class="d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; flex-shrink: 0;">
+                <img src="${author.img || '/assets/img/team/kaleb.jpg'}" class="author-row-preview rounded-circle border border-warning" style="width: 34px; height: 34px; object-fit: cover;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+            </div>
+            <div class="flex-grow-1">
+                <div class="row g-2">
+                    <div class="col-md-5">
+                        <input type="text" class="form-control form-control-sm author-name" placeholder="Nombre del expositor" value="${author.name || ''}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control form-control-sm author-role" placeholder="Rol (Ej: Moréh)" value="${author.role || 'Moréh'}">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control form-control-sm author-img" placeholder="URL Foto" value="${author.img || '/assets/img/team/kaleb.jpg'}">
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger btn-remove-author" title="Eliminar expositor" style="padding: 0.25rem 0.5rem;">
+                <i class="bi bi-trash"></i>
+            </button>
+        `;
+
+        const imgInput = row.querySelector('.author-img');
+        const imgPreview = row.querySelector('.author-row-preview');
+        if (imgInput && imgPreview) {
+            imgInput.addEventListener('input', e => {
+                imgPreview.src = e.target.value || '/assets/img/team/kaleb.jpg';
+            });
+        }
+
+        row.querySelector('.btn-remove-author').addEventListener('click', () => {
+            if (container.querySelectorAll('.author-row').length > 1) {
+                row.remove();
+            } else {
+                row.querySelector('.author-name').value = '';
+                row.querySelector('.author-role').value = 'Moréh';
+                row.querySelector('.author-img').value = '/assets/img/team/kaleb.jpg';
+                if (imgPreview) imgPreview.src = '/assets/img/team/kaleb.jpg';
+            }
+        });
+
+        container.appendChild(row);
+        return row;
+    }
+
+    function serializeAuthors(containerId, hiddenInputId) {
+        const container = document.getElementById(containerId);
+        const hiddenInput = document.getElementById(hiddenInputId);
+        if (!container || !hiddenInput) return;
+
+        const list = [];
+        container.querySelectorAll('.author-row').forEach(row => {
+            const name = (row.querySelector('.author-name')?.value || '').trim();
+            const role = (row.querySelector('.author-role')?.value || 'Moréh').trim();
+            const img = (row.querySelector('.author-img')?.value || '/assets/img/team/kaleb.jpg').trim();
+            if (name) {
+                list.push({ name, role, img });
+            }
+        });
+
+        if (list.length === 0) {
+            list.push({ name: 'Moréh Kalev Aquerman', role: 'Moreh מורה', img: '/assets/img/team/kaleb.jpg' });
+        }
+        hiddenInput.value = JSON.stringify(list);
+    }
+
+    function setupQuickAddButtons(btnClass, containerId) {
+        document.querySelectorAll('.' + btnClass).forEach(btn => {
+            btn.onclick = function() {
+                const name = this.dataset.name;
+                const role = this.dataset.role;
+                const img = this.dataset.img;
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                const rows = container.querySelectorAll('.author-row');
+                let filled = false;
+                for (let r of rows) {
+                    const nameInput = r.querySelector('.author-name');
+                    if (nameInput && !nameInput.value.trim()) {
+                        nameInput.value = name;
+                        if (r.querySelector('.author-role')) r.querySelector('.author-role').value = role;
+                        if (r.querySelector('.author-img')) {
+                            r.querySelector('.author-img').value = img;
+                            const prev = r.querySelector('.author-row-preview');
+                            if (prev) prev.src = img;
+                        }
+                        filled = true;
+                        break;
+                    }
+                }
+                if (!filled) {
+                    renderAuthorRow(containerId, { name, role, img });
+                }
+            };
+        });
+    }
+
+    // Init create authors container
+    const createAuthorsCont = document.getElementById('create-authors-container');
+    if (createAuthorsCont) {
+        renderAuthorRow('create-authors-container', { name: 'Moréh Kalev Aquerman', role: 'Moreh מורה', img: '/assets/img/team/kaleb.jpg' });
+        document.getElementById('btn-add-create-author')?.addEventListener('click', () => {
+            renderAuthorRow('create-authors-container', { name: '', role: 'Moréh', img: '/assets/img/team/kaleb.jpg' });
+        });
+        setupQuickAddButtons('quick-add-team-create', 'create-authors-container');
+    }
+
+    // Init edit authors button
+    document.getElementById('btn-add-edit-author')?.addEventListener('click', () => {
+        renderAuthorRow('edit-authors-container', { name: '', role: 'Moréh', img: '/assets/img/team/kaleb.jpg' });
+    });
+    setupQuickAddButtons('quick-add-team-edit', 'edit-authors-container');
+
     // Edit Ensenanza modal
     const editEnsModal = new bootstrap.Modal(document.getElementById('editEnsenanzaModal'));
     document.querySelectorAll('.edit-ensenanza-btn').forEach(btn=>{
@@ -1205,17 +1340,50 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('edit_ens_title').value=d.title;
             document.getElementById('edit_ens_subtitle').value=d.subtitle || '';
             document.getElementById('edit_ens_date').value=d.date || '';
-            document.getElementById('edit_ens_author').value=d.author || 'Moréh Kaleb';
-            document.getElementById('edit_ens_author_role').value=d.author_role || 'Moréh';
-            document.getElementById('edit_ens_author_img').value=d.author_img || '/assets/img/team/kaleb.jpg';
             document.getElementById('edit_ens_description').value=d.description || '';
             document.getElementById('edit_ens_youtube').value=d.youtube || '';
             document.getElementById('edit_ens_image_url').value=d.image || '';
             document.getElementById('editEnsImgPreview').src=d.image || '';
+            
+            // Populate authors
+            const editAuthorsCont = document.getElementById('edit-authors-container');
+            if (editAuthorsCont) {
+                editAuthorsCont.innerHTML = '';
+                let authorsList = [];
+                if (d.authors) {
+                    try {
+                        const parsed = JSON.parse(d.authors);
+                        if (Array.isArray(parsed) && parsed.length > 0) authorsList = parsed;
+                    } catch(e) {}
+                }
+                if (authorsList.length === 0) {
+                    authorsList = [{
+                        name: d.author || 'Moréh Kalev Aquerman',
+                        role: d.author_role || 'Moreh מורה',
+                        img: d.author_img || '/assets/img/team/kaleb.jpg'
+                    }];
+                }
+                authorsList.forEach(a => renderAuthorRow('edit-authors-container', a));
+            }
+
             qEnsEdit.root.innerHTML=d.content || '';
             editEnsModal.show();
         };
     });
+
+    // Form submissions with Quill content & Authors
+    const cEnsForm = document.getElementById('createEnsenanzaForm');
+    if(cEnsForm) cEnsForm.onsubmit=function(){
+        serializeAuthors('create-authors-container', 'create_ens_authors_json');
+        document.getElementById('createEnsenanzaContentInput').value=qEnsCreate.root.innerHTML;
+        return true;
+    };
+    const eEnsForm = document.getElementById('editEnsenanzaForm');
+    if(eEnsForm) eEnsForm.onsubmit=function(){
+        serializeAuthors('edit-authors-container', 'edit_ens_authors_json');
+        document.getElementById('editEnsenanzaContentInput').value=qEnsEdit.root.innerHTML;
+        return true;
+    };
 
     // Edit Haftara modal
     const editHafModalEl = document.getElementById('editHaftaraModal');

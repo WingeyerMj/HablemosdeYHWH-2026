@@ -29,32 +29,39 @@
                 <input type="date" name="teaching_date" class="form-control border-warning" required value="<%= curDate %>">
             </div>
 
-            <!-- Expositor / Servidor -->
-            <div class="col-md-4">
-                <label class="form-label small text-white-50">Expositor / Servidor</label>
-                <input type="text" name="author" id="page_edit_ens_author" class="form-control" value="<%= ensenanza.author || 'Moréh Kaleb' %>" required>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label small text-white-50">Rol del Expositor</label>
-                <input type="text" name="author_role" id="page_edit_ens_author_role" class="form-control" value="<%= ensenanza.author_role || 'Moréh' %>">
-            </div>
-            <div class="col-md-4">
-                <label class="form-label small text-white-50">Foto del Expositor (URL)</label>
-                <input type="text" name="author_img" id="page_edit_ens_author_img" class="form-control" value="<%= ensenanza.author_img || '/assets/img/team/kaleb.jpg' %>">
-            </div>
-            <% if (typeof team !== 'undefined' && team && team.length > 0) { %>
-                <div class="col-12">
-                    <span class="small text-white-50 me-2"><i class="bi bi-people me-1"></i>Seleccionar rápido del equipo:</span>
-                    <div class="d-inline-flex gap-2 flex-wrap">
-                        <% team.forEach(m => { %>
-                            <button type="button" class="btn btn-sm btn-outline-warning rounded-pill py-0 px-2" style="font-size: 0.78rem;" 
-                                    onclick="document.getElementById('page_edit_ens_author').value='<%= m.name %>'; document.getElementById('page_edit_ens_author_role').value='<%= m.role %>'; document.getElementById('page_edit_ens_author_img').value='<%= m.img %>';">
-                                <%= m.name %> (<%= m.role %>)
-                            </button>
-                        <% }) %>
+            <!-- Expositores / Servidores -->
+            <div class="col-12">
+                <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);">
+                    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                        <label class="form-label mb-0 small text-warning fw-bold">
+                            <i class="bi bi-people-fill me-1"></i>Expositor(es) / Servidor(es)
+                        </label>
+                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill" id="page-btn-add-author">
+                            <i class="bi bi-plus-circle me-1"></i>Añadir otro expositor
+                        </button>
                     </div>
+
+                    <% if (typeof team !== 'undefined' && team && team.length > 0) { %>
+                        <div class="mb-2 d-flex align-items-center gap-1 flex-wrap">
+                            <span class="small text-white-50 me-1" style="font-size: 0.75rem;">Añadir del equipo con 1 clic:</span>
+                            <% team.forEach(m => { %>
+                                <button type="button" class="btn btn-sm btn-dark border-secondary rounded-pill py-0 px-2 text-warning page-quick-add-team" 
+                                        style="font-size: 0.75rem;" 
+                                        data-name="<%= m.name %>" 
+                                        data-role="<%= m.role %>" 
+                                        data-img="<%= m.img %>">
+                                    + <%= m.name %> (<%= m.role %>)
+                                </button>
+                            <% }) %>
+                        </div>
+                    <% } %>
+
+                    <div id="page-authors-container" class="d-flex flex-column gap-2 mt-2">
+                        <!-- Filas dinámicas de expositores -->
+                    </div>
+                    <input type="hidden" name="authors_json" id="page_edit_ens_authors_json">
                 </div>
-            <% } %>
+            </div>
 
             <div class="col-md-12">
                 <label class="form-label small text-white-50">Resumen Breve</label>
@@ -131,7 +138,116 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Dynamic Multi-Author Management for Edit Page
+    const pageAuthorsContainer = document.getElementById('page-authors-container');
+
+    function renderPageAuthorRow(author = { name: '', role: 'Moréh', img: '/assets/img/team/kaleb.jpg' }) {
+        if (!pageAuthorsContainer) return;
+
+        const row = document.createElement('div');
+        row.className = 'author-row d-flex align-items-center gap-2 p-2 rounded bg-black bg-opacity-25 border border-secondary border-opacity-25';
+        row.innerHTML = `
+            <div class="d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; flex-shrink: 0;">
+                <img src="${author.img || '/assets/img/team/kaleb.jpg'}" class="author-row-preview rounded-circle border border-warning" style="width: 34px; height: 34px; object-fit: cover;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+            </div>
+            <div class="flex-grow-1">
+                <div class="row g-2">
+                    <div class="col-md-5">
+                        <input type="text" class="form-control form-control-sm author-name" placeholder="Nombre del expositor" value="${author.name || ''}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control form-control-sm author-role" placeholder="Rol (Ej: Moréh)" value="${author.role || 'Moréh'}">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control form-control-sm author-img" placeholder="URL Foto" value="${author.img || '/assets/img/team/kaleb.jpg'}">
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger btn-remove-author" title="Eliminar expositor" style="padding: 0.25rem 0.5rem;">
+                <i class="bi bi-trash"></i>
+            </button>
+        `;
+
+        const imgInput = row.querySelector('.author-img');
+        const imgPreview = row.querySelector('.author-row-preview');
+        if (imgInput && imgPreview) {
+            imgInput.addEventListener('input', e => {
+                imgPreview.src = e.target.value || '/assets/img/team/kaleb.jpg';
+            });
+        }
+
+        row.querySelector('.btn-remove-author').addEventListener('click', () => {
+            if (pageAuthorsContainer.querySelectorAll('.author-row').length > 1) {
+                row.remove();
+            } else {
+                row.querySelector('.author-name').value = '';
+                row.querySelector('.author-role').value = 'Moréh';
+                row.querySelector('.author-img').value = '/assets/img/team/kaleb.jpg';
+                if (imgPreview) imgPreview.src = '/assets/img/team/kaleb.jpg';
+            }
+        });
+
+        pageAuthorsContainer.appendChild(row);
+    }
+
+    function serializePageAuthors() {
+        const hiddenInput = document.getElementById('page_edit_ens_authors_json');
+        if (!pageAuthorsContainer || !hiddenInput) return;
+
+        const list = [];
+        pageAuthorsContainer.querySelectorAll('.author-row').forEach(row => {
+            const name = (row.querySelector('.author-name')?.value || '').trim();
+            const role = (row.querySelector('.author-role')?.value || 'Moréh').trim();
+            const img = (row.querySelector('.author-img')?.value || '/assets/img/team/kaleb.jpg').trim();
+            if (name) {
+                list.push({ name, role, img });
+            }
+        });
+
+        if (list.length === 0) {
+            list.push({ name: 'Moréh Kalev Aquerman', role: 'Moreh מורה', img: '/assets/img/team/kaleb.jpg' });
+        }
+        hiddenInput.value = JSON.stringify(list);
+    }
+
+    // Populate initial authors
+    const initialAuthors = <%- JSON.stringify(ensenanza.authors_list && ensenanza.authors_list.length > 0 ? ensenanza.authors_list : [{ name: ensenanza.author || 'Moréh Kalev Aquerman', role: ensenanza.author_role || 'Moreh מורה', img: ensenanza.author_img || '/assets/img/team/kaleb.jpg' }]) %>;
+    initialAuthors.forEach(a => renderPageAuthorRow(a));
+
+    document.getElementById('page-btn-add-author')?.addEventListener('click', () => {
+        renderPageAuthorRow({ name: '', role: 'Moréh', img: '/assets/img/team/kaleb.jpg' });
+    });
+
+    document.querySelectorAll('.page-quick-add-team').forEach(btn => {
+        btn.onclick = function() {
+            const name = this.dataset.name;
+            const role = this.dataset.role;
+            const img = this.dataset.img;
+
+            const rows = pageAuthorsContainer.querySelectorAll('.author-row');
+            let filled = false;
+            for (let r of rows) {
+                const nameInput = r.querySelector('.author-name');
+                if (nameInput && !nameInput.value.trim()) {
+                    nameInput.value = name;
+                    if (r.querySelector('.author-role')) r.querySelector('.author-role').value = role;
+                    if (r.querySelector('.author-img')) {
+                        r.querySelector('.author-img').value = img;
+                        const prev = r.querySelector('.author-row-preview');
+                        if (prev) prev.src = img;
+                    }
+                    filled = true;
+                    break;
+                }
+            }
+            if (!filled) {
+                renderPageAuthorRow({ name, role, img });
+            }
+        };
+    });
+
     document.getElementById('editEnsenanzaPageForm').onsubmit = function() {
+        serializePageAuthors();
         document.getElementById('editEnsenanzaPageContent').value = quill.root.innerHTML;
         return true;
     };

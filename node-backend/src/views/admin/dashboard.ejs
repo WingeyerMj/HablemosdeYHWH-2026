@@ -141,13 +141,27 @@
                                     <td><span class="badge bg-secondary font-monospace"><i class="bi bi-calendar3 me-1 text-warning"></i><%= dateStr || '-' %></span></td>
                                     <td><span class="badge bg-dark border border-secondary text-info"><i class="bi bi-eye-fill me-1"></i><%= item.views || 0 %></span></td>
                                     <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #d4a853;">
-                                            <div>
-                                                <div class="small fw-semibold text-white"><%= item.author || 'Moréh Kaleb' %></div>
-                                                <div class="text-white-50" style="font-size: 0.72rem;"><%= item.author_role || 'Moréh' %></div>
+                                        <% if (item.authors_list && item.authors_list.length > 1) { %>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="d-flex" style="margin-left: 5px;">
+                                                    <% item.authors_list.forEach((auth, aIdx) => { %>
+                                                        <img src="<%= auth.img || '/assets/img/team/kaleb.jpg' %>" alt="<%= auth.name %>" title="<%= auth.name %> (<%= auth.role %>)" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853; margin-left: <%= aIdx === 0 ? '0' : '-10px' %>; position: relative; z-index: <%= 10 - aIdx %>;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                    <% }) %>
+                                                </div>
+                                                <div>
+                                                    <div class="small fw-semibold text-white text-truncate" style="max-width: 150px;"><%= item.authors_display %></div>
+                                                    <span class="badge bg-warning text-dark px-1 py-0" style="font-size: 0.68rem;"><%= item.authors_list.length %> expositores</span>
+                                                </div>
                                             </div>
-                                        </div>
+                                        <% } else { %>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #d4a853;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                <div>
+                                                    <div class="small fw-semibold text-white"><%= item.author || 'Moréh Kaleb' %></div>
+                                                    <div class="text-white-50" style="font-size: 0.72rem;"><%= item.author_role || 'Moréh' %></div>
+                                                </div>
+                                            </div>
+                                        <% } %>
                                     </td>
                                     <td><span class="text-truncate d-inline-block text-white-50" style="max-width:180px;"><%= item.subtitle || '-' %></span></td>
                                     <td>
@@ -169,6 +183,7 @@
                                             data-author="<%= item.author || 'Moréh Kaleb' %>"
                                             data-author_role="<%= item.author_role || 'Moréh' %>"
                                             data-author_img="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>"
+                                            data-authors='<%- (item.authors_list ? JSON.stringify(item.authors_list) : (item.authors || "[]")).replace(/'/g, "&#39;") %>'
                                             data-content='<%= item.content ? item.content.replace(/'/g, "&#39;") : "" %>'>Editar</button>
                                         <a href="/admin/ensenanzas/edit/<%= item.id %>" class="btn btn-sm btn-outline-light me-1" title="Editor completo"><i class="bi bi-pencil-square"></i></a>
                                         <a href="/admin/ensenanzas/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta Enseñanza?')">Eliminar</a>

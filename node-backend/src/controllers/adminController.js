@@ -268,9 +268,21 @@ const adminController = {
     // ==================== ENSEÑANZAS ====================
     createEnsenanza: async (req, res) => {
         try {
-            let { title, subtitle, teaching_date, description, content, youtube_link, image_url, author, author_role, author_img } = req.body;
+            let { title, subtitle, teaching_date, description, content, youtube_link, image_url, author, author_role, author_img, authors, authors_json } = req.body;
             if (req.file) {
                 image_url = '/uploads/ensenanzas/' + req.file.filename;
+            }
+
+            let finalAuthors = authors || authors_json;
+            if (!finalAuthors && req.body.author_name) {
+                const names = Array.isArray(req.body.author_name) ? req.body.author_name : [req.body.author_name];
+                const roles = Array.isArray(req.body.author_role) ? req.body.author_role : [req.body.author_role];
+                const imgs = Array.isArray(req.body.author_img) ? req.body.author_img : [req.body.author_img];
+                finalAuthors = names.map((name, idx) => ({
+                    name: (name || '').trim(),
+                    role: (roles[idx] || 'Moréh').trim(),
+                    img: (imgs[idx] || '/assets/img/team/kaleb.jpg').trim()
+                })).filter(a => a.name);
             }
             
             const Ensenanza = require('../models/Ensenanza');
@@ -284,7 +296,8 @@ const adminController = {
                 image_url: image_url || '',
                 author: author || 'Moréh Kaleb',
                 author_role: author_role || 'Moréh',
-                author_img: author_img || '/assets/img/team/kaleb.jpg'
+                author_img: author_img || '/assets/img/team/kaleb.jpg',
+                authors: finalAuthors
             });
             res.redirect('/admin/dashboard#pills-ensenanzas');
         } catch (error) {
@@ -314,9 +327,21 @@ const adminController = {
 
     updateEnsenanza: async (req, res) => {
         try {
-            let { id, title, subtitle, teaching_date, description, content, youtube_link, image_url, author, author_role, author_img } = req.body;
+            let { id, title, subtitle, teaching_date, description, content, youtube_link, image_url, author, author_role, author_img, authors, authors_json } = req.body;
             if (req.file) {
                 image_url = '/uploads/ensenanzas/' + req.file.filename;
+            }
+
+            let finalAuthors = authors || authors_json;
+            if (!finalAuthors && req.body.author_name) {
+                const names = Array.isArray(req.body.author_name) ? req.body.author_name : [req.body.author_name];
+                const roles = Array.isArray(req.body.author_role) ? req.body.author_role : [req.body.author_role];
+                const imgs = Array.isArray(req.body.author_img) ? req.body.author_img : [req.body.author_img];
+                finalAuthors = names.map((name, idx) => ({
+                    name: (name || '').trim(),
+                    role: (roles[idx] || 'Moréh').trim(),
+                    img: (imgs[idx] || '/assets/img/team/kaleb.jpg').trim()
+                })).filter(a => a.name);
             }
             
             const Ensenanza = require('../models/Ensenanza');
@@ -330,7 +355,8 @@ const adminController = {
                 image_url: image_url || '',
                 author: author || 'Moréh Kaleb',
                 author_role: author_role || 'Moréh',
-                author_img: author_img || '/assets/img/team/kaleb.jpg'
+                author_img: author_img || '/assets/img/team/kaleb.jpg',
+                authors: finalAuthors
             });
             res.redirect('/admin/dashboard#pills-ensenanzas');
         } catch (error) {
