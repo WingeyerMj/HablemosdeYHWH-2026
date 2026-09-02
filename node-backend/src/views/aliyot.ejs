@@ -10,42 +10,38 @@
     <main class="main">
 
         <!-- Page Title Banner con Identificación de Menajem Ben Leví -->
-        <div class="page-title dark-background py-4 py-md-5" data-aos="fade" style="background: linear-gradient(135deg, #181411 0%, #2b231d 50%, #151210 100%); border-bottom: 3px solid #d4a853;">
-            <div class="container d-lg-flex justify-content-between align-items-center gap-4">
+        <div class="page-title dark-background" data-aos="fade" style="padding-top: 130px; padding-bottom: 50px; background: linear-gradient(135deg, #181411 0%, #2b231d 50%, #151210 100%); border-bottom: 3px solid #d4a853;">
+            <div class="container d-flex flex-column flex-lg-row justify-content-between align-items-center gap-4">
                 
-                <!-- Columna Izquierda: Título y Descripción -->
-                <div class="mb-3 mb-lg-0">
+                <!-- Columna Izquierda: Título, Breadcrumbs y Descripción -->
+                <div class="text-center text-lg-start flex-grow-1">
+                    <nav class="breadcrumbs mb-3">
+                        <ol class="m-0 p-0 d-inline-flex gap-2">
+                            <li><a href="/" class="text-white-50 text-decoration-none">Inicio</a> <span class="text-white-50 mx-1">/</span></li>
+                            <li><a href="/#services" class="text-white-50 text-decoration-none">Parashot</a> <span class="text-white-50 mx-1">/</span></li>
+                            <li class="current text-warning fw-semibold">Aliyot</li>
+                        </ol>
+                    </nav>
                     <div class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-2 rounded-pill" style="background: rgba(212, 168, 83, 0.15); border: 1px solid rgba(212, 168, 83, 0.35); color: #d4a853; font-size: 0.85rem; font-weight: 700;">
                         <i class="bi bi-headphones"></i> Audios Diarios Oficiales
                     </div>
                     <h1 class="mb-2 text-white fw-bold" style="font-size: 2.3rem;">Aliyot: Lecturas Diarias de la Torá</h1>
-                    <p class="text-white-50 mb-0" style="font-size: 1.05rem;">Escucha los audios de cada día y estudia los versículos correspondientes a cada porción semanal.</p>
+                    <p class="text-white-50 mb-0" style="font-size: 1.05rem; max-width: 680px;">Escucha los audios de cada día y estudia los versículos correspondientes a cada porción semanal.</p>
                 </div>
 
-                <!-- Columna Derecha: Tarjeta de Menajem Ben Leví + Breadcrumbs -->
-                <div class="d-flex flex-column align-items-start align-items-lg-end gap-3">
-                    <nav class="breadcrumbs mb-0">
-                        <ol class="m-0 p-0">
-                            <li><a href="/" class="text-white-50 text-decoration-none">Inicio</a></li>
-                            <li><a href="/parashot" class="text-white-50 text-decoration-none">Parashot</a></li>
-                            <li class="current text-warning fw-semibold">Aliyot</li>
-                        </ol>
-                    </nav>
-
-                    <!-- Profile Badge de Menajem Ben Leví -->
-                    <div class="d-flex align-items-center gap-3 p-2 pe-3 rounded-pill shadow" style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(8px); border: 1px solid rgba(212, 168, 83, 0.4);">
-                        <div class="position-relative flex-shrink-0">
-                            <img src="/assets/img/team/menajem.jpg" alt="Menajem Ben Leví" class="rounded-circle" style="width: 52px; height: 52px; object-fit: cover; border: 2px solid #d4a853; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
-                            <span class="position-absolute bottom-0 end-0 badge rounded-pill bg-warning text-dark p-1" style="font-size: 0.6rem; transform: translate(15%, 15%);" title="Voz Oficial">
+                <!-- Columna Derecha: Tarjeta de Menajem Ben Leví (diseño destacado) -->
+                <div class="flex-shrink-0">
+                    <div class="d-flex flex-column align-items-center text-center p-3 px-4 rounded-4 shadow-lg" style="background: #191512; border: 2px solid rgba(212, 168, 83, 0.45); min-width: 220px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                        <div class="position-relative mb-2">
+                            <img src="/assets/img/team/menajem.jpg" alt="Menajem Ben Leví" class="rounded-circle" style="width: 88px; height: 88px; object-fit: cover; border: 3px solid #d4a853; box-shadow: 0 6px 15px rgba(0,0,0,0.6);">
+                            <span class="position-absolute bottom-0 end-0 rounded-circle d-flex align-items-center justify-content-center shadow" style="width: 28px; height: 28px; background: #d4a853; color: #1a1a1a; font-size: 0.85rem; transform: translate(15%, 5%); border: 2px solid #191512;" title="Voz de Aliyot">
                                 <i class="bi bi-mic-fill"></i>
                             </span>
                         </div>
-                        <div class="text-start">
-                            <div class="text-white fw-bold lh-1 mb-1" style="font-size: 0.95rem;">Menajem Ben Leví</div>
-                            <span class="badge px-2 py-0 rounded-pill" style="background: linear-gradient(135deg, #d4a853, #b8860b); color: #fff; font-size: 0.72rem; font-weight: 600;">
-                                Voz & Lecturas de Aliyot
-                            </span>
-                        </div>
+                        <h4 class="text-white fw-bold mb-1" style="font-size: 1.15rem; letter-spacing: 0.5px;">Menajem Ben Leví</h4>
+                        <span class="badge rounded-pill px-3 py-1" style="background: rgba(0, 0, 0, 0.4); border: 1px solid #d4a853; color: #d4a853; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.5px;">
+                            Servidor / Voz de Aliyot
+                        </span>
                     </div>
                 </div>
 
