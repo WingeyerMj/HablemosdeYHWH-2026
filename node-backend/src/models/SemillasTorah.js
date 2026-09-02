@@ -128,6 +128,14 @@ class SemillasTorah {
             return 0;
         }
     }
+
+    static async incrementViews(id) {
+        try {
+            await db.query('UPDATE semillas_torah SET views = views + 1 WHERE id = ?', [id]);
+        } catch (e) {
+            console.warn('Aviso incrementViews semillas_torah:', e.message);
+        }
+    }
 }
 
 module.exports = SemillasTorah;

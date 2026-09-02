@@ -86,6 +86,14 @@ class Haftara {
         const [rows] = await db.query('SELECT COUNT(*) as total FROM haftarot');
         return rows[0] ? rows[0].total : 0;
     }
+
+    static async incrementViews(id) {
+        try {
+            await db.query('UPDATE haftarot SET views = views + 1 WHERE id = ?', [id]);
+        } catch (e) {
+            console.warn('Aviso incrementViews haftarot:', e.message);
+        }
+    }
 }
 
 module.exports = Haftara;

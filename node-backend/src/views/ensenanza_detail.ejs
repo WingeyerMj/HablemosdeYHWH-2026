@@ -74,6 +74,9 @@
                                             <% if (ensenanza.subtitle) { %>
                                                 <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #d4a853; color: #fff; font-size: 0.82rem;"><%= ensenanza.subtitle %></span>
                                             <% } %>
+                                            <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #f8f9fa; color: #495057; border: 1px solid #dee2e6; font-size: 0.82rem;">
+                                                <i class="bi bi-eye-fill me-1 text-primary"></i> <%= (ensenanza.views || 0) + 1 %> vistas
+                                            </span>
                                         </div>
                                     </div>
 

@@ -61,12 +61,13 @@
                 </div>
                 <div class="table-responsive">
                     <table class="table table-dark table-hover">
-                        <thead><tr><th>Nº</th><th>Título</th><th>Descripción</th><th>PDF</th><th>Acciones</th></tr></thead>
+                        <thead><tr><th>Nº</th><th>Título</th><th>Vistas</th><th>Descripción</th><th>PDF</th><th>Acciones</th></tr></thead>
                         <tbody>
                             <% parashot.forEach(p => { %>
                             <tr>
                                 <td><%= p.parasha_number || '-' %></td>
                                 <td><%= p.title %></td>
+                                <td><span class="badge bg-dark border border-secondary text-info"><i class="bi bi-eye-fill me-1"></i><%= p.views || 0 %></span></td>
                                 <td><span class="text-truncate d-inline-block" style="max-width:200px;"><%= p.description %></span></td>
                                 <td><% if (p.pdf_file) { %><a href="<%= p.pdf_file %>" target="_blank" class="badge bg-success"><i class="bi bi-file-pdf"></i> PDF</a><% } else { %>-<% } %></td>
                                 <td>
@@ -121,7 +122,7 @@
                 </div>
                 <div class="table-responsive">
                     <table class="table table-dark table-hover">
-                        <thead><tr><th>Imagen</th><th>Título</th><th>Fecha</th><th>Expositor</th><th>Referencia</th><th>Video</th><th>Acciones</th></tr></thead>
+                        <thead><tr><th>Imagen</th><th>Título</th><th>Fecha</th><th>Vistas</th><th>Expositor</th><th>Referencia</th><th>Video</th><th>Acciones</th></tr></thead>
                         <tbody>
                             <% if (typeof ensenanzas !== 'undefined' && ensenanzas && ensenanzas.length > 0) { %>
                                 <% ensenanzas.forEach(item => { %>
@@ -138,6 +139,7 @@
                                     </td>
                                     <td><strong><%= item.title %></strong></td>
                                     <td><span class="badge bg-secondary font-monospace"><i class="bi bi-calendar3 me-1 text-warning"></i><%= dateStr || '-' %></span></td>
+                                    <td><span class="badge bg-dark border border-secondary text-info"><i class="bi bi-eye-fill me-1"></i><%= item.views || 0 %></span></td>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
                                             <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #d4a853;">
@@ -174,7 +176,7 @@
                                 </tr>
                                 <% }) %>
                             <% } else { %>
-                                <tr><td colspan="7" class="text-center text-white-50">No hay enseñanzas registradas</td></tr>
+                                <tr><td colspan="8" class="text-center text-white-50">No hay enseñanzas registradas</td></tr>
                             <% } %>
                         </tbody>
                     </table>
@@ -189,7 +191,7 @@
                 </div>
                 <div class="table-responsive">
                     <table class="table table-dark table-hover">
-                        <thead><tr><th>Imagen</th><th>Título</th><th>Expositor</th><th>Referencia / Subtítulo</th><th>Video</th><th>Audio</th><th>Acciones</th></tr></thead>
+                        <thead><tr><th>Imagen</th><th>Título</th><th>Vistas</th><th>Expositor</th><th>Referencia / Subtítulo</th><th>Video</th><th>Audio</th><th>Acciones</th></tr></thead>
                         <tbody>
                             <% if (typeof haftarot !== 'undefined' && haftarot && haftarot.length > 0) { %>
                                 <% haftarot.forEach(item => { %>
@@ -202,6 +204,7 @@
                                         <% } %>
                                     </td>
                                     <td><strong><%= item.title %></strong></td>
+                                    <td><span class="badge bg-dark border border-secondary text-info"><i class="bi bi-eye-fill me-1"></i><%= item.views || 0 %></span></td>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
                                             <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #d4a853;">

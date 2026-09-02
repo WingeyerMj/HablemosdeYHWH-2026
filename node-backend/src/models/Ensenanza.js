@@ -85,6 +85,14 @@ class Ensenanza {
         const [rows] = await db.query('SELECT COUNT(*) as total FROM ensenanzas');
         return rows[0] ? rows[0].total : 0;
     }
+
+    static async incrementViews(id) {
+        try {
+            await db.query('UPDATE ensenanzas SET views = views + 1 WHERE id = ?', [id]);
+        } catch (e) {
+            console.warn('Aviso incrementViews ensenanzas:', e.message);
+        }
+    }
 }
 
 module.exports = Ensenanza;

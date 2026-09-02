@@ -249,19 +249,22 @@ CREATE TABLE IF NOT EXISTS ensenanzas (
     content LONGTEXT,
     image_url VARCHAR(500),
     youtube_link VARCHAR(500),
-    author VARCHAR(150) DEFAULT 'Moréh Kaleb',
-    author_role VARCHAR(150) DEFAULT 'Moréh',
+    author VARCHAR(150) DEFAULT 'Moréh Kalev Aquerman',
+    author_role VARCHAR(150) DEFAULT 'Moreh מורה',
     author_img VARCHAR(500) DEFAULT '/assets/img/team/kaleb.jpg',
+    views INT DEFAULT 0,
     is_published BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Migraciones seguras para ensenanzas
+-- Migraciones seguras para ensenanzas y parashot
 ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS teaching_date DATE DEFAULT (CURRENT_DATE) AFTER subtitle;
-ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS author VARCHAR(150) DEFAULT 'Moréh Kaleb' AFTER youtube_link;
-ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS author_role VARCHAR(150) DEFAULT 'Moréh' AFTER author;
+ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS author VARCHAR(150) DEFAULT 'Moréh Kalev Aquerman' AFTER youtube_link;
+ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS author_role VARCHAR(150) DEFAULT 'Moreh מורה' AFTER author;
 ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS author_img VARCHAR(500) DEFAULT '/assets/img/team/kaleb.jpg' AFTER author_role;
+ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS views INT DEFAULT 0;
+ALTER TABLE parashot ADD COLUMN IF NOT EXISTS views INT DEFAULT 0;
 
 -- Tabla para Haftarot (Lecturas Proféticas de la Torá)
 CREATE TABLE IF NOT EXISTS haftarot (

@@ -201,6 +201,7 @@ const homeController = {
             const Aliyah = require('../models/Aliyah');
             const parasha = await Parasha.getById(req.params.id);
             if (!parasha) return next();
+            await Parasha.incrementViews(parasha.id);
             const aliyot = await Aliyah.getByParashaId(parasha.id);
             res.render('parasha_detail', { 
                 title: parasha.title + ' - Hablemos de YHWH', 
@@ -315,6 +316,7 @@ const homeController = {
             
             const relatedItems = await SemillasTorah.getLatest(4);
             const siteSettings = await SiteSettings.getMap();
+            await SemillasTorah.incrementViews(item.id);
             
             res.render('semillas_detail', {
                 title: item.title + ' - Semillas de Torah',
@@ -361,6 +363,7 @@ const homeController = {
         try {
             const ensenanza = await Ensenanza.getById(req.params.id);
             if (!ensenanza) return next();
+            await Ensenanza.incrementViews(ensenanza.id);
             res.render('ensenanza_detail', {
                 title: ensenanza.title + ' - Hablemos de YHWH',
                 page: 'ensenanzas',
@@ -390,6 +393,7 @@ const homeController = {
         try {
             const haftara = await Haftara.getById(req.params.id);
             if (!haftara) return next();
+            await Haftara.incrementViews(haftara.id);
             res.render('haftara_detail', {
                 title: haftara.title + ' - Haftará - Hablemos de YHWH',
                 page: 'haftara',

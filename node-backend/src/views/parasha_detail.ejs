@@ -41,9 +41,11 @@
                                     <% if (parasha.subtitle) { %>
                                         <div class="meta-top mb-4">
                                             <ul class="list-unstyled">
-                                                <li class="d-flex align-items-center">
-                                                    <i class="bi bi-book me-2"></i> 
-                                                    <span class="badge bg-primary px-3 py-2 fs-6"><%= parasha.subtitle %></span>
+                                                <li class="d-flex align-items-center gap-2">
+                                                    <% if (parasha.subtitle) { %>
+                                                        <span class="badge bg-primary px-3 py-2 fs-6"><i class="bi bi-book me-1"></i> <%= parasha.subtitle %></span>
+                                                    <% } %>
+                                                    <span class="badge bg-dark px-3 py-2 fs-6 shadow-sm"><i class="bi bi-eye text-info me-1"></i> <%= (parasha.views || 0) + 1 %> vistas</span>
                                                 </li>
                                             </ul>
                                         </div>

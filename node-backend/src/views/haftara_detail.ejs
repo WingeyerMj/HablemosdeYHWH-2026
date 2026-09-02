@@ -64,9 +64,14 @@
                                                 <h5 class="fw-bold mb-0" style="color: #2b231d; font-size: 1.15rem;"><%= haftara.author || 'Moréh Kaleb' %></h5>
                                             </div>
                                         </div>
-                                        <% if (haftara.subtitle) { %>
-                                            <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #d4a853; color: #fff; font-size: 0.85rem;"><%= haftara.subtitle %></span>
-                                        <% } %>
+                                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                                            <% if (haftara.subtitle) { %>
+                                                <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #d4a853; color: #fff; font-size: 0.85rem;"><%= haftara.subtitle %></span>
+                                            <% } %>
+                                            <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #f8f9fa; color: #495057; border: 1px solid #dee2e6; font-size: 0.82rem;">
+                                                <i class="bi bi-eye-fill me-1 text-primary"></i> <%= (haftara.views || 0) + 1 %> vistas
+                                            </span>
+                                        </div>
                                     </div>
 
                                     <!-- Video de YouTube si existe -->

@@ -50,6 +50,14 @@ class Parasha {
         const [rows] = await db.query('SELECT COUNT(*) as total FROM parashot');
         return rows[0].total;
     }
+
+    static async incrementViews(id) {
+        try {
+            await db.query('UPDATE parashot SET views = views + 1 WHERE id = ?', [id]);
+        } catch (e) {
+            console.warn('Aviso incrementViews parashot:', e.message);
+        }
+    }
 }
 
 module.exports = Parasha;
