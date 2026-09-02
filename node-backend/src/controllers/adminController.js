@@ -41,12 +41,16 @@ const adminController = {
             const Testimonial = require('../models/Testimonial');
             const Pricing = require('../models/Pricing');
 
-            let parashot = [], portfolio = [], ensenanzas = [], blogs = [], team = [], testimonials = [], pricing = [], sections = [], semillas = [];
+            let parashot = [], portfolio = [], ensenanzas = [], haftarot = [], blogs = [], team = [], testimonials = [], pricing = [], sections = [], semillas = [];
             
             try {
                 parashot = await Parasha.getAll();
                 portfolio = await Portfolio.getAll();
                 try { ensenanzas = await Ensenanza.getAll(); } catch(e) { ensenanzas = []; }
+                try { 
+                    const Haftara = require('../models/Haftara');
+                    haftarot = await Haftara.getAll(); 
+                } catch(e) { haftarot = []; }
                 try { blogs = await BlogPost.getAll(); } catch(e) { blogs = []; }
                 try { 
                     const SemillasTorah = require('../models/SemillasTorah');
@@ -122,6 +126,7 @@ const adminController = {
                 parashot,
                 portfolio,
                 ensenanzas,
+                haftarot,
                 blogs,
                 semillas,
                 semillasShorts: typeof semillasShorts !== 'undefined' ? semillasShorts : [],
@@ -340,6 +345,93 @@ const adminController = {
         } catch (error) {
             console.error('Error deleteEnsenanza:', error);
             res.redirect('/admin/dashboard#pills-ensenanzas');
+        }
+    },
+
+    // ==================== HAFTARÁ ====================
+    createHaftara: async (req, res) => {
+        try {
+            let { title, subtitle, parasha_reference, description, content, youtube_link, audio_url, image_url, author, author_role, author_img } = req.body;
+            if (req.file) {
+                image_url = '/uploads/haftara/' + req.file.filename;
+            }
+            
+            const Haftara = require('../models/Haftara');
+            await Haftara.create({
+                title,
+                subtitle: subtitle || '',
+                parasha_reference: parasha_reference || '',
+                description: description || '',
+                content: content || '',
+                youtube_link: youtube_link || '',
+                audio_url: audio_url || '',
+                image_url: image_url || '',
+                author: author || 'Moréh Kaleb',
+                author_role: author_role || 'Moréh',
+                author_img: author_img || '/assets/img/team/kaleb.jpg'
+            });
+            res.redirect('/admin/dashboard#pills-haftara');
+        } catch (error) {
+            console.error('Error createHaftara:', error);
+            res.redirect('/admin/dashboard#pills-haftara');
+        }
+    },
+
+    editHaftaraPage: async (req, res) => {
+        try {
+            const Haftara = require('../models/Haftara');
+            const Team = require('../models/Team');
+            const haftara = await Haftara.getById(req.params.id);
+            if (!haftara) return res.redirect('/admin/dashboard#pills-haftara');
+            
+            let team = [];
+            try {
+                team = await Team.getAll();
+            } catch(e) {}
+
+            res.render('admin/edit_haftara', { layout: 'admin/layout', haftara, team });
+        } catch (error) {
+            console.error('Error editHaftaraPage:', error);
+            res.redirect('/admin/dashboard#pills-haftara');
+        }
+    },
+
+    updateHaftara: async (req, res) => {
+        try {
+            let { id, title, subtitle, parasha_reference, description, content, youtube_link, audio_url, image_url, author, author_role, author_img } = req.body;
+            if (req.file) {
+                image_url = '/uploads/haftara/' + req.file.filename;
+            }
+            
+            const Haftara = require('../models/Haftara');
+            await Haftara.update(id, {
+                title,
+                subtitle: subtitle || '',
+                parasha_reference: parasha_reference || '',
+                description: description || '',
+                content: content || '',
+                youtube_link: youtube_link || '',
+                audio_url: audio_url || '',
+                image_url: image_url || '',
+                author: author || 'Moréh Kaleb',
+                author_role: author_role || 'Moréh',
+                author_img: author_img || '/assets/img/team/kaleb.jpg'
+            });
+            res.redirect('/admin/dashboard#pills-haftara');
+        } catch (error) {
+            console.error('Error updateHaftara:', error);
+            res.redirect('/admin/dashboard#pills-haftara');
+        }
+    },
+
+    deleteHaftara: async (req, res) => {
+        try {
+            const Haftara = require('../models/Haftara');
+            await Haftara.delete(req.params.id);
+            res.redirect('/admin/dashboard#pills-haftara');
+        } catch (error) {
+            console.error('Error deleteHaftara:', error);
+            res.redirect('/admin/dashboard#pills-haftara');
         }
     },
 

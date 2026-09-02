@@ -1,0 +1,149 @@
+<!-- Sidebar -->
+<%- include('partials/_sidebar') %>
+
+<main class="col-md-10 main-content">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1><i class="bi bi-scroll me-2" style="color: var(--primary-color);"></i>Editar Haftará</h1>
+            <p class="text-white-50 mb-0">Editando: <strong><%= haftara.title %></strong></p>
+        </div>
+        <a href="/admin/dashboard#pills-haftara" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
+    </div>
+
+    <form action="/admin/haftara/update" method="POST" enctype="multipart/form-data" id="editHaftaraPageForm">
+        <input type="hidden" name="id" value="<%= haftara.id %>">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label small text-white-50">Título</label>
+                <input type="text" name="title" class="form-control" required value="<%= haftara.title %>">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label small text-white-50">Subtítulo / Referencia Bíblica (ej: Isaías 42:5 - 43:10)</label>
+                <input type="text" name="subtitle" class="form-control" value="<%= haftara.subtitle || '' %>">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label small text-white-50">Parashá Correspondiente (ej: Correspondiente a Parashá Bereshit)</label>
+                <input type="text" name="parasha_reference" class="form-control" value="<%= haftara.parasha_reference || '' %>">
+            </div>
+
+            <!-- Expositor / Docente -->
+            <div class="col-md-6">
+                <div class="row g-2">
+                    <div class="col-md-4">
+                        <label class="form-label small text-white-50">Expositor / Lector</label>
+                        <input type="text" name="author" id="page_edit_haf_author" class="form-control" value="<%= haftara.author || 'Moréh Kaleb' %>" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-white-50">Rol</label>
+                        <input type="text" name="author_role" id="page_edit_haf_author_role" class="form-control" value="<%= haftara.author_role || 'Moréh' %>">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-white-50">Foto URL</label>
+                        <input type="text" name="author_img" id="page_edit_haf_author_img" class="form-control" value="<%= haftara.author_img || '/assets/img/team/kaleb.jpg' %>">
+                    </div>
+                </div>
+            </div>
+
+            <% if (typeof team !== 'undefined' && team && team.length > 0) { %>
+                <div class="col-12">
+                    <span class="small text-white-50 me-2"><i class="bi bi-people me-1"></i>Seleccionar rápido del equipo:</span>
+                    <div class="d-inline-flex gap-2 flex-wrap">
+                        <% team.forEach(m => { %>
+                            <button type="button" class="btn btn-sm btn-outline-warning rounded-pill py-0 px-2" style="font-size: 0.78rem;" 
+                                    onclick="document.getElementById('page_edit_haf_author').value='<%= m.name %>'; document.getElementById('page_edit_haf_author_role').value='<%= m.role %>'; document.getElementById('page_edit_haf_author_img').value='<%= m.img %>';">
+                                <%= m.name %> (<%= m.role %>)
+                            </button>
+                        <% }) %>
+                    </div>
+                </div>
+            <% } %>
+
+            <div class="col-md-12">
+                <label class="form-label small text-white-50">Resumen Breve</label>
+                <textarea name="description" class="form-control" rows="2"><%= haftara.description || '' %></textarea>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label small text-white-50">Link de YouTube (Video)</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-youtube text-danger"></i></span>
+                    <input type="text" name="youtube_link" class="form-control" value="<%= haftara.youtube_link || '' %>" placeholder="https://www.youtube.com/watch?v=...">
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label small text-white-50">URL de Audio (Opcional)</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-headphones text-warning"></i></span>
+                    <input type="text" name="audio_url" class="form-control" value="<%= haftara.audio_url || '' %>" placeholder="https://... o /uploads/audios/...">
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label small text-white-50">Subir Nueva Imagen</label>
+                <input type="file" name="image_file" id="edit_page_image_file" class="form-control" accept="image/*">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small text-white-50">O URL de Imagen</label>
+                <input type="text" name="image_url" id="edit_page_image_url" class="form-control" value="<%= haftara.image_url || '' %>">
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="border border-secondary rounded overflow-hidden" style="height:120px;background:rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;">
+                    <img id="editPageImgPreview" src="<%= haftara.image_url || '' %>" style="max-width:100%;max-height:100%;object-fit:contain;">
+                </div>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label small text-white-50">Contenido Detallado de la Lectura y Reflexión</label>
+                <div id="edit-haftara-editor" style="height:400px;background:white;color:black;border-radius:5px;"></div>
+                <input type="hidden" name="content" id="editHaftaraPageContent">
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end mt-4 mb-5 gap-3">
+            <a href="/admin/dashboard#pills-haftara" class="btn btn-outline-secondary px-4">Cancelar</a>
+            <button type="submit" class="btn btn-primary px-5"><i class="bi bi-check-lg me-2"></i>Guardar Cambios</button>
+        </div>
+    </form>
+</main>
+
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const quill = new Quill('#edit-haftara-editor', {
+        theme: 'snow',
+        modules: { toolbar: [[{'header':[1,2,3,false]}],['bold','italic','underline','strike'],[{'color':[]},{'background':[]}],['link','blockquote','code-block','image'],[{'list':'ordered'},{'list':'bullet'}],[{'align':[]}],['clean']] }
+    });
+    quill.root.innerHTML = `<%- (haftara.content || haftara.description || '').replace(/`/g, '\\`').replace(/\\/g, '\\\\') %>`;
+    
+    // Image previews
+    const urlInput = document.getElementById('edit_page_image_url');
+    const fileInput = document.getElementById('edit_page_image_file');
+    const previewImg = document.getElementById('editPageImgPreview');
+
+    if (urlInput) {
+        urlInput.addEventListener('input', e => {
+            if (e.target.value) previewImg.src = e.target.value;
+        });
+    }
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    previewImg.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    document.getElementById('editHaftaraPageForm').onsubmit = function() {
+        document.getElementById('editHaftaraPageContent').value = quill.root.innerHTML;
+        return true;
+    };
+});
+</script>

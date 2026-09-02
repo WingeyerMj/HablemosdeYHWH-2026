@@ -1,6 +1,7 @@
 const Parasha = require('../models/Parasha');
 const Portfolio = require('../models/Portfolio');
 const Ensenanza = require('../models/Ensenanza');
+const Haftara = require('../models/Haftara');
 const BlogPost = require('../models/BlogPost');
 const Team = require('../models/Team');
 const Testimonial = require('../models/Testimonial');
@@ -13,7 +14,7 @@ const db = require('../config/db');
 const homeController = {
     index: async (req, res, next) => {
         try {
-            let allDynamicSections = [], latestParashot = [], portfolio = [], latestEnsenanzas = [], latestBlogPosts = [], team = [], testimonials = [], pricingRaw = [], siteSettings = {}, eventCategories = [];
+            let allDynamicSections = [], latestParashot = [], portfolio = [], latestEnsenanzas = [], latestHaftarot = [], latestBlogPosts = [], team = [], testimonials = [], pricingRaw = [], siteSettings = {}, eventCategories = [];
             const sectionsObj = {};
 
             try {
@@ -41,6 +42,7 @@ const homeController = {
                 latestParashot = await Parasha.getLatest(6);
                 portfolio = await Portfolio.getLatest(4);
                 try { latestEnsenanzas = await Ensenanza.getLatest(4); } catch(e) { latestEnsenanzas = []; }
+                try { latestHaftarot = await Haftara.getLatest(4); } catch(e) { latestHaftarot = []; }
                 try { latestBlogPosts = await BlogPost.getLatest(3); } catch(e) { latestBlogPosts = []; }
                 eventCategories = await Portfolio.getCategories();
                 team = await Team.getAll();
@@ -98,6 +100,7 @@ const homeController = {
                 services: latestParashot,
                 portfolio: portfolio,
                 ensenanzas: latestEnsenanzas,
+                haftarot: latestHaftarot,
                 blogPosts: latestBlogPosts,
                 eventCategories: eventCategories,
                 team: team,
@@ -362,6 +365,35 @@ const homeController = {
                 title: ensenanza.title + ' - Hablemos de YHWH',
                 page: 'ensenanzas',
                 ensenanza,
+                layout: false
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    haftaraPage: async (req, res, next) => {
+        try {
+            const haftarot = await Haftara.getPublished();
+            res.render('haftara', {
+                title: 'Haftará - Lecturas Proféticas de la Torá - Hablemos de YHWH',
+                page: 'haftara',
+                haftarot,
+                layout: false
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    haftaraDetail: async (req, res, next) => {
+        try {
+            const haftara = await Haftara.getById(req.params.id);
+            if (!haftara) return next();
+            res.render('haftara_detail', {
+                title: haftara.title + ' - Haftará - Hablemos de YHWH',
+                page: 'haftara',
+                haftara,
                 layout: false
             });
         } catch (error) {

@@ -261,6 +261,31 @@ ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS author VARCHAR(150) DEFAULT 'Mor
 ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS author_role VARCHAR(150) DEFAULT 'Moréh' AFTER author;
 ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS author_img VARCHAR(500) DEFAULT '/assets/img/team/kaleb.jpg' AFTER author_role;
 
+-- Tabla para Haftarot (Lecturas Proféticas de la Torá)
+CREATE TABLE IF NOT EXISTS haftarot (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    subtitle VARCHAR(255),
+    parasha_reference VARCHAR(255),
+    description TEXT,
+    content LONGTEXT,
+    image_url VARCHAR(500),
+    youtube_link VARCHAR(500),
+    audio_url VARCHAR(500),
+    author VARCHAR(150) DEFAULT 'Moréh Kaleb',
+    author_role VARCHAR(150) DEFAULT 'Moréh',
+    author_img VARCHAR(500) DEFAULT '/assets/img/team/kaleb.jpg',
+    is_published BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Migraciones seguras para haftarot
+ALTER TABLE haftarot ADD COLUMN IF NOT EXISTS author VARCHAR(150) DEFAULT 'Moréh Kaleb' AFTER audio_url;
+ALTER TABLE haftarot ADD COLUMN IF NOT EXISTS author_role VARCHAR(150) DEFAULT 'Moréh' AFTER author;
+ALTER TABLE haftarot ADD COLUMN IF NOT EXISTS author_img VARCHAR(500) DEFAULT '/assets/img/team/kaleb.jpg' AFTER author_role;
+ALTER TABLE haftarot ADD COLUMN IF NOT EXISTS parasha_reference VARCHAR(255) AFTER subtitle;
+
 -- Tabla para sección Enseñanzas del Home
 CREATE TABLE IF NOT EXISTS home_section_ensenanzas (
     id INT AUTO_INCREMENT PRIMARY KEY,

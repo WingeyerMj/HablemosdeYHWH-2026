@@ -191,6 +191,74 @@
                     </div>
                 </section>
 
+                <!-- Sección de Haftará (Lecturas Proféticas) - Justo después de Parashot -->
+                <section id="haftara" class="haftara section" style="background-color: #faf8f5; padding: 70px 0;">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2>Haftará</h2>
+                        <p>Lecturas y reflexiones de los Profetas (Nevi'im) conectadas a la porción de la Toráh</p>
+                    </div>
+                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                        <% if (typeof haftarot !== 'undefined' && haftarot && haftarot.length > 0) { %>
+                            <div class="row gy-4 justify-content-center">
+                                <% haftarot.forEach((item, index) => { %>
+                                    <div class="col-lg-3 col-md-6 col-12" data-aos="fade-up" data-aos-delay="<%= (index + 1) * 100 %>">
+                                        <a href="/haftara/<%= item.id %>" class="text-decoration-none text-reset d-block h-100">
+                                            <div class="haftara-card h-100 shadow-sm" style="background: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #ebdccb; transition: all 0.35s ease; display: flex; flex-direction: column;">
+                                                <div class="haftara-img-box" style="position: relative; width: 100%; height: 200px; overflow: hidden; background: #1a1a1a;">
+                                                    <% if (item.image_url && item.image_url.trim() !== '') { %>
+                                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+                                                    <% } else { %>
+                                                        <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #2b231d, #1a1614); color: #fff;">
+                                                            <i class="bi bi-scroll text-warning" style="font-size: 2.8rem;"></i>
+                                                            <span class="badge rounded-pill mt-2 px-2 py-1" style="background: rgba(212,168,83,0.25); color: #d4a853; font-size: 0.72rem;">Nevi'im</span>
+                                                        </div>
+                                                    <% } %>
+                                                    <% if (item.youtube_link) { %>
+                                                        <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1" style="font-size: 0.7rem;"><i class="bi bi-youtube me-1"></i>Video</span>
+                                                    <% } %>
+                                                </div>
+                                                <div class="p-3 d-flex flex-column flex-grow-1">
+                                                    <h5 class="fw-bold mb-1" style="font-size: 1.05rem; color: #222; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                                        <%= item.title %>
+                                                    </h5>
+                                                    <% if (item.subtitle || item.parasha_reference) { %>
+                                                        <div class="mb-2" style="color: #b8860b; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
+                                                            <%= item.subtitle || item.parasha_reference %>
+                                                        </div>
+                                                    <% } %>
+                                                    <% if (item.description) { %>
+                                                        <p class="text-muted mb-3" style="font-size: 0.85rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                                            <%= item.description %>
+                                                        </p>
+                                                    <% } %>
+                                                    <div class="mt-auto pt-2 border-top d-flex align-items-center gap-2">
+                                                        <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= item.author || 'Moréh Kaleb' %>" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853;">
+                                                        <div class="min-width-0">
+                                                            <div class="fw-bold text-truncate" style="font-size: 0.82rem; color: #222;"><%= item.author || 'Moréh Kaleb' %></div>
+                                                            <div class="text-muted" style="font-size: 0.72rem; line-height: 1;"><%= item.author_role || 'Moréh' %></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                <% }) %>
+                            </div>
+                            <div class="text-center mt-5" data-aos="fade-up">
+                                <a href="/haftara"
+                                    style="background: linear-gradient(135deg, #d4a853, #b8860b); color: #fff; padding: 12px 40px; border-radius: 50px; display: inline-block; text-decoration: none; font-weight: 600; box-shadow: 0 4px 15px rgba(212,168,83,0.35); transition: all 0.3s ease;">
+                                    Ver todas las Haftarot <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        <% } else { %>
+                            <div class="text-center py-4">
+                                <p class="text-muted">Próximamente publicaremos lecturas de Haftará.</p>
+                                <a href="/haftara" class="btn btn-outline-dark btn-sm rounded-pill px-4">Ir a la sección de Haftará</a>
+                            </div>
+                        <% } %>
+                    </div>
+                </section>
+
                 <section id="portfolio" class="portfolio section">
                     <div class="container section-title" data-aos="fade-up">
                         <h2><%= (sections.Eventos && sections.Eventos.title) || 'Eventos' %></h2>

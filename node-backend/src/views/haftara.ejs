@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('partials/head') %>
+
+    <body class="haftara-page">
+
+        <%- include('partials/header') %>
+
+            <main class="main">
+
+                <!-- Page Title -->
+                <div class="page-title accent-background" style="background: linear-gradient(135deg, #1f1b16 0%, #3a2e1d 50%, #15120e 100%);">
+                    <div class="container d-lg-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="mb-2 mb-lg-0 text-white fw-bold">Haftará (Lecturas Proféticas)</h1>
+                            <p class="text-white-50 mb-0">Porciones proféticas vinculadas a cada Parashá semanal de la Toráh</p>
+                        </div>
+                        <nav class="breadcrumbs">
+                            <ol>
+                                <li><a href="/" class="text-white-50">Inicio</a></li>
+                                <li><a href="/parashot" class="text-white-50">Parashot</a></li>
+                                <li class="current text-warning fw-semibold">Haftará</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div><!-- End Page Title -->
+
+                <section class="section py-5" style="background-color: #faf9f6; min-height: 80vh;">
+                    <div class="container">
+                        
+                        <!-- Buscador / Contador -->
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 pb-3 border-bottom" data-aos="fade-up">
+                            <div>
+                                <h3 class="fw-bold mb-1" style="color: #2b231d;">Todas las Haftarot</h3>
+                                <p class="text-muted mb-0">Estudios, lecturas y reflexiones de los Nevi'im (Profetas)</p>
+                            </div>
+                            <div class="mt-3 mt-md-0 d-flex align-items-center gap-3">
+                                <span class="badge px-3 py-2 shadow-sm" style="background: linear-gradient(135deg, #d4a853, #b8860b); font-size: 0.9rem; font-weight: 600; border-radius: 20px;">
+                                    <%= (typeof haftarot !== 'undefined' && haftarot) ? haftarot.length : 0 %> Haftarot disponibles
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="row gy-4">
+                            <% if (typeof haftarot !== 'undefined' && haftarot && haftarot.length > 0) { %>
+                                <% haftarot.forEach((item, index) => { %>
+                                    <div class="col-lg-6 col-12" data-aos="fade-up" data-aos-delay="<%= (index % 4 + 1) * 100 %>">
+                                        <div class="card h-100 shadow-sm border-0 haftara-item-card" style="border-radius: 20px; overflow: hidden; background: #ffffff; border: 1px solid #eee; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                                            <div class="row g-0 h-100 flex-column flex-sm-row">
+                                                
+                                                <!-- Columna Imagen / Icono -->
+                                                <div class="col-sm-5 position-relative" style="min-height: 220px; background: #1a1a1a;">
+                                                    <% if (item.image_url && item.image_url.trim() !== '') { %>
+                                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0;">
+                                                    <% } else { %>
+                                                        <div class="d-flex align-items-center justify-content-center h-100 w-100 position-absolute" style="background: linear-gradient(135deg, #2b231d, #1a1614);">
+                                                            <div class="text-center p-3">
+                                                                <i class="bi bi-scroll text-warning" style="font-size: 3.5rem;"></i>
+                                                                <div class="text-white-50 small mt-1">Nevi'im &bull; Profetas</div>
+                                                            </div>
+                                                        </div>
+                                                    <% } %>
+
+                                                    <% if (item.youtube_link) { %>
+                                                        <a href="<%= item.youtube_link %>" target="_blank" rel="noopener noreferrer" class="youtube-badge position-absolute top-0 start-0 m-3 px-2 py-1 rounded text-white d-flex align-items-center gap-1 shadow-sm" style="background: rgba(230, 33, 23, 0.9); font-size: 0.75rem; font-weight: 700; text-decoration: none; backdrop-filter: blur(4px);">
+                                                            <i class="bi bi-youtube"></i> Video
+                                                        </a>
+                                                    <% } %>
+                                                </div>
+
+                                                <!-- Columna Contenido -->
+                                                <div class="col-sm-7 d-flex flex-column p-4">
+                                                    <div>
+                                                        <% if (item.subtitle || item.parasha_reference) { %>
+                                                            <div class="badge-sub text-uppercase mb-1" style="color: #d4a853; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px;">
+                                                                <%= item.subtitle || item.parasha_reference %>
+                                                            </div>
+                                                        <% } %>
+                                                        <h4 class="card-title fw-bold mb-2" style="font-size: 1.22rem; color: #222; line-height: 1.35;">
+                                                            <a href="/haftara/<%= item.id %>" class="text-decoration-none text-dark hover-gold">
+                                                                <%= item.title %>
+                                                            </a>
+                                                        </h4>
+                                                        <% if (item.description) { %>
+                                                            <p class="card-text text-muted mb-3" style="font-size: 0.9rem; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                                                <%= item.description %>
+                                                            </p>
+                                                        <% } %>
+
+                                                        <!-- Expositor / Docente -->
+                                                        <div class="d-flex align-items-center gap-2 mb-3 pt-2 border-top">
+                                                            <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= item.author || 'Moréh Kaleb' %>" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853;">
+                                                            <div>
+                                                                <div class="fw-bold" style="font-size: 0.88rem; color: #222; line-height: 1.2;"><%= item.author || 'Moréh Kaleb' %></div>
+                                                                <small class="text-muted" style="font-size: 0.75rem;"><%= item.author_role || 'Moréh' %></small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Botones de Acción -->
+                                                    <div class="mt-auto pt-2 border-top d-flex flex-wrap align-items-center gap-2">
+                                                        <a href="/haftara/<%= item.id %>" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-1">
+                                                            <i class="bi bi-file-text"></i> Ver Detalle
+                                                        </a>
+
+                                                        <% if (item.youtube_link && item.youtube_link.trim() !== '') { %>
+                                                            <a href="<%= item.youtube_link %>" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-danger rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-1 shadow-sm" style="background-color: #ff0000; border-color: #ff0000;">
+                                                                <i class="bi bi-youtube"></i> Ver Video
+                                                            </a>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <div class="col-12 text-center py-5">
+                                    <div class="p-5 bg-white rounded-4 shadow-sm d-inline-block">
+                                        <i class="bi bi-scroll text-muted" style="font-size: 3rem; color: #d4a853 !important;"></i>
+                                        <h4 class="mt-3 fw-bold">No hay Haftarot publicadas aún</h4>
+                                        <p class="text-muted mb-0">Pronto subiremos las lecturas y reflexiones proféticas.</p>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </section>
+
+                <style>
+                    .haftara-item-card:hover {
+                        transform: translateY(-6px);
+                        box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+                    }
+                    .hover-gold:hover {
+                        color: #d4a853 !important;
+                    }
+                </style>
+
+            </main>
+
+            <%- include('partials/footer') %>
+
+    </body>
+
+</html>

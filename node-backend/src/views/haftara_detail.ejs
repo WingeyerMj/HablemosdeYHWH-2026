@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('partials/head') %>
+
+    <body class="haftara-details-page">
+
+        <%- include('partials/header') %>
+
+            <main class="main">
+
+                <!-- Page Title -->
+                <div class="page-title dark-background" data-aos="fade" style="background: linear-gradient(135deg, #181411 0%, #2b231d 50%, #151210 100%);">
+                    <div class="container d-lg-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="mb-2 mb-lg-0 text-white"><%= haftara.title %></h1>
+                            <% if (haftara.parasha_reference) { %>
+                                <p class="text-white-50 mb-0"><i class="bi bi-link-45deg text-warning"></i> <%= haftara.parasha_reference %></p>
+                            <% } %>
+                        </div>
+                        <nav class="breadcrumbs">
+                            <ol>
+                                <li><a href="/">Inicio</a></li>
+                                <li><a href="/haftara">Haftará</a></li>
+                                <li class="current"><%= haftara.title %></li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Encabezado visible solo en el PDF -->
+                <div id="pdf-header" style="display: none;">
+                    <h1>Haftará: <%= haftara.title %></h1>
+                    <% if (haftara.subtitle) { %>
+                        <p class="pdf-subtitle"><%= haftara.subtitle %></p>
+                    <% } %>
+                    <% if (haftara.parasha_reference) { %>
+                        <p class="pdf-subtitle"><%= haftara.parasha_reference %></p>
+                    <% } %>
+                    <p class="pdf-subtitle" style="font-size: 10pt; color: #888;">Hablemos de YHWH &bull; www.hablemosdeyhwh.com</p>
+                </div>
+
+                <section id="haftara-details" class="haftara-details section py-5" style="background-color: #faf9f6;">
+                    <div class="container">
+
+                        <article class="article">
+
+                            <div class="row gy-4">
+                                <div class="col-lg-8">
+                                    
+                                    <!-- Banner de Expositor / Autor -->
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 p-3 mb-4 rounded-4 shadow-sm" style="background: linear-gradient(135deg, #ffffff 0%, #faf8f5 100%); border: 1px solid #ede8df; border-left: 5px solid #d4a853 !important;">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="position-relative">
+                                                <img src="<%= haftara.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= haftara.author || 'Moréh Kaleb' %>" style="width: 58px; height: 58px; border-radius: 50%; object-fit: cover; border: 3px solid #d4a853; box-shadow: 0 4px 12px rgba(212,168,83,0.25);">
+                                            </div>
+                                            <div>
+                                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                    <span class="text-muted small fw-semibold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">Lectura / Enseñanza impartida por:</span>
+                                                    <span class="badge rounded-pill px-2 py-1" style="background: #fdf6e7; color: #b8860b; border: 1px solid #f2e3be; font-size: 0.72rem; font-weight: 700;">
+                                                        <i class="bi bi-person-badge me-1"></i><%= haftara.author_role || 'Moréh' %>
+                                                    </span>
+                                                </div>
+                                                <h5 class="fw-bold mb-0" style="color: #2b231d; font-size: 1.15rem;"><%= haftara.author || 'Moréh Kaleb' %></h5>
+                                            </div>
+                                        </div>
+                                        <% if (haftara.subtitle) { %>
+                                            <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #d4a853; color: #fff; font-size: 0.85rem;"><%= haftara.subtitle %></span>
+                                        <% } %>
+                                    </div>
+
+                                    <!-- Video de YouTube si existe -->
+                                    <% if (haftara.youtube_link && haftara.youtube_link.trim() !== '') { 
+                                        let videoId = '';
+                                        const yLink = haftara.youtube_link;
+                                        if (yLink.includes('watch?v=')) {
+                                            videoId = yLink.split('watch?v=')[1].split('&')[0];
+                                        } else if (yLink.includes('youtu.be/')) {
+                                            videoId = yLink.split('youtu.be/')[1].split('?')[0];
+                                        } else if (yLink.includes('embed/')) {
+                                            videoId = yLink.split('embed/')[1].split('?')[0];
+                                        }
+                                    %>
+                                        <div class="youtube-box mb-4 no-print" style="background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.08); border: 1px solid #eee;">
+                                            <% if (videoId) { %>
+                                                <div class="ratio ratio-16x9">
+                                                    <iframe src="https://www.youtube.com/embed/<%= videoId %>" title="<%= haftara.title %>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                                </div>
+                                            <% } %>
+                                            <div class="p-3 text-center bg-light border-top d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                                <span class="fw-semibold text-dark"><i class="bi bi-youtube text-danger me-1"></i> Video de la Haftará</span>
+                                                <a href="<%= haftara.youtube_link %>" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-danger rounded-pill px-4 py-2 fw-bold d-inline-flex align-items-center gap-2" style="background-color: #ff0000; border: none;">
+                                                    <i class="bi bi-box-arrow-up-right"></i> Abrir en YouTube
+                                                </a>
+                                            </div>
+                                        </div>
+                                    <% } %>
+
+                                    <!-- Audio si existe -->
+                                    <% if (haftara.audio_url && haftara.audio_url.trim() !== '') { %>
+                                        <div class="audio-box p-3 mb-4 rounded-4 shadow-sm no-print" style="background: linear-gradient(135deg, #1c1c1c 0%, #2a251f 100%); color: #fff;">
+                                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <span class="text-warning"><i class="bi bi-headphones fs-4"></i></span>
+                                                    <span class="fw-bold">Audio de la Lectura Profética</span>
+                                                </div>
+                                                <a href="<%= haftara.audio_url %>" download target="_blank" class="btn btn-sm btn-outline-light rounded-pill px-3 py-1">
+                                                    <i class="bi bi-download me-1"></i> Descargar
+                                                </a>
+                                            </div>
+                                            <audio controls class="w-100" style="height: 38px; border-radius: 8px;">
+                                                <source src="<%= haftara.audio_url %>" type="audio/mpeg">
+                                            </audio>
+                                        </div>
+                                    <% } %>
+
+                                    <div class="content mt-4" style="font-size: 1.1rem; line-height: 1.85; color: #333;">
+                                        <% if (haftara.description && !haftara.content) { %>
+                                            <p class="lead" style="color: #555;"><%= haftara.description %></p>
+                                        <% } %>
+                                        
+                                        <% if (haftara.content) { %>
+                                            <div class="main-body-content">
+                                                <%- haftara.content %>
+                                            </div>
+                                        <% } %>
+                                    </div>
+
+                                    <!-- Botones de Acción inferior -->
+                                    <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center mt-5 pt-4 border-top no-print">
+                                        <a href="/haftara" class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2">
+                                            <i class="bi bi-arrow-left"></i> Volver a Haftarot
+                                        </a>
+
+                                        <button onclick="window.print()" class="btn d-inline-flex align-items-center gap-2 shadow-sm rounded-pill px-4 py-2 fw-semibold text-white" 
+                                                style="background: linear-gradient(135deg, #d4a853, #b8860b); border: none;">
+                                            <i class="bi bi-printer" style="font-size: 1.1rem;"></i>
+                                            <span>Imprimir / Guardar PDF</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Columna Lateral con Expositor y Portada -->
+                                <div class="col-lg-4">
+                                    <div class="sticky-top" style="top: 100px; z-index: 1;">
+                                        
+                                        <!-- Card del Expositor / Maestro -->
+                                        <div class="card border-0 shadow-sm mb-4 rounded-4 overflow-hidden" style="background: #ffffff; border: 1px solid #ede8df;">
+                                            <div class="p-4 text-center" style="background: linear-gradient(135deg, #2b231d 0%, #1a1614 100%); color: #fff; position: relative;">
+                                                <div class="position-relative d-inline-block mb-3">
+                                                    <img src="<%= haftara.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= haftara.author || 'Moréh Kaleb' %>" class="img-fluid rounded-circle shadow" style="width: 110px; height: 110px; object-fit: cover; border: 4px solid #d4a853;">
+                                                    <span class="position-absolute bottom-0 end-0 badge rounded-pill p-2 bg-warning text-dark border border-2 border-white shadow" title="<%= haftara.author_role || 'Moréh' %>">
+                                                        <i class="bi bi-mic-fill"></i>
+                                                    </span>
+                                                </div>
+                                                <h5 class="fw-bold mb-1 text-white"><%= haftara.author || 'Moréh Kaleb' %></h5>
+                                                <span class="badge px-3 py-1 rounded-pill" style="background: rgba(212,168,83,0.2); color: #d4a853; border: 1px solid #d4a853; font-size: 0.8rem; font-weight: 600;">
+                                                    <%= haftara.author_role || 'Moréh' %>
+                                                </span>
+                                            </div>
+                                            <div class="p-3 text-center bg-light border-top">
+                                                <p class="text-muted small mb-0">
+                                                    <i class="bi bi-scroll text-warning me-1"></i> Docente y expositor bíblico en la congregación.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Portada de la Haftará si existe -->
+                                        <% if (haftara.image_url && haftara.image_url.trim() !== '') { %>
+                                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background: #fff; border: 1px solid #ede8df;">
+                                                <img src="<%= haftara.image_url %>" alt="<%= haftara.title %>" class="img-fluid" style="width: 100%; height: auto; max-height: 320px; object-fit: cover;">
+                                                <div class="p-3 text-center">
+                                                    <h6 class="fw-bold mb-1" style="font-size: 0.95rem;"><%= haftara.title %></h6>
+                                                    <% if (haftara.subtitle) { %>
+                                                        <small class="text-muted"><%= haftara.subtitle %></small>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        <% } %>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </article>
+
+                    </div>
+                </section>
+
+            </main>
+
+            <%- include('partials/footer') %>
+
+    <!-- Estilos para impresión / PDF -->
+    <style>
+        @media print {
+            .no-print,
+            header, 
+            nav, 
+            footer, 
+            .breadcrumbs,
+            .page-title,
+            .post-img,
+            .scroll-top,
+            #header,
+            .footer {
+                display: none !important;
+            }
+
+            body {
+                background: white !important;
+                color: #000 !important;
+                font-size: 12pt !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .main {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .haftara-details.section {
+                padding: 0 !important;
+            }
+
+            .container {
+                max-width: 100% !important;
+                padding: 0 20px !important;
+            }
+
+            #pdf-header {
+                display: block !important;
+                text-align: center;
+                border-bottom: 2px solid #333;
+                padding-bottom: 15px;
+                margin-bottom: 25px;
+            }
+
+            #pdf-header h1 {
+                font-size: 22pt !important;
+                color: #000 !important;
+                margin-bottom: 5px;
+            }
+
+            #pdf-header .pdf-subtitle {
+                font-size: 12pt;
+                color: #555;
+            }
+
+            .content {
+                font-size: 12pt !important;
+                line-height: 1.6 !important;
+                color: #000 !important;
+            }
+
+            .col-lg-8 {
+                width: 100% !important;
+                max-width: 100% !important;
+                flex: 0 0 100% !important;
+            }
+
+            .col-lg-4 {
+                display: none !important;
+            }
+        }
+    </style>
+
+    </body>
+
+</html>

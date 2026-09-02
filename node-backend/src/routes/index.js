@@ -15,6 +15,8 @@ router.get('/eventos', homeController.eventosPage);
 router.get('/eventos/:id', homeController.eventDetail);
 router.get('/ensenanzas', homeController.ensenanzasPage);
 router.get('/ensenanzas/:id', homeController.ensenanzaDetail);
+router.get('/haftara', homeController.haftaraPage);
+router.get('/haftara/:id', homeController.haftaraDetail);
 router.get('/semillas-de-torah', homeController.semillasTorah);
 router.get('/semillas-de-torah/:id', homeController.semillasDetail);
 router.get('/semillas', homeController.semillasTorah);

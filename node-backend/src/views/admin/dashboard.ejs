@@ -10,6 +10,7 @@
         <% if (role === 'admin') { %>
             <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-journal-text"></i></div><div><div class="text-white-50 small">Parashot</div><div class="fs-4 fw-bold"><%= parashot.length %></div></div></div></div>
             <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-book"></i></div><div><div class="text-white-50 small">Enseñanzas</div><div class="fs-4 fw-bold"><%= (typeof ensenanzas !== 'undefined' && ensenanzas) ? ensenanzas.length : 0 %></div></div></div></div>
+            <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-scroll"></i></div><div><div class="text-white-50 small">Haftará</div><div class="fs-4 fw-bold"><%= (typeof haftarot !== 'undefined' && haftarot) ? haftarot.length : 0 %></div></div></div></div>
         <% } %>
         <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-newspaper"></i></div><div><div class="text-white-50 small">Blog</div><div class="fs-4 fw-bold"><%= (typeof blogs !== 'undefined' && blogs) ? blogs.length : 0 %></div></div></div></div>
         <div class="col-md"><div class="card-stat d-flex align-items-center gap-3"><div class="stat-icon"><i class="bi bi-calendar-event"></i></div><div><div class="text-white-50 small">Eventos</div><div class="fs-4 fw-bold"><%= portfolio.length %></div></div></div></div>
@@ -27,6 +28,7 @@
             <li class="nav-item" role="presentation"><button class="nav-link active" id="pills-services-tab" data-bs-toggle="pill" data-bs-target="#pills-services" type="button">📖 Parashot</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="pills-portfolio-tab" data-bs-toggle="pill" data-bs-target="#pills-portfolio" type="button">🗓️ Eventos</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="pills-ensenanzas-tab" data-bs-toggle="pill" data-bs-target="#pills-ensenanzas" type="button">📚 Enseñanzas</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-haftara-tab" data-bs-toggle="pill" data-bs-target="#pills-haftara" type="button">📜 Haftará</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="pills-semillas-tab" data-bs-toggle="pill" data-bs-target="#pills-semillas" type="button" style="color: #d8b4fe;"><i class="bi bi-balloon-heart-fill me-1 text-purple"></i> Semillas de Torah</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="pills-blog-tab" data-bs-toggle="pill" data-bs-target="#pills-blog" type="button">📰 Blog</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="pills-team-tab" data-bs-toggle="pill" data-bs-target="#pills-team" type="button">👥 Equipo</button></li>
@@ -168,6 +170,78 @@
                                 <% }) %>
                             <% } else { %>
                                 <tr><td colspan="6" class="text-center text-white-50">No hay enseñanzas registradas</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- HAFTARA TAB -->
+            <div class="tab-pane fade" id="pills-haftara" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4><i class="bi bi-scroll me-2" style="color: var(--primary-color);"></i>Gestión de Haftará (Lecturas Proféticas)</h4>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createHaftaraModal"><i class="bi bi-plus-lg me-1"></i> Nueva Haftará</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead><tr><th>Imagen</th><th>Título</th><th>Expositor</th><th>Referencia / Subtítulo</th><th>Video</th><th>Audio</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            <% if (typeof haftarot !== 'undefined' && haftarot && haftarot.length > 0) { %>
+                                <% haftarot.forEach(item => { %>
+                                <tr>
+                                    <td>
+                                        <% if (item.image_url) { %>
+                                            <img src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 45px; height: 35px; object-fit: cover; border-radius: 4px;">
+                                        <% } else { %>
+                                            <span class="text-muted"><i class="bi bi-scroll"></i></span>
+                                        <% } %>
+                                    </td>
+                                    <td><strong><%= item.title %></strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #d4a853;">
+                                            <div>
+                                                <div class="small fw-semibold text-white"><%= item.author || 'Moréh Kaleb' %></div>
+                                                <div class="text-white-50" style="font-size: 0.72rem;"><%= item.author_role || 'Moréh' %></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="text-truncate d-inline-block text-white-50" style="max-width:180px;"><%= item.subtitle || item.parasha_reference || '-' %></span></td>
+                                    <td>
+                                        <% if (item.youtube_link) { %>
+                                            <a href="<%= item.youtube_link %>" target="_blank" class="badge bg-danger text-decoration-none"><i class="bi bi-youtube"></i> Ver</a>
+                                        <% } else { %>
+                                            <span class="text-white-50">-</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% if (item.audio_url) { %>
+                                            <span class="badge bg-warning text-dark"><i class="bi bi-headphones"></i> Audio</span>
+                                        <% } else { %>
+                                            <span class="text-white-50">-</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-primary me-1 edit-haftara-btn"
+                                            data-id="<%= item.id %>"
+                                            data-title="<%= item.title %>"
+                                            data-subtitle="<%= item.subtitle || '' %>"
+                                            data-reference="<%= item.parasha_reference || '' %>"
+                                            data-description="<%= item.description || '' %>"
+                                            data-image="<%= item.image_url || '' %>"
+                                            data-youtube="<%= item.youtube_link || '' %>"
+                                            data-audio="<%= item.audio_url || '' %>"
+                                            data-author="<%= item.author || 'Moréh Kaleb' %>"
+                                            data-author_role="<%= item.author_role || 'Moréh' %>"
+                                            data-author_img="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>"
+                                            data-content='<%= item.content ? item.content.replace(/'/g, "&#39;") : "" %>'>Editar</button>
+                                        <a href="/admin/haftara/edit/<%= item.id %>" class="btn btn-sm btn-outline-light me-1" title="Editor completo"><i class="bi bi-pencil-square"></i></a>
+                                        <a href="/admin/haftara/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta Haftará?')">Eliminar</a>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr><td colspan="7" class="text-center text-white-50">No hay Haftarot registradas</td></tr>
                             <% } %>
                         </tbody>
                     </table>

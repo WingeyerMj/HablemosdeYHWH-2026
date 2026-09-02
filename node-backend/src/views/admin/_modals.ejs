@@ -317,6 +317,213 @@
     </div>
 </div>
 
+<!-- MODAL: CREAR HAFTARÁ -->
+<div class="modal fade" id="createHaftaraModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title"><i class="bi bi-scroll me-2 text-warning"></i>Nueva Haftará (Lectura Profética)</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/haftara/create" method="POST" enctype="multipart/form-data" id="createHaftaraForm">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Título de la Haftará</label>
+                            <input type="text" name="title" class="form-control" placeholder="Ej: Haftará Bereshit: El Creador y Su Gloria" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subtítulo / Referencia Bíblica</label>
+                            <input type="text" name="subtitle" class="form-control" placeholder="Ej: Isaías 42:5 - 43:10">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Parashá Correspondiente</label>
+                            <input type="text" name="parasha_reference" class="form-control" placeholder="Ej: Correspondiente a Parashá Bereshit">
+                        </div>
+                        
+                        <!-- Expositor / Lector -->
+                        <div class="col-md-6">
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <label class="form-label small text-white-50">Expositor / Lector</label>
+                                    <input type="text" name="author" id="create_haf_author" class="form-control" value="Moréh Kaleb" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small text-white-50">Rol</label>
+                                    <input type="text" name="author_role" id="create_haf_author_role" class="form-control" value="Moréh">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small text-white-50">Foto URL</label>
+                                    <input type="text" name="author_img" id="create_haf_author_img" class="form-control" value="/assets/img/team/kaleb.jpg">
+                                </div>
+                            </div>
+                        </div>
+
+                        <% if (typeof team !== 'undefined' && team && team.length > 0) { %>
+                            <div class="col-12">
+                                <span class="small text-white-50 me-2"><i class="bi bi-people me-1"></i>Asignar expositor del equipo:</span>
+                                <div class="d-inline-flex gap-2 flex-wrap">
+                                    <% team.forEach(m => { %>
+                                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill py-0 px-2" style="font-size: 0.78rem;" 
+                                                onclick="document.getElementById('create_haf_author').value='<%= m.name %>'; document.getElementById('create_haf_author_role').value='<%= m.role %>'; document.getElementById('create_haf_author_img').value='<%= m.img %>';">
+                                            <%= m.name %> (<%= m.role %>)
+                                        </button>
+                                    <% }) %>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">Resumen Breve</label>
+                            <textarea name="description" class="form-control" rows="2" placeholder="Breve introducción o pasaje principal..."></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Link de YouTube (Video)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-youtube text-danger"></i></span>
+                                <input type="text" name="youtube_link" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">URL de Audio (Opcional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-headphones text-warning"></i></span>
+                                <input type="text" name="audio_url" class="form-control" placeholder="https://... o /uploads/audios/...">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Subir Imagen / Portada</label>
+                            <input type="file" id="create_haf_image_file" name="image_file" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">O URL de Imagen</label>
+                            <input type="text" id="create_haf_image_url" name="image_url" class="form-control" placeholder="https://... o /uploads/...">
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height:100px;background:rgba(0,0,0,0.2);">
+                                <img id="createHafImgPreview" src="" style="max-width:100%;max-height:100%;object-fit:contain;">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Contenido Detallado del Estudio y Versículos</label>
+                            <div id="haftara-create-editor-container" style="height:250px;background:white;color:black;border-radius:5px;"></div>
+                            <input type="hidden" name="content" id="createHaftaraContentInput">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary px-4">Crear Haftará</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: EDITAR HAFTARÁ RÁPIDO -->
+<div class="modal fade" id="editHaftaraModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title"><i class="bi bi-pencil-square me-2 text-warning"></i>Editar Haftará</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/haftara/update" method="POST" enctype="multipart/form-data" id="editHaftaraForm">
+                <input type="hidden" name="id" id="edit_haf_id">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Título de la Haftará</label>
+                            <input type="text" name="title" id="edit_haf_title" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subtítulo / Referencia Bíblica</label>
+                            <input type="text" name="subtitle" id="edit_haf_subtitle" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Parashá Correspondiente</label>
+                            <input type="text" name="parasha_reference" id="edit_haf_reference" class="form-control">
+                        </div>
+
+                        <!-- Expositor / Lector -->
+                        <div class="col-md-6">
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <label class="form-label small text-white-50">Expositor / Lector</label>
+                                    <input type="text" name="author" id="edit_haf_author" class="form-control" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small text-white-50">Rol</label>
+                                    <input type="text" name="author_role" id="edit_haf_author_role" class="form-control">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small text-white-50">Foto URL</label>
+                                    <input type="text" name="author_img" id="edit_haf_author_img" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <% if (typeof team !== 'undefined' && team && team.length > 0) { %>
+                            <div class="col-12">
+                                <span class="small text-white-50 me-2"><i class="bi bi-people me-1"></i>Asignar expositor del equipo:</span>
+                                <div class="d-inline-flex gap-2 flex-wrap">
+                                    <% team.forEach(m => { %>
+                                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill py-0 px-2" style="font-size: 0.78rem;" 
+                                                onclick="document.getElementById('edit_haf_author').value='<%= m.name %>'; document.getElementById('edit_haf_author_role').value='<%= m.role %>'; document.getElementById('edit_haf_author_img').value='<%= m.img %>';">
+                                            <%= m.name %> (<%= m.role %>)
+                                        </button>
+                                    <% }) %>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">Resumen Breve</label>
+                            <textarea name="description" id="edit_haf_description" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Link de YouTube</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-youtube text-danger"></i></span>
+                                <input type="text" name="youtube_link" id="edit_haf_youtube" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">URL de Audio</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-headphones text-warning"></i></span>
+                                <input type="text" name="audio_url" id="edit_haf_audio" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Subir Nueva Imagen</label>
+                            <input type="file" id="edit_haf_image_file" name="image_file" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">URL Imagen</label>
+                            <input type="text" id="edit_haf_image_url" name="image_url" class="form-control">
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height:100px;background:rgba(0,0,0,0.2);">
+                                <img id="editHafImgPreview" src="" style="max-width:100%;max-height:100%;object-fit:contain;">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Contenido Detallado</label>
+                            <div id="haftara-edit-editor-container" style="height:250px;background:white;color:black;border-radius:5px;"></div>
+                            <input type="hidden" name="content" id="editHaftaraContentInput">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary px-4">Actualizar Haftará</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- MODAL: NUEVA PUBLICACIÓN DE BLOG -->
 <div class="modal fade" id="createBlogModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -905,6 +1112,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const qEditPort = new Quill('#edit-port-editor-container', qCfg);
     const qEnsCreate = new Quill('#ensenanza-create-editor-container', qCfg);
     const qEnsEdit = new Quill('#ensenanza-edit-editor-container', qCfg);
+    const qHafCreate = new Quill('#haftara-create-editor-container', qCfg);
+    const qHafEdit = new Quill('#haftara-edit-editor-container', qCfg);
     const qBlogCreate = new Quill('#blog-create-editor-container', qCfg);
     const qBlogEdit = new Quill('#blog-edit-editor-container', qCfg);
     const qDynCreate = new Quill('#dyn-create-editor-container', qCfg);
@@ -921,6 +1130,8 @@ document.addEventListener('DOMContentLoaded', function() {
     setupPreview('edit_port_image_url','edit_port_image_file','editPortImgPreview');
     setupPreview('create_ens_image_url','create_ens_image_file','createEnsImgPreview');
     setupPreview('edit_ens_image_url','edit_ens_image_file','editEnsImgPreview');
+    setupPreview('create_haf_image_url','create_haf_image_file','createHafImgPreview');
+    setupPreview('edit_haf_image_url','edit_haf_image_file','editHafImgPreview');
     setupPreview('create_blog_image_url','create_blog_image_file','createBlogImgPreview');
     setupPreview('edit_blog_image_url','edit_blog_image_file','editBlogImgPreview');
     setupPreview('dyn_create_image_url','dyn_create_image_file','dynCreateImgPreview');
@@ -968,6 +1179,31 @@ document.addEventListener('DOMContentLoaded', function() {
             editEnsModal.show();
         };
     });
+
+    // Edit Haftara modal
+    const editHafModalEl = document.getElementById('editHaftaraModal');
+    if (editHafModalEl) {
+        const editHafModal = new bootstrap.Modal(editHafModalEl);
+        document.querySelectorAll('.edit-haftara-btn').forEach(btn=>{
+            btn.onclick=function(){
+                const d=this.dataset;
+                document.getElementById('edit_haf_id').value=d.id;
+                document.getElementById('edit_haf_title').value=d.title;
+                document.getElementById('edit_haf_subtitle').value=d.subtitle || '';
+                document.getElementById('edit_haf_reference').value=d.reference || '';
+                document.getElementById('edit_haf_author').value=d.author || 'Moréh Kaleb';
+                document.getElementById('edit_haf_author_role').value=d.author_role || 'Moréh';
+                document.getElementById('edit_haf_author_img').value=d.author_img || '/assets/img/team/kaleb.jpg';
+                document.getElementById('edit_haf_description').value=d.description || '';
+                document.getElementById('edit_haf_youtube').value=d.youtube || '';
+                document.getElementById('edit_haf_audio').value=d.audio || '';
+                document.getElementById('edit_haf_image_url').value=d.image || '';
+                document.getElementById('editHafImgPreview').src=d.image || '';
+                qHafEdit.root.innerHTML=d.content || '';
+                editHafModal.show();
+            };
+        });
+    }
 
     // Edit Blog modal
     const editBlogModalEl = document.getElementById('editBlogModal');
@@ -1038,6 +1274,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if(cEnsForm) cEnsForm.onsubmit=function(){document.getElementById('createEnsenanzaContentInput').value=qEnsCreate.root.innerHTML;return true;};
     const eEnsForm = document.getElementById('editEnsenanzaForm');
     if(eEnsForm) eEnsForm.onsubmit=function(){document.getElementById('editEnsenanzaContentInput').value=qEnsEdit.root.innerHTML;return true;};
+    const cHafForm = document.getElementById('createHaftaraForm');
+    if(cHafForm) cHafForm.onsubmit=function(){document.getElementById('createHaftaraContentInput').value=qHafCreate.root.innerHTML;return true;};
+    const eHafForm = document.getElementById('editHaftaraForm');
+    if(eHafForm) eHafForm.onsubmit=function(){document.getElementById('editHaftaraContentInput').value=qHafEdit.root.innerHTML;return true;};
     const cBlogForm = document.getElementById('createBlogForm');
     if(cBlogForm) cBlogForm.onsubmit=function(){document.getElementById('createBlogContentInput').value=qBlogCreate.root.innerHTML;return true;};
     const eBlogForm = document.getElementById('editBlogForm');
