@@ -41,7 +41,7 @@ const adminController = {
             const Testimonial = require('../models/Testimonial');
             const Pricing = require('../models/Pricing');
 
-            let parashot = [], portfolio = [], ensenanzas = [], haftarot = [], blogs = [], team = [], testimonials = [], pricing = [], sections = [], semillas = [];
+            let parashot = [], portfolio = [], ensenanzas = [], haftarot = [], blogs = [], team = [], testimonials = [], pricing = [], sections = [], semillas = [], semillasShorts = [], subscribers = [];
             
             try {
                 parashot = await Parasha.getAll();
@@ -56,7 +56,6 @@ const adminController = {
                     const SemillasTorah = require('../models/SemillasTorah');
                     semillas = await SemillasTorah.getAll(); 
                 } catch(e) { semillas = []; }
-                let semillasShorts = [];
                 try {
                     const SemillasShort = require('../models/SemillasShort');
                     semillasShorts = await SemillasShort.getAll();
@@ -64,10 +63,9 @@ const adminController = {
                 team = await Team.getAll();
                 testimonials = await Testimonial.getAll();
                 pricing = await Pricing.getAll();
-                let subscribers = [];
                 try {
-                    const [subRows] = await db.query('SELECT * FROM newsletter_subscribers ORDER BY subscribed_at DESC');
-                    subscribers = subRows || [];
+                    const Subscriber = require('../models/Subscriber');
+                    subscribers = await Subscriber.getAll();
                 } catch(e) {
                     subscribers = [];
                 }
@@ -162,6 +160,20 @@ const adminController = {
             console.log('--- Saving Parasha with image_url:', image_url);
             const Parasha = require('../models/Parasha');
             await Parasha.create({ parasha_number, title, description, subtitle, content, image_url, pdf_file, icon, link, youtube_link });
+
+            // Notificación automática a todos los suscriptores
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'parasha',
+                    title: `${parasha_number ? '#' + parasha_number + ' ' : ''}${title}`,
+                    subtitle: subtitle || '',
+                    link: '/parashot',
+                    description: description || '',
+                    image_url: image_url || ''
+                }).catch(e => console.warn('Aviso en notificación Parashá:', e.message));
+            } catch(e) {}
+
             res.redirect('/admin/dashboard#pills-services');
         } catch (error) {
             console.error('Error createParasha:', error);
@@ -299,6 +311,21 @@ const adminController = {
                 author_img: author_img || '/assets/img/team/kaleb.jpg',
                 authors: finalAuthors
             });
+
+            // Notificación automática a todos los suscriptores
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'ensenanza',
+                    title: title,
+                    subtitle: subtitle || '',
+                    link: '/ensenanzas',
+                    description: description || '',
+                    image_url: image_url || '',
+                    author: (finalAuthors && finalAuthors[0]) ? finalAuthors[0].name : (author || 'Moréh Kaleb')
+                }).catch(e => console.warn('Aviso en notificación Enseñanza:', e.message));
+            } catch(e) {}
+
             res.redirect('/admin/dashboard#pills-ensenanzas');
         } catch (error) {
             console.error('Error createEnsenanza:', error);
@@ -412,6 +439,21 @@ const adminController = {
                 author_img: author_img || '/assets/img/team/kaleb.jpg',
                 authors: finalAuthors
             });
+
+            // Notificación automática a todos los suscriptores
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'haftara',
+                    title: title,
+                    subtitle: subtitle || parasha_reference || '',
+                    link: '/haftara',
+                    description: description || '',
+                    image_url: image_url || '',
+                    author: (finalAuthors && finalAuthors[0]) ? finalAuthors[0].name : (author || 'Moréh Kaleb')
+                }).catch(e => console.warn('Aviso en notificación Haftará:', e.message));
+            } catch(e) {}
+
             res.redirect('/admin/dashboard#pills-haftara');
         } catch (error) {
             console.error('Error createHaftara:', error);
@@ -530,6 +572,21 @@ const adminController = {
                 pdf_file: pdf_file || '',
                 is_published: is_published !== '0' && is_published !== false
             });
+
+            // Notificación automática a todos los suscriptores
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'semillas',
+                    title: title,
+                    subtitle: subtitle || '',
+                    link: '/semillas-de-torah',
+                    description: description || '',
+                    image_url: image_url || '',
+                    author: author || 'Elva Avila'
+                }).catch(e => console.warn('Aviso en notificación Semillas:', e.message));
+            } catch(e) {}
+
             res.redirect('/admin/dashboard#pills-semillas');
         } catch (error) {
             console.error('Error createSemillas:', error);
@@ -627,6 +684,20 @@ const adminController = {
                 is_highlight: is_highlight === '1' || is_highlight === true || is_highlight === 'on',
                 is_published: is_published !== '0' && is_published !== false
             });
+
+            // Notificación automática a todos los suscriptores
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'semillas',
+                    title: title,
+                    subtitle: child_name ? `Aliyá con ${child_name} · ${parasha_name || ''}` : (parasha_name || ''),
+                    link: '/semillas-de-torah',
+                    description: description || '',
+                    image_url: thumbnail_url || ''
+                }).catch(e => console.warn('Aviso en notificación Short Infantil:', e.message));
+            } catch(e) {}
+
             res.redirect('/admin/dashboard#pills-semillas');
         } catch (error) {
             console.error('Error createSemillasShort:', error);
@@ -716,6 +787,21 @@ const adminController = {
                 is_published: is_published !== '0' && is_published !== false,
                 image_url: image_url || ''
             });
+
+            // Notificación automática a todos los suscriptores
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'blog',
+                    title: title,
+                    subtitle: subtitle || '',
+                    link: '/blog',
+                    description: summary || '',
+                    image_url: image_url || '',
+                    author: author || 'Hablemos de YHWH'
+                }).catch(e => console.warn('Aviso en notificación Blog:', e.message));
+            } catch(e) {}
+
             res.redirect('/admin/dashboard#pills-blog');
         } catch (error) {
             console.error('Error createBlogPost:', error);
@@ -1271,10 +1357,34 @@ const adminController = {
         res.redirect(`/admin/dashboard#pills-ds-${table}`);
     },
 
+    createSubscriber: async (req, res) => {
+        try {
+            const Subscriber = require('../models/Subscriber');
+            const { email } = req.body;
+            await Subscriber.create({ email, ip_address: 'admin_panel' });
+            res.redirect('/admin/dashboard#pills-subscribers');
+        } catch (error) {
+            console.error('Error createSubscriber:', error);
+            res.redirect('/admin/dashboard#pills-subscribers');
+        }
+    },
+
+    broadcastNewsletter: async (req, res) => {
+        try {
+            const NotificationService = require('../utils/notificationService');
+            const { subject, message, actionUrl, actionText } = req.body;
+            await NotificationService.sendCustomBroadcast({ subject, message, actionUrl, actionText });
+            res.redirect('/admin/dashboard#pills-subscribers');
+        } catch (error) {
+            console.error('Error broadcastNewsletter:', error);
+            res.redirect('/admin/dashboard#pills-subscribers');
+        }
+    },
+
     deleteSubscriber: async (req, res) => {
         try {
-            const { id } = req.params;
-            await db.query('DELETE FROM newsletter_subscribers WHERE id = ?', [id]);
+            const Subscriber = require('../models/Subscriber');
+            await Subscriber.delete(req.params.id);
             res.redirect('/admin/dashboard#pills-subscribers');
         } catch (error) {
             console.error('Error deleteSubscriber:', error);

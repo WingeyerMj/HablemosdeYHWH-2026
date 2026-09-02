@@ -661,10 +661,18 @@
 
             <!-- SUBSCRIBERS TAB -->
             <div class="tab-pane fade" id="pills-subscribers" role="tabpanel">
-                <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
                     <div>
-                        <h4 class="mb-1">📬 Suscriptores al Boletín</h4>
-                        <p class="text-white-50 small mb-0">Lista de usuarios que se han suscrito desde el sitio web.</p>
+                        <h4 class="mb-1 text-white"><i class="bi bi-envelope-paper-heart-fill text-success me-2"></i>Suscriptores al Boletín</h4>
+                        <p class="text-white-50 small mb-0">Lista de usuarios que reciben notificaciones automáticas cada vez que se publica nuevo contenido.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#createSubscriberModal">
+                            <i class="bi bi-person-plus-fill me-1"></i> Añadir Suscriptor
+                        </button>
+                        <button type="button" class="btn btn-warning text-dark fw-bold" data-bs-toggle="modal" data-bs-target="#broadcastNewsletterModal">
+                            <i class="bi bi-send-fill me-1"></i> Enviar Boletín / Aviso a Todos
+                        </button>
                     </div>
                 </div>
                 <div class="table-responsive">

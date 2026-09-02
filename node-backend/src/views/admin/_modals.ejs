@@ -1179,6 +1179,76 @@
             </form>
         </div>
     </div>
+<!-- MODAL: AÑADIR SUSCRIPTOR MANUALMENTE -->
+<div class="modal fade" id="createSubscriberModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title"><i class="bi bi-person-plus-fill text-info me-2"></i>Añadir Suscriptor al Boletín</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/subscribers/create" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label small text-white-50">Correo Electrónico *</label>
+                        <input type="email" name="email" class="form-control bg-dark text-white border-secondary" required placeholder="correo@ejemplo.com">
+                    </div>
+                    <p class="small text-white-50 mb-0">
+                        <i class="bi bi-info-circle me-1 text-info"></i>
+                        Este correo recibirá notificaciones automáticas cada vez que se publique una nueva Parashá, Enseñanza, Haftará, Semillas de Torah o Blog.
+                    </p>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-info text-dark fw-bold px-4"><i class="bi bi-check-lg me-1"></i>Guardar Suscriptor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: ENVIAR BOLETÍN / AVISO GENERAL A TODOS LOS SUSCRIPTORES -->
+<div class="modal fade" id="broadcastNewsletterModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title"><i class="bi bi-send-fill text-warning me-2"></i>Enviar Notificación / Boletín a Todos los Suscriptores</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/subscribers/broadcast" method="POST">
+                <div class="modal-body">
+                    <div class="alert alert-warning bg-warning bg-opacity-10 border-warning text-white small mb-3">
+                        <i class="bi bi-broadcast me-1 text-warning fs-5"></i>
+                        <strong>Atención:</strong> Este mensaje se enviará por correo electrónico a <strong>todos los usuarios registrados y activos</strong> en la lista de suscriptores.
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Asunto del Correo *</label>
+                            <input type="text" name="subject" class="form-control bg-dark text-white border-secondary" required placeholder="Ej: ✨ ¡Nueva Porción de la Torá y Noticias Importantes!">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Mensaje / Contenido del Anuncio *</label>
+                            <textarea name="message" class="form-control bg-dark text-white border-secondary" rows="5" required placeholder="Escribe aquí el mensaje, reflexión, aviso de Shabat o anuncio que deseas enviar a toda la congregación..."></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Enlace / Botón de Acción (Opcional)</label>
+                            <input type="text" name="actionUrl" class="form-control bg-dark text-white border-secondary" placeholder="Ej: /parashot o /ensenanzas">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Texto del Botón</label>
+                            <input type="text" name="actionText" class="form-control bg-dark text-white border-secondary" value="Ver en el Sitio Web" placeholder="Ej: Ver en el Sitio Web">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning text-dark fw-bold px-4" onclick="return confirm('¿Confirmas que deseas enviar este correo a todos los suscriptores?')">
+                        <i class="bi bi-send-fill me-1"></i> Enviar a Todos los Suscriptores
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <script>

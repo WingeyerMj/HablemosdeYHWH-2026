@@ -184,6 +184,9 @@ router.post('/entity/:table/update/:id', isAuthenticated, isAdmin, upload.fields
 router.get('/entity/:table/delete/:id', isAuthenticated, isAdmin, adminController.deleteEntityData);
 
 // Suscriptores Boletín (Solo Admin)
+router.post('/subscribers/create', isAuthenticated, isAdmin, adminController.createSubscriber);
+router.post('/subscribers/broadcast', isAuthenticated, isAdmin, adminController.broadcastNewsletter);
 router.get('/subscribers/delete/:id', isAuthenticated, isAdmin, adminController.deleteSubscriber);
 
 module.exports = router;
+
