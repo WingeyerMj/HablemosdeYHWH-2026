@@ -2,17 +2,17 @@ const db = require('../config/db');
 
 class Ensenanza {
     static async getAll() {
-        const [rows] = await db.query('SELECT * FROM ensenanzas ORDER BY COALESCE(teaching_date, DATE(created_at)) ASC, id ASC');
+        const [rows] = await db.query('SELECT * FROM ensenanzas ORDER BY COALESCE(teaching_date, DATE(created_at)) DESC, id DESC');
         return rows;
     }
 
     static async getLatest(limit = 4) {
-        const [rows] = await db.query('SELECT * FROM ensenanzas WHERE is_published = TRUE ORDER BY COALESCE(teaching_date, DATE(created_at)) ASC, id ASC LIMIT ?', [limit]);
+        const [rows] = await db.query('SELECT * FROM ensenanzas WHERE is_published = TRUE ORDER BY COALESCE(teaching_date, DATE(created_at)) DESC, id DESC LIMIT ?', [limit]);
         return rows;
     }
 
     static async getPublished() {
-        const [rows] = await db.query('SELECT * FROM ensenanzas WHERE is_published = TRUE ORDER BY COALESCE(teaching_date, DATE(created_at)) ASC, id ASC');
+        const [rows] = await db.query('SELECT * FROM ensenanzas WHERE is_published = TRUE ORDER BY COALESCE(teaching_date, DATE(created_at)) DESC, id DESC');
         return rows;
     }
 
