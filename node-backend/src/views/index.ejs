@@ -30,29 +30,112 @@
                     </div>
                 </section>
 
-                <section id="about" class="about section">
-                    <div class="container section-title" data-aos="fade-up">
-                        <h2>
-                            <%= siteSettings.site_name || 'Hablemos de YHWH' %>
-                        </h2>
-                        <p>
-                            <%= (sections.About && sections.About.subtitle) || 'Nuestra historia y valores' %>
-                        </p>
-                    </div>
-                    <div class="container" data-aos="fade-up" data-aos-delay="100">
-                        <div class="row gy-4">
-                            <div class="col-lg-6">
-                                <img src="<%= (sections.About && sections.About.image_url) || '/assets/img/about.png' %>"
-                                    class="img-fluid" alt="">
+                <!-- Sobre Nosotros / Quiénes Somos Section -->
+                <section id="about" class="about section" style="background: linear-gradient(180deg, #fbfaf8 0%, #f4f0e8 100%); position: relative; padding: 80px 0;">
+                    
+                    <!-- Decoración de fondo sutil -->
+                    <div style="position: absolute; top: -50px; right: -50px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(212,168,83,0.12) 0%, transparent 70%); pointer-events: none;"></div>
+                    <div style="position: absolute; bottom: -50px; left: -50px; width: 350px; height: 350px; background: radial-gradient(circle, rgba(212,168,83,0.08) 0%, transparent 70%); pointer-events: none;"></div>
+
+                    <div class="container position-relative" data-aos="fade-up">
+                        
+                        <!-- Encabezado Central con Badge Editorial -->
+                        <div class="text-center mb-5">
+                            <span class="badge px-3 py-2 rounded-pill mb-3 shadow-sm" style="background: rgba(212,168,83,0.15); color: #b8860b; border: 1px solid rgba(212,168,83,0.35); font-weight: 700; font-size: 0.85rem; letter-spacing: 1.5px; text-transform: uppercase;">
+                                <i class="bi bi-stars me-1 text-warning"></i> Nuestro Propósito
+                            </span>
+                            <h2 class="fw-bold mb-3" style="color: #1a1410; font-size: 2.6rem; letter-spacing: -0.5px;">
+                                <%= siteSettings.site_name || 'Hablemos de YHWH' %>
+                            </h2>
+                            <div class="d-flex justify-content-center align-items-center gap-2 mb-4">
+                                <span style="width: 40px; height: 2px; background: #d4a853;"></span>
+                                <i class="bi bi-book-half" style="color: #d4a853;"></i>
+                                <span style="width: 40px; height: 2px; background: #d4a853;"></span>
                             </div>
-                            <div class="col-lg-6 content">
-                                <h3><%= (sections.About && sections.About.title) || 'Sobre Nosotros' %></h3>
-                                <p>
-                                    <%= (sections.About && sections.About.content)
-                                        || 'Somos un grupo de personas dedicados al estudio de las Sagradas escrituras, desde una perspectiva Hebrea'
-                                        %>
-                                </p>
+
+                            <!-- Manifiesto Principal en Tarjeta Editorial -->
+                            <% if (sections.About && sections.About.subtitle) { %>
+                                <div class="mx-auto text-start p-4 p-md-5 rounded-4 shadow-sm position-relative" style="max-width: 960px; background: #ffffff; border: 1px solid #ede8df; border-left: 5px solid #d4a853;">
+                                    <i class="bi bi-quote position-absolute text-muted" style="top: 15px; right: 25px; font-size: 3.5rem; opacity: 0.15; pointer-events: none;"></i>
+                                    <p class="mb-0" style="font-size: 1.12rem; line-height: 1.85; color: #4a3e35; font-weight: 400;">
+                                        <%= sections.About.subtitle %>
+                                    </p>
+                                </div>
+                            <% } %>
+                        </div>
+
+                        <!-- Sección Dos Columnas: Imagen Histórica + Quiénes Somos -->
+                        <div class="row gy-4 align-items-center mt-3">
+                            
+                            <!-- Columna Izquierda: Imagen en Marco Premium -->
+                            <div class="col-lg-5" data-aos="fade-right" data-aos-delay="150">
+                                <div class="position-relative p-2 rounded-4 shadow-lg" style="background: #ffffff; border: 1px solid #ede8df;">
+                                    <div class="overflow-hidden rounded-4 position-relative" style="aspect-ratio: 4/3; max-height: 420px;">
+                                        <img src="<%= (sections.About && sections.About.image_url) || '/assets/img/about.png' %>"
+                                            class="img-fluid w-100 h-100 object-fit-cover" 
+                                            alt="<%= (sections.About && sections.About.title) || 'Quiénes somos' %>"
+                                            style="transition: transform 0.6s ease; object-position: center;"
+                                            onmouseover="this.style.transform='scale(1.05)'"
+                                            onmouseout="this.style.transform='scale(1)'">
+                                        
+                                        <!-- Insignia flotante sobre la imagen -->
+                                        <div class="position-absolute bottom-0 start-0 m-3 px-3 py-2 rounded-3 shadow-lg" style="background: rgba(26,20,16,0.88); backdrop-filter: blur(8px); border: 1px solid rgba(212,168,83,0.4);">
+                                            <div class="fw-bold text-warning small d-flex align-items-center gap-1">
+                                                <i class="bi bi-journal-bookmark-fill"></i> Raíces Hebreas
+                                            </div>
+                                            <div class="text-white-50" style="font-size: 0.75rem;">Fieles a las Sagradas Escrituras</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+
+                            <!-- Columna Derecha: Quiénes somos y Pilares -->
+                            <div class="col-lg-7 ps-lg-4" data-aos="fade-left" data-aos-delay="200">
+                                <div class="ps-lg-2">
+                                    <div class="d-flex align-items-center gap-2 mb-3">
+                                        <span class="badge rounded-pill px-3 py-1" style="background: #fdf6e7; color: #b8860b; border: 1px solid #f2e3be; font-size: 0.8rem; font-weight: 700;">
+                                            <i class="bi bi-people-fill me-1"></i> Nuestra Identidad
+                                        </span>
+                                    </div>
+                                    <h3 class="fw-bold mb-3" style="color: #1a1410; font-size: 2.2rem; letter-spacing: -0.5px;">
+                                        <%= (sections.About && sections.About.title) || 'Quiénes somos' %>
+                                    </h3>
+
+                                    <% 
+                                        const rawContent = (sections.About && sections.About.content) || '';
+                                        const paragraphs = rawContent.split(/\r?\n+/).map(p => p.trim()).filter(p => p.length > 0);
+                                    %>
+
+                                    <% if (paragraphs.length > 0) { %>
+                                        <div class="about-paragraphs">
+                                            <% paragraphs.forEach((para, idx) => { %>
+                                                <% if (para.toLowerCase().startsWith('creemos')) { %>
+                                                    <!-- Tarjeta destacada para declaraciones de fe / propósito -->
+                                                    <div class="d-flex align-items-start gap-3 p-3 mb-2 rounded-3 shadow-sm" style="background: #ffffff; border: 1px solid #ede8df; border-left: 4px solid #d4a853;">
+                                                        <i class="bi bi-check-circle-fill text-warning fs-5 flex-shrink-0 mt-1"></i>
+                                                        <p class="mb-0" style="color: #4a3e35; font-size: 1.02rem; line-height: 1.6;">
+                                                            <strong><%= para.split('.')[0] %></strong><%= para.includes('.') ? para.substring(para.indexOf('.')) : '' %>
+                                                        </p>
+                                                    </div>
+                                                <% } else if (idx === 0) { %>
+                                                    <p class="lead mb-3" style="color: #2b231d; font-size: 1.15rem; line-height: 1.8; font-weight: 500;">
+                                                        <%= para %>
+                                                    </p>
+                                                <% } else { %>
+                                                    <p class="mb-3" style="color: #55483d; font-size: 1.02rem; line-height: 1.75;">
+                                                        <%= para %>
+                                                    </p>
+                                                <% } %>
+                                            <% }) %>
+                                        </div>
+                                    <% } else { %>
+                                        <p class="lead" style="color: #4a3e35; line-height: 1.8;">
+                                            Somos un grupo de personas dedicados al estudio de las Sagradas escrituras, desde una perspectiva Hebrea.
+                                        </p>
+                                    <% } %>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </section>
