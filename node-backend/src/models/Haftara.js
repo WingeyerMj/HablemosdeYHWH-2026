@@ -30,8 +30,8 @@ class Haftara {
                 image_url || '',
                 youtube_link || '',
                 audio_url || '',
-                author || 'Moréh Kaleb',
-                author_role || 'Moréh',
+                author || 'Moréh Kalev Aquerman',
+                author_role || 'Moreh מורה',
                 author_img || '/assets/img/team/kaleb.jpg',
                 is_published !== undefined ? is_published : true
             ]
@@ -64,8 +64,8 @@ class Haftara {
                 image_url || '',
                 youtube_link || '',
                 audio_url || '',
-                author || 'Moréh Kaleb',
-                author_role || 'Moréh',
+                author || 'Moréh Kalev Aquerman',
+                author_role || 'Moreh מורה',
                 author_img || '/assets/img/team/kaleb.jpg',
                 is_published !== undefined ? is_published : true,
                 id
