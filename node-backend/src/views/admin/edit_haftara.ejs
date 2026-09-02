@@ -18,45 +18,56 @@
                 <input type="text" name="title" class="form-control" required value="<%= haftara.title %>">
             </div>
             <div class="col-md-6">
-                <label class="form-label small text-white-50">Subtítulo / Referencia Bíblica (ej: Isaías 42:5 - 43:10)</label>
-                <input type="text" name="subtitle" class="form-control" value="<%= haftara.subtitle || '' %>">
+                <label class="form-label small text-warning fw-semibold"><i class="bi bi-link-45deg me-1"></i>Vincular a Parashá de la Torá</label>
+                <select name="parasha_id" class="form-select">
+                    <option value="">-- Sin vincular a Parashá (Opcional) --</option>
+                    <% if (typeof parashot !== 'undefined' && parashot && parashot.length > 0) { %>
+                        <% parashot.forEach(p => { %>
+                            <option value="<%= p.id %>" <%= (haftara.parasha_id == p.id) ? 'selected' : '' %>>
+                                #<%= p.parasha_number || '' %> <%= p.title %> <%= p.subtitle ? `(${p.subtitle})` : '' %>
+                            </option>
+                        <% }) %>
+                    <% } %>
+                </select>
             </div>
             <div class="col-md-6">
-                <label class="form-label small text-white-50">Parashá Correspondiente (ej: Correspondiente a Parashá Bereshit)</label>
+                <label class="form-label small text-white-50">Texto / Referencia de la Parashá (ej: Correspondiente a Parashá Bereshit)</label>
                 <input type="text" name="parasha_reference" class="form-control" value="<%= haftara.parasha_reference || '' %>">
             </div>
 
-            <!-- Expositor / Servidor -->
-            <div class="col-md-6">
-                <div class="row g-2">
-                    <div class="col-md-4">
-                        <label class="form-label small text-white-50">Expositor / Lector</label>
-                        <input type="text" name="author" id="page_edit_haf_author" class="form-control" value="<%= haftara.author || 'Moréh Kaleb' %>" required>
+            <!-- Expositores / Lectores Múltiples -->
+            <div class="col-12">
+                <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);">
+                    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                        <label class="form-label mb-0 small text-warning fw-bold">
+                            <i class="bi bi-people-fill me-1"></i>Expositor(es) / Lector(es)
+                        </label>
+                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill" id="btn-add-page-haf-author">
+                            <i class="bi bi-plus-circle me-1"></i>Añadir otro expositor/lector
+                        </button>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label small text-white-50">Rol</label>
-                        <input type="text" name="author_role" id="page_edit_haf_author_role" class="form-control" value="<%= haftara.author_role || 'Moréh' %>">
+
+                    <% if (typeof team !== 'undefined' && team && team.length > 0) { %>
+                        <div class="mb-2 d-flex align-items-center gap-1 flex-wrap">
+                            <span class="small text-white-50 me-1" style="font-size: 0.75rem;">Añadir del equipo con 1 clic:</span>
+                            <% team.forEach(m => { %>
+                                <button type="button" class="btn btn-sm btn-dark border-secondary rounded-pill py-0 px-2 text-warning quick-add-team-page-haf" 
+                                        style="font-size: 0.75rem;" 
+                                        data-name="<%= m.name %>" 
+                                        data-role="<%= m.role %>" 
+                                        data-img="<%= m.img %>">
+                                    + <%= m.name %> (<%= m.role %>)
+                                </button>
+                            <% }) %>
+                        </div>
+                    <% } %>
+
+                    <div id="page-haf-authors-container" class="d-flex flex-column gap-2 mt-2">
+                        <!-- Filas de expositores -->
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label small text-white-50">Foto URL</label>
-                        <input type="text" name="author_img" id="page_edit_haf_author_img" class="form-control" value="<%= haftara.author_img || '/assets/img/team/kaleb.jpg' %>">
-                    </div>
+                    <input type="hidden" name="authors_json" id="page_edit_haf_authors_json">
                 </div>
             </div>
-
-            <% if (typeof team !== 'undefined' && team && team.length > 0) { %>
-                <div class="col-12">
-                    <span class="small text-white-50 me-2"><i class="bi bi-people me-1"></i>Seleccionar rápido del equipo:</span>
-                    <div class="d-inline-flex gap-2 flex-wrap">
-                        <% team.forEach(m => { %>
-                            <button type="button" class="btn btn-sm btn-outline-warning rounded-pill py-0 px-2" style="font-size: 0.78rem;" 
-                                    onclick="document.getElementById('page_edit_haf_author').value='<%= m.name %>'; document.getElementById('page_edit_haf_author_role').value='<%= m.role %>'; document.getElementById('page_edit_haf_author_img').value='<%= m.img %>';">
-                                <%= m.name %> (<%= m.role %>)
-                            </button>
-                        <% }) %>
-                    </div>
-                </div>
-            <% } %>
 
             <div class="col-md-12">
                 <label class="form-label small text-white-50">Resumen Breve</label>
@@ -141,7 +152,89 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Multi-Author dynamic repeater
+    function renderHafAuthorRow(containerId, author = {}) {
+        const cont = document.getElementById(containerId);
+        if (!cont) return;
+        const row = document.createElement('div');
+        row.className = 'author-row d-flex align-items-center gap-2 p-2 rounded-2 mb-1';
+        row.style.background = 'rgba(255,255,255,0.06)';
+        row.style.border = '1px solid rgba(255,255,255,0.1)';
+        
+        const avatarImg = author.img || '/assets/img/team/kaleb.jpg';
+        const nameVal = author.name || '';
+        const roleVal = author.role || 'Moréh';
+
+        row.innerHTML = `
+            <img src="${avatarImg}" class="author-row-preview rounded-circle border border-warning" style="width: 38px; height: 38px; object-fit: cover; flex-shrink: 0;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+            <div class="flex-grow-1">
+                <input type="text" class="form-control form-control-sm author-name-input" placeholder="Nombre (ej: Moréh Kaleb)" value="${nameVal.replace(/"/g, '&quot;')}" required>
+            </div>
+            <div style="width: 140px;">
+                <input type="text" class="form-control form-control-sm author-role-input" placeholder="Rol" value="${roleVal.replace(/"/g, '&quot;')}">
+            </div>
+            <div class="flex-grow-1 d-none d-md-block">
+                <input type="text" class="form-control form-control-sm author-img-input" placeholder="URL Foto" value="${avatarImg.replace(/"/g, '&quot;')}">
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger btn-remove-author px-2" title="Eliminar"><i class="bi bi-trash"></i></button>
+        `;
+
+        const imgInput = row.querySelector('.author-img-input');
+        const imgEl = row.querySelector('.author-row-preview');
+        imgInput.addEventListener('input', e => {
+            imgEl.src = e.target.value || '/assets/img/team/kaleb.jpg';
+        });
+
+        row.querySelector('.btn-remove-author').addEventListener('click', () => {
+            if (cont.querySelectorAll('.author-row').length > 1) {
+                row.remove();
+            } else {
+                row.querySelector('.author-name-input').value = '';
+                row.querySelector('.author-role-input').value = 'Moréh';
+                row.querySelector('.author-img-input').value = '/assets/img/team/kaleb.jpg';
+                imgEl.src = '/assets/img/team/kaleb.jpg';
+            }
+        });
+
+        cont.appendChild(row);
+    }
+
+    function serializeHafAuthors(containerId, hiddenInputId) {
+        const cont = document.getElementById(containerId);
+        const hiddenInput = document.getElementById(hiddenInputId);
+        if (!cont || !hiddenInput) return;
+        const rows = cont.querySelectorAll('.author-row');
+        const list = [];
+        rows.forEach(r => {
+            const name = r.querySelector('.author-name-input')?.value.trim();
+            const role = r.querySelector('.author-role-input')?.value.trim() || 'Moréh';
+            const img = r.querySelector('.author-img-input')?.value.trim() || '/assets/img/team/kaleb.jpg';
+            if (name) list.push({ name, role, img });
+        });
+        hiddenInput.value = JSON.stringify(list);
+    }
+
+    // Populate initial authors
+    const initialAuthors = <%- JSON.stringify(haftara.authors_list || [{ name: haftara.author || 'Moréh Kalev Aquerman', role: haftara.author_role || 'Moreh מורה', img: haftara.author_img || '/assets/img/team/kaleb.jpg' }]) %>;
+    if (initialAuthors && initialAuthors.length > 0) {
+        initialAuthors.forEach(a => renderHafAuthorRow('page-haf-authors-container', a));
+    } else {
+        renderHafAuthorRow('page-haf-authors-container', { name: 'Moréh Kalev Aquerman', role: 'Moreh מורה', img: '/assets/img/team/kaleb.jpg' });
+    }
+
+    document.getElementById('btn-add-page-haf-author')?.addEventListener('click', () => {
+        renderHafAuthorRow('page-haf-authors-container', { name: '', role: 'Moréh', img: '/assets/img/team/kaleb.jpg' });
+    });
+
+    document.querySelectorAll('.quick-add-team-page-haf').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const { name, role, img } = btn.dataset;
+            renderHafAuthorRow('page-haf-authors-container', { name, role, img });
+        });
+    });
+
     document.getElementById('editHaftaraPageForm').onsubmit = function() {
+        serializeHafAuthors('page-haf-authors-container', 'page_edit_haf_authors_json');
         document.getElementById('editHaftaraPageContent').value = quill.root.innerHTML;
         return true;
     };

@@ -199,15 +199,29 @@ const homeController = {
     parashaDetail: async (req, res, next) => {
         try {
             const Aliyah = require('../models/Aliyah');
+            const Haftara = require('../models/Haftara');
             const parasha = await Parasha.getById(req.params.id);
             if (!parasha) return next();
             await Parasha.incrementViews(parasha.id);
             const aliyot = await Aliyah.getByParashaId(parasha.id);
+            
+            // Buscar Haftará vinculada directamente o por título/porción
+            let haftara = null;
+            try {
+                haftara = await Haftara.getByParashaId(parasha.id);
+                if (!haftara) {
+                    haftara = await Haftara.getByParashaTitle(parasha.title);
+                }
+            } catch(e) {
+                console.warn('Aviso cargando haftará vinculada:', e.message);
+            }
+
             res.render('parasha_detail', { 
                 title: parasha.title + ' - Hablemos de YHWH', 
                 page: 'parashot', 
                 parasha, 
                 aliyot,
+                haftara,
                 layout: false 
             });
         } catch (error) {
@@ -391,13 +405,29 @@ const homeController = {
 
     haftaraDetail: async (req, res, next) => {
         try {
+            const Parasha = require('../models/Parasha');
             const haftara = await Haftara.getById(req.params.id);
             if (!haftara) return next();
             await Haftara.incrementViews(haftara.id);
+
+            // Buscar Parashá vinculada
+            let parasha = null;
+            try {
+                if (haftara.parasha_id) {
+                    parasha = await Parasha.getById(haftara.parasha_id);
+                }
+                if (!parasha) {
+                    parasha = await Parasha.getByTitleOrMatch(haftara.title, haftara.subtitle, haftara.parasha_reference);
+                }
+            } catch(e) {
+                console.warn('Aviso cargando parashá vinculada:', e.message);
+            }
+
             res.render('haftara_detail', {
                 title: haftara.title + ' - Haftará - Hablemos de YHWH',
                 page: 'haftara',
                 haftara,
+                parasha,
                 layout: false
             });
         } catch (error) {

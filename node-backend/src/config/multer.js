@@ -7,6 +7,7 @@ const uploadDirs = [
     path.join(__dirname, '../../public/assets/parashot'),
     path.join(__dirname, '../../public/uploads/portfolio'),
     path.join(__dirname, '../../public/uploads/ensenanzas'),
+    path.join(__dirname, '../../public/uploads/haftara'),
     path.join(__dirname, '../../public/uploads/blog'),
     path.join(__dirname, '../../public/uploads/team'),
     path.join(__dirname, '../../public/uploads/pdf'),
@@ -42,6 +43,7 @@ const storage = multer.diskStorage({
             base = '../../public/assets/';
         } else if (req.originalUrl.includes('/portfolio')) folder = 'portfolio';
         else if (req.originalUrl.includes('/ensenanzas')) folder = 'ensenanzas';
+        else if (req.originalUrl.includes('/haftara')) folder = 'haftara';
         else if (req.originalUrl.includes('/semillas')) folder = 'semillas';
         else if (req.originalUrl.includes('/blog')) folder = 'blog';
         else if (req.originalUrl.includes('/team')) folder = 'team';
@@ -54,6 +56,9 @@ const storage = multer.diskStorage({
         if (file.mimetype && file.mimetype.startsWith('video/')) folder = 'videos';
 
         const dest = path.join(__dirname, base, folder);
+        if (!fs.existsSync(dest)) {
+            fs.mkdirSync(dest, { recursive: true });
+        }
         cb(null, dest);
     },
     filename: function (req, file, cb) {

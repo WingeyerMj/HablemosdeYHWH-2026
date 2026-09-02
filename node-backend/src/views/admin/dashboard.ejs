@@ -212,8 +212,9 @@
                                 <% haftarot.forEach(item => { %>
                                 <tr>
                                     <td>
-                                        <% if (item.image_url) { %>
-                                            <img src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 45px; height: 35px; object-fit: cover; border-radius: 4px;">
+                                        <% const hafThumb = item.image_url || item.youtube_thumbnail; %>
+                                        <% if (hafThumb) { %>
+                                            <img src="<%= hafThumb %>" alt="<%= item.title %>" style="width: 45px; height: 35px; object-fit: cover; border-radius: 4px;" onerror="this.src='/assets/img/team/kaleb.jpg'">
                                         <% } else { %>
                                             <span class="text-muted"><i class="bi bi-scroll"></i></span>
                                         <% } %>
@@ -221,15 +222,38 @@
                                     <td><strong><%= item.title %></strong></td>
                                     <td><span class="badge bg-dark border border-secondary text-info"><i class="bi bi-eye-fill me-1"></i><%= item.views || 0 %></span></td>
                                     <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #d4a853;">
-                                            <div>
-                                                <div class="small fw-semibold text-white"><%= item.author || 'Moréh Kaleb' %></div>
-                                                <div class="text-white-50" style="font-size: 0.72rem;"><%= item.author_role || 'Moréh' %></div>
+                                        <% if (item.authors_list && item.authors_list.length > 1) { %>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="d-flex" style="margin-left: 5px;">
+                                                    <% item.authors_list.forEach((auth, aIdx) => { %>
+                                                        <img src="<%= auth.img || '/assets/img/team/kaleb.jpg' %>" alt="<%= auth.name %>" title="<%= auth.name %> (<%= auth.role %>)" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853; margin-left: <%= aIdx === 0 ? '0' : '-10px' %>; position: relative; z-index: <%= 10 - aIdx %>;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                    <% }) %>
+                                                </div>
+                                                <div>
+                                                    <div class="small fw-semibold text-white text-truncate" style="max-width: 150px;"><%= item.authors_display %></div>
+                                                    <span class="badge bg-warning text-dark px-1 py-0" style="font-size: 0.68rem;"><%= item.authors_list.length %> expositores</span>
+                                                </div>
                                             </div>
-                                        </div>
+                                        <% } else { %>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #d4a853;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                <div>
+                                                    <div class="small fw-semibold text-white"><%= item.author || 'Moréh Kaleb' %></div>
+                                                    <div class="text-white-50" style="font-size: 0.72rem;"><%= item.author_role || 'Moréh' %></div>
+                                                </div>
+                                            </div>
+                                        <% } %>
                                     </td>
-                                    <td><span class="text-truncate d-inline-block text-white-50" style="max-width:180px;"><%= item.subtitle || item.parasha_reference || '-' %></span></td>
+                                    <td>
+                                        <div class="small fw-semibold text-white"><%= item.subtitle || '-' %></div>
+                                        <% if (item.parasha_title) { %>
+                                            <span class="badge bg-dark border border-warning text-warning" style="font-size: 0.72rem;">
+                                                <i class="bi bi-book me-1"></i>Parashá: <%= item.parasha_title %>
+                                            </span>
+                                        <% } else if (item.parasha_reference) { %>
+                                            <div class="text-white-50" style="font-size: 0.72rem;"><%= item.parasha_reference %></div>
+                                        <% } %>
+                                    </td>
                                     <td>
                                         <% if (item.youtube_link) { %>
                                             <a href="<%= item.youtube_link %>" target="_blank" class="badge bg-danger text-decoration-none"><i class="bi bi-youtube"></i> Ver</a>
@@ -247,6 +271,7 @@
                                     <td>
                                         <button type="button" class="btn btn-sm btn-primary me-1 edit-haftara-btn"
                                             data-id="<%= item.id %>"
+                                            data-parasha_id="<%= item.parasha_id || '' %>"
                                             data-title="<%= item.title %>"
                                             data-subtitle="<%= item.subtitle || '' %>"
                                             data-reference="<%= item.parasha_reference || '' %>"
@@ -257,6 +282,7 @@
                                             data-author="<%= item.author || 'Moréh Kaleb' %>"
                                             data-author_role="<%= item.author_role || 'Moréh' %>"
                                             data-author_img="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>"
+                                            data-authors='<%- (item.authors_list ? JSON.stringify(item.authors_list) : (item.authors || "[]")).replace(/'/g, "&#39;") %>'
                                             data-content='<%= item.content ? item.content.replace(/'/g, "&#39;") : "" %>'>Editar</button>
                                         <a href="/admin/haftara/edit/<%= item.id %>" class="btn btn-sm btn-outline-light me-1" title="Editor completo"><i class="bi bi-pencil-square"></i></a>
                                         <a href="/admin/haftara/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta Haftará?')">Eliminar</a>

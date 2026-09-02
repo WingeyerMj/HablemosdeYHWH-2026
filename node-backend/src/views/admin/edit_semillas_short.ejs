@@ -23,8 +23,21 @@
             </div>
 
             <div class="col-md-5">
-                <label class="form-label small text-white-50">Parashá Relacionada</label>
-                <input type="text" name="parasha_name" class="form-control" value="<%= item.parasha_name || '' %>" placeholder="Ej: Bereshit, Noaj">
+                <label class="form-label small text-warning fw-semibold"><i class="bi bi-book me-1"></i>Parashá Relacionada</label>
+                <select name="parasha_name" class="form-select bg-dark text-white border-secondary">
+                    <option value="">-- Seleccionar Parashá --</option>
+                    <% if (typeof parashot !== 'undefined' && parashot && parashot.length > 0) { %>
+                        <% 
+                            const sortedParashot = [...parashot].sort((a, b) => (Number(a.parasha_number) || 999) - (Number(b.parasha_number) || 999));
+                            sortedParashot.forEach(p => { 
+                                const isSelected = item.parasha_name && (item.parasha_name.trim().toLowerCase() === p.title.trim().toLowerCase() || item.parasha_name.toLowerCase().includes(p.title.toLowerCase()));
+                        %>
+                            <option value="<%= p.title %>" <%= isSelected ? 'selected' : '' %>>
+                                #<%= p.parasha_number || '' %> <%= p.title %> <%= p.subtitle ? `(${p.subtitle})` : '' %>
+                            </option>
+                        <% }) %>
+                    <% } %>
+                </select>
             </div>
             <div class="col-md-3">
                 <label class="form-label small text-white-50">Nº de Aliyá (1-7)</label>

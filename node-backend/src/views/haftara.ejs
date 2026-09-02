@@ -50,9 +50,21 @@
                                             <div class="row g-0 h-100 flex-column flex-sm-row">
                                                 
                                                 <!-- Columna Imagen / Icono -->
-                                                <div class="col-sm-5 position-relative" style="min-height: 220px; background: #1a1a1a;">
-                                                    <% if (item.image_url && item.image_url.trim() !== '') { %>
-                                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0;">
+                                                <div class="col-sm-5 position-relative overflow-hidden" style="min-height: 220px; background: linear-gradient(135deg, #2b231d, #1a1614);">
+                                                    <% 
+                                                        const primaryImg = (item.image_url && item.image_url.trim() !== '') ? item.image_url : (item.youtube_thumbnail || '');
+                                                        const fallbackImg = item.youtube_thumbnail || '';
+                                                    %>
+                                                    <% if (primaryImg) { %>
+                                                        <img src="<%= primaryImg %>" alt="<%= item.title %>" 
+                                                             style="width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0;"
+                                                             onerror="if(this.src !== '<%= fallbackImg %>' && '<%= fallbackImg %>') { this.src='<%= fallbackImg %>'; } else { this.style.display='none'; this.nextElementSibling.style.display='flex'; }">
+                                                        <div class="d-none align-items-center justify-content-center h-100 w-100 position-absolute" style="background: linear-gradient(135deg, #2b231d, #1a1614);">
+                                                            <div class="text-center p-3">
+                                                                <i class="bi bi-scroll text-warning" style="font-size: 3.5rem;"></i>
+                                                                <div class="text-white-50 small mt-1">Nevi'im &bull; Profetas</div>
+                                                            </div>
+                                                        </div>
                                                     <% } else { %>
                                                         <div class="d-flex align-items-center justify-content-center h-100 w-100 position-absolute" style="background: linear-gradient(135deg, #2b231d, #1a1614);">
                                                             <div class="text-center p-3">
@@ -63,7 +75,7 @@
                                                     <% } %>
 
                                                     <% if (item.youtube_link) { %>
-                                                        <a href="<%= item.youtube_link %>" target="_blank" rel="noopener noreferrer" class="youtube-badge position-absolute top-0 start-0 m-3 px-2 py-1 rounded text-white d-flex align-items-center gap-1 shadow-sm" style="background: rgba(230, 33, 23, 0.9); font-size: 0.75rem; font-weight: 700; text-decoration: none; backdrop-filter: blur(4px);">
+                                                        <a href="<%= item.youtube_link %>" target="_blank" rel="noopener noreferrer" class="youtube-badge position-absolute top-0 start-0 m-3 px-2 py-1 rounded text-white d-flex align-items-center gap-1 shadow-sm" style="background: rgba(230, 33, 23, 0.9); font-size: 0.75rem; font-weight: 700; text-decoration: none; backdrop-filter: blur(4px); z-index: 2;">
                                                             <i class="bi bi-youtube"></i> Video
                                                         </a>
                                                     <% } %>
@@ -72,11 +84,18 @@
                                                 <!-- Columna Contenido -->
                                                 <div class="col-sm-7 d-flex flex-column p-4">
                                                     <div>
-                                                        <% if (item.subtitle || item.parasha_reference) { %>
-                                                            <div class="badge-sub text-uppercase mb-1" style="color: #d4a853; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px;">
-                                                                <%= item.subtitle || item.parasha_reference %>
-                                                            </div>
-                                                        <% } %>
+                                                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-1 mb-1">
+                                                            <% if (item.subtitle || item.parasha_reference) { %>
+                                                                <div class="badge-sub text-uppercase" style="color: #d4a853; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px;">
+                                                                    <%= item.subtitle || item.parasha_reference %>
+                                                                </div>
+                                                            <% } %>
+                                                            <% if (item.parasha_title && item.parasha_id) { %>
+                                                                <a href="/parashot/<%= item.parasha_id %>" class="badge rounded-pill text-decoration-none shadow-sm" style="background: rgba(212,168,83,0.15); color: #8c6a2d; border: 1px solid #d4a853; font-size: 0.72rem; font-weight: 700;">
+                                                                    <i class="bi bi-book me-1"></i>Torá: <%= item.parasha_title %> &rarr;
+                                                                </a>
+                                                            <% } %>
+                                                        </div>
                                                         <h4 class="card-title fw-bold mb-2" style="font-size: 1.22rem; color: #222; line-height: 1.35;">
                                                             <a href="/haftara/<%= item.id %>" class="text-decoration-none text-dark hover-gold">
                                                                 <%= item.title %>
@@ -89,13 +108,27 @@
                                                         <% } %>
 
                                                         <!-- Expositor / Servidor -->
-                                                        <div class="d-flex align-items-center gap-2 mb-3 pt-2 border-top">
-                                                            <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= item.author || 'Moréh Kaleb' %>" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853;">
-                                                            <div>
-                                                                <div class="fw-bold" style="font-size: 0.88rem; color: #222; line-height: 1.2;"><%= item.author || 'Moréh Kaleb' %></div>
-                                                                <small class="text-muted" style="font-size: 0.75rem;"><%= item.author_role || 'Moréh' %></small>
+                                                        <% if (item.authors_list && item.authors_list.length > 1) { %>
+                                                            <div class="d-flex align-items-center gap-2 mb-3 pt-2 border-top">
+                                                                <div class="d-flex" style="margin-left: 4px;">
+                                                                    <% item.authors_list.forEach((auth, aIdx) => { %>
+                                                                        <img src="<%= auth.img || '/assets/img/team/kaleb.jpg' %>" alt="<%= auth.name %>" title="<%= auth.name %> (<%= auth.role %>)" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853; margin-left: <%= aIdx === 0 ? '0' : '-12px' %>; position: relative; z-index: <%= 10 - aIdx %>;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                                    <% }) %>
+                                                                </div>
+                                                                <div class="min-width-0">
+                                                                    <div class="fw-bold text-truncate" style="font-size: 0.88rem; color: #222; line-height: 1.2;"><%= item.authors_display %></div>
+                                                                    <small class="badge bg-warning text-dark px-1 py-0" style="font-size: 0.7rem;"><%= item.authors_list.length %> expositores</small>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        <% } else { %>
+                                                            <div class="d-flex align-items-center gap-2 mb-3 pt-2 border-top">
+                                                                <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= item.author || 'Moréh Kaleb' %>" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                                <div class="min-width-0">
+                                                                    <div class="fw-bold text-truncate" style="font-size: 0.88rem; color: #222; line-height: 1.2;"><%= item.author || 'Moréh Kaleb' %></div>
+                                                                    <small class="text-muted" style="font-size: 0.75rem;"><%= item.author_role || 'Moréh' %></small>
+                                                                </div>
+                                                            </div>
+                                                        <% } %>
                                                     </div>
 
                                                     <!-- Botones de Acción -->

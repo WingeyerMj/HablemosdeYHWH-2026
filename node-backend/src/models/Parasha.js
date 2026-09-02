@@ -58,6 +58,19 @@ class Parasha {
             console.warn('Aviso incrementViews parashot:', e.message);
         }
     }
+
+    static async getByTitleOrMatch(title, subtitle, reference) {
+        if (!title && !subtitle && !reference) return null;
+        const candidates = [title, subtitle, reference].filter(Boolean);
+        for (const cand of candidates) {
+            const clean = cand.replace(/haftará|haftara|parashá|parasha/gi, '').trim();
+            if (clean.length >= 3) {
+                const [rows] = await db.query('SELECT * FROM parashot WHERE title LIKE ? OR subtitle LIKE ? LIMIT 1', [`%${clean}%`, `%${clean}%`]);
+                if (rows && rows.length > 0) return rows[0];
+            }
+        }
+        return null;
+    }
 }
 
 module.exports = Parasha;

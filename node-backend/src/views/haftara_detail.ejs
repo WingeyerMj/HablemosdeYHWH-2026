@@ -48,22 +48,43 @@
                             <div class="row gy-4">
                                 <div class="col-lg-8">
                                     
-                                    <!-- Banner de Expositor / Autor -->
+                                    <!-- Banner de Expositor(es) / Autor(es) -->
                                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 p-3 mb-4 rounded-4 shadow-sm" style="background: linear-gradient(135deg, #ffffff 0%, #faf8f5 100%); border: 1px solid #ede8df; border-left: 5px solid #d4a853 !important;">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <div class="position-relative">
-                                                <img src="<%= haftara.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= haftara.author || 'Moréh Kaleb' %>" style="width: 58px; height: 58px; border-radius: 50%; object-fit: cover; border: 3px solid #d4a853; box-shadow: 0 4px 12px rgba(212,168,83,0.25);">
-                                            </div>
-                                            <div>
-                                                <div class="d-flex align-items-center gap-2 flex-wrap">
-                                                    <span class="text-muted small fw-semibold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">Lectura / Enseñanza impartida por:</span>
-                                                    <span class="badge rounded-pill px-2 py-1" style="background: #fdf6e7; color: #b8860b; border: 1px solid #f2e3be; font-size: 0.72rem; font-weight: 700;">
-                                                        <i class="bi bi-person-badge me-1"></i><%= haftara.author_role || 'Moréh' %>
-                                                    </span>
+                                        <% if (haftara.authors_list && haftara.authors_list.length > 1) { %>
+                                            <div class="d-flex flex-column gap-2">
+                                                <span class="text-muted small fw-semibold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">
+                                                    <i class="bi bi-people-fill text-warning me-1"></i>Lectura y Enseñanza impartida por los expositores:
+                                                </span>
+                                                <div class="d-flex align-items-center gap-3 flex-wrap">
+                                                    <% haftara.authors_list.forEach(auth => { %>
+                                                        <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded-pill shadow-sm border">
+                                                            <img src="<%= auth.img || '/assets/img/team/kaleb.jpg' %>" alt="<%= auth.name %>" style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                            <div>
+                                                                <h6 class="fw-bold mb-0" style="color: #2b231d; font-size: 0.95rem;"><%= auth.name %></h6>
+                                                                <span class="badge rounded-pill px-2 py-0" style="background: #fdf6e7; color: #b8860b; border: 1px solid #f2e3be; font-size: 0.68rem; font-weight: 700;">
+                                                                    <%= auth.role || 'Moréh' %>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    <% }) %>
                                                 </div>
-                                                <h5 class="fw-bold mb-0" style="color: #2b231d; font-size: 1.15rem;"><%= haftara.author || 'Moréh Kaleb' %></h5>
                                             </div>
-                                        </div>
+                                        <% } else { %>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="position-relative">
+                                                    <img src="<%= haftara.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= haftara.author || 'Moréh Kaleb' %>" style="width: 58px; height: 58px; border-radius: 50%; object-fit: cover; border: 3px solid #d4a853; box-shadow: 0 4px 12px rgba(212,168,83,0.25);" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                </div>
+                                                <div>
+                                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                        <span class="text-muted small fw-semibold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">Lectura / Enseñanza impartida por:</span>
+                                                        <span class="badge rounded-pill px-2 py-1" style="background: #fdf6e7; color: #b8860b; border: 1px solid #f2e3be; font-size: 0.72rem; font-weight: 700;">
+                                                            <i class="bi bi-person-badge me-1"></i><%= haftara.author_role || 'Moréh' %>
+                                                        </span>
+                                                    </div>
+                                                    <h5 class="fw-bold mb-0" style="color: #2b231d; font-size: 1.15rem;"><%= haftara.author || 'Moréh Kaleb' %></h5>
+                                                </div>
+                                            </div>
+                                        <% } %>
                                         <div class="d-flex align-items-center gap-2 flex-wrap">
                                             <% if (haftara.subtitle) { %>
                                                 <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #d4a853; color: #fff; font-size: 0.85rem;"><%= haftara.subtitle %></span>
@@ -149,37 +170,103 @@
                                 <div class="col-lg-4">
                                     <div class="sticky-top" style="top: 100px; z-index: 1;">
                                         
-                                        <!-- Card del Expositor / Maestro -->
-                                        <div class="card border-0 shadow-sm mb-4 rounded-4 overflow-hidden" style="background: #ffffff; border: 1px solid #ede8df;">
-                                            <div class="p-4 text-center" style="background: linear-gradient(135deg, #2b231d 0%, #1a1614 100%); color: #fff; position: relative;">
-                                                <div class="position-relative d-inline-block mb-3">
-                                                    <img src="<%= haftara.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= haftara.author || 'Moréh Kaleb' %>" class="img-fluid rounded-circle shadow" style="width: 110px; height: 110px; object-fit: cover; border: 4px solid #d4a853;">
-                                                    <span class="position-absolute bottom-0 end-0 badge rounded-pill p-2 bg-warning text-dark border border-2 border-white shadow" title="<%= haftara.author_role || 'Moréh' %>">
-                                                        <i class="bi bi-mic-fill"></i>
+                                        <!-- Card del Expositor(es) / Maestro(s) -->
+                                        <% if (haftara.authors_list && haftara.authors_list.length > 1) { %>
+                                            <div class="card border-0 shadow-sm mb-4 rounded-4 overflow-hidden" style="background: #ffffff; border: 1px solid #ede8df;">
+                                                <div class="p-3 text-center" style="background: linear-gradient(135deg, #2b231d 0%, #1a1614 100%); color: #fff;">
+                                                    <h6 class="fw-bold mb-1 text-white"><i class="bi bi-people-fill text-warning me-2"></i>Expositores de la Haftará</h6>
+                                                    <small class="text-white-50" style="font-size: 0.75rem;"><%= haftara.authors_list.length %> expositores / lectores bíblicos</small>
+                                                </div>
+                                                <div class="p-3 d-flex flex-column gap-2">
+                                                    <% haftara.authors_list.forEach((auth, idx) => { %>
+                                                        <div class="d-flex align-items-center gap-3 p-2 rounded-3" style="background: #faf8f5; border: 1px solid #eee;">
+                                                            <div class="position-relative">
+                                                                <img src="<%= auth.img || '/assets/img/team/kaleb.jpg' %>" alt="<%= auth.name %>" class="img-fluid rounded-circle shadow-sm" style="width: 55px; height: 55px; object-fit: cover; border: 3px solid #d4a853;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                                <span class="position-absolute bottom-0 end-0 badge rounded-pill p-1 bg-warning text-dark border border-white" style="font-size: 0.6rem;">
+                                                                    <i class="bi bi-mic-fill"></i>
+                                                                </span>
+                                                            </div>
+                                                            <div>
+                                                                <h6 class="fw-bold mb-1 text-dark" style="font-size: 0.95rem;"><%= auth.name %></h6>
+                                                                <span class="badge px-2 py-0 rounded-pill" style="background: rgba(212,168,83,0.15); color: #b8860b; border: 1px solid #d4a853; font-size: 0.72rem; font-weight: 600;">
+                                                                    <%= auth.role || 'Moréh' %>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    <% }) %>
+                                                </div>
+                                                <div class="p-3 text-center bg-light border-top">
+                                                    <p class="text-muted small mb-0">
+                                                        <i class="bi bi-scroll text-warning me-1"></i> Servidores y expositores bíblicos en la congregación.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        <% } else { %>
+                                            <div class="card border-0 shadow-sm mb-4 rounded-4 overflow-hidden" style="background: #ffffff; border: 1px solid #ede8df;">
+                                                <div class="p-4 text-center" style="background: linear-gradient(135deg, #2b231d 0%, #1a1614 100%); color: #fff; position: relative;">
+                                                    <div class="position-relative d-inline-block mb-3">
+                                                        <img src="<%= haftara.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= haftara.author || 'Moréh Kaleb' %>" class="img-fluid rounded-circle shadow" style="width: 110px; height: 110px; object-fit: cover; border: 4px solid #d4a853;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                        <span class="position-absolute bottom-0 end-0 badge rounded-pill p-2 bg-warning text-dark border border-2 border-white shadow" title="<%= haftara.author_role || 'Moréh' %>">
+                                                            <i class="bi bi-mic-fill"></i>
+                                                        </span>
+                                                    </div>
+                                                    <h5 class="fw-bold mb-1 text-white"><%= haftara.author || 'Moréh Kaleb' %></h5>
+                                                    <span class="badge px-3 py-1 rounded-pill" style="background: rgba(212,168,83,0.2); color: #d4a853; border: 1px solid #d4a853; font-size: 0.8rem; font-weight: 600;">
+                                                        <%= haftara.author_role || 'Moréh' %>
                                                     </span>
                                                 </div>
-                                                <h5 class="fw-bold mb-1 text-white"><%= haftara.author || 'Moréh Kaleb' %></h5>
-                                                <span class="badge px-3 py-1 rounded-pill" style="background: rgba(212,168,83,0.2); color: #d4a853; border: 1px solid #d4a853; font-size: 0.8rem; font-weight: 600;">
-                                                    <%= haftara.author_role || 'Moréh' %>
-                                                </span>
+                                                <div class="p-3 text-center bg-light border-top">
+                                                    <p class="text-muted small mb-0">
+                                                        <i class="bi bi-scroll text-warning me-1"></i> Servidor y expositor bíblico en la congregación.
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div class="p-3 text-center bg-light border-top">
-                                                <p class="text-muted small mb-0">
-                                                    <i class="bi bi-scroll text-warning me-1"></i> Servidor y expositor bíblico en la congregación.
-                                                </p>
-                                            </div>
-                                        </div>
+                                        <% } %>
 
-                                        <!-- Portada de la Haftará si existe -->
-                                        <% if (haftara.image_url && haftara.image_url.trim() !== '') { %>
-                                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background: #fff; border: 1px solid #ede8df;">
-                                                <img src="<%= haftara.image_url %>" alt="<%= haftara.title %>" class="img-fluid" style="width: 100%; height: auto; max-height: 320px; object-fit: cover;">
+                                        <!-- Portada de la Haftará -->
+                                        <% const hafDetailImg = haftara.image_url || haftara.youtube_thumbnail; %>
+                                        <% if (hafDetailImg && hafDetailImg.trim() !== '') { %>
+                                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4" style="background: #fff; border: 1px solid #ede8df;">
+                                                <img src="<%= hafDetailImg %>" alt="<%= haftara.title %>" class="img-fluid" style="width: 100%; height: auto; max-height: 320px; object-fit: cover;" onerror="this.parentElement.style.display='none'">
                                                 <div class="p-3 text-center">
                                                     <h6 class="fw-bold mb-1" style="font-size: 0.95rem;"><%= haftara.title %></h6>
                                                     <% if (haftara.subtitle) { %>
                                                         <small class="text-muted"><%= haftara.subtitle %></small>
                                                     <% } %>
                                                 </div>
+                                            </div>
+                                        <% } %>
+
+                                        <!-- Tarjeta de Parashá Correspondiente -->
+                                        <% if (typeof parasha !== 'undefined' && parasha) { %>
+                                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4" style="background: linear-gradient(135deg, #fdfbf7 0%, #f7efe2 100%); border: 1.5px solid #d4a853 !important;">
+                                                <div class="p-3 text-center" style="background: linear-gradient(135deg, #d4a853, #b8860b); color: #fff;">
+                                                    <div class="small fw-bold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.72rem;">
+                                                        <i class="bi bi-book-half me-1"></i>Porción de la Torá Correspondiente
+                                                    </div>
+                                                    <h5 class="fw-bold mb-0 text-white mt-1"><%= parasha.title %></h5>
+                                                </div>
+                                                <div class="p-3 text-center">
+                                                    <% if (parasha.subtitle) { %>
+                                                        <p class="small text-muted mb-2 fw-semibold"><i class="bi bi-bookmark text-warning me-1"></i><%= parasha.subtitle %></p>
+                                                    <% } %>
+                                                    <p class="small text-muted mb-3" style="font-size: 0.85rem; line-height: 1.4;">
+                                                        La Haftará y la Parashá se estudian juntas en el Shabat semanal.
+                                                    </p>
+                                                    <a href="/parashot/<%= parasha.id %>" class="btn btn-sm w-100 rounded-pill fw-bold text-white shadow-sm" style="background: linear-gradient(135deg, #2b231d, #1a1614); padding: 8px 16px;">
+                                                        <i class="bi bi-arrow-right-circle me-1 text-warning"></i> Ver Parashá y Aliyot Diarias
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        <% } else { %>
+                                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 p-3 text-center" style="background: #faf8f5; border: 1px dashed #d4a853 !important;">
+                                                <div class="small fw-bold text-uppercase text-warning mb-1" style="font-size: 0.72rem;">
+                                                    <i class="bi bi-book me-1"></i>Porciones de la Torá
+                                                </div>
+                                                <p class="small text-muted mb-2" style="font-size: 0.85rem;">Cada Haftará acompaña a la Parashá semanal en Shabat.</p>
+                                                <a href="/parashot" class="btn btn-sm btn-outline-dark rounded-pill fw-bold">
+                                                    Explorar todas las Parashot &rarr;
+                                                </a>
                                             </div>
                                         <% } %>
 

@@ -379,13 +379,26 @@ const adminController = {
     // ==================== HAFTARÁ ====================
     createHaftara: async (req, res) => {
         try {
-            let { title, subtitle, parasha_reference, description, content, youtube_link, audio_url, image_url, author, author_role, author_img } = req.body;
+            let { parasha_id, title, subtitle, parasha_reference, description, content, youtube_link, audio_url, image_url, author, author_role, author_img, authors, authors_json } = req.body;
             if (req.file) {
                 image_url = '/uploads/haftara/' + req.file.filename;
+            }
+
+            let finalAuthors = authors || authors_json;
+            if (!finalAuthors && req.body.author_name) {
+                const names = Array.isArray(req.body.author_name) ? req.body.author_name : [req.body.author_name];
+                const roles = Array.isArray(req.body.author_role) ? req.body.author_role : [req.body.author_role];
+                const imgs = Array.isArray(req.body.author_img) ? req.body.author_img : [req.body.author_img];
+                finalAuthors = names.map((name, idx) => ({
+                    name: (name || '').trim(),
+                    role: (roles[idx] || 'Moréh').trim(),
+                    img: (imgs[idx] || '/assets/img/team/kaleb.jpg').trim()
+                })).filter(a => a.name);
             }
             
             const Haftara = require('../models/Haftara');
             await Haftara.create({
+                parasha_id: parasha_id ? parseInt(parasha_id) : null,
                 title,
                 subtitle: subtitle || '',
                 parasha_reference: parasha_reference || '',
@@ -396,7 +409,8 @@ const adminController = {
                 image_url: image_url || '',
                 author: author || 'Moréh Kaleb',
                 author_role: author_role || 'Moréh',
-                author_img: author_img || '/assets/img/team/kaleb.jpg'
+                author_img: author_img || '/assets/img/team/kaleb.jpg',
+                authors: finalAuthors
             });
             res.redirect('/admin/dashboard#pills-haftara');
         } catch (error) {
@@ -408,6 +422,7 @@ const adminController = {
     editHaftaraPage: async (req, res) => {
         try {
             const Haftara = require('../models/Haftara');
+            const Parasha = require('../models/Parasha');
             const Team = require('../models/Team');
             const haftara = await Haftara.getById(req.params.id);
             if (!haftara) return res.redirect('/admin/dashboard#pills-haftara');
@@ -417,7 +432,12 @@ const adminController = {
                 team = await Team.getAll();
             } catch(e) {}
 
-            res.render('admin/edit_haftara', { layout: 'admin/layout', haftara, team });
+            let parashot = [];
+            try {
+                parashot = await Parasha.getAll();
+            } catch(e) {}
+
+            res.render('admin/edit_haftara', { layout: 'admin/layout', haftara, team, parashot });
         } catch (error) {
             console.error('Error editHaftaraPage:', error);
             res.redirect('/admin/dashboard#pills-haftara');
@@ -426,13 +446,26 @@ const adminController = {
 
     updateHaftara: async (req, res) => {
         try {
-            let { id, title, subtitle, parasha_reference, description, content, youtube_link, audio_url, image_url, author, author_role, author_img } = req.body;
+            let { id, parasha_id, title, subtitle, parasha_reference, description, content, youtube_link, audio_url, image_url, author, author_role, author_img, authors, authors_json } = req.body;
             if (req.file) {
                 image_url = '/uploads/haftara/' + req.file.filename;
+            }
+
+            let finalAuthors = authors || authors_json;
+            if (!finalAuthors && req.body.author_name) {
+                const names = Array.isArray(req.body.author_name) ? req.body.author_name : [req.body.author_name];
+                const roles = Array.isArray(req.body.author_role) ? req.body.author_role : [req.body.author_role];
+                const imgs = Array.isArray(req.body.author_img) ? req.body.author_img : [req.body.author_img];
+                finalAuthors = names.map((name, idx) => ({
+                    name: (name || '').trim(),
+                    role: (roles[idx] || 'Moréh').trim(),
+                    img: (imgs[idx] || '/assets/img/team/kaleb.jpg').trim()
+                })).filter(a => a.name);
             }
             
             const Haftara = require('../models/Haftara');
             await Haftara.update(id, {
+                parasha_id: parasha_id ? parseInt(parasha_id) : null,
                 title,
                 subtitle: subtitle || '',
                 parasha_reference: parasha_reference || '',
@@ -443,7 +476,8 @@ const adminController = {
                 image_url: image_url || '',
                 author: author || 'Moréh Kaleb',
                 author_role: author_role || 'Moréh',
-                author_img: author_img || '/assets/img/team/kaleb.jpg'
+                author_img: author_img || '/assets/img/team/kaleb.jpg',
+                authors: finalAuthors
             });
             res.redirect('/admin/dashboard#pills-haftara');
         } catch (error) {
@@ -603,9 +637,14 @@ const adminController = {
     editSemillasShortPage: async (req, res) => {
         try {
             const SemillasShort = require('../models/SemillasShort');
+            const Parasha = require('../models/Parasha');
             const item = await SemillasShort.getById(req.params.id);
             if (!item) return res.redirect('/admin/dashboard#pills-semillas');
-            res.render('admin/edit_semillas_short', { layout: 'admin/layout', item });
+            let parashot = [];
+            try {
+                parashot = await Parasha.getAll();
+            } catch(e) {}
+            res.render('admin/edit_semillas_short', { layout: 'admin/layout', item, parashot });
         } catch (error) {
             console.error('Error editSemillasShortPage:', error);
             res.redirect('/admin/dashboard#pills-semillas');
