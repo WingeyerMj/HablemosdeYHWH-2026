@@ -866,16 +866,27 @@
             <form action="/admin/semillas-shorts/create" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="row g-3">
-                        <div class="col-md-8">
-                            <label class="form-label small text-white-50">Título del Short / Aliyá *</label>
-                            <input type="text" name="title" class="form-control" required placeholder="Ej: 1ª Aliyá de Bereshit con Lucas">
+                        <div class="col-md-6">
+                            <label class="form-label small text-info fw-bold"><i class="bi bi-tags-fill me-1"></i>Tipo de Short *</label>
+                            <select name="short_type" id="create_short_type" class="form-select bg-dark text-white border-info fw-semibold" onchange="const isG = this.value === 'general'; document.getElementById('create_short_cat_box').style.display = isG ? 'block' : 'none'; document.getElementById('create_short_parasha_box').style.display = isG ? 'none' : 'block'; document.getElementById('create_short_aliya_box').style.display = isG ? 'none' : 'block';">
+                                <option value="aliya" selected>📖 Aliyá con Niños (Lectura Semanal)</option>
+                                <option value="general">🌟 Short General / Temas Diversos (Historias, Reflexión, Valores)</option>
+                            </select>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label small text-white-50">Niño(s) Participante(s)</label>
+                        <div class="col-md-6" id="create_short_cat_box" style="display: none;">
+                            <label class="form-label small text-warning fw-semibold"><i class="bi bi-bookmark-star me-1"></i>Tema / Categoría</label>
+                            <input type="text" name="category" class="form-control" placeholder="Ej: Historia Bíblica, Valores, Canción, Reflexión" value="Temas Diversos">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Título del Short *</label>
+                            <input type="text" name="title" class="form-control" required placeholder="Ej: 1ª Aliyá de Bereshit con Lucas o Historia del Arca">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Niño(s) Participante(s) (Opcional)</label>
                             <input type="text" name="child_name" class="form-control" placeholder="Ej: Lucas (6 años)">
                         </div>
 
-                        <div class="col-md-5">
+                        <div class="col-md-5" id="create_short_parasha_box">
                             <label class="form-label small text-warning fw-semibold"><i class="bi bi-book me-1"></i>Parashá Relacionada</label>
                             <select name="parasha_name" class="form-select bg-dark text-white border-secondary">
                                 <option value="">-- Seleccionar Parashá --</option>
@@ -889,7 +900,7 @@
                                 <% } %>
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="create_short_aliya_box">
                             <label class="form-label small text-white-50">Nº de Aliyá (1-7)</label>
                             <select name="aliyah_number" class="form-select bg-dark text-white border-secondary">
                                 <option value="1">1ª Aliyá (Domingo)</option>
@@ -1762,4 +1773,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+function filterAdminShorts(type, btn) {
+    if (btn && btn.parentElement) {
+        btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+    const rows = document.querySelectorAll('#adminShortsTable tbody tr.short-row');
+    rows.forEach(r => {
+        if (type === 'all' || r.dataset.type === type) {
+            r.style.display = '';
+        } else {
+            r.style.display = 'none';
+        }
+    });
+}
 </script>

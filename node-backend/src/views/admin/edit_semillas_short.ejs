@@ -13,16 +13,27 @@
     <form action="/admin/semillas-shorts/update" method="POST" enctype="multipart/form-data" id="editSemillasShortForm">
         <input type="hidden" name="id" value="<%= item.id %>">
         <div class="row g-3">
-            <div class="col-md-8">
-                <label class="form-label small text-white-50">Título del Short / Aliyá *</label>
+            <div class="col-md-6">
+                <label class="form-label small text-info fw-bold"><i class="bi bi-tags-fill me-1"></i>Tipo de Short *</label>
+                <select name="short_type" id="edit_short_type" class="form-select bg-dark text-white border-info fw-semibold" onchange="const isG = this.value === 'general'; document.getElementById('edit_short_cat_box').style.display = isG ? 'block' : 'none'; document.getElementById('edit_short_parasha_box').style.display = isG ? 'none' : 'block'; document.getElementById('edit_short_aliya_box').style.display = isG ? 'none' : 'block';">
+                    <option value="aliya" <%= (item.short_type === 'aliya' || !item.short_type) ? 'selected' : '' %>>📖 Aliyá con Niños (Lectura Semanal)</option>
+                    <option value="general" <%= item.short_type === 'general' ? 'selected' : '' %>>🌟 Short General / Temas Diversos (Historias, Reflexión, Valores)</option>
+                </select>
+            </div>
+            <div class="col-md-6" id="edit_short_cat_box" style="<%= item.short_type === 'general' ? '' : 'display: none;' %>">
+                <label class="form-label small text-warning fw-semibold"><i class="bi bi-bookmark-star me-1"></i>Tema / Categoría</label>
+                <input type="text" name="category" class="form-control" value="<%= item.category || 'Temas Diversos' %>" placeholder="Ej: Historia Bíblica, Valores, Canción, Reflexión">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label small text-white-50">Título del Short *</label>
                 <input type="text" name="title" class="form-control" required value="<%= item.title %>">
             </div>
-            <div class="col-md-4">
-                <label class="form-label small text-white-50">Niño(s) Participante(s)</label>
+            <div class="col-md-6">
+                <label class="form-label small text-white-50">Niño(s) Participante(s) (Opcional)</label>
                 <input type="text" name="child_name" class="form-control" value="<%= item.child_name || '' %>" placeholder="Ej: Lucas (6 años)">
             </div>
 
-            <div class="col-md-5">
+            <div class="col-md-5" id="edit_short_parasha_box" style="<%= item.short_type === 'general' ? 'display: none;' : '' %>">
                 <label class="form-label small text-warning fw-semibold"><i class="bi bi-book me-1"></i>Parashá Relacionada</label>
                 <select name="parasha_name" class="form-select bg-dark text-white border-secondary">
                     <option value="">-- Seleccionar Parashá --</option>
@@ -39,7 +50,7 @@
                     <% } %>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3" id="edit_short_aliya_box" style="<%= item.short_type === 'general' ? 'display: none;' : '' %>">
                 <label class="form-label small text-white-50">Nº de Aliyá (1-7)</label>
                 <select name="aliyah_number" class="form-select bg-dark text-white border-secondary">
                     <% for(let i = 1; i <= 7; i++) { %>

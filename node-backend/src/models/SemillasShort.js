@@ -7,6 +7,8 @@ class SemillasShort {
                 CREATE TABLE IF NOT EXISTS semillas_shorts (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     title VARCHAR(255) NOT NULL,
+                    short_type VARCHAR(50) DEFAULT 'aliya',
+                    category VARCHAR(100) DEFAULT 'Aliyot con Niños',
                     child_name VARCHAR(255) DEFAULT NULL,
                     parasha_name VARCHAR(255) DEFAULT NULL,
                     aliyah_number INT DEFAULT 1,
@@ -27,6 +29,8 @@ class SemillasShort {
 
             // Asegurar que todas las columnas existan si la tabla fue creada previamente con otro esquema
             const columnsToAdd = [
+                { name: 'short_type', type: "VARCHAR(50) DEFAULT 'aliya'" },
+                { name: 'category', type: "VARCHAR(100) DEFAULT 'Aliyot con Niños'" },
                 { name: 'child_name', type: 'VARCHAR(255) DEFAULT NULL' },
                 { name: 'parasha_name', type: 'VARCHAR(255) DEFAULT NULL' },
                 { name: 'aliyah_number', type: 'INT DEFAULT 1' },
@@ -118,6 +122,8 @@ class SemillasShort {
         await SemillasShort.ensureTable();
         let {
             title,
+            short_type,
+            category,
             child_name,
             parasha_name,
             aliyah_number,
@@ -137,15 +143,20 @@ class SemillasShort {
             if (ytId) thumb = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
         }
 
+        const type = short_type || 'aliya';
+        const cat = category || (type === 'general' ? 'General / Temas Diversos' : 'Aliyot con Niños');
+
         return await db.query(
             `INSERT INTO semillas_shorts 
-             (title, child_name, parasha_name, aliyah_number, verses_reference, video_url, youtube_short_url, youtube_url, thumbnail_url, description, is_highlight, is_published) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+             (title, short_type, category, child_name, parasha_name, aliyah_number, verses_reference, video_url, youtube_short_url, youtube_url, thumbnail_url, description, is_highlight, is_published) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 title,
+                type,
+                cat,
                 child_name || '',
                 parasha_name || '',
-                parseInt(aliyah_number) || 1,
+                type === 'general' ? (parseInt(aliyah_number) || null) : (parseInt(aliyah_number) || 1),
                 verses_reference || '',
                 video_url || '',
                 ytUrl,
@@ -162,6 +173,8 @@ class SemillasShort {
         await SemillasShort.ensureTable();
         let {
             title,
+            short_type,
+            category,
             child_name,
             parasha_name,
             aliyah_number,
@@ -181,15 +194,20 @@ class SemillasShort {
             if (ytId) thumb = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
         }
 
+        const type = short_type || 'aliya';
+        const cat = category || (type === 'general' ? 'General / Temas Diversos' : 'Aliyot con Niños');
+
         return await db.query(
             `UPDATE semillas_shorts 
-             SET title = ?, child_name = ?, parasha_name = ?, aliyah_number = ?, verses_reference = ?, video_url = ?, youtube_short_url = ?, youtube_url = ?, thumbnail_url = ?, description = ?, is_highlight = ?, is_published = ? 
+             SET title = ?, short_type = ?, category = ?, child_name = ?, parasha_name = ?, aliyah_number = ?, verses_reference = ?, video_url = ?, youtube_short_url = ?, youtube_url = ?, thumbnail_url = ?, description = ?, is_highlight = ?, is_published = ? 
              WHERE id = ?`,
             [
                 title,
+                type,
+                cat,
                 child_name || '',
                 parasha_name || '',
-                parseInt(aliyah_number) || 1,
+                type === 'general' ? (parseInt(aliyah_number) || null) : (parseInt(aliyah_number) || 1),
                 verses_reference || '',
                 video_url || '',
                 ytUrl,

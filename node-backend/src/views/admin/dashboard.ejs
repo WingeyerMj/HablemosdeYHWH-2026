@@ -410,23 +410,30 @@
 
                 <!-- SUB-TAB 2: SHORTS / ALIYOT CON NIÑOS -->
                 <div class="tab-pane fade" id="admin-semillas-shorts" role="tabpanel">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                         <div>
-                            <h5 class="text-white mb-0"><i class="bi bi-camera-reels-fill me-2" style="color: #38bdf8;"></i>Aliyot con Niños · Novedades (Shorts / Reels)</h5>
-                            <p class="text-white-50 small mb-0">Videos verticales cortos de los niños recitando las porciones semanales.</p>
+                            <h5 class="text-white mb-0"><i class="bi bi-camera-reels-fill me-2" style="color: #38bdf8;"></i>Aliyot con Niños & Shorts Generales</h5>
+                            <p class="text-white-50 small mb-0">Videos verticales cortos de Aliyot y temas diversos infantiles.</p>
                         </div>
-                        <button type="button" class="btn btn-info text-dark fw-bold" data-bs-toggle="modal" data-bs-target="#createSemillasShortModal">
-                            <i class="bi bi-plus-circle-fill me-1"></i> Nueva Aliyá Infantil / Short
-                        </button>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button type="button" class="btn btn-outline-info active" onclick="filterAdminShorts('all', this)">Todos (<%= (typeof semillasShorts !== 'undefined' && semillasShorts) ? semillasShorts.length : 0 %>)</button>
+                                <button type="button" class="btn btn-outline-info" onclick="filterAdminShorts('aliya', this)">📖 Aliyot</button>
+                                <button type="button" class="btn btn-outline-info" onclick="filterAdminShorts('general', this)">🌟 Generales</button>
+                            </div>
+                            <button type="button" class="btn btn-info text-dark fw-bold" data-bs-toggle="modal" data-bs-target="#createSemillasShortModal">
+                                <i class="bi bi-plus-circle-fill me-1"></i> Nuevo Short
+                            </button>
+                        </div>
                     </div>
 
                     <div class="table-responsive">
-                        <table class="table table-dark table-hover align-middle">
+                        <table class="table table-dark table-hover align-middle" id="adminShortsTable">
                             <thead>
                                 <tr>
                                     <th>Miniatura</th>
-                                    <th>Título & Niñ@(s)</th>
-                                    <th>Parashá / Aliyá</th>
+                                    <th>Tipo & Título</th>
+                                    <th>Parashá / Tema</th>
                                     <th>Cita Bíblica</th>
                                     <th>Video</th>
                                     <th>Destacado</th>
@@ -437,24 +444,35 @@
                             <tbody>
                                 <% if (typeof semillasShorts !== 'undefined' && semillasShorts && semillasShorts.length > 0) { %>
                                     <% semillasShorts.forEach(short => { %>
-                                    <tr>
+                                    <tr class="short-row" data-type="<%= short.short_type || 'aliya' %>">
                                         <td style="width: 60px;">
                                             <div style="width: 50px; height: 75px; border-radius: 8px; overflow: hidden; background: #222; border: 1px solid rgba(255,255,255,0.2);">
                                                 <img src="<%= short.thumbnail_url || '/assets/img/pagina/semillas_torah_banner.png' %>" alt="" style="width: 100%; height: 100%; object-fit: cover;">
                                             </div>
                                         </td>
                                         <td>
+                                            <div class="d-flex align-items-center gap-1 mb-1">
+                                                <% if (short.short_type === 'general') { %>
+                                                    <span class="badge rounded-pill bg-warning text-dark px-2" style="font-size: 0.68rem;"><i class="bi bi-star-fill me-1"></i>General</span>
+                                                <% } else { %>
+                                                    <span class="badge rounded-pill bg-info text-dark px-2" style="font-size: 0.68rem;"><i class="bi bi-book-fill me-1"></i>Aliyá</span>
+                                                <% } %>
+                                            </div>
                                             <div class="fw-bold text-white"><%= short.title %></div>
                                             <% if (short.child_name) { %>
                                                 <div class="text-info small"><i class="bi bi-person-heart me-1"></i><%= short.child_name %></div>
                                             <% } %>
                                         </td>
                                         <td>
-                                            <% if (short.parasha_name) { %>
-                                                <span class="badge bg-purple px-2 py-1"><%= short.parasha_name %></span>
-                                            <% } %>
-                                            <% if (short.aliyah_number) { %>
-                                                <span class="badge bg-success px-2 py-1"><%= short.aliyah_number %>ª Aliyá</span>
+                                            <% if (short.short_type === 'general') { %>
+                                                <span class="badge bg-secondary px-2 py-1"><%= short.category || 'General' %></span>
+                                            <% } else { %>
+                                                <% if (short.parasha_name) { %>
+                                                    <span class="badge bg-purple px-2 py-1"><%= short.parasha_name %></span>
+                                                <% } %>
+                                                <% if (short.aliyah_number) { %>
+                                                    <span class="badge bg-success px-2 py-1"><%= short.aliyah_number %>ª Aliyá</span>
+                                                <% } %>
                                             <% } %>
                                         </td>
                                         <td>

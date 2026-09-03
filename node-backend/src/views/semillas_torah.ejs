@@ -148,7 +148,7 @@
                 <div class="tab-content" id="semillasTabContent">
 
                     <!-- ============================================== -->
-                    <!-- PESTAÑA 1: ALIYOT CON NIÑOS · SHORTS / NOVEDADES -->
+                    <!-- PESTAÑA 1: SHORTS · ALIYOT CON NIÑOS Y TEMAS DIVERSOS -->
                     <!-- ============================================== -->
                     <div class="tab-pane fade show active" id="pane-shorts" role="tabpanel">
                         
@@ -159,20 +159,38 @@
                             </div>
                             <div class="flex-grow-1">
                                 <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-                                    <h5 class="fw-bold mb-0" style="color: #0369a1;">Aliyot con los Niños · Novedades en Formato Shorts</h5>
-                                    <span class="badge bg-danger rounded-pill px-2 py-1 small"><i class="bi bi-play-circle-fill me-1"></i>Videos Verticales</span>
+                                    <h5 class="fw-bold mb-0" style="color: #0369a1;">Videos Cortos · Aliyot Infantiles y Temas Diversos</h5>
+                                    <span class="badge bg-danger rounded-pill px-2 py-1 small"><i class="bi bi-play-circle-fill me-1"></i>Shorts Verticales</span>
                                 </div>
                                 <p class="mb-0 text-muted" style="font-size: 0.95rem; line-height: 1.6;">
-                                    ¡Nuestros pequeños se deleitan en la Palabra! Aquí compartimos videos cortos donde los niños participan en la recitación, lectura y bendición de las <strong>Aliyot semanales</strong>. Haz clic en cualquiera para ver el video completo en pantalla completa interactiva.
+                                    ¡Nuestros pequeños se deleitan en la Palabra! Disfruta de los videos de las <strong>Aliyot semanales</strong> y de <strong>temas diversos</strong> con historias bíblicas, valores y reflexiones infantiles en pantalla interactiva.
                                 </p>
                             </div>
                         </div>
 
+                        <!-- Filtros de Secciones de Shorts -->
+                        <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+                            <div class="d-flex align-items-center gap-2 flex-wrap" id="frontendShortFilters">
+                                <button type="button" class="btn btn-sm rounded-pill px-3 py-2 fw-bold short-filter-btn active" onclick="filterFrontendShorts('all', this)" style="background: #0284c7; color: #fff; border: 1.5px solid #0284c7; transition: all 0.25s ease;">
+                                    <i class="bi bi-grid-fill me-1"></i> Todos (<%= (typeof shorts !== 'undefined' && shorts) ? shorts.length : 0 %>)
+                                </button>
+                                <button type="button" class="btn btn-sm rounded-pill px-3 py-2 fw-bold short-filter-btn" onclick="filterFrontendShorts('aliya', this)" style="background: #ffffff; color: #0369a1; border: 1.5px solid #bae6fd; transition: all 0.25s ease;">
+                                    <i class="bi bi-book-fill me-1 text-info"></i> 📖 Aliyot con Niños
+                                </button>
+                                <button type="button" class="btn btn-sm rounded-pill px-3 py-2 fw-bold short-filter-btn" onclick="filterFrontendShorts('general', this)" style="background: #ffffff; color: #6b21a8; border: 1.5px solid #e9d5ff; transition: all 0.25s ease;">
+                                    <i class="bi bi-star-fill me-1 text-warning"></i> 🌟 Temas Diversos & Historias
+                                </button>
+                            </div>
+                            <div class="small text-muted fst-italic">
+                                <i class="bi bi-hand-index-thumb me-1"></i> Haz clic en un video para reproducir
+                            </div>
+                        </div>
+
                         <!-- Grid de Shorts Verticales (9:16 Aspect Ratio) -->
-                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-4">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-4" id="frontendShortsGrid">
                             <% if (typeof shorts !== 'undefined' && shorts && shorts.length > 0) { %>
                                 <% shorts.forEach((short, idx) => { %>
-                                    <div class="col" data-aos="fade-up" data-aos-delay="<%= (idx % 4 + 1) * 80 %>">
+                                    <div class="col frontend-short-item" data-type="<%= short.short_type || 'aliya' %>" data-aos="fade-up" data-aos-delay="<%= (idx % 4 + 1) * 80 %>">
                                         <div class="card border-0 shadow-sm rounded-4 overflow-hidden short-card position-relative h-100" 
                                              onclick="openShortModal(<%= idx %>)" 
                                              style="cursor: pointer; background: #000; border: 2px solid transparent; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); aspect-ratio: 9 / 16; max-height: 480px;">
@@ -195,15 +213,21 @@
                                                         <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); font-size: 0.72rem; color: #fff;">
                                                             <i class="bi bi-star-fill me-1"></i> Destacado
                                                         </span>
-                                                    <% } else { %>
-                                                        <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: rgba(2,132,199,0.85); backdrop-filter: blur(4px); font-size: 0.72rem; color: #fff;">
-                                                            <i class="bi bi-camera-reels me-1"></i> Short
-                                                        </span>
                                                     <% } %>
-                                                    <% if (short.aliyah_number) { %>
-                                                        <span class="badge bg-success bg-opacity-90 rounded-pill px-2 py-1 shadow-sm" style="font-size: 0.72rem;">
-                                                            <%= short.aliyah_number %>ª Aliyá
+                                                    
+                                                    <% if (short.short_type === 'general') { %>
+                                                        <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: rgba(107,33,168,0.9); backdrop-filter: blur(4px); font-size: 0.72rem; color: #fff;">
+                                                            <i class="bi bi-star-fill me-1 text-warning"></i> <%= short.category || 'Tema Diverso' %>
                                                         </span>
+                                                    <% } else { %>
+                                                        <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: rgba(2,132,199,0.9); backdrop-filter: blur(4px); font-size: 0.72rem; color: #fff;">
+                                                            <i class="bi bi-camera-reels me-1"></i> Aliyá
+                                                        </span>
+                                                        <% if (short.aliyah_number) { %>
+                                                            <span class="badge bg-success bg-opacity-90 rounded-pill px-2 py-1 shadow-sm" style="font-size: 0.72rem;">
+                                                                <%= short.aliyah_number %>ª Aliyá
+                                                            </span>
+                                                        <% } %>
                                                     <% } %>
                                                 </div>
                                                 <% if (short.video_url || short.youtube_short_url) { %>
@@ -223,9 +247,13 @@
 
                                             <!-- Bottom Info -->
                                             <div class="position-absolute bottom-0 start-0 w-100 p-3 z-2 text-white">
-                                                <% if (short.parasha_name) { %>
+                                                <% if (short.short_type !== 'general' && short.parasha_name) { %>
                                                     <div class="d-inline-flex align-items-center gap-1 px-2 py-1 mb-2 rounded-pill shadow-sm" style="background: rgba(107,33,168,0.85); backdrop-filter: blur(4px); font-size: 0.72rem; font-weight: 600;">
                                                         <i class="bi bi-journal-bookmark"></i> <%= short.parasha_name %>
+                                                    </div>
+                                                <% } else if (short.short_type === 'general' && short.category) { %>
+                                                    <div class="d-inline-flex align-items-center gap-1 px-2 py-1 mb-2 rounded-pill shadow-sm" style="background: rgba(14,116,144,0.85); backdrop-filter: blur(4px); font-size: 0.72rem; font-weight: 600;">
+                                                        <i class="bi bi-tag-fill text-warning"></i> <%= short.category %>
                                                     </div>
                                                 <% } %>
 
@@ -594,17 +622,23 @@
 
             // Fill text metadata
             document.getElementById('shortModalTitle').textContent = short.title || '';
-            document.getElementById('shortModalParasha').textContent = short.parasha_name ? ('📖 ' + short.parasha_name) : '';
-            document.getElementById('shortModalParasha').style.display = short.parasha_name ? 'inline-block' : 'none';
+            if (short.short_type === 'general') {
+                document.getElementById('shortModalParasha').textContent = short.category ? ('🌟 ' + short.category) : '🌟 Tema Diverso';
+                document.getElementById('shortModalParasha').style.display = 'inline-block';
+                document.getElementById('shortModalBadge').textContent = short.category ? `🌟 ${short.category}` : `🌟 Short General`;
+            } else {
+                document.getElementById('shortModalParasha').textContent = short.parasha_name ? ('📖 ' + short.parasha_name) : '';
+                document.getElementById('shortModalParasha').style.display = short.parasha_name ? 'inline-block' : 'none';
+                if (short.aliyah_number) {
+                    document.getElementById('shortModalBadge').textContent = `${short.aliyah_number}ª Aliyá Infantil`;
+                } else {
+                    document.getElementById('shortModalBadge').textContent = `📖 Aliyá con Niños`;
+                }
+            }
+
             document.getElementById('shortModalChild').textContent = short.child_name ? ('👧 ' + short.child_name) : '';
             document.getElementById('shortModalVerses').textContent = short.verses_reference ? ('📜 ' + short.verses_reference) : '';
             document.getElementById('shortModalDescription').textContent = short.description || '';
-
-            if (short.aliyah_number) {
-                document.getElementById('shortModalBadge').textContent = `${short.aliyah_number}ª Aliyá Infantil`;
-            } else {
-                document.getElementById('shortModalBadge').textContent = `🎬 Short de Semillas`;
-            }
 
             // Decide video source
             if (short.video_url && short.video_url.trim() !== '') {
@@ -623,6 +657,29 @@
             // Update arrow states
             document.getElementById('shortPrevBtn').style.opacity = currentShortIndex > 0 ? '1' : '0.35';
             document.getElementById('shortNextBtn').style.opacity = currentShortIndex < SHORTS_DATA.length - 1 ? '1' : '0.35';
+        }
+
+        function filterFrontendShorts(type, btn) {
+            if (btn && btn.parentElement) {
+                btn.parentElement.querySelectorAll('button').forEach(b => {
+                    b.classList.remove('active');
+                    b.style.background = '#ffffff';
+                    b.style.color = b.dataset.filter === 'general' ? '#6b21a8' : '#0369a1';
+                });
+                btn.classList.add('active');
+                btn.style.background = type === 'general' ? '#6b21a8' : '#0284c7';
+                btn.style.color = '#ffffff';
+            }
+
+            const items = document.querySelectorAll('#frontendShortsGrid .frontend-short-item');
+            items.forEach(item => {
+                const itemType = item.dataset.type || 'aliya';
+                if (type === 'all' || itemType === type) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
         }
 
         function nextShort() {

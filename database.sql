@@ -465,10 +465,12 @@ ON DUPLICATE KEY UPDATE
     title = VALUES(title), 
     subtitle = VALUES(subtitle);
 
--- Tabla para Shorts / Aliyot Infantiles (Semillas de Torah)
+-- Tabla para Shorts / Aliyot Infantiles y Temas Diversos (Semillas de Torah)
 CREATE TABLE IF NOT EXISTS semillas_shorts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
+    short_type VARCHAR(50) DEFAULT 'aliya',
+    category VARCHAR(100) DEFAULT 'Aliyot con Niños',
     child_name VARCHAR(255) DEFAULT NULL,
     parasha_name VARCHAR(255) DEFAULT NULL,
     aliyah_number INT DEFAULT 1,
