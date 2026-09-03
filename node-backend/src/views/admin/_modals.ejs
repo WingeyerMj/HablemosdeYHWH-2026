@@ -1687,28 +1687,78 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Tab hash management
-    function activateTab() {
-        const h = window.location.hash;
-        if (!h) return;
+    // Universal Tab & Hash Manager for Admin Panel
+    function switchAdminTab(targetHash, updateUrl = true) {
+        if (!targetHash) return;
+        const hash = targetHash.startsWith('#') ? targetHash : '#' + targetHash;
         
-        if (h === '#admin-semillas-shorts' || h === '#admin-semillas-ensenanzas') {
-            const parentPill = document.querySelector(`.nav-pills button[data-bs-target="#pills-semillas"]`);
-            if (parentPill) bootstrap.Tab.getOrCreateInstance(parentPill).show();
-            const subTab = document.querySelector(`button[data-bs-target="${h}"]`);
-            if (subTab) bootstrap.Tab.getOrCreateInstance(subTab).show();
-            return;
+        // Handle nested subtabs (Semillas Shorts / Enseñanzas)
+        if (hash === '#admin-semillas-shorts' || hash === '#admin-semillas-ensenanzas') {
+            const parentBtn = document.querySelector(`.nav-pills button[data-bs-target="#pills-semillas"]`);
+            if (parentBtn) {
+                bootstrap.Tab.getOrCreateInstance(parentBtn).show();
+            }
+            const subBtn = document.querySelector(`button[data-bs-target="${hash}"]`);
+            if (subBtn) {
+                setTimeout(() => {
+                    bootstrap.Tab.getOrCreateInstance(subBtn).show();
+                }, 30);
+            }
+        } else {
+            const tabBtn = document.querySelector(`.nav-pills button[data-bs-target="${hash}"]`) || document.querySelector(`button[data-bs-target="${hash}"]`);
+            if (tabBtn) {
+                bootstrap.Tab.getOrCreateInstance(tabBtn).show();
+            }
         }
 
-        const t = document.querySelector(`.nav-pills button[data-bs-target="${h}"]`) || document.querySelector(`button[data-bs-target="${h}"]`);
-        if (t) bootstrap.Tab.getOrCreateInstance(t).show();
+        // Update active state in sidebar
+        document.querySelectorAll('.sidebar a').forEach(a => {
+            const href = a.getAttribute('href') || a.dataset.tabTarget || '';
+            if (href.includes(hash)) {
+                a.classList.add('active');
+            } else if (href.includes('#pills-') || href.includes('#admin-')) {
+                a.classList.remove('active');
+            }
+        });
+
+        if (updateUrl && window.location.hash !== hash) {
+            history.replaceState(null, null, hash);
+        }
     }
-    activateTab();
-    window.addEventListener('hashchange', activateTab);
+
+    // Intercept clicks on sidebar links & stat cards
+    document.addEventListener('click', function(e) {
+        const target = e.target.closest('[data-tab-target], .sidebar a[href*="#"]');
+        if (!target) return;
+        
+        const href = target.dataset.tabTarget || target.getAttribute('href') || '';
+        if (href.includes('#')) {
+            const hash = href.substring(href.indexOf('#'));
+            if (window.location.pathname.includes('/admin/dashboard') || window.location.pathname === '/admin' || window.location.pathname === '/admin/') {
+                e.preventDefault();
+                switchAdminTab(hash, true);
+            }
+        }
+    });
+
+    // Run on initial load and back/forward navigation
+    if (window.location.hash) {
+        setTimeout(() => switchAdminTab(window.location.hash, false), 50);
+    }
+    window.addEventListener('hashchange', () => {
+        if (window.location.hash) switchAdminTab(window.location.hash, false);
+    });
+
     document.querySelectorAll('.nav-pills button, #semillasAdminTabs button').forEach(b => {
         b.addEventListener('shown.bs.tab', e => {
             const h = e.target.getAttribute('data-bs-target');
             if (h && window.location.hash !== h) history.replaceState(null, null, h);
+            // Sync sidebar
+            document.querySelectorAll('.sidebar a').forEach(a => {
+                const href = a.getAttribute('href') || a.dataset.tabTarget || '';
+                if (href.includes(h)) a.classList.add('active');
+                else if (href.includes('#pills-') || href.includes('#admin-')) a.classList.remove('active');
+            });
         });
     });
 });

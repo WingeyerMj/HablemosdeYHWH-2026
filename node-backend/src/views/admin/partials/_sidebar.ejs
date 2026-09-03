@@ -12,18 +12,18 @@
     
     <div class="nav-label mt-3">Gestión de Contenido</div>
     <% if (role === 'admin') { %>
-        <a href="/admin/dashboard#pills-services"><i class="bi bi-journal-text"></i> Parashot</a>
+        <a href="/admin/dashboard#pills-services" data-tab-target="#pills-services"><i class="bi bi-journal-text"></i> Parashot</a>
         <a href="/admin/aliyot" class="<%= (typeof activePage !== 'undefined' && activePage === 'aliyot') ? 'active' : '' %>"><i class="bi bi-mic"></i> Aliyot (Lecturas)</a>
-        <a href="/admin/dashboard#pills-ensenanzas"><i class="bi bi-book"></i> Enseñanzas</a>
-        <a href="/admin/dashboard#pills-haftara"><i class="bi bi-scroll"></i> Haftará</a>
+        <a href="/admin/dashboard#pills-ensenanzas" data-tab-target="#pills-ensenanzas"><i class="bi bi-book"></i> Enseñanzas</a>
+        <a href="/admin/dashboard#pills-haftara" data-tab-target="#pills-haftara"><i class="bi bi-scroll"></i> Haftará</a>
     <% } %>
-    <a href="/admin/dashboard#pills-blog"><i class="bi bi-newspaper"></i> Blog</a>
-    <a href="/admin/dashboard#pills-semillas"><i class="bi bi-balloon-heart text-purple"></i> Semillas de Torah</a>
-    <a href="/admin/dashboard#pills-portfolio"><i class="bi bi-calendar-event"></i> Eventos</a>
+    <a href="/admin/dashboard#pills-blog" data-tab-target="#pills-blog"><i class="bi bi-newspaper"></i> Blog</a>
+    <a href="/admin/dashboard#pills-semillas" data-tab-target="#pills-semillas"><i class="bi bi-balloon-heart text-purple"></i> Semillas de Torah</a>
+    <a href="/admin/dashboard#pills-portfolio" data-tab-target="#pills-portfolio"><i class="bi bi-calendar-event"></i> Eventos</a>
     <% if (role === 'admin') { %>
-        <a href="/admin/dashboard#pills-team"><i class="bi bi-person-badge"></i> Equipo</a>
-        <a href="/admin/dashboard#pills-testimonials"><i class="bi bi-star"></i> Testimonios</a>
-        <a href="/admin/dashboard#pills-subscribers"><i class="bi bi-envelope-check"></i> Suscriptores Boletín</a>
+        <a href="/admin/dashboard#pills-team" data-tab-target="#pills-team"><i class="bi bi-person-badge"></i> Equipo</a>
+        <a href="/admin/dashboard#pills-testimonials" data-tab-target="#pills-testimonials"><i class="bi bi-star"></i> Testimonios</a>
+        <a href="/admin/dashboard#pills-subscribers" data-tab-target="#pills-subscribers"><i class="bi bi-envelope-check"></i> Suscriptores Boletín</a>
         
         <div class="nav-label mt-3">Estructura & Home</div>
         <a href="/admin/dynamic-sections" class="<%= (typeof activePage !== 'undefined' && activePage === 'dynamic-sections') ? 'active' : '' %>"><i class="bi bi-puzzle"></i> Mis Secciones</a>
