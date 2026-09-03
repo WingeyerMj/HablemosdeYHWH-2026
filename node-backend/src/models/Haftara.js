@@ -27,19 +27,40 @@ class Haftara {
                 await db.query("ALTER TABLE haftarot ADD COLUMN IF NOT EXISTS parasha_id INT DEFAULT NULL");
             } catch (errPG) {}
         }
+
+        // Auto-link Haftarot to Parashot if unlinked
+        await Haftara.autoLinkParashot();
+    }
+
+    static async autoLinkParashot() {
+        try {
+            await db.query(`
+                UPDATE haftarot h
+                JOIN parashot p ON (
+                    h.parasha_id IS NULL AND (
+                        h.title LIKE CONCAT('%', p.title, '%')
+                        OR h.parasha_reference LIKE CONCAT('%', p.title, '%')
+                        OR (h.subtitle IS NOT NULL AND h.subtitle != '' AND (h.subtitle LIKE CONCAT('%', p.title, '%') OR p.subtitle LIKE CONCAT('%', h.subtitle, '%')))
+                    )
+                )
+                SET h.parasha_id = p.id
+                WHERE h.parasha_id IS NULL
+            `);
+        } catch(e) {}
     }
 
     static extractYoutubeId(url) {
         if (!url || typeof url !== 'string') return '';
-        let videoId = '';
+        const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|live\/|shorts\/))([\w-]{11})/);
+        if (match && match[1]) return match[1];
         if (url.includes('watch?v=')) {
-            videoId = url.split('watch?v=')[1].split('&')[0];
+            return url.split('watch?v=')[1].split('&')[0];
         } else if (url.includes('youtu.be/')) {
-            videoId = url.split('youtu.be/')[1].split('?')[0];
+            return url.split('youtu.be/')[1].split('?')[0];
         } else if (url.includes('embed/')) {
-            videoId = url.split('embed/')[1].split('?')[0];
+            return url.split('embed/')[1].split('?')[0];
         }
-        return videoId;
+        return '';
     }
 
     static normalize(row) {
@@ -91,6 +112,11 @@ class Haftara {
             row.author_img = authorsList[0].img;
         }
 
+        // Parasha Link normalization
+        if (!row.parasha_id && row.matched_parasha_id) {
+            row.parasha_id = row.matched_parasha_id;
+        }
+
         // YouTube Thumbnail helper
         const ytId = Haftara.extractYoutubeId(row.youtube_link);
         row.youtube_id = ytId;
@@ -105,18 +131,24 @@ class Haftara {
             } else {
                 // Check if local file exists on disk
                 const relPath = cleanImg.startsWith('/') ? cleanImg.slice(1) : cleanImg;
-                const path1 = path.join(__dirname, '../../public', relPath);
-                const path2 = path.join(__dirname, '../../../public', relPath);
-                if (fs.existsSync(path1) || fs.existsSync(path2)) {
-                    chosenImg = cleanImg;
+                const p1 = path.join(__dirname, '../../public', relPath);
+                const p2 = path.join(__dirname, '../../../public', relPath);
+                const p3 = path.join(process.cwd(), 'public', relPath);
+                const p4 = path.join(process.cwd(), relPath);
+                if (fs.existsSync(p1) || fs.existsSync(p2) || fs.existsSync(p3) || fs.existsSync(p4)) {
+                    chosenImg = cleanImg.startsWith('/') ? cleanImg : '/' + cleanImg;
                 } else if (row.youtube_thumbnail) {
                     chosenImg = row.youtube_thumbnail;
+                } else if (row.parasha_image_url) {
+                    chosenImg = row.parasha_image_url;
                 } else {
-                    chosenImg = cleanImg;
+                    chosenImg = cleanImg.startsWith('/') ? cleanImg : '/' + cleanImg;
                 }
             }
-        } else {
-            chosenImg = row.youtube_thumbnail || '';
+        } else if (row.youtube_thumbnail) {
+            chosenImg = row.youtube_thumbnail;
+        } else if (row.parasha_image_url) {
+            chosenImg = row.parasha_image_url;
         }
         row.display_image = chosenImg;
 
@@ -127,13 +159,21 @@ class Haftara {
         await Haftara.ensureColumns();
         const [rows] = await db.query(`
             SELECT h.*, 
-                   p.title AS parasha_title, 
-                   p.subtitle AS parasha_subtitle, 
-                   p.parasha_number,
-                   p.image_url AS parasha_image_url
+                   COALESCE(p.id, p_match.id) AS matched_parasha_id,
+                   COALESCE(p.title, p_match.title) AS parasha_title, 
+                   COALESCE(p.subtitle, p_match.subtitle) AS parasha_subtitle, 
+                   COALESCE(p.parasha_number, p_match.parasha_number) AS parasha_number,
+                   COALESCE(p.image_url, p_match.image_url) AS parasha_image_url
             FROM haftarot h
             LEFT JOIN parashot p ON h.parasha_id = p.id
-            ORDER BY h.id DESC
+            LEFT JOIN parashot p_match ON (
+                h.parasha_id IS NULL AND (
+                    h.title LIKE CONCAT('%', p_match.title, '%')
+                    OR h.parasha_reference LIKE CONCAT('%', p_match.title, '%')
+                    OR p_match.title LIKE CONCAT('%', REPLACE(REPLACE(h.title, 'Haftará', ''), 'Parashá', ''), '%')
+                )
+            )
+            ORDER BY COALESCE(p.parasha_number, p_match.parasha_number, 0) DESC, h.id DESC
         `);
         return (rows || []).map(r => Haftara.normalize(r));
     }
@@ -142,14 +182,22 @@ class Haftara {
         await Haftara.ensureColumns();
         const [rows] = await db.query(`
             SELECT h.*, 
-                   p.title AS parasha_title, 
-                   p.subtitle AS parasha_subtitle, 
-                   p.parasha_number,
-                   p.image_url AS parasha_image_url
+                   COALESCE(p.id, p_match.id) AS matched_parasha_id,
+                   COALESCE(p.title, p_match.title) AS parasha_title, 
+                   COALESCE(p.subtitle, p_match.subtitle) AS parasha_subtitle, 
+                   COALESCE(p.parasha_number, p_match.parasha_number) AS parasha_number,
+                   COALESCE(p.image_url, p_match.image_url) AS parasha_image_url
             FROM haftarot h
             LEFT JOIN parashot p ON h.parasha_id = p.id
+            LEFT JOIN parashot p_match ON (
+                h.parasha_id IS NULL AND (
+                    h.title LIKE CONCAT('%', p_match.title, '%')
+                    OR h.parasha_reference LIKE CONCAT('%', p_match.title, '%')
+                    OR p_match.title LIKE CONCAT('%', REPLACE(REPLACE(h.title, 'Haftará', ''), 'Parashá', ''), '%')
+                )
+            )
             WHERE h.is_published = TRUE 
-            ORDER BY h.id DESC 
+            ORDER BY COALESCE(p.parasha_number, p_match.parasha_number, 0) DESC, h.id DESC 
             LIMIT ?
         `, [limit]);
         return (rows || []).map(r => Haftara.normalize(r));
@@ -159,14 +207,22 @@ class Haftara {
         await Haftara.ensureColumns();
         const [rows] = await db.query(`
             SELECT h.*, 
-                   p.title AS parasha_title, 
-                   p.subtitle AS parasha_subtitle, 
-                   p.parasha_number,
-                   p.image_url AS parasha_image_url
+                   COALESCE(p.id, p_match.id) AS matched_parasha_id,
+                   COALESCE(p.title, p_match.title) AS parasha_title, 
+                   COALESCE(p.subtitle, p_match.subtitle) AS parasha_subtitle, 
+                   COALESCE(p.parasha_number, p_match.parasha_number) AS parasha_number,
+                   COALESCE(p.image_url, p_match.image_url) AS parasha_image_url
             FROM haftarot h
             LEFT JOIN parashot p ON h.parasha_id = p.id
+            LEFT JOIN parashot p_match ON (
+                h.parasha_id IS NULL AND (
+                    h.title LIKE CONCAT('%', p_match.title, '%')
+                    OR h.parasha_reference LIKE CONCAT('%', p_match.title, '%')
+                    OR p_match.title LIKE CONCAT('%', REPLACE(REPLACE(h.title, 'Haftará', ''), 'Parashá', ''), '%')
+                )
+            )
             WHERE h.is_published = TRUE 
-            ORDER BY h.id DESC
+            ORDER BY COALESCE(p.parasha_number, p_match.parasha_number, 0) DESC, h.id DESC
         `);
         return (rows || []).map(r => Haftara.normalize(r));
     }
@@ -175,13 +231,21 @@ class Haftara {
         await Haftara.ensureColumns();
         const [rows] = await db.query(`
             SELECT h.*, 
-                   p.title AS parasha_title, 
-                   p.subtitle AS parasha_subtitle, 
-                   p.parasha_number,
-                   p.image_url AS parasha_image_url,
+                   COALESCE(p.id, p_match.id) AS matched_parasha_id,
+                   COALESCE(p.title, p_match.title) AS parasha_title, 
+                   COALESCE(p.subtitle, p_match.subtitle) AS parasha_subtitle, 
+                   COALESCE(p.parasha_number, p_match.parasha_number) AS parasha_number,
+                   COALESCE(p.image_url, p_match.image_url) AS parasha_image_url,
                    p.description AS parasha_description
             FROM haftarot h
             LEFT JOIN parashot p ON h.parasha_id = p.id
+            LEFT JOIN parashot p_match ON (
+                h.parasha_id IS NULL AND (
+                    h.title LIKE CONCAT('%', p_match.title, '%')
+                    OR h.parasha_reference LIKE CONCAT('%', p_match.title, '%')
+                    OR p_match.title LIKE CONCAT('%', REPLACE(REPLACE(h.title, 'Haftará', ''), 'Parashá', ''), '%')
+                )
+            )
             WHERE h.id = ?
         `, [id]);
         return rows && rows[0] ? Haftara.normalize(rows[0]) : null;
@@ -194,7 +258,9 @@ class Haftara {
             SELECT h.*, 
                    p.title AS parasha_title, 
                    p.subtitle AS parasha_subtitle, 
-                   p.parasha_number
+                   p.parasha_number,
+                   p.image_url AS parasha_image_url,
+                   p.description AS parasha_description
             FROM haftarot h
             LEFT JOIN parashot p ON h.parasha_id = p.id
             WHERE h.parasha_id = ? AND h.is_published = TRUE
@@ -212,11 +278,21 @@ class Haftara {
 
         const [rows] = await db.query(`
             SELECT h.*, 
-                   p.title AS parasha_title, 
-                   p.subtitle AS parasha_subtitle, 
-                   p.parasha_number
+                   COALESCE(p.id, p_match.id) AS matched_parasha_id,
+                   COALESCE(p.title, p_match.title) AS parasha_title, 
+                   COALESCE(p.subtitle, p_match.subtitle) AS parasha_subtitle, 
+                   COALESCE(p.parasha_number, p_match.parasha_number) AS parasha_number,
+                   COALESCE(p.image_url, p_match.image_url) AS parasha_image_url,
+                   COALESCE(p.description, p_match.description) AS parasha_description
             FROM haftarot h
             LEFT JOIN parashot p ON h.parasha_id = p.id
+            LEFT JOIN parashot p_match ON (
+                h.parasha_id IS NULL AND (
+                    h.title LIKE CONCAT('%', p_match.title, '%')
+                    OR h.parasha_reference LIKE CONCAT('%', p_match.title, '%')
+                    OR p_match.title LIKE CONCAT('%', REPLACE(REPLACE(h.title, 'Haftará', ''), 'Parashá', ''), '%')
+                )
+            )
             WHERE (h.title LIKE ? OR h.subtitle LIKE ? OR h.parasha_reference LIKE ?) 
               AND h.is_published = TRUE
             ORDER BY h.id DESC

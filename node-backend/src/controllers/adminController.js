@@ -698,10 +698,10 @@ const adminController = {
                 }).catch(e => console.warn('Aviso en notificación Short Infantil:', e.message));
             } catch(e) {}
 
-            res.redirect('/admin/dashboard#pills-semillas');
+            res.redirect('/admin/dashboard#admin-semillas-shorts');
         } catch (error) {
             console.error('Error createSemillasShort:', error);
-            res.redirect('/admin/dashboard#pills-semillas');
+            res.redirect('/admin/dashboard#admin-semillas-shorts');
         }
     },
 
@@ -710,7 +710,7 @@ const adminController = {
             const SemillasShort = require('../models/SemillasShort');
             const Parasha = require('../models/Parasha');
             const item = await SemillasShort.getById(req.params.id);
-            if (!item) return res.redirect('/admin/dashboard#pills-semillas');
+            if (!item) return res.redirect('/admin/dashboard#admin-semillas-shorts');
             let parashot = [];
             try {
                 parashot = await Parasha.getAll();
@@ -718,7 +718,7 @@ const adminController = {
             res.render('admin/edit_semillas_short', { layout: 'admin/layout', item, parashot });
         } catch (error) {
             console.error('Error editSemillasShortPage:', error);
-            res.redirect('/admin/dashboard#pills-semillas');
+            res.redirect('/admin/dashboard#admin-semillas-shorts');
         }
     },
 
@@ -749,10 +749,10 @@ const adminController = {
                 is_highlight: is_highlight === '1' || is_highlight === true || is_highlight === 'on',
                 is_published: is_published !== '0' && is_published !== false
             });
-            res.redirect('/admin/dashboard#pills-semillas');
+            res.redirect('/admin/dashboard#admin-semillas-shorts');
         } catch (error) {
             console.error('Error updateSemillasShort:', error);
-            res.redirect('/admin/dashboard#pills-semillas');
+            res.redirect('/admin/dashboard#admin-semillas-shorts');
         }
     },
 
@@ -760,10 +760,10 @@ const adminController = {
         try {
             const SemillasShort = require('../models/SemillasShort');
             await SemillasShort.delete(req.params.id);
-            res.redirect('/admin/dashboard#pills-semillas');
+            res.redirect('/admin/dashboard#admin-semillas-shorts');
         } catch (error) {
             console.error('Error deleteSemillasShort:', error);
-            res.redirect('/admin/dashboard#pills-semillas');
+            res.redirect('/admin/dashboard#admin-semillas-shorts');
         }
     },
 

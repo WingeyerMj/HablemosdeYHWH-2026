@@ -289,10 +289,21 @@
                                         <a href="/haftara/<%= item.id %>" class="text-decoration-none text-reset d-block h-100">
                                             <div class="haftara-card h-100 shadow-sm" style="background: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #ebdccb; transition: all 0.35s ease; display: flex; flex-direction: column;">
                                                 <div class="haftara-img-box" style="position: relative; width: 100%; height: 200px; overflow: hidden; background: #1a1a1a;">
-                                                    <% if (item.image_url && item.image_url.trim() !== '') { %>
-                                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+                                                    <% 
+                                                        const hDisplayImg = item.display_image || item.image_url || item.youtube_thumbnail || item.parasha_image_url || '';
+                                                        const hYtThumb = item.youtube_thumbnail || (item.youtube_id ? `https://img.youtube.com/vi/${item.youtube_id}/hqdefault.jpg` : '');
+                                                    %>
+                                                    <% if (hDisplayImg) { %>
+                                                        <img src="<%= hDisplayImg %>" alt="<%= item.title %>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;"
+                                                             onerror="if(this.src !== '<%= hYtThumb %>' && '<%= hYtThumb %>') { this.src = '<%= hYtThumb %>'; } else { this.style.display = 'none'; const ph = this.parentElement.querySelector('.haftara-home-fallback'); if (ph) { ph.classList.remove('d-none'); ph.classList.add('d-flex'); } }">
+                                                        <div class="haftara-home-fallback d-none align-items-center justify-content-center h-100 w-100 position-absolute top-0 start-0" style="background: linear-gradient(135deg, #2b231d, #1a1614); color: #fff;">
+                                                            <div class="text-center p-2">
+                                                                <i class="bi bi-scroll text-warning" style="font-size: 2.8rem;"></i>
+                                                                <div><span class="badge rounded-pill mt-2 px-2 py-1" style="background: rgba(212,168,83,0.25); color: #d4a853; font-size: 0.72rem;">Nevi'im</span></div>
+                                                            </div>
+                                                        </div>
                                                     <% } else { %>
-                                                        <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #2b231d, #1a1614); color: #fff;">
+                                                        <div class="d-flex flex-column align-items-center justify-content-center h-100 w-100 position-absolute top-0 start-0" style="background: linear-gradient(135deg, #2b231d, #1a1614); color: #fff;">
                                                             <i class="bi bi-scroll text-warning" style="font-size: 2.8rem;"></i>
                                                             <span class="badge rounded-pill mt-2 px-2 py-1" style="background: rgba(212,168,83,0.25); color: #d4a853; font-size: 0.72rem;">Nevi'im</span>
                                                         </div>
@@ -305,22 +316,34 @@
                                                     <h5 class="fw-bold mb-1" style="font-size: 1.05rem; color: #222; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                                                         <%= item.title %>
                                                     </h5>
-                                                    <% if (item.subtitle || item.parasha_reference) { %>
-                                                        <div class="mb-2" style="color: #b8860b; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
-                                                            <%= item.subtitle || item.parasha_reference %>
-                                                        </div>
-                                                    <% } %>
+                                                    <div class="d-flex align-items-center justify-content-between mb-2 gap-1 flex-wrap">
+                                                        <% if (item.subtitle || item.parasha_reference) { %>
+                                                            <div class="text-truncate" style="color: #b8860b; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; max-width: 60%;">
+                                                                <%= item.subtitle || item.parasha_reference %>
+                                                            </div>
+                                                        <% } else { %>
+                                                            <span></span>
+                                                        <% } %>
+                                                        <% if (item.parasha_title) { %>
+                                                            <span class="badge rounded-pill px-2 py-1" style="background: #fdf6e7; color: #8c6a2d; font-size: 0.72rem; font-weight: 600;">
+                                                                <i class="bi bi-book me-1 text-warning"></i>Torá: <%= item.parasha_number ? '#' + item.parasha_number + ' ' : '' %><%= item.parasha_title %>
+                                                            </span>
+                                                        <% } %>
+                                                    </div>
                                                     <% if (item.description) { %>
                                                         <p class="text-muted mb-3" style="font-size: 0.85rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                                                             <%= item.description %>
                                                         </p>
                                                     <% } %>
-                                                    <div class="mt-auto pt-2 border-top d-flex align-items-center gap-2">
-                                                        <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= item.author || 'Moréh Kaleb' %>" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853;">
-                                                        <div class="min-width-0">
-                                                            <div class="fw-bold text-truncate" style="font-size: 0.82rem; color: #222;"><%= item.author || 'Moréh Kaleb' %></div>
-                                                            <div class="text-muted" style="font-size: 0.72rem; line-height: 1;"><%= item.author_role || 'Moréh' %></div>
+                                                    <div class="mt-auto pt-2 border-top d-flex align-items-center justify-content-between">
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= item.author || 'Moréh Kaleb' %>" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853;">
+                                                            <div class="min-width-0">
+                                                                <div class="fw-bold text-truncate" style="font-size: 0.82rem; color: #222;"><%= item.author || 'Moréh Kaleb' %></div>
+                                                                <div class="text-muted" style="font-size: 0.72rem; line-height: 1;"><%= item.author_role || 'Moréh' %></div>
+                                                            </div>
                                                         </div>
+                                                        <span class="text-muted small ms-2 flex-shrink-0"><i class="bi bi-eye me-1"></i><%= item.views || 0 %></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -595,24 +618,30 @@
                                                         </p>
                                                     <% } %>
                                                     <% if (item.authors_list && item.authors_list.length > 1) { %>
-                                                        <div class="mt-auto pt-2 border-top d-flex align-items-center gap-2">
-                                                            <div class="d-flex" style="margin-left: 2px;">
-                                                                <% item.authors_list.forEach((auth, aIdx) => { %>
-                                                                    <img src="<%= auth.img || '/assets/img/team/kaleb.jpg' %>" alt="<%= auth.name %>" title="<%= auth.name %> (<%= auth.role %>)" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853; margin-left: <%= aIdx === 0 ? '0' : '-10px' %>; position: relative; z-index: <%= 10 - aIdx %>;" onerror="this.src='/assets/img/team/kaleb.jpg'">
-                                                                <% }) %>
+                                                        <div class="mt-auto pt-2 border-top d-flex align-items-center justify-content-between">
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <div class="d-flex" style="margin-left: 2px;">
+                                                                    <% item.authors_list.forEach((auth, aIdx) => { %>
+                                                                        <img src="<%= auth.img || '/assets/img/team/kaleb.jpg' %>" alt="<%= auth.name %>" title="<%= auth.name %> (<%= auth.role %>)" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853; margin-left: <%= aIdx === 0 ? '0' : '-10px' %>; position: relative; z-index: <%= 10 - aIdx %>;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                                    <% }) %>
+                                                                </div>
+                                                                <div class="min-width-0">
+                                                                    <div class="fw-bold text-truncate" style="font-size: 0.82rem; color: #222;"><%= item.authors_display %></div>
+                                                                    <div class="text-muted" style="font-size: 0.72rem; line-height: 1;"><%= item.authors_list.length %> expositores</div>
+                                                                </div>
                                                             </div>
-                                                            <div class="min-width-0">
-                                                                <div class="fw-bold text-truncate" style="font-size: 0.82rem; color: #222;"><%= item.authors_display %></div>
-                                                                <div class="text-muted" style="font-size: 0.72rem; line-height: 1;"><%= item.authors_list.length %> expositores</div>
-                                                            </div>
+                                                            <span class="text-muted small ms-2 flex-shrink-0"><i class="bi bi-eye me-1"></i><%= item.views || 0 %></span>
                                                         </div>
                                                     <% } else { %>
-                                                        <div class="mt-auto pt-2 border-top d-flex align-items-center gap-2">
-                                                            <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= item.author || 'Moréh Kaleb' %>" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853;" onerror="this.src='/assets/img/team/kaleb.jpg'">
-                                                            <div class="min-width-0">
-                                                                <div class="fw-bold text-truncate" style="font-size: 0.82rem; color: #222;"><%= item.author || 'Moréh Kaleb' %></div>
-                                                                <div class="text-muted" style="font-size: 0.72rem; line-height: 1;"><%= item.author_role || 'Moréh' %></div>
+                                                        <div class="mt-auto pt-2 border-top d-flex align-items-center justify-content-between">
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= item.author || 'Moréh Kaleb' %>" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                                <div class="min-width-0">
+                                                                    <div class="fw-bold text-truncate" style="font-size: 0.82rem; color: #222;"><%= item.author || 'Moréh Kaleb' %></div>
+                                                                    <div class="text-muted" style="font-size: 0.72rem; line-height: 1;"><%= item.author_role || 'Moréh' %></div>
+                                                                </div>
                                                             </div>
+                                                            <span class="text-muted small ms-2 flex-shrink-0"><i class="bi bi-eye me-1"></i><%= item.views || 0 %></span>
                                                         </div>
                                                     <% } %>
                                                 </div>

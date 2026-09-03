@@ -465,6 +465,22 @@ ON DUPLICATE KEY UPDATE
     title = VALUES(title), 
     subtitle = VALUES(subtitle);
 
-
-
-
+-- Tabla para Shorts / Aliyot Infantiles (Semillas de Torah)
+CREATE TABLE IF NOT EXISTS semillas_shorts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    child_name VARCHAR(255) DEFAULT NULL,
+    parasha_name VARCHAR(255) DEFAULT NULL,
+    aliyah_number INT DEFAULT 1,
+    verses_reference VARCHAR(255) DEFAULT NULL,
+    video_url VARCHAR(500) DEFAULT NULL,
+    youtube_short_url VARCHAR(500) DEFAULT NULL,
+    youtube_url VARCHAR(500) DEFAULT NULL,
+    thumbnail_url VARCHAR(500) DEFAULT NULL,
+    description TEXT DEFAULT NULL,
+    is_highlight BOOLEAN DEFAULT FALSE,
+    is_published BOOLEAN DEFAULT TRUE,
+    views_count INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);

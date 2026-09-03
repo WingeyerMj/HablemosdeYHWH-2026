@@ -52,21 +52,21 @@
                                                 <!-- Columna Imagen / Icono -->
                                                 <div class="col-sm-5 position-relative overflow-hidden" style="min-height: 220px; background: linear-gradient(135deg, #2b231d, #1a1614);">
                                                     <% 
-                                                        const primaryImg = (item.image_url && item.image_url.trim() !== '') ? item.image_url : (item.youtube_thumbnail || '');
-                                                        const fallbackImg = item.youtube_thumbnail || '';
+                                                        const displayImg = item.display_image || item.image_url || item.youtube_thumbnail || item.parasha_image_url || '';
+                                                        const ytThumb = item.youtube_thumbnail || (item.youtube_id ? `https://img.youtube.com/vi/${item.youtube_id}/hqdefault.jpg` : '');
                                                     %>
-                                                    <% if (primaryImg) { %>
-                                                        <img src="<%= primaryImg %>" alt="<%= item.title %>" 
+                                                    <% if (displayImg) { %>
+                                                        <img src="<%= displayImg %>" alt="<%= item.title %>" 
                                                              style="width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0;"
-                                                             onerror="if(this.src !== '<%= fallbackImg %>' && '<%= fallbackImg %>') { this.src='<%= fallbackImg %>'; } else { this.style.display='none'; this.nextElementSibling.style.display='flex'; }">
-                                                        <div class="d-none align-items-center justify-content-center h-100 w-100 position-absolute" style="background: linear-gradient(135deg, #2b231d, #1a1614);">
+                                                             onerror="if(this.src !== '<%= ytThumb %>' && '<%= ytThumb %>') { this.src='<%= ytThumb %>'; } else { this.style.display='none'; const ph = this.parentElement.querySelector('.haftara-fallback-placeholder'); if (ph) { ph.classList.remove('d-none'); ph.classList.add('d-flex'); } }">
+                                                        <div class="haftara-fallback-placeholder d-none align-items-center justify-content-center h-100 w-100 position-absolute inset-0" style="background: linear-gradient(135deg, #2b231d, #1a1614);">
                                                             <div class="text-center p-3">
                                                                 <i class="bi bi-scroll text-warning" style="font-size: 3.5rem;"></i>
                                                                 <div class="text-white-50 small mt-1">Nevi'im &bull; Profetas</div>
                                                             </div>
                                                         </div>
                                                     <% } else { %>
-                                                        <div class="d-flex align-items-center justify-content-center h-100 w-100 position-absolute" style="background: linear-gradient(135deg, #2b231d, #1a1614);">
+                                                        <div class="d-flex align-items-center justify-content-center h-100 w-100 position-absolute inset-0" style="background: linear-gradient(135deg, #2b231d, #1a1614);">
                                                             <div class="text-center p-3">
                                                                 <i class="bi bi-scroll text-warning" style="font-size: 3.5rem;"></i>
                                                                 <div class="text-white-50 small mt-1">Nevi'im &bull; Profetas</div>
@@ -90,9 +90,14 @@
                                                                     <%= item.subtitle || item.parasha_reference %>
                                                                 </div>
                                                             <% } %>
-                                                            <% if (item.parasha_title && item.parasha_id) { %>
-                                                                <a href="/parashot/<%= item.parasha_id %>" class="badge rounded-pill text-decoration-none shadow-sm" style="background: rgba(212,168,83,0.15); color: #8c6a2d; border: 1px solid #d4a853; font-size: 0.72rem; font-weight: 700;">
-                                                                    <i class="bi bi-book me-1"></i>Torá: <%= item.parasha_title %> &rarr;
+                                                            <% 
+                                                                const pId = item.parasha_id || item.matched_parasha_id;
+                                                                const pTitle = item.parasha_title || '';
+                                                                const pNum = item.parasha_number ? `#${item.parasha_number} ` : '';
+                                                            %>
+                                                            <% if (pTitle && pId) { %>
+                                                                <a href="/parashot/<%= pId %>" class="badge rounded-pill text-decoration-none shadow-sm" style="background: rgba(212,168,83,0.18); color: #7a581e; border: 1px solid #d4a853; font-size: 0.74rem; font-weight: 700;">
+                                                                    <i class="bi bi-book me-1 text-warning"></i>Torá: <%= pNum %><%= pTitle %> &rarr;
                                                                 </a>
                                                             <% } %>
                                                         </div>
@@ -131,17 +136,22 @@
                                                         <% } %>
                                                     </div>
 
-                                                    <!-- Botones de Acción -->
-                                                    <div class="mt-auto pt-2 border-top d-flex flex-wrap align-items-center gap-2">
-                                                        <a href="/haftara/<%= item.id %>" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-1">
-                                                            <i class="bi bi-file-text"></i> Ver Detalle
-                                                        </a>
-
-                                                        <% if (item.youtube_link && item.youtube_link.trim() !== '') { %>
-                                                            <a href="<%= item.youtube_link %>" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-danger rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-1 shadow-sm" style="background-color: #ff0000; border-color: #ff0000;">
-                                                                <i class="bi bi-youtube"></i> Ver Video
+                                                    <!-- Botones de Acción y Visualizaciones -->
+                                                    <div class="mt-auto pt-2 border-top d-flex flex-wrap align-items-center justify-content-between gap-2">
+                                                        <div class="d-flex flex-wrap align-items-center gap-2">
+                                                            <a href="/haftara/<%= item.id %>" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-1">
+                                                                <i class="bi bi-file-text"></i> Ver Detalle
                                                             </a>
-                                                        <% } %>
+
+                                                            <% if (item.youtube_link && item.youtube_link.trim() !== '') { %>
+                                                                <a href="<%= item.youtube_link %>" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-danger rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-1 shadow-sm" style="background-color: #ff0000; border-color: #ff0000;">
+                                                                    <i class="bi bi-youtube"></i> Ver Video
+                                                                </a>
+                                                            <% } %>
+                                                        </div>
+                                                        <span class="text-muted small d-inline-flex align-items-center gap-1">
+                                                            <i class="bi bi-eye"></i> <%= item.views || 0 %>
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>

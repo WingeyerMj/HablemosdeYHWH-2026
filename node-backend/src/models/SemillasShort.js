@@ -13,6 +13,7 @@ class SemillasShort {
                     verses_reference VARCHAR(255) DEFAULT NULL,
                     video_url VARCHAR(500) DEFAULT NULL,
                     youtube_short_url VARCHAR(500) DEFAULT NULL,
+                    youtube_url VARCHAR(500) DEFAULT NULL,
                     thumbnail_url VARCHAR(500) DEFAULT NULL,
                     description TEXT DEFAULT NULL,
                     is_highlight BOOLEAN DEFAULT FALSE,
@@ -24,42 +25,39 @@ class SemillasShort {
             `;
             await db.query(createTableSql);
 
-            // Verificar si hay registros iniciales, si no, insertar de ejemplo
-            const [rows] = await db.query('SELECT COUNT(*) as count FROM semillas_shorts');
-            const total = rows && rows[0] ? rows[0].count : 0;
-            if (total === 0) {
-                const initialSql = `
-                    INSERT INTO semillas_shorts (title, child_name, parasha_name, aliyah_number, verses_reference, video_url, youtube_short_url, thumbnail_url, description, is_highlight, is_published)
-                    VALUES 
-                    (
-                        '1ª Aliyá de Bereshit con los Niños',
-                        'Lucas y Sofía',
-                        'Bereshit',
-                        1,
-                        'Génesis 1:1 - 1:5',
-                        '',
-                        'https://www.youtube.com/shorts/dQw4w9WgXcQ',
-                        '/assets/img/pagina/semillas_torah_banner.png',
-                        'Nuestros pequeños compartiendo con gozo la bendición y lectura de la primera Aliyá en Shabat.',
-                        TRUE,
-                        TRUE
-                    ),
-                    (
-                        '2ª Aliyá: El Firmamento y las Aguas',
-                        'Mateo (7 años)',
-                        'Bereshit',
-                        2,
-                        'Génesis 1:6 - 1:8',
-                        '',
-                        '',
-                        '/assets/img/pagina/semillas_torah.jpg',
-                        'Hermosa recitación de los versículos del segundo día de la creación.',
-                        FALSE,
-                        TRUE
-                    )
-                `;
-                await db.query(initialSql);
+            // Asegurar que todas las columnas existan si la tabla fue creada previamente con otro esquema
+            const columnsToAdd = [
+                { name: 'child_name', type: 'VARCHAR(255) DEFAULT NULL' },
+                { name: 'parasha_name', type: 'VARCHAR(255) DEFAULT NULL' },
+                { name: 'aliyah_number', type: 'INT DEFAULT 1' },
+                { name: 'verses_reference', type: 'VARCHAR(255) DEFAULT NULL' },
+                { name: 'video_url', type: 'VARCHAR(500) DEFAULT NULL' },
+                { name: 'youtube_short_url', type: 'VARCHAR(500) DEFAULT NULL' },
+                { name: 'thumbnail_url', type: 'VARCHAR(500) DEFAULT NULL' },
+                { name: 'description', type: 'TEXT DEFAULT NULL' },
+                { name: 'is_highlight', type: 'BOOLEAN DEFAULT FALSE' },
+                { name: 'is_published', type: 'BOOLEAN DEFAULT TRUE' },
+                { name: 'views_count', type: 'INT DEFAULT 0' }
+            ];
+
+            for (const col of columnsToAdd) {
+                try {
+                    const [exists] = await db.query(`SHOW COLUMNS FROM semillas_shorts LIKE '${col.name}'`);
+                    if (!exists || exists.length === 0) {
+                        await db.query(`ALTER TABLE semillas_shorts ADD COLUMN ${col.name} ${col.type}`);
+                    }
+                } catch(errCol) {
+                    try {
+                        await db.query(`ALTER TABLE semillas_shorts ADD COLUMN IF NOT EXISTS ${col.name} ${col.type}`);
+                    } catch(errPG) {}
+                }
             }
+
+            // Si existía la columna youtube_url como NOT NULL antigua, hacerla NULL
+            try {
+                await db.query(`ALTER TABLE semillas_shorts MODIFY COLUMN youtube_url VARCHAR(500) DEFAULT NULL`);
+            } catch(e) {}
+
         } catch (e) {
             console.warn('Aviso en SemillasShort.ensureTable:', e.message);
         }
@@ -109,9 +107,16 @@ class SemillasShort {
         }
     }
 
+    static extractYoutubeId(url) {
+        if (!url || typeof url !== 'string') return '';
+        const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|live\/|shorts\/))([\w-]{11})/);
+        if (match && match[1]) return match[1];
+        return '';
+    }
+
     static async create(data) {
         await SemillasShort.ensureTable();
-        const {
+        let {
             title,
             child_name,
             parasha_name,
@@ -125,10 +130,17 @@ class SemillasShort {
             is_published
         } = data;
 
+        const ytUrl = youtube_short_url || '';
+        let thumb = thumbnail_url || '';
+        if (!thumb && ytUrl) {
+            const ytId = SemillasShort.extractYoutubeId(ytUrl);
+            if (ytId) thumb = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+        }
+
         return await db.query(
             `INSERT INTO semillas_shorts 
-             (title, child_name, parasha_name, aliyah_number, verses_reference, video_url, youtube_short_url, thumbnail_url, description, is_highlight, is_published) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+             (title, child_name, parasha_name, aliyah_number, verses_reference, video_url, youtube_short_url, youtube_url, thumbnail_url, description, is_highlight, is_published) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 title,
                 child_name || '',
@@ -136,8 +148,9 @@ class SemillasShort {
                 parseInt(aliyah_number) || 1,
                 verses_reference || '',
                 video_url || '',
-                youtube_short_url || '',
-                thumbnail_url || '',
+                ytUrl,
+                ytUrl,
+                thumb || '/assets/img/pagina/semillas_torah_banner.png',
                 description || '',
                 is_highlight ? 1 : 0,
                 is_published !== undefined ? (is_published ? 1 : 0) : 1
@@ -147,7 +160,7 @@ class SemillasShort {
 
     static async update(id, data) {
         await SemillasShort.ensureTable();
-        const {
+        let {
             title,
             child_name,
             parasha_name,
@@ -161,9 +174,16 @@ class SemillasShort {
             is_published
         } = data;
 
+        const ytUrl = youtube_short_url || '';
+        let thumb = thumbnail_url || '';
+        if (!thumb && ytUrl) {
+            const ytId = SemillasShort.extractYoutubeId(ytUrl);
+            if (ytId) thumb = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+        }
+
         return await db.query(
             `UPDATE semillas_shorts 
-             SET title = ?, child_name = ?, parasha_name = ?, aliyah_number = ?, verses_reference = ?, video_url = ?, youtube_short_url = ?, thumbnail_url = ?, description = ?, is_highlight = ?, is_published = ? 
+             SET title = ?, child_name = ?, parasha_name = ?, aliyah_number = ?, verses_reference = ?, video_url = ?, youtube_short_url = ?, youtube_url = ?, thumbnail_url = ?, description = ?, is_highlight = ?, is_published = ? 
              WHERE id = ?`,
             [
                 title,
@@ -172,8 +192,9 @@ class SemillasShort {
                 parseInt(aliyah_number) || 1,
                 verses_reference || '',
                 video_url || '',
-                youtube_short_url || '',
-                thumbnail_url || '',
+                ytUrl,
+                ytUrl,
+                thumb || '/assets/img/pagina/semillas_torah_banner.png',
                 description || '',
                 is_highlight ? 1 : 0,
                 is_published !== undefined ? (is_published ? 1 : 0) : 1,
