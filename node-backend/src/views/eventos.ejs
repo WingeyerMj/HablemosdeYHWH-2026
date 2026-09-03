@@ -97,9 +97,14 @@
                                                     <% } %>
                                                 </td>
                                                 <td style="padding: 12px 20px;">
-                                                    <a href="/eventos/<%= evento.id %>" style="font-weight: 600; color: #222; text-decoration: none; font-size: 0.95rem; transition: color 0.2s;">
-                                                        <%= evento.title %>
-                                                    </a>
+                                                    <div class="d-flex align-items-center justify-content-between gap-2">
+                                                        <a href="/eventos/<%= evento.id %>" style="font-weight: 600; color: #222; text-decoration: none; font-size: 0.95rem; transition: color 0.2s;">
+                                                            <%= evento.title %>
+                                                        </a>
+                                                        <span class="badge rounded-pill px-2 py-1 flex-shrink-0" style="background: #fdf6e7; color: #8c6a2d; font-size: 0.72rem; font-weight: 600; border: 1px solid #ebdccb;">
+                                                            <i class="bi bi-eye-fill me-1 text-info"></i><%= evento.views || 0 %>
+                                                        </span>
+                                                    </div>
                                                 </td>
                                                 <td style="padding: 12px 20px;" class="d-none d-md-table-cell">
                                                     <span style="background: #f0ebe3; color: #8a7356; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; border: 1px solid #e2d7c9;"><%= c.name %></span>

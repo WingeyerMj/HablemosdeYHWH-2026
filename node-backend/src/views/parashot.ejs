@@ -39,11 +39,16 @@
                                             
                                             <!-- Texto -->
                                             <div class="col text-start ps-2 overflow-hidden">
-                                                <h4 class="title mb-1" style="font-size: 1.3rem; font-weight: 700;">
-                                                    <a href="/parashot/<%= service.id %>" class="stretched-link" style="color: #222;">
-                                                        <%= service.parasha_number ? service.parasha_number + '. ' : '' %><%= service.title %>
-                                                    </a>
-                                                </h4>
+                                                <div class="d-flex align-items-center justify-content-between gap-1 mb-1">
+                                                    <h4 class="title mb-0" style="font-size: 1.3rem; font-weight: 700;">
+                                                        <a href="/parashot/<%= service.id %>" class="stretched-link" style="color: #222;">
+                                                            <%= service.parasha_number ? service.parasha_number + '. ' : '' %><%= service.title %>
+                                                        </a>
+                                                    </h4>
+                                                    <span class="badge rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center" style="background: #fdf6e7; color: #8c6a2d; font-size: 0.75rem; font-weight: 600; border: 1px solid #ebdccb; z-index: 2; position: relative;">
+                                                        <i class="bi bi-eye-fill me-1 text-info"></i><%= service.views || 0 %>
+                                                    </span>
+                                                </div>
                                                 <% if (service.subtitle) { %>
                                                     <div class="subtitle mb-2" style="color: var(--primary-color); font-size: 0.9rem; font-weight: 600; line-height: 1.2;">
                                                         <%= service.subtitle %>

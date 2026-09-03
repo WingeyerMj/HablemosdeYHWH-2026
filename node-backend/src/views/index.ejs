@@ -228,13 +228,18 @@
                                                 </div>
                                             </div>
                                             
-                                            <!-- Columna 2: Texto (Título + Subtítulo + Descripción) -->
+                                            <!-- Columna 2: Texto (Título + Subtítulo + Descripción + Vistas) -->
                                             <div class="col text-start ps-2 overflow-hidden">
-                                                <h4 class="title mb-0" style="font-size: 1.2rem; font-weight: 700; white-space: nowrap;">
-                                                    <a href="/parashot/<%= service.id %>" class="stretched-link" style="color: #222;">
-                                                        <%= service.parasha_number ? service.parasha_number + '. ' : '' %><%= service.title %>
-                                                    </a>
-                                                </h4>
+                                                <div class="d-flex align-items-center justify-content-between gap-1">
+                                                    <h4 class="title mb-0" style="font-size: 1.2rem; font-weight: 700; white-space: nowrap;">
+                                                        <a href="/parashot/<%= service.id %>" class="stretched-link" style="color: #222;">
+                                                            <%= service.parasha_number ? service.parasha_number + '. ' : '' %><%= service.title %>
+                                                        </a>
+                                                    </h4>
+                                                    <span class="badge rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center" style="background: #fdf6e7; color: #8c6a2d; font-size: 0.72rem; font-weight: 600; border: 1px solid #ebdccb; z-index: 2; position: relative;">
+                                                        <i class="bi bi-eye-fill me-1 text-info"></i><%= service.views || 0 %>
+                                                    </span>
+                                                </div>
                                                 <% if (service.subtitle) { %>
                                                     <div class="subtitle mb-0" style="color: var(--primary-color); font-size: 0.85rem; font-weight: 600; line-height: 1.2;">
                                                         <%= service.subtitle %>
@@ -439,6 +444,9 @@
                                                     <span style="position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.75); color: #d4a853; border: 1px solid rgba(212,168,83,0.6); font-size: 0.72rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
                                                         <%= cat.name %>
                                                     </span>
+                                                    <span style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.75); color: #38bdf8; border: 1px solid rgba(56,189,248,0.5); font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                                                        <i class="bi bi-eye-fill me-1"></i><%= item.views || 0 %>
+                                                    </span>
                                                 </div>
                                                 <div style="padding: 16px; flex-grow: 1; display: flex; flex-direction: column;">
                                                     <h5 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; color: #222; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"><%= item.title %></h5>
@@ -451,6 +459,10 @@
                                                     <% if (item.description) { %>
                                                         <p style="font-size: 0.8rem; color: #777; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"><%= item.description %></p>
                                                     <% } %>
+                                                    <div class="mt-auto pt-2 border-top d-flex align-items-center justify-content-between text-muted small" style="font-size: 0.75rem;">
+                                                        <span><i class="bi bi-collection-play me-1 text-warning"></i>Serie / Tema</span>
+                                                        <span><i class="bi bi-eye me-1 text-info"></i><%= item.views || 0 %> vistas</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </a>
