@@ -165,11 +165,8 @@
                                 <p class="mb-0 text-muted" style="font-size: 0.95rem; line-height: 1.6;">
                                     ¡Nuestros pequeños se deleitan en la Palabra! Disfruta de los videos de las <strong>Aliyot semanales</strong> y de <strong>temas diversos</strong> con historias bíblicas, valores y reflexiones infantiles en pantalla interactiva.
                                 </p>
-                            </div>
-                        </div>
-
-                        <!-- Filtros de Secciones de Shorts -->
-                        <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+                                              <!-- Filtros y Controles del Slider de Shorts -->
+                        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
                             <div class="d-flex align-items-center gap-2 flex-wrap" id="frontendShortFilters">
                                 <button type="button" class="btn btn-sm rounded-pill px-3 py-2 fw-bold short-filter-btn active" onclick="filterFrontendShorts('all', this)" style="background: #0284c7; color: #fff; border: 1.5px solid #0284c7; transition: all 0.25s ease;">
                                     <i class="bi bi-grid-fill me-1"></i> Todos (<%= (typeof shorts !== 'undefined' && shorts) ? shorts.length : 0 %>)
@@ -181,111 +178,136 @@
                                     <i class="bi bi-star-fill me-1 text-warning"></i> 🌟 Temas Diversos & Historias
                                 </button>
                             </div>
-                            <div class="small text-muted fst-italic">
-                                <i class="bi bi-hand-index-thumb me-1"></i> Haz clic en un video para reproducir
+                            
+                            <!-- Controles de Navegación del Carrusel -->
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="small text-muted fst-italic d-none d-md-inline me-2">
+                                    <i class="bi bi-arrows-expand-vertical me-1" style="transform: rotate(90deg); display: inline-block;"></i> Desliza para explorar más
+                                </span>
+                                <div class="btn-group shadow-sm rounded-pill p-1" style="background: rgba(2, 132, 199, 0.08); border: 1px solid rgba(2, 132, 199, 0.2);">
+                                    <button type="button" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center shorts-nav-btn" id="shortsNavPrev" onclick="slideShorts('prev')" title="Ver anteriores" style="width: 38px; height: 38px; background: #fff; color: #0284c7; border: 1px solid #bae6fd; transition: all 0.2s;">
+                                        <i class="bi bi-chevron-left fw-bold"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center shorts-nav-btn ms-1" id="shortsNavNext" onclick="slideShorts('next')" title="Ver más recientes" style="width: 38px; height: 38px; background: #0284c7; color: #fff; border: 1px solid #0284c7; transition: all 0.2s;">
+                                        <i class="bi bi-chevron-right fw-bold"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Grid de Shorts Verticales (9:16 Aspect Ratio) -->
-                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-4" id="frontendShortsGrid">
-                            <% if (typeof shorts !== 'undefined' && shorts && shorts.length > 0) { %>
-                                <% shorts.forEach((short, idx) => { %>
-                                    <div class="col frontend-short-item" data-type="<%= short.short_type || 'aliya' %>" data-aos="fade-up" data-aos-delay="<%= (idx % 4 + 1) * 80 %>">
-                                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden short-card position-relative h-100" 
-                                             onclick="openShortModal(<%= idx %>)" 
-                                             style="cursor: pointer; background: #000; border: 2px solid transparent; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); aspect-ratio: 9 / 16; max-height: 480px;">
-                                            
-                                            <!-- Poster / Image -->
-                                            <img src="<%= short.thumbnail_url || '/assets/img/pagina/semillas_torah_banner.png' %>" 
-                                                 alt="<%= short.title %>" 
-                                                 class="short-thumb w-100 h-100" 
-                                                 style="object-fit: cover; transition: transform 0.5s ease;">
+                        <!-- Carrusel / Slider de Shorts Verticales (4 por pantalla en escritorio) -->
+                        <div class="shorts-carousel-container position-relative mb-4">
+                            <!-- Floating Left Arrow -->
+                            <button type="button" class="shorts-float-arrow shorts-float-left shadow-lg" onclick="slideShorts('prev')" id="floatShortsPrev" title="Anterior">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
 
-                                            <!-- Gradient Overlay -->
-                                            <div class="position-absolute top-0 start-0 w-100 h-100 short-overlay" 
-                                                 style="background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.88) 100%); pointer-events: none;">
-                                            </div>
+                            <!-- Slider Track -->
+                            <div class="shorts-slider-track" id="frontendShortsGrid">
+                                <% if (typeof shorts !== 'undefined' && shorts && shorts.length > 0) { %>
+                                    <% shorts.forEach((short, idx) => { %>
+                                        <div class="frontend-short-item" data-type="<%= short.short_type || 'aliya' %>">
+                                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden short-card position-relative h-100" 
+                                                 onclick="openShortModal(<%= idx %>)" 
+                                                 style="cursor: pointer; background: #000; border: 2px solid transparent; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); aspect-ratio: 9 / 16; max-height: 480px;">
+                                                
+                                                <!-- Poster / Image -->
+                                                <img src="<%= short.thumbnail_url || '/assets/img/pagina/semillas_torah_banner.png' %>" 
+                                                     alt="<%= short.title %>" 
+                                                     class="short-thumb w-100 h-100" 
+                                                     style="object-fit: cover; transition: transform 0.5s ease;">
 
-                                            <!-- Top Badges -->
-                                            <div class="position-absolute top-0 start-0 w-100 p-3 d-flex justify-content-between align-items-center z-2">
-                                                <div class="d-flex gap-1 flex-wrap">
-                                                    <% if (short.is_highlight) { %>
-                                                        <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); font-size: 0.72rem; color: #fff;">
-                                                            <i class="bi bi-star-fill me-1"></i> Destacado
-                                                        </span>
-                                                    <% } %>
-                                                    
-                                                    <% if (short.short_type === 'general') { %>
-                                                        <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: rgba(107,33,168,0.9); backdrop-filter: blur(4px); font-size: 0.72rem; color: #fff;">
-                                                            <i class="bi bi-star-fill me-1 text-warning"></i> <%= short.category || 'Tema Diverso' %>
-                                                        </span>
-                                                    <% } else { %>
-                                                        <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: rgba(2,132,199,0.9); backdrop-filter: blur(4px); font-size: 0.72rem; color: #fff;">
-                                                            <i class="bi bi-camera-reels me-1"></i> Aliyá
-                                                        </span>
-                                                        <% if (short.aliyah_number) { %>
-                                                            <span class="badge bg-success bg-opacity-90 rounded-pill px-2 py-1 shadow-sm" style="font-size: 0.72rem;">
-                                                                <%= short.aliyah_number %>ª Aliyá
+                                                <!-- Gradient Overlay -->
+                                                <div class="position-absolute top-0 start-0 w-100 h-100 short-overlay" 
+                                                     style="background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.88) 100%); pointer-events: none;">
+                                                </div>
+
+                                                <!-- Top Badges -->
+                                                <div class="position-absolute top-0 start-0 w-100 p-3 d-flex justify-content-between align-items-center z-2">
+                                                    <div class="d-flex gap-1 flex-wrap">
+                                                        <% if (short.is_highlight) { %>
+                                                            <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); font-size: 0.72rem; color: #fff;">
+                                                                <i class="bi bi-star-fill me-1"></i> Destacado
                                                             </span>
                                                         <% } %>
+                                                        
+                                                        <% if (short.short_type === 'general') { %>
+                                                            <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: rgba(107,33,168,0.9); backdrop-filter: blur(4px); font-size: 0.72rem; color: #fff;">
+                                                                <i class="bi bi-star-fill me-1 text-warning"></i> <%= short.category || 'Tema Diverso' %>
+                                                            </span>
+                                                        <% } else { %>
+                                                            <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: rgba(2,132,199,0.9); backdrop-filter: blur(4px); font-size: 0.72rem; color: #fff;">
+                                                                <i class="bi bi-camera-reels me-1"></i> Aliyá
+                                                            </span>
+                                                            <% if (short.aliyah_number) { %>
+                                                                <span class="badge bg-success bg-opacity-90 rounded-pill px-2 py-1 shadow-sm" style="font-size: 0.72rem;">
+                                                                    <%= short.aliyah_number %>ª Aliyá
+                                                                </span>
+                                                            <% } %>
+                                                        <% } %>
+                                                    </div>
+                                                    <% if (short.video_url || short.youtube_short_url) { %>
+                                                        <span class="badge bg-dark bg-opacity-75 rounded-circle p-2 shadow-sm text-white" title="Video disponible">
+                                                            <i class="bi bi-play-fill fs-6"></i>
+                                                        </span>
                                                     <% } %>
                                                 </div>
-                                                <% if (short.video_url || short.youtube_short_url) { %>
-                                                    <span class="badge bg-dark bg-opacity-75 rounded-circle p-2 shadow-sm text-white" title="Video disponible">
-                                                        <i class="bi bi-play-fill fs-6"></i>
-                                                    </span>
-                                                <% } %>
-                                            </div>
 
-                                            <!-- Center Play Icon (Revealed on hover) -->
-                                            <div class="position-absolute top-50 start-50 translate-middle play-btn-overlay z-2 text-center" style="transition: all 0.3s ease;">
-                                                <div class="rounded-circle d-flex align-items-center justify-content-center shadow-lg" 
-                                                     style="width: 58px; height: 58px; background: rgba(255,255,255,0.92); color: #6b21a8; font-size: 1.6rem; backdrop-filter: blur(4px); transition: transform 0.3s ease;">
-                                                    <i class="bi bi-play-fill ms-1"></i>
+                                                <!-- Center Play Icon (Revealed on hover) -->
+                                                <div class="position-absolute top-50 start-50 translate-middle play-btn-overlay z-2 text-center" style="transition: all 0.3s ease;">
+                                                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-lg" 
+                                                         style="width: 58px; height: 58px; background: rgba(255,255,255,0.92); color: #6b21a8; font-size: 1.6rem; backdrop-filter: blur(4px); transition: transform 0.3s ease;">
+                                                        <i class="bi bi-play-fill ms-1"></i>
+                                                    </div>
                                                 </div>
+
+                                                <!-- Bottom Info -->
+                                                <div class="position-absolute bottom-0 start-0 w-100 p-3 z-2 text-white">
+                                                    <% if (short.short_type !== 'general' && short.parasha_name) { %>
+                                                        <div class="d-inline-flex align-items-center gap-1 px-2 py-1 mb-2 rounded-pill shadow-sm" style="background: rgba(107,33,168,0.85); backdrop-filter: blur(4px); font-size: 0.72rem; font-weight: 600;">
+                                                            <i class="bi bi-journal-bookmark"></i> <%= short.parasha_name %>
+                                                        </div>
+                                                    <% } else if (short.short_type === 'general' && short.category) { %>
+                                                        <div class="d-inline-flex align-items-center gap-1 px-2 py-1 mb-2 rounded-pill shadow-sm" style="background: rgba(14,116,144,0.85); backdrop-filter: blur(4px); font-size: 0.72rem; font-weight: 600;">
+                                                            <i class="bi bi-tag-fill text-warning"></i> <%= short.category %>
+                                                        </div>
+                                                    <% } %>
+
+                                                    <h6 class="fw-bold mb-1 text-white text-truncate-2" style="font-size: 0.95rem; line-height: 1.35; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
+                                                        <%= short.title %>
+                                                    </h6>
+
+                                                    <% if (short.child_name) { %>
+                                                        <div class="small d-flex align-items-center gap-1 text-info fw-semibold mb-1" style="font-size: 0.82rem; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
+                                                            <i class="bi bi-person-heart text-danger"></i> <%= short.child_name %>
+                                                        </div>
+                                                    <% } %>
+
+                                                    <% if (short.verses_reference) { %>
+                                                        <div class="text-white-50 small text-truncate" style="font-size: 0.75rem;">
+                                                            <i class="bi bi-book me-1"></i> <%= short.verses_reference %>
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+
                                             </div>
-
-                                            <!-- Bottom Info -->
-                                            <div class="position-absolute bottom-0 start-0 w-100 p-3 z-2 text-white">
-                                                <% if (short.short_type !== 'general' && short.parasha_name) { %>
-                                                    <div class="d-inline-flex align-items-center gap-1 px-2 py-1 mb-2 rounded-pill shadow-sm" style="background: rgba(107,33,168,0.85); backdrop-filter: blur(4px); font-size: 0.72rem; font-weight: 600;">
-                                                        <i class="bi bi-journal-bookmark"></i> <%= short.parasha_name %>
-                                                    </div>
-                                                <% } else if (short.short_type === 'general' && short.category) { %>
-                                                    <div class="d-inline-flex align-items-center gap-1 px-2 py-1 mb-2 rounded-pill shadow-sm" style="background: rgba(14,116,144,0.85); backdrop-filter: blur(4px); font-size: 0.72rem; font-weight: 600;">
-                                                        <i class="bi bi-tag-fill text-warning"></i> <%= short.category %>
-                                                    </div>
-                                                <% } %>
-
-                                                <h6 class="fw-bold mb-1 text-white text-truncate-2" style="font-size: 0.95rem; line-height: 1.35; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
-                                                    <%= short.title %>
-                                                </h6>
-
-                                                <% if (short.child_name) { %>
-                                                    <div class="small d-flex align-items-center gap-1 text-info fw-semibold mb-1" style="font-size: 0.82rem; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
-                                                        <i class="bi bi-person-heart text-danger"></i> <%= short.child_name %>
-                                                    </div>
-                                                <% } %>
-
-                                                <% if (short.verses_reference) { %>
-                                                    <div class="text-white-50 small text-truncate" style="font-size: 0.75rem;">
-                                                        <i class="bi bi-book me-1"></i> <%= short.verses_reference %>
-                                                    </div>
-                                                <% } %>
-                                            </div>
-
                                         </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <div class="w-100 text-center py-5">
+                                        <div class="d-inline-flex p-4 rounded-circle mb-3" style="background: #e0f2fe; color: #0284c7; font-size: 3rem;">
+                                            <i class="bi bi-camera-reels"></i>
+                                        </div>
+                                        <h4 class="fw-bold" style="color: #0369a1;">Próximamente videos de Aliyot con los Niños</h4>
+                                        <p class="text-muted">Estamos grabando las lecturas y bendiciones de las porciones con los pequeños para compartirlas aquí.</p>
                                     </div>
-                                <% }) %>
-                            <% } else { %>
-                                <div class="col-12 text-center py-5">
-                                    <div class="d-inline-flex p-4 rounded-circle mb-3" style="background: #e0f2fe; color: #0284c7; font-size: 3rem;">
-                                        <i class="bi bi-camera-reels"></i>
-                                    </div>
-                                    <h4 class="fw-bold" style="color: #0369a1;">Próximamente videos de Aliyot con los Niños</h4>
-                                    <p class="text-muted">Estamos grabando las lecturas y bendiciones de las porciones con los pequeños para compartirlas aquí.</p>
-                                </div>
-                            <% } %>
+                                <% } %>
+                            </div>
+
+                            <!-- Floating Right Arrow -->
+                            <button type="button" class="shorts-float-arrow shorts-float-right shadow-lg" onclick="slideShorts('next')" id="floatShortsNext" title="Siguiente">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -680,6 +702,57 @@
                     item.style.display = 'none';
                 }
             });
+
+            // Reset scroll to first item
+            const track = document.getElementById('frontendShortsGrid');
+            if (track) {
+                track.scrollTo({ left: 0, behavior: 'smooth' });
+                setTimeout(updateSliderArrowStates, 300);
+            }
+        }
+
+        // ==========================================
+        // SLIDER / CAROUSEL CONTROLLER PARA SHORTS
+        // ==========================================
+        function slideShorts(direction) {
+            const track = document.getElementById('frontendShortsGrid');
+            if (!track) return;
+
+            const visibleItem = track.querySelector('.frontend-short-item:not([style*="display: none"])');
+            const itemWidth = visibleItem ? (visibleItem.offsetWidth + 20) : 300;
+            
+            if (direction === 'next') {
+                track.scrollBy({ left: itemWidth, behavior: 'smooth' });
+            } else {
+                track.scrollBy({ left: -itemWidth, behavior: 'smooth' });
+            }
+
+            setTimeout(updateSliderArrowStates, 350);
+        }
+
+        function updateSliderArrowStates() {
+            const track = document.getElementById('frontendShortsGrid');
+            if (!track) return;
+
+            const atStart = track.scrollLeft <= 5;
+            const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 5;
+
+            const prevBtns = [document.getElementById('shortsNavPrev'), document.getElementById('floatShortsPrev')];
+            const nextBtns = [document.getElementById('shortsNavNext'), document.getElementById('floatShortsNext')];
+
+            prevBtns.forEach(btn => {
+                if (btn) {
+                    btn.style.opacity = atStart ? '0.4' : '1';
+                    btn.style.pointerEvents = atStart ? 'none' : 'auto';
+                }
+            });
+
+            nextBtns.forEach(btn => {
+                if (btn) {
+                    btn.style.opacity = atEnd ? '0.4' : '1';
+                    btn.style.pointerEvents = atEnd ? 'none' : 'auto';
+                }
+            });
         }
 
         function nextShort() {
@@ -696,8 +769,45 @@
             }
         }
 
-        // Cleanup video on modal close
+        // Setup Drag-to-scroll & Keyboard Navigation
         document.addEventListener('DOMContentLoaded', () => {
+            const track = document.getElementById('frontendShortsGrid');
+            if (track) {
+                track.addEventListener('scroll', updateSliderArrowStates);
+                updateSliderArrowStates();
+
+                // Mouse Drag-to-scroll
+                let isDown = false;
+                let startX;
+                let scrollLeft;
+
+                track.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    startX = e.pageX - track.offsetLeft;
+                    scrollLeft = track.scrollLeft;
+                    track.style.cursor = 'grabbing';
+                    track.style.userSelect = 'none';
+                });
+
+                track.addEventListener('mouseleave', () => {
+                    isDown = false;
+                    track.style.cursor = 'default';
+                });
+
+                track.addEventListener('mouseup', () => {
+                    isDown = false;
+                    track.style.cursor = 'default';
+                });
+
+                track.addEventListener('mousemove', (e) => {
+                    if (!isDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - track.offsetLeft;
+                    const walk = (x - startX) * 1.5;
+                    track.scrollLeft = scrollLeft - walk;
+                });
+            }
+
             const modalEl = document.getElementById('shortsModalViewer');
             if (modalEl) {
                 modalEl.addEventListener('hidden.bs.modal', () => {
@@ -720,6 +830,115 @@
     </script>
 
     <style>
+        /* ================================================= */
+        /* ESTILOS DEL SLIDER / CARRUSEL DE SHORTS VERTICALES */
+        /* ================================================= */
+        .shorts-carousel-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .shorts-slider-track {
+            display: flex;
+            gap: 1.25rem;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scroll-snap-type: x mandatory;
+            padding: 0.5rem 0.25rem 1.25rem 0.25rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #38bdf8 #f0f9ff;
+        }
+
+        .shorts-slider-track::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .shorts-slider-track::-webkit-scrollbar-track {
+            background: #f0f9ff;
+            border-radius: 10px;
+        }
+
+        .shorts-slider-track::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, #0284c7, #38bdf8);
+            border-radius: 10px;
+        }
+
+        /* 4 Tarjetas exactas por pantalla en Desktop */
+        .frontend-short-item {
+            flex: 0 0 calc((100% - 3.75rem) / 4);
+            min-width: calc((100% - 3.75rem) / 4);
+            max-width: calc((100% - 3.75rem) / 4);
+            scroll-snap-align: start;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        @media (max-width: 1199.98px) {
+            .frontend-short-item {
+                flex: 0 0 calc((100% - 2.5rem) / 3);
+                min-width: calc((100% - 2.5rem) / 3);
+                max-width: calc((100% - 2.5rem) / 3);
+            }
+        }
+
+        @media (max-width: 991.98px) {
+            .frontend-short-item {
+                flex: 0 0 calc((100% - 1.25rem) / 2);
+                min-width: calc((100% - 1.25rem) / 2);
+                max-width: calc((100% - 1.25rem) / 2);
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .frontend-short-item {
+                flex: 0 0 85%;
+                min-width: 85%;
+                max-width: 85%;
+            }
+        }
+
+        /* Flechas Flotantes de Navegación */
+        .shorts-float-arrow {
+            position: absolute;
+            top: 48%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #ffffff;
+            color: #0284c7;
+            border: 2px solid #bae6fd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            font-size: 1.3rem;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .shorts-float-arrow:hover {
+            background: #0284c7;
+            color: #ffffff;
+            border-color: #0284c7;
+            transform: translateY(-50%) scale(1.12);
+            box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4) !important;
+        }
+
+        .shorts-float-left {
+            left: -20px;
+        }
+
+        .shorts-float-right {
+            right: -20px;
+        }
+
+        @media (max-width: 767.98px) {
+            .shorts-float-arrow {
+                display: none;
+            }
+        }
+
         .short-card:hover {
             transform: translateY(-8px) scale(1.02);
             box-shadow: 0 20px 40px rgba(2, 132, 199, 0.28) !important;
