@@ -433,6 +433,53 @@ const homeController = {
         } catch (error) {
             next(error);
         }
+    },
+
+    semillasTorah: async (req, res, next) => {
+        try {
+            const SemillasTorah = require('../models/SemillasTorah');
+            const SemillasShort = require('../models/SemillasShort');
+            
+            let items = [];
+            let shorts = [];
+            try { items = await SemillasTorah.getPublished(); } catch(e) { items = []; }
+            try { shorts = await SemillasShort.getPublished(); } catch(e) { shorts = []; }
+
+            res.render('semillas_torah', {
+                title: 'Semillas de Torah - Ministerio Infantil - Hablemos de YHWH',
+                page: 'semillas',
+                items,
+                shorts,
+                layout: false
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    semillasDetail: async (req, res, next) => {
+        try {
+            const SemillasTorah = require('../models/SemillasTorah');
+            const item = await SemillasTorah.getById(req.params.id);
+            if (!item) return next();
+            await SemillasTorah.incrementViews(item.id);
+
+            let otherItems = [];
+            try {
+                const all = await SemillasTorah.getPublished();
+                otherItems = all.filter(x => x.id !== item.id).slice(0, 3);
+            } catch(e) {}
+
+            res.render('semillas_detail', {
+                title: item.title + ' - Semillas de Torah - Hablemos de YHWH',
+                page: 'semillas',
+                item,
+                otherItems,
+                layout: false
+            });
+        } catch (error) {
+            next(error);
+        }
     }
 };
 

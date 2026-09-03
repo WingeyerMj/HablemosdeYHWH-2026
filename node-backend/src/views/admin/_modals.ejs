@@ -1266,23 +1266,36 @@
 document.addEventListener('DOMContentLoaded', function() {
     const qCfg = { theme:'snow', modules:{ toolbar:[[{'header':[1,2,3,false]}],['bold','italic','underline','strike'],[{'color':[]},{'background':[]}],['link','blockquote','code-block','image'],[{'list':'ordered'},{'list':'bullet'}],[{'align':[]}],['clean']] }};
 
-    const qCreate = new Quill('#create-editor-container', qCfg);
-    const qPort = new Quill('#port-editor-container', qCfg);
-    const qEditPort = new Quill('#edit-port-editor-container', qCfg);
-    const qEnsCreate = new Quill('#ensenanza-create-editor-container', qCfg);
-    const qEnsEdit = new Quill('#ensenanza-edit-editor-container', qCfg);
-    const qHafCreate = new Quill('#haftara-create-editor-container', qCfg);
-    const qHafEdit = new Quill('#haftara-edit-editor-container', qCfg);
-    const qBlogCreate = new Quill('#blog-create-editor-container', qCfg);
-    const qBlogEdit = new Quill('#blog-edit-editor-container', qCfg);
-    const qDynCreate = new Quill('#dyn-create-editor-container', qCfg);
-    const qDynEdit = new Quill('#dyn-edit-editor-container', qCfg);
+    function initSafeQuill(id, cfg) {
+        const el = document.getElementById(id);
+        if (!el || typeof Quill === 'undefined') return null;
+        try { return new Quill(el, cfg); } catch(e) { console.warn('Quill init warning:', id, e); return null; }
+    }
+
+    const qCreate = initSafeQuill('create-editor-container', qCfg);
+    const qPort = initSafeQuill('port-editor-container', qCfg);
+    const qEditPort = initSafeQuill('edit-port-editor-container', qCfg);
+    const qEnsCreate = initSafeQuill('ensenanza-create-editor-container', qCfg);
+    const qEnsEdit = initSafeQuill('ensenanza-edit-editor-container', qCfg);
+    const qHafCreate = initSafeQuill('haftara-create-editor-container', qCfg);
+    const qHafEdit = initSafeQuill('haftara-edit-editor-container', qCfg);
+    const qBlogCreate = initSafeQuill('blog-create-editor-container', qCfg);
+    const qBlogEdit = initSafeQuill('blog-edit-editor-container', qCfg);
+    const qDynCreate = initSafeQuill('dyn-create-editor-container', qCfg);
+    const qDynEdit = initSafeQuill('dyn-edit-editor-container', qCfg);
 
     // Image previews
     function setupPreview(urlId, fileId, prevId) {
-        const u=document.getElementById(urlId), f=document.getElementById(fileId), p=document.getElementById(prevId);
-        if(u) u.addEventListener('input',e=>{if(e.target.value)p.src=e.target.value;});
-        if(f) f.addEventListener('change',function(){const file=this.files[0];if(file){const r=new FileReader();r.onload=e=>{p.src=e.target.result;};r.readAsDataURL(file);}});
+        const u = document.getElementById(urlId), f = document.getElementById(fileId), p = document.getElementById(prevId);
+        if (u && p) u.addEventListener('input', e => { if (e.target.value) p.src = e.target.value; });
+        if (f && p) f.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const r = new FileReader();
+                r.onload = e => { p.src = e.target.result; };
+                r.readAsDataURL(file);
+            }
+        });
     }
     setupPreview('create_image_url','create_image_file','createImgPreview');
     setupPreview('port_image_url','port_image_file','portImgPreview');
@@ -1297,27 +1310,48 @@ document.addEventListener('DOMContentLoaded', function() {
     setupPreview('dyn_edit_image_url','dyn_edit_image_file','dynEditImgPreview');
 
     // Edit Portfolio modal
-    const editPortModal = new bootstrap.Modal(document.getElementById('editPortfolioModal'));
-    document.querySelectorAll('.edit-portfolio-btn').forEach(btn=>{
-        btn.onclick=function(){
-            const d=this.dataset;
-            document.getElementById('edit_port_id').value=d.id;
-            document.getElementById('edit_port_title').value=d.title;
-            var editCatSel=document.getElementById('edit_port_category');
-            var catFound=false;
-            for(var i=0;i<editCatSel.options.length;i++){if(editCatSel.options[i].value===d.category){catFound=true;break;}}
-            if(!catFound && d.category){var opt=document.createElement('option');opt.value=d.category;opt.textContent=d.category;editCatSel.insertBefore(opt,editCatSel.querySelector('[value=__custom__]'));}
-            editCatSel.value=d.category;
-            document.getElementById('edit_port_category_custom_wrap').style.display='none';editCatSel.style.display='';
-            document.getElementById('edit_port_date').value=d.date;
-            document.getElementById('edit_port_subtitle').value=d.subtitle;
-            document.getElementById('edit_port_description').value=d.description;
-            document.getElementById('edit_port_image_url').value=d.image;
-            document.getElementById('editPortImgPreview').src=d.image||'/assets/img/blog/blog-1.jpg';
-            qEditPort.root.innerHTML=d.content;
-            editPortModal.show();
-        };
-    });
+    const editPortModalEl = document.getElementById('editPortfolioModal');
+    if (editPortModalEl) {
+        const editPortModal = new bootstrap.Modal(editPortModalEl);
+        document.querySelectorAll('.edit-portfolio-btn').forEach(btn => {
+            btn.onclick = function() {
+                const d = this.dataset;
+                const idEl = document.getElementById('edit_port_id');
+                if (idEl) idEl.value = d.id;
+                const titleEl = document.getElementById('edit_port_title');
+                if (titleEl) titleEl.value = d.title;
+                const editCatSel = document.getElementById('edit_port_category');
+                if (editCatSel) {
+                    let catFound = false;
+                    for (let i = 0; i < editCatSel.options.length; i++) {
+                        if (editCatSel.options[i].value === d.category) { catFound = true; break; }
+                    }
+                    if (!catFound && d.category) {
+                        const opt = document.createElement('option');
+                        opt.value = d.category;
+                        opt.textContent = d.category;
+                        editCatSel.insertBefore(opt, editCatSel.querySelector('[value=__custom__]'));
+                    }
+                    editCatSel.value = d.category;
+                }
+                const customWrap = document.getElementById('edit_port_category_custom_wrap');
+                if (customWrap) customWrap.style.display = 'none';
+                if (editCatSel) editCatSel.style.display = '';
+                const dateEl = document.getElementById('edit_port_date');
+                if (dateEl) dateEl.value = d.date;
+                const subEl = document.getElementById('edit_port_subtitle');
+                if (subEl) subEl.value = d.subtitle;
+                const descEl = document.getElementById('edit_port_description');
+                if (descEl) descEl.value = d.description;
+                const imgEl = document.getElementById('edit_port_image_url');
+                if (imgEl) imgEl.value = d.image;
+                const prevEl = document.getElementById('editPortImgPreview');
+                if (prevEl) prevEl.src = d.image || '/assets/img/blog/blog-1.jpg';
+                if (qEditPort) qEditPort.root.innerHTML = d.content;
+                editPortModal.show();
+            };
+        });
+    }
 
     // Author Repeater Helpers for Ensenanzas
     function renderAuthorRow(containerId, author = { name: '', role: 'Moréh', img: '/assets/img/team/kaleb.jpg' }) {
@@ -1356,16 +1390,19 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        row.querySelector('.btn-remove-author').addEventListener('click', () => {
-            if (container.querySelectorAll('.author-row').length > 1) {
-                row.remove();
-            } else {
-                row.querySelector('.author-name').value = '';
-                row.querySelector('.author-role').value = 'Moréh';
-                row.querySelector('.author-img').value = '/assets/img/team/kaleb.jpg';
-                if (imgPreview) imgPreview.src = '/assets/img/team/kaleb.jpg';
-            }
-        });
+        const rmBtn = row.querySelector('.btn-remove-author');
+        if (rmBtn) {
+            rmBtn.addEventListener('click', () => {
+                if (container.querySelectorAll('.author-row').length > 1) {
+                    row.remove();
+                } else {
+                    const n = row.querySelector('.author-name'); if (n) n.value = '';
+                    const r = row.querySelector('.author-role'); if (r) r.value = 'Moréh';
+                    const im = row.querySelector('.author-img'); if (im) im.value = '/assets/img/team/kaleb.jpg';
+                    if (imgPreview) imgPreview.src = '/assets/img/team/kaleb.jpg';
+                }
+            });
+        }
 
         container.appendChild(row);
         return row;
@@ -1441,58 +1478,47 @@ document.addEventListener('DOMContentLoaded', function() {
     setupQuickAddButtons('quick-add-team-edit', 'edit-authors-container');
 
     // Edit Ensenanza modal
-    const editEnsModal = new bootstrap.Modal(document.getElementById('editEnsenanzaModal'));
-    document.querySelectorAll('.edit-ensenanza-btn').forEach(btn=>{
-        btn.onclick=function(){
-            const d=this.dataset;
-            document.getElementById('edit_ens_id').value=d.id;
-            document.getElementById('edit_ens_title').value=d.title;
-            document.getElementById('edit_ens_subtitle').value=d.subtitle || '';
-            document.getElementById('edit_ens_date').value=d.date || '';
-            document.getElementById('edit_ens_description').value=d.description || '';
-            document.getElementById('edit_ens_youtube').value=d.youtube || '';
-            document.getElementById('edit_ens_image_url').value=d.image || '';
-            document.getElementById('editEnsImgPreview').src=d.image || '';
-            
-            // Populate authors
-            const editAuthorsCont = document.getElementById('edit-authors-container');
-            if (editAuthorsCont) {
-                editAuthorsCont.innerHTML = '';
-                let authorsList = [];
-                if (d.authors) {
-                    try {
-                        const parsed = JSON.parse(d.authors);
-                        if (Array.isArray(parsed) && parsed.length > 0) authorsList = parsed;
-                    } catch(e) {}
+    const editEnsModalEl = document.getElementById('editEnsenanzaModal');
+    if (editEnsModalEl) {
+        const editEnsModal = new bootstrap.Modal(editEnsModalEl);
+        document.querySelectorAll('.edit-ensenanza-btn').forEach(btn => {
+            btn.onclick = function() {
+                const d = this.dataset;
+                const idEl = document.getElementById('edit_ens_id'); if (idEl) idEl.value = d.id;
+                const titleEl = document.getElementById('edit_ens_title'); if (titleEl) titleEl.value = d.title;
+                const subEl = document.getElementById('edit_ens_subtitle'); if (subEl) subEl.value = d.subtitle || '';
+                const dateEl = document.getElementById('edit_ens_date'); if (dateEl) dateEl.value = d.date || '';
+                const descEl = document.getElementById('edit_ens_description'); if (descEl) descEl.value = d.description || '';
+                const ytEl = document.getElementById('edit_ens_youtube'); if (ytEl) ytEl.value = d.youtube || '';
+                const imgEl = document.getElementById('edit_ens_image_url'); if (imgEl) imgEl.value = d.image || '';
+                const prevEl = document.getElementById('editEnsImgPreview'); if (prevEl) prevEl.src = d.image || '';
+                
+                // Populate authors
+                const editAuthorsCont = document.getElementById('edit-authors-container');
+                if (editAuthorsCont) {
+                    editAuthorsCont.innerHTML = '';
+                    let authorsList = [];
+                    if (d.authors) {
+                        try {
+                            const parsed = JSON.parse(d.authors);
+                            if (Array.isArray(parsed) && parsed.length > 0) authorsList = parsed;
+                        } catch(e) {}
+                    }
+                    if (authorsList.length === 0) {
+                        authorsList = [{
+                            name: d.author || 'Moréh Kalev Aquerman',
+                            role: d.author_role || 'Moreh מורה',
+                            img: d.author_img || '/assets/img/team/kaleb.jpg'
+                        }];
+                    }
+                    authorsList.forEach(a => renderAuthorRow('edit-authors-container', a));
                 }
-                if (authorsList.length === 0) {
-                    authorsList = [{
-                        name: d.author || 'Moréh Kalev Aquerman',
-                        role: d.author_role || 'Moreh מורה',
-                        img: d.author_img || '/assets/img/team/kaleb.jpg'
-                    }];
-                }
-                authorsList.forEach(a => renderAuthorRow('edit-authors-container', a));
-            }
 
-            qEnsEdit.root.innerHTML=d.content || '';
-            editEnsModal.show();
-        };
-    });
-
-    // Form submissions with Quill content & Authors
-    const cEnsForm = document.getElementById('createEnsenanzaForm');
-    if(cEnsForm) cEnsForm.onsubmit=function(){
-        serializeAuthors('create-authors-container', 'create_ens_authors_json');
-        document.getElementById('createEnsenanzaContentInput').value=qEnsCreate.root.innerHTML;
-        return true;
-    };
-    const eEnsForm = document.getElementById('editEnsenanzaForm');
-    if(eEnsForm) eEnsForm.onsubmit=function(){
-        serializeAuthors('edit-authors-container', 'edit_ens_authors_json');
-        document.getElementById('editEnsenanzaContentInput').value=qEnsEdit.root.innerHTML;
-        return true;
-    };
+                if (qEnsEdit) qEnsEdit.root.innerHTML = d.content || '';
+                editEnsModal.show();
+            };
+        });
+    }
 
     // Init create haftara authors container
     const createHafAuthorsCont = document.getElementById('create-haf-authors-container');
@@ -1514,19 +1540,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const editHafModalEl = document.getElementById('editHaftaraModal');
     if (editHafModalEl) {
         const editHafModal = new bootstrap.Modal(editHafModalEl);
-        document.querySelectorAll('.edit-haftara-btn').forEach(btn=>{
-            btn.onclick=function(){
-                const d=this.dataset;
-                document.getElementById('edit_haf_id').value=d.id;
-                document.getElementById('edit_haf_title').value=d.title;
-                document.getElementById('edit_haf_subtitle').value=d.subtitle || '';
-                document.getElementById('edit_haf_parasha_id').value=d.parasha_id || '';
-                document.getElementById('edit_haf_reference').value=d.reference || '';
-                document.getElementById('edit_haf_description').value=d.description || '';
-                document.getElementById('edit_haf_youtube').value=d.youtube || '';
-                document.getElementById('edit_haf_audio').value=d.audio || '';
-                document.getElementById('edit_haf_image_url').value=d.image || '';
-                document.getElementById('editHafImgPreview').src=d.image || '';
+        document.querySelectorAll('.edit-haftara-btn').forEach(btn => {
+            btn.onclick = function() {
+                const d = this.dataset;
+                const idEl = document.getElementById('edit_haf_id'); if (idEl) idEl.value = d.id;
+                const titleEl = document.getElementById('edit_haf_title'); if (titleEl) titleEl.value = d.title;
+                const subEl = document.getElementById('edit_haf_subtitle'); if (subEl) subEl.value = d.subtitle || '';
+                const pIdEl = document.getElementById('edit_haf_parasha_id'); if (pIdEl) pIdEl.value = d.parasha_id || '';
+                const refEl = document.getElementById('edit_haf_reference'); if (refEl) refEl.value = d.reference || '';
+                const descEl = document.getElementById('edit_haf_description'); if (descEl) descEl.value = d.description || '';
+                const ytEl = document.getElementById('edit_haf_youtube'); if (ytEl) ytEl.value = d.youtube || '';
+                const audEl = document.getElementById('edit_haf_audio'); if (audEl) audEl.value = d.audio || '';
+                const imgEl = document.getElementById('edit_haf_image_url'); if (imgEl) imgEl.value = d.image || '';
+                const prevEl = document.getElementById('editHafImgPreview'); if (prevEl) prevEl.src = d.image || '';
 
                 // Populate authors for Haftara
                 const editHafAuthorsCont = document.getElementById('edit-haf-authors-container');
@@ -1549,106 +1575,152 @@ document.addEventListener('DOMContentLoaded', function() {
                     authorsList.forEach(a => renderAuthorRow('edit-haf-authors-container', a));
                 }
 
-                qHafEdit.root.innerHTML=d.content || '';
+                if (qHafEdit) qHafEdit.root.innerHTML = d.content || '';
                 editHafModal.show();
             };
         });
     }
 
-    const cHafForm = document.getElementById('createHaftaraForm');
-    if(cHafForm) cHafForm.onsubmit=function(){
-        serializeAuthors('create-haf-authors-container', 'create_haf_authors_json');
-        document.getElementById('createHaftaraContentInput').value=qHafCreate.root.innerHTML;
-        return true;
-    };
-    const eHafForm = document.getElementById('editHaftaraForm');
-    if(eHafForm) eHafForm.onsubmit=function(){
-        serializeAuthors('edit-haf-authors-container', 'edit_haf_authors_json');
-        document.getElementById('editHaftaraContentInput').value=qHafEdit.root.innerHTML;
-        return true;
-    };
-
     // Edit Blog modal
     const editBlogModalEl = document.getElementById('editBlogModal');
     if (editBlogModalEl) {
         const editBlogModal = new bootstrap.Modal(editBlogModalEl);
-        document.querySelectorAll('.edit-blog-btn').forEach(btn=>{
-            btn.onclick=function(){
-                const d=this.dataset;
-                document.getElementById('edit_blog_id').value=d.id;
-                document.getElementById('edit_blog_title').value=d.title;
-                document.getElementById('edit_blog_subtitle').value=d.subtitle || '';
-                document.getElementById('edit_blog_author').value=d.author || 'Hablemos de YHWH';
-                document.getElementById('edit_blog_summary').value=d.summary || '';
-                document.getElementById('edit_blog_tags').value=d.tags || '';
+        document.querySelectorAll('.edit-blog-btn').forEach(btn => {
+            btn.onclick = function() {
+                const d = this.dataset;
+                const idEl = document.getElementById('edit_blog_id'); if (idEl) idEl.value = d.id;
+                const titleEl = document.getElementById('edit_blog_title'); if (titleEl) titleEl.value = d.title;
+                const subEl = document.getElementById('edit_blog_subtitle'); if (subEl) subEl.value = d.subtitle || '';
+                const authEl = document.getElementById('edit_blog_author'); if (authEl) authEl.value = d.author || 'Hablemos de YHWH';
+                const sumEl = document.getElementById('edit_blog_summary'); if (sumEl) sumEl.value = d.summary || '';
+                const tagEl = document.getElementById('edit_blog_tags'); if (tagEl) tagEl.value = d.tags || '';
                 
-                var editCatSel=document.getElementById('edit_blog_category');
+                const editCatSel = document.getElementById('edit_blog_category');
                 if (editCatSel) {
-                    var catFound=false;
-                    for(var i=0;i<editCatSel.options.length;i++){if(editCatSel.options[i].value===d.category){catFound=true;break;}}
-                    if(!catFound && d.category){
-                        var opt=document.createElement('option');opt.value=d.category;opt.textContent=d.category;
-                        editCatSel.insertBefore(opt,editCatSel.querySelector('[value=__custom__]'));
+                    let catFound = false;
+                    for (let i = 0; i < editCatSel.options.length; i++) {
+                        if (editCatSel.options[i].value === d.category) { catFound = true; break; }
                     }
-                    editCatSel.value=d.category || 'Reflexiones';
+                    if (!catFound && d.category) {
+                        const opt = document.createElement('option'); opt.value = d.category; opt.textContent = d.category;
+                        editCatSel.insertBefore(opt, editCatSel.querySelector('[value=__custom__]'));
+                    }
+                    editCatSel.value = d.category || 'Reflexiones';
                 }
                 
-                document.getElementById('edit_blog_image_url').value=d.image || '';
-                document.getElementById('editBlogImgPreview').src=d.image || '/assets/img/blog/blog-1.jpg';
-                qBlogEdit.root.innerHTML=d.content || '';
+                const imgEl = document.getElementById('edit_blog_image_url'); if (imgEl) imgEl.value = d.image || '';
+                const prevEl = document.getElementById('editBlogImgPreview'); if (prevEl) prevEl.src = d.image || '/assets/img/blog/blog-1.jpg';
+                if (qBlogEdit) qBlogEdit.root.innerHTML = d.content || '';
                 editBlogModal.show();
             };
         });
     }
 
     // Edit Team modal
-    const editTeamModal = new bootstrap.Modal(document.getElementById('editTeamModal'));
-    document.querySelectorAll('.edit-team-btn').forEach(btn=>{
-        btn.onclick=function(){
-            const d=this.dataset;
-            document.getElementById('edit_team_id').value=d.id;
-            document.getElementById('edit_team_name').value=d.name;
-            document.getElementById('edit_team_role').value=d.role;
-            document.getElementById('edit_team_description').value=d.description;
-            document.getElementById('edit_team_image_url').value=d.img;
-            editTeamModal.show();
-        };
-    });
+    const editTeamModalEl = document.getElementById('editTeamModal');
+    if (editTeamModalEl) {
+        const editTeamModal = new bootstrap.Modal(editTeamModalEl);
+        document.querySelectorAll('.edit-team-btn').forEach(btn => {
+            btn.onclick = function() {
+                const d = this.dataset;
+                const idEl = document.getElementById('edit_team_id'); if (idEl) idEl.value = d.id;
+                const nameEl = document.getElementById('edit_team_name'); if (nameEl) nameEl.value = d.name;
+                const roleEl = document.getElementById('edit_team_role'); if (roleEl) roleEl.value = d.role;
+                const descEl = document.getElementById('edit_team_description'); if (descEl) descEl.value = d.description;
+                const imgEl = document.getElementById('edit_team_image_url'); if (imgEl) imgEl.value = d.img;
+                editTeamModal.show();
+            };
+        });
+    }
 
     // Edit Testimonial modal
-    const editTestModal = new bootstrap.Modal(document.getElementById('editTestimonialModal'));
-    document.querySelectorAll('.edit-testimonial-btn').forEach(btn=>{
-        btn.onclick=function(){
-            const d=this.dataset;
-            document.getElementById('edit_test_id').value=d.id;
-            document.getElementById('edit_test_name').value=d.name;
-            document.getElementById('edit_test_role').value=d.role;
-            document.getElementById('edit_test_img').value=d.img;
-            document.getElementById('edit_test_text').value=d.text;
-            editTestModal.show();
-        };
-    });
+    const editTestModalEl = document.getElementById('editTestimonialModal');
+    if (editTestModalEl) {
+        const editTestModal = new bootstrap.Modal(editTestModalEl);
+        document.querySelectorAll('.edit-testimonial-btn').forEach(btn => {
+            btn.onclick = function() {
+                const d = this.dataset;
+                const idEl = document.getElementById('edit_test_id'); if (idEl) idEl.value = d.id;
+                const nameEl = document.getElementById('edit_test_name'); if (nameEl) nameEl.value = d.name;
+                const roleEl = document.getElementById('edit_test_role'); if (roleEl) roleEl.value = d.role;
+                const imgEl = document.getElementById('edit_test_img'); if (imgEl) imgEl.value = d.img;
+                const txtEl = document.getElementById('edit_test_text'); if (txtEl) txtEl.value = d.text;
+                editTestModal.show();
+            };
+        });
+    }
 
-    // Form submissions with Quill content
-    document.getElementById('createParashaForm').onsubmit=function(){document.getElementById('createContentInput').value=qCreate.root.innerHTML;return true;};
-    document.getElementById('createPortfolioForm').onsubmit=function(){document.getElementById('portContentInput').value=qPort.root.innerHTML;return true;};
-    document.getElementById('editPortfolioForm').onsubmit=function(){document.getElementById('editPortContentInput').value=qEditPort.root.innerHTML;return true;};
+    // Form submissions with Quill content & Authors (All null-safe)
+    const cParForm = document.getElementById('createParashaForm');
+    if (cParForm) cParForm.onsubmit = function() {
+        const inp = document.getElementById('createContentInput');
+        if (inp && qCreate) inp.value = qCreate.root.innerHTML;
+        return true;
+    };
+    const cPortForm = document.getElementById('createPortfolioForm');
+    if (cPortForm) cPortForm.onsubmit = function() {
+        const inp = document.getElementById('portContentInput');
+        if (inp && qPort) inp.value = qPort.root.innerHTML;
+        return true;
+    };
+    const ePortForm = document.getElementById('editPortfolioForm');
+    if (ePortForm) ePortForm.onsubmit = function() {
+        const inp = document.getElementById('editPortContentInput');
+        if (inp && qEditPort) inp.value = qEditPort.root.innerHTML;
+        return true;
+    };
     const cEnsForm = document.getElementById('createEnsenanzaForm');
-    if(cEnsForm) cEnsForm.onsubmit=function(){document.getElementById('createEnsenanzaContentInput').value=qEnsCreate.root.innerHTML;return true;};
+    if (cEnsForm) cEnsForm.onsubmit = function() {
+        serializeAuthors('create-authors-container', 'create_ens_authors_json');
+        const inp = document.getElementById('createEnsenanzaContentInput');
+        if (inp && qEnsCreate) inp.value = qEnsCreate.root.innerHTML;
+        return true;
+    };
     const eEnsForm = document.getElementById('editEnsenanzaForm');
-    if(eEnsForm) eEnsForm.onsubmit=function(){document.getElementById('editEnsenanzaContentInput').value=qEnsEdit.root.innerHTML;return true;};
+    if (eEnsForm) eEnsForm.onsubmit = function() {
+        serializeAuthors('edit-authors-container', 'edit_ens_authors_json');
+        const inp = document.getElementById('editEnsenanzaContentInput');
+        if (inp && qEnsEdit) inp.value = qEnsEdit.root.innerHTML;
+        return true;
+    };
     const cHafForm = document.getElementById('createHaftaraForm');
-    if(cHafForm) cHafForm.onsubmit=function(){document.getElementById('createHaftaraContentInput').value=qHafCreate.root.innerHTML;return true;};
+    if (cHafForm) cHafForm.onsubmit = function() {
+        serializeAuthors('create-haf-authors-container', 'create_haf_authors_json');
+        const inp = document.getElementById('createHaftaraContentInput');
+        if (inp && qHafCreate) inp.value = qHafCreate.root.innerHTML;
+        return true;
+    };
     const eHafForm = document.getElementById('editHaftaraForm');
-    if(eHafForm) eHafForm.onsubmit=function(){document.getElementById('editHaftaraContentInput').value=qHafEdit.root.innerHTML;return true;};
+    if (eHafForm) eHafForm.onsubmit = function() {
+        serializeAuthors('edit-haf-authors-container', 'edit_haf_authors_json');
+        const inp = document.getElementById('editHaftaraContentInput');
+        if (inp && qHafEdit) inp.value = qHafEdit.root.innerHTML;
+        return true;
+    };
     const cBlogForm = document.getElementById('createBlogForm');
-    if(cBlogForm) cBlogForm.onsubmit=function(){document.getElementById('createBlogContentInput').value=qBlogCreate.root.innerHTML;return true;};
+    if (cBlogForm) cBlogForm.onsubmit = function() {
+        const inp = document.getElementById('createBlogContentInput');
+        if (inp && qBlogCreate) inp.value = qBlogCreate.root.innerHTML;
+        return true;
+    };
     const eBlogForm = document.getElementById('editBlogForm');
-    if(eBlogForm) eBlogForm.onsubmit=function(){document.getElementById('editBlogContentInput').value=qBlogEdit.root.innerHTML;return true;};
+    if (eBlogForm) eBlogForm.onsubmit = function() {
+        const inp = document.getElementById('editBlogContentInput');
+        if (inp && qBlogEdit) inp.value = qBlogEdit.root.innerHTML;
+        return true;
+    };
     const cdf = document.getElementById('createDynamicForm');
-    if(cdf) cdf.onsubmit=function(){document.getElementById('dynCreateContentInput').value=qDynCreate.root.innerHTML;return true;};
+    if (cdf) cdf.onsubmit = function() {
+        const inp = document.getElementById('dynCreateContentInput');
+        if (inp && qDynCreate) inp.value = qDynCreate.root.innerHTML;
+        return true;
+    };
     const edf = document.getElementById('editDynamicForm');
-    if(edf) edf.onsubmit=function(){document.getElementById('dynEditContentInput').value=qDynEdit.root.innerHTML;return true;};
+    if (edf) edf.onsubmit = function() {
+        const inp = document.getElementById('dynEditContentInput');
+        if (inp && qDynEdit) inp.value = qDynEdit.root.innerHTML;
+        return true;
+    };
 
     // Dynamic Modals Logic
     const createDynamicModalElement = document.getElementById('createDynamicModal');
@@ -1662,9 +1734,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('Esta sección aún no tiene una tabla de datos asociada.');
                     return;
                 }
-                document.getElementById('createDynamicModalTitle').textContent = 'Añadir Nuevo Registro - ' + title;
-                document.getElementById('createDynamicForm').action = '/admin/entity/' + table + '/add';
-                qDynCreate.root.innerHTML = '';
+                const tEl = document.getElementById('createDynamicModalTitle');
+                if (tEl) tEl.textContent = 'Añadir Nuevo Registro - ' + title;
+                const fEl = document.getElementById('createDynamicForm');
+                if (fEl) fEl.action = '/admin/entity/' + table + '/add';
+                if (qDynCreate) qDynCreate.root.innerHTML = '';
                 createDynamicModal.show();
             };
         });
@@ -1678,20 +1752,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 const table = this.dataset.table;
                 const title = this.dataset.title;
                 const id = this.dataset.id;
-                const r = JSON.parse(this.dataset.record);
+                let r = {};
+                try { r = JSON.parse(this.dataset.record); } catch(e) {}
 
-                document.getElementById('editDynamicModalTitle').textContent = 'Editar Registro - ' + title;
-                document.getElementById('editDynamicForm').action = '/admin/entity/' + table + '/update/' + id;
+                const tEl = document.getElementById('editDynamicModalTitle');
+                if (tEl) tEl.textContent = 'Editar Registro - ' + title;
+                const fEl = document.getElementById('editDynamicForm');
+                if (fEl) fEl.action = '/admin/entity/' + table + '/update/' + id;
                 
-                document.getElementById('edit_dyn_parasha_number').value = r.parasha_number || '';
-                document.getElementById('edit_dyn_title').value = r.title || r.titulo || '';
-                document.getElementById('edit_dyn_subtitle').value = r.subtitle || r.subtitulo || '';
-                document.getElementById('edit_dyn_description').value = r.description || r.descripcion || '';
-                document.getElementById('edit_dyn_youtube_link').value = r.youtube_link || r.video_url || '';
-                document.getElementById('dyn_edit_image_url').value = r.image_url || r.imagen_url || '';
-                document.getElementById('dynEditImgPreview').src = r.image_url || r.imagen_url || '';
+                const pnEl = document.getElementById('edit_dyn_parasha_number'); if (pnEl) pnEl.value = r.parasha_number || '';
+                const titEl = document.getElementById('edit_dyn_title'); if (titEl) titEl.value = r.title || r.titulo || '';
+                const subEl = document.getElementById('edit_dyn_subtitle'); if (subEl) subEl.value = r.subtitle || r.subtitulo || '';
+                const descEl = document.getElementById('edit_dyn_description'); if (descEl) descEl.value = r.description || r.descripcion || '';
+                const ytEl = document.getElementById('edit_dyn_youtube_link'); if (ytEl) ytEl.value = r.youtube_link || r.video_url || '';
+                const imgEl = document.getElementById('dyn_edit_image_url'); if (imgEl) imgEl.value = r.image_url || r.imagen_url || '';
+                const prevEl = document.getElementById('dynEditImgPreview'); if (prevEl) prevEl.src = r.image_url || r.imagen_url || '';
                 
-                qDynEdit.root.innerHTML = r.content || r.contenido || '';
+                if (qDynEdit) qDynEdit.root.innerHTML = r.content || r.contenido || '';
                 
                 editDynamicModal.show();
             };
@@ -1706,18 +1783,18 @@ document.addEventListener('DOMContentLoaded', function() {
         // Handle nested subtabs (Semillas Shorts / Enseñanzas)
         if (hash === '#admin-semillas-shorts' || hash === '#admin-semillas-ensenanzas') {
             const parentBtn = document.querySelector(`.nav-pills button[data-bs-target="#pills-semillas"]`);
-            if (parentBtn) {
+            if (parentBtn && typeof bootstrap !== 'undefined') {
                 bootstrap.Tab.getOrCreateInstance(parentBtn).show();
             }
             const subBtn = document.querySelector(`button[data-bs-target="${hash}"]`);
-            if (subBtn) {
+            if (subBtn && typeof bootstrap !== 'undefined') {
                 setTimeout(() => {
                     bootstrap.Tab.getOrCreateInstance(subBtn).show();
                 }, 30);
             }
         } else {
             const tabBtn = document.querySelector(`.nav-pills button[data-bs-target="${hash}"]`) || document.querySelector(`button[data-bs-target="${hash}"]`);
-            if (tabBtn) {
+            if (tabBtn && typeof bootstrap !== 'undefined') {
                 bootstrap.Tab.getOrCreateInstance(tabBtn).show();
             }
         }

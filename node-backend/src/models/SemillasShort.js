@@ -33,10 +33,11 @@ class SemillasShort {
                 { name: 'category', type: "VARCHAR(100) DEFAULT 'Aliyot con Niños'" },
                 { name: 'child_name', type: 'VARCHAR(255) DEFAULT NULL' },
                 { name: 'parasha_name', type: 'VARCHAR(255) DEFAULT NULL' },
-                { name: 'aliyah_number', type: 'INT DEFAULT 1' },
+                { name: 'aliyah_number', type: 'INT DEFAULT NULL' },
                 { name: 'verses_reference', type: 'VARCHAR(255) DEFAULT NULL' },
                 { name: 'video_url', type: 'VARCHAR(500) DEFAULT NULL' },
                 { name: 'youtube_short_url', type: 'VARCHAR(500) DEFAULT NULL' },
+                { name: 'youtube_url', type: 'VARCHAR(500) DEFAULT NULL' },
                 { name: 'thumbnail_url', type: 'VARCHAR(500) DEFAULT NULL' },
                 { name: 'description', type: 'TEXT DEFAULT NULL' },
                 { name: 'is_highlight', type: 'BOOLEAN DEFAULT FALSE' },
@@ -57,9 +58,24 @@ class SemillasShort {
                 }
             }
 
-            // Si existía la columna youtube_url como NOT NULL antigua, hacerla NULL
+            // Asegurar que columnas opcionales no tengan NOT NULL antiguo
             try {
                 await db.query(`ALTER TABLE semillas_shorts MODIFY COLUMN youtube_url VARCHAR(500) DEFAULT NULL`);
+            } catch(e) {}
+            try {
+                await db.query(`ALTER TABLE semillas_shorts MODIFY COLUMN youtube_short_url VARCHAR(500) DEFAULT NULL`);
+            } catch(e) {}
+            try {
+                await db.query(`ALTER TABLE semillas_shorts MODIFY COLUMN parasha_name VARCHAR(255) DEFAULT NULL`);
+            } catch(e) {}
+            try {
+                await db.query(`ALTER TABLE semillas_shorts MODIFY COLUMN aliyah_number INT DEFAULT NULL`);
+            } catch(e) {}
+            try {
+                await db.query(`ALTER TABLE semillas_shorts MODIFY COLUMN child_name VARCHAR(255) DEFAULT NULL`);
+            } catch(e) {}
+            try {
+                await db.query(`ALTER TABLE semillas_shorts MODIFY COLUMN verses_reference VARCHAR(255) DEFAULT NULL`);
             } catch(e) {}
 
         } catch (e) {

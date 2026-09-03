@@ -30,6 +30,22 @@ class Haftara {
 
         // Auto-link Haftarot to Parashot if unlinked
         await Haftara.autoLinkParashot();
+
+        // Auto-limpiar imágenes de personas que se hubieran guardado como portada de Haftará
+        try {
+            await db.query("UPDATE haftarot SET image_url = NULL WHERE image_url LIKE '%kaleb.jpg%' OR image_url LIKE '%/team/%'");
+        } catch(e) {}
+
+        // Sincronizar portada oficial de la Parashá si la Haftará no tiene imagen propia
+        try {
+            await db.query(`
+                UPDATE haftarot h
+                JOIN parashot p ON h.parasha_id = p.id
+                SET h.image_url = p.image_url
+                WHERE (h.image_url IS NULL OR h.image_url = '' OR h.image_url LIKE '%kaleb.jpg%' OR h.image_url LIKE '%/team/%')
+                  AND p.image_url IS NOT NULL AND p.image_url != ''
+            `);
+        } catch(e) {}
     }
 
     static async autoLinkParashot() {
@@ -41,6 +57,7 @@ class Haftara {
                         h.title LIKE CONCAT('%', p.title, '%')
                         OR h.parasha_reference LIKE CONCAT('%', p.title, '%')
                         OR (h.subtitle IS NOT NULL AND h.subtitle != '' AND (h.subtitle LIKE CONCAT('%', p.title, '%') OR p.subtitle LIKE CONCAT('%', h.subtitle, '%')))
+                        OR p.title LIKE CONCAT('%', REPLACE(REPLACE(h.title, 'Haftará', ''), 'Parashá', ''), '%')
                     )
                 )
                 SET h.parasha_id = p.id
@@ -83,11 +100,19 @@ class Haftara {
         }
 
         if (authorsList.length === 0) {
+            const defaultName = row.author || 'Moréh';
+            const isKaleb = defaultName.toLowerCase().includes('kale');
             authorsList = [{
-                name: row.author || 'Moréh Kalev Aquerman',
-                role: row.author_role || 'Moreh מורה',
-                img: row.author_img || '/assets/img/team/kaleb.jpg'
+                name: defaultName,
+                role: row.author_role || 'Moréh',
+                img: row.author_img || (isKaleb ? '/assets/img/team/kaleb.jpg' : `https://ui-avatars.com/api/?name=${encodeURIComponent(defaultName)}&background=d4a853&color=111&bold=true`)
             }];
+        } else {
+            authorsList = authorsList.map(a => {
+                const isKaleb = a.name && a.name.toLowerCase().includes('kale');
+                const img = a.img || (isKaleb ? '/assets/img/team/kaleb.jpg' : `https://ui-avatars.com/api/?name=${encodeURIComponent(a.name || 'M')}&background=d4a853&color=111&bold=true`);
+                return { ...a, img };
+            });
         }
 
         row.authors_list = authorsList;
@@ -122,9 +147,9 @@ class Haftara {
         row.youtube_id = ytId;
         row.youtube_thumbnail = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : '';
 
-        // Smart Display image helper
+        // Smart Display image helper (Avoid using team portraits as Haftará cover)
         let chosenImg = '';
-        if (row.image_url && row.image_url.trim() !== '') {
+        if (row.image_url && row.image_url.trim() !== '' && !row.image_url.includes('kaleb.jpg') && !row.image_url.includes('/team/')) {
             const cleanImg = row.image_url.trim();
             if (cleanImg.startsWith('http://') || cleanImg.startsWith('https://')) {
                 chosenImg = cleanImg;

@@ -98,12 +98,7 @@
                             <td><%= item.category %></td>
                             <td><%= item.event_date ? new Date(item.event_date).toLocaleDateString('es-ES') : '-' %></td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-primary me-1 edit-portfolio-btn"
-                                    data-id="<%= item.id %>" data-title="<%= item.title %>" data-category="<%= item.category %>"
-                                    data-date="<%= item.event_date ? new Date(item.event_date).toISOString().split('T')[0] : '' %>"
-                                    data-subtitle="<%= item.subtitle || '' %>" data-description="<%= item.description || '' %>"
-                                    data-image="<%= item.image_url || item.img %>"
-                                    data-content='<%= item.content ? item.content.replace(/'/g, "&#39;") : "" %>'>Editar</button>
+                                <a href="/admin/portfolio/edit/<%= item.id %>" class="btn btn-sm btn-primary me-1"><i class="bi bi-pencil me-1"></i>Editar</a>
                                 <a href="/admin/portfolio/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este Evento?')">Eliminar</a>
                             </td>
                         </tr>
@@ -122,30 +117,30 @@
                 </div>
                 <div class="table-responsive">
                     <table class="table table-dark table-hover">
-                        <thead><tr><th>Imagen</th><th>Título</th><th>Fecha</th><th>Vistas</th><th>Expositor</th><th>Referencia</th><th>Video</th><th>Acciones</th></tr></thead>
+                        <thead><tr><th>Título</th><th>Fecha</th><th>Expositor</th><th>Subtítulo</th><th>Video</th><th>Acciones</th></tr></thead>
                         <tbody>
                             <% if (typeof ensenanzas !== 'undefined' && ensenanzas && ensenanzas.length > 0) { %>
                                 <% ensenanzas.forEach(item => { %>
                                 <% 
-                                    const dateStr = item.teaching_date ? new Date(item.teaching_date).toISOString().split('T')[0] : (item.created_at ? new Date(item.created_at).toISOString().split('T')[0] : '');
+                                    let dateStr = '-';
+                                    if (item.teaching_date) {
+                                        try {
+                                            const d = new Date(item.teaching_date);
+                                            dateStr = !isNaN(d) ? d.toISOString().split('T')[0] : item.teaching_date;
+                                        } catch(e) { dateStr = item.teaching_date; }
+                                    }
                                 %>
                                 <tr>
-                                    <td>
-                                        <% if (item.image_url) { %>
-                                            <img src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 45px; height: 35px; object-fit: cover; border-radius: 4px;">
-                                        <% } else { %>
-                                            <span class="text-muted"><i class="bi bi-image"></i></span>
-                                        <% } %>
-                                    </td>
                                     <td><strong><%= item.title %></strong></td>
-                                    <td><span class="badge bg-secondary font-monospace"><i class="bi bi-calendar3 me-1 text-warning"></i><%= dateStr || '-' %></span></td>
-                                    <td><span class="badge bg-dark border border-secondary text-info"><i class="bi bi-eye-fill me-1"></i><%= item.views || 0 %></span></td>
+                                    <td><%= dateStr %></td>
                                     <td>
                                         <% if (item.authors_list && item.authors_list.length > 1) { %>
                                             <div class="d-flex align-items-center gap-2">
                                                 <div class="d-flex" style="margin-left: 5px;">
-                                                    <% item.authors_list.forEach((auth, aIdx) => { %>
-                                                        <img src="<%= auth.img || '/assets/img/team/kaleb.jpg' %>" alt="<%= auth.name %>" title="<%= auth.name %> (<%= auth.role %>)" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853; margin-left: <%= aIdx === 0 ? '0' : '-10px' %>; position: relative; z-index: <%= 10 - aIdx %>;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                    <% item.authors_list.forEach((auth, aIdx) => { 
+                                                        const authAvatar = auth.img && !auth.img.includes('kaleb.jpg') ? auth.img : (!auth.name.toLowerCase().includes('kale') ? `https://ui-avatars.com/api/?name=${encodeURIComponent(auth.name)}&background=d4a853&color=111&bold=true` : (auth.img || '/assets/img/team/kaleb.jpg'));
+                                                    %>
+                                                        <img src="<%= authAvatar %>" alt="<%= auth.name %>" title="<%= auth.name %> (<%= auth.role %>)" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853; margin-left: <%= aIdx === 0 ? '0' : '-10px' %>; position: relative; z-index: <%= 10 - aIdx %>;" onerror="this.src='https://ui-avatars.com/api/?name=<%= encodeURIComponent(auth.name) %>&background=d4a853&color=111'">
                                                     <% }) %>
                                                 </div>
                                                 <div>
@@ -153,12 +148,19 @@
                                                     <span class="badge bg-warning text-dark px-1 py-0" style="font-size: 0.68rem;"><%= item.authors_list.length %> expositores</span>
                                                 </div>
                                             </div>
-                                        <% } else { %>
+                                        <% } else { 
+                                            const eAuthName = (item.authors_list && item.authors_list[0]) ? item.authors_list[0].name : (item.author || 'Moréh Kaleb');
+                                            const eAuthRole = (item.authors_list && item.authors_list[0]) ? item.authors_list[0].role : (item.author_role || 'Moréh');
+                                            let eAuthImg = (item.authors_list && item.authors_list[0]) ? item.authors_list[0].img : (item.author_img || '');
+                                            if (!eAuthImg || (eAuthImg.includes('kaleb.jpg') && !eAuthName.toLowerCase().includes('kale'))) {
+                                                eAuthImg = `https://ui-avatars.com/api/?name=${encodeURIComponent(eAuthName)}&background=d4a853&color=111&bold=true`;
+                                            }
+                                        %>
                                             <div class="d-flex align-items-center gap-2">
-                                                <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #d4a853;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                <img src="<%= eAuthImg %>" alt="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #d4a853;" onerror="this.src='https://ui-avatars.com/api/?name=<%= encodeURIComponent(eAuthName) %>&background=d4a853&color=111'">
                                                 <div>
-                                                    <div class="small fw-semibold text-white"><%= item.author || 'Moréh Kaleb' %></div>
-                                                    <div class="text-white-50" style="font-size: 0.72rem;"><%= item.author_role || 'Moréh' %></div>
+                                                    <div class="small fw-semibold text-white"><%= eAuthName %></div>
+                                                    <div class="text-white-50" style="font-size: 0.72rem;"><%= eAuthRole %></div>
                                                 </div>
                                             </div>
                                         <% } %>
@@ -172,26 +174,13 @@
                                         <% } %>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-primary me-1 edit-ensenanza-btn"
-                                            data-id="<%= item.id %>"
-                                            data-title="<%= item.title %>"
-                                            data-subtitle="<%= item.subtitle || '' %>"
-                                            data-date="<%= dateStr %>"
-                                            data-description="<%= item.description || '' %>"
-                                            data-image="<%= item.image_url || '' %>"
-                                            data-youtube="<%= item.youtube_link || '' %>"
-                                            data-author="<%= item.author || 'Moréh Kaleb' %>"
-                                            data-author_role="<%= item.author_role || 'Moréh' %>"
-                                            data-author_img="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>"
-                                            data-authors='<%- (item.authors_list ? JSON.stringify(item.authors_list) : (item.authors || "[]")).replace(/'/g, "&#39;") %>'
-                                            data-content='<%= item.content ? item.content.replace(/'/g, "&#39;") : "" %>'>Editar</button>
-                                        <a href="/admin/ensenanzas/edit/<%= item.id %>" class="btn btn-sm btn-outline-light me-1" title="Editor completo"><i class="bi bi-pencil-square"></i></a>
+                                        <a href="/admin/ensenanzas/edit/<%= item.id %>" class="btn btn-sm btn-primary me-1"><i class="bi bi-pencil me-1"></i>Editar</a>
                                         <a href="/admin/ensenanzas/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta Enseñanza?')">Eliminar</a>
                                     </td>
                                 </tr>
                                 <% }) %>
                             <% } else { %>
-                                <tr><td colspan="8" class="text-center text-white-50">No hay enseñanzas registradas</td></tr>
+                                <tr><td colspan="6" class="text-center text-white-50">No hay enseñanzas registradas</td></tr>
                             <% } %>
                         </tbody>
                     </table>
@@ -212,11 +201,17 @@
                                 <% haftarot.forEach(item => { %>
                                 <tr>
                                     <td>
-                                        <% const hafThumb = item.image_url || item.youtube_thumbnail; %>
+                                        <% 
+                                            let hafThumb = item.display_image || item.image_url || item.youtube_thumbnail || item.parasha_image_url;
+                                            if (hafThumb && (hafThumb.includes('kaleb.jpg') || hafThumb.includes('/team/'))) {
+                                                hafThumb = item.youtube_thumbnail || item.parasha_image_url || '';
+                                            }
+                                        %>
                                         <% if (hafThumb) { %>
-                                            <img src="<%= hafThumb %>" alt="<%= item.title %>" style="width: 45px; height: 35px; object-fit: cover; border-radius: 4px;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                            <img src="<%= hafThumb %>" alt="<%= item.title %>" style="width: 45px; height: 35px; object-fit: cover; border-radius: 4px;" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='inline-flex';">
+                                            <span class="text-warning align-items-center justify-content-center bg-dark border border-secondary rounded" style="width: 45px; height: 35px; display: none;"><i class="bi bi-scroll"></i></span>
                                         <% } else { %>
-                                            <span class="text-muted"><i class="bi bi-scroll"></i></span>
+                                            <span class="d-inline-flex align-items-center justify-content-center bg-dark border border-secondary rounded text-warning" style="width: 45px; height: 35px;"><i class="bi bi-scroll"></i></span>
                                         <% } %>
                                     </td>
                                     <td><strong><%= item.title %></strong></td>
@@ -225,8 +220,10 @@
                                         <% if (item.authors_list && item.authors_list.length > 1) { %>
                                             <div class="d-flex align-items-center gap-2">
                                                 <div class="d-flex" style="margin-left: 5px;">
-                                                    <% item.authors_list.forEach((auth, aIdx) => { %>
-                                                        <img src="<%= auth.img || '/assets/img/team/kaleb.jpg' %>" alt="<%= auth.name %>" title="<%= auth.name %> (<%= auth.role %>)" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853; margin-left: <%= aIdx === 0 ? '0' : '-10px' %>; position: relative; z-index: <%= 10 - aIdx %>;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                    <% item.authors_list.forEach((auth, aIdx) => { 
+                                                        const authAvatar = auth.img && !auth.img.includes('kaleb.jpg') ? auth.img : (!auth.name.toLowerCase().includes('kale') ? `https://ui-avatars.com/api/?name=${encodeURIComponent(auth.name)}&background=d4a853&color=111&bold=true` : (auth.img || '/assets/img/team/kaleb.jpg'));
+                                                    %>
+                                                        <img src="<%= authAvatar %>" alt="<%= auth.name %>" title="<%= auth.name %> (<%= auth.role %>)" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853; margin-left: <%= aIdx === 0 ? '0' : '-10px' %>; position: relative; z-index: <%= 10 - aIdx %>;" onerror="this.src='https://ui-avatars.com/api/?name=<%= encodeURIComponent(auth.name) %>&background=d4a853&color=111'">
                                                     <% }) %>
                                                 </div>
                                                 <div>
@@ -234,12 +231,19 @@
                                                     <span class="badge bg-warning text-dark px-1 py-0" style="font-size: 0.68rem;"><%= item.authors_list.length %> expositores</span>
                                                 </div>
                                             </div>
-                                        <% } else { %>
+                                        <% } else { 
+                                            const singleAuthName = (item.authors_list && item.authors_list[0]) ? item.authors_list[0].name : (item.author || 'Moréh');
+                                            const singleAuthRole = (item.authors_list && item.authors_list[0]) ? item.authors_list[0].role : (item.author_role || 'Moréh');
+                                            let singleAuthImg = (item.authors_list && item.authors_list[0]) ? item.authors_list[0].img : (item.author_img || '');
+                                            if (!singleAuthImg || (singleAuthImg.includes('kaleb.jpg') && !singleAuthName.toLowerCase().includes('kale'))) {
+                                                singleAuthImg = `https://ui-avatars.com/api/?name=${encodeURIComponent(singleAuthName)}&background=d4a853&color=111&bold=true`;
+                                            }
+                                        %>
                                             <div class="d-flex align-items-center gap-2">
-                                                <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #d4a853;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                <img src="<%= singleAuthImg %>" alt="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #d4a853;" onerror="this.src='https://ui-avatars.com/api/?name=<%= encodeURIComponent(singleAuthName) %>&background=d4a853&color=111'">
                                                 <div>
-                                                    <div class="small fw-semibold text-white"><%= item.author || 'Moréh Kaleb' %></div>
-                                                    <div class="text-white-50" style="font-size: 0.72rem;"><%= item.author_role || 'Moréh' %></div>
+                                                    <div class="small fw-semibold text-white"><%= singleAuthName %></div>
+                                                    <div class="text-white-50" style="font-size: 0.72rem;"><%= singleAuthRole %></div>
                                                 </div>
                                             </div>
                                         <% } %>
@@ -269,28 +273,13 @@
                                         <% } %>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-primary me-1 edit-haftara-btn"
-                                            data-id="<%= item.id %>"
-                                            data-parasha_id="<%= item.parasha_id || '' %>"
-                                            data-title="<%= item.title %>"
-                                            data-subtitle="<%= item.subtitle || '' %>"
-                                            data-reference="<%= item.parasha_reference || '' %>"
-                                            data-description="<%= item.description || '' %>"
-                                            data-image="<%= item.image_url || '' %>"
-                                            data-youtube="<%= item.youtube_link || '' %>"
-                                            data-audio="<%= item.audio_url || '' %>"
-                                            data-author="<%= item.author || 'Moréh Kaleb' %>"
-                                            data-author_role="<%= item.author_role || 'Moréh' %>"
-                                            data-author_img="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>"
-                                            data-authors='<%- (item.authors_list ? JSON.stringify(item.authors_list) : (item.authors || "[]")).replace(/'/g, "&#39;") %>'
-                                            data-content='<%= item.content ? item.content.replace(/'/g, "&#39;") : "" %>'>Editar</button>
-                                        <a href="/admin/haftara/edit/<%= item.id %>" class="btn btn-sm btn-outline-light me-1" title="Editor completo"><i class="bi bi-pencil-square"></i></a>
+                                        <a href="/admin/haftara/edit/<%= item.id %>" class="btn btn-sm btn-primary me-1"><i class="bi bi-pencil me-1"></i>Editar</a>
                                         <a href="/admin/haftara/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta Haftará?')">Eliminar</a>
                                     </td>
                                 </tr>
                                 <% }) %>
                             <% } else { %>
-                                <tr><td colspan="7" class="text-center text-white-50">No hay Haftarot registradas</td></tr>
+                                <tr><td colspan="8" class="text-center text-white-50">No hay Haftarot registradas</td></tr>
                             <% } %>
                         </tbody>
                     </table>
@@ -600,17 +589,7 @@
                                         </ul>
                                     </div>
 
-                                    <button type="button" class="btn btn-sm btn-primary me-1 edit-blog-btn"
-                                        data-id="<%= post.id %>"
-                                        data-title="<%= post.title %>"
-                                        data-subtitle="<%= post.subtitle || '' %>"
-                                        data-category="<%= post.category || 'Reflexiones' %>"
-                                        data-author="<%= post.author || 'Hablemos de YHWH' %>"
-                                        data-summary="<%= post.summary || '' %>"
-                                        data-tags="<%= post.tags || '' %>"
-                                        data-image="<%= post.image_url || '' %>"
-                                        data-content='<%= post.content ? post.content.replace(/'/g, "&#39;") : "" %>'>Editar</button>
-                                    <a href="/admin/blog/edit/<%= post.id %>" class="btn btn-sm btn-outline-light me-1" title="Editor completo"><i class="bi bi-pencil-square"></i></a>
+                                    <a href="/admin/blog/edit/<%= post.id %>" class="btn btn-sm btn-primary me-1"><i class="bi bi-pencil me-1"></i>Editar</a>
                                     <a href="/admin/blog/delete/<%= post.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este artículo del blog?')">Eliminar</a>
                                 </td>
                             </tr>
