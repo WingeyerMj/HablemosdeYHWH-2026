@@ -165,77 +165,208 @@
                                 <p class="mb-0 text-muted" style="font-size: 0.95rem; line-height: 1.6;">
                                     ¡Nuestros pequeños se deleitan en la Palabra! Disfruta de los videos de las <strong>Aliyot semanales</strong> y de <strong>temas diversos</strong> con historias bíblicas, valores y reflexiones infantiles en pantalla interactiva.
                                 </p>
-                                              <!-- Filtros y Controles del Slider de Shorts -->
-                        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
-                            <div class="d-flex align-items-center gap-2 flex-wrap" id="frontendShortFilters">
-                                <button type="button" class="btn btn-sm rounded-pill px-3 py-2 fw-bold short-filter-btn active" onclick="filterFrontendShorts('all', this)" style="background: #0284c7; color: #fff; border: 1.5px solid #0284c7; transition: all 0.25s ease;">
-                                    <i class="bi bi-grid-fill me-1"></i> Todos (<%= (typeof shorts !== 'undefined' && shorts) ? shorts.length : 0 %>)
-                                </button>
-                                <button type="button" class="btn btn-sm rounded-pill px-3 py-2 fw-bold short-filter-btn" onclick="filterFrontendShorts('aliya', this)" style="background: #ffffff; color: #0369a1; border: 1.5px solid #bae6fd; transition: all 0.25s ease;">
-                                    <i class="bi bi-book-fill me-1 text-info"></i> 📖 Aliyot con Niños
-                                </button>
-                                <button type="button" class="btn btn-sm rounded-pill px-3 py-2 fw-bold short-filter-btn" onclick="filterFrontendShorts('general', this)" style="background: #ffffff; color: #6b21a8; border: 1.5px solid #e9d5ff; transition: all 0.25s ease;">
-                                    <i class="bi bi-star-fill me-1 text-warning"></i> 🌟 Temas Diversos & Historias
-                                </button>
-                            </div>
-                            
-                            <!-- Controles de Navegación del Carrusel -->
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="small text-muted fst-italic d-none d-md-inline me-2">
-                                    <i class="bi bi-arrows-expand-vertical me-1" style="transform: rotate(90deg); display: inline-block;"></i> Desliza para explorar más
-                                </span>
-                                <div class="btn-group shadow-sm rounded-pill p-1" style="background: rgba(2, 132, 199, 0.08); border: 1px solid rgba(2, 132, 199, 0.2);">
-                                    <button type="button" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center shorts-nav-btn" id="shortsNavPrev" onclick="slideShorts('prev')" title="Ver anteriores" style="width: 38px; height: 38px; background: #fff; color: #0284c7; border: 1px solid #bae6fd; transition: all 0.2s;">
-                                        <i class="bi bi-chevron-left fw-bold"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center shorts-nav-btn ms-1" id="shortsNavNext" onclick="slideShorts('next')" title="Ver más recientes" style="width: 38px; height: 38px; background: #0284c7; color: #fff; border: 1px solid #0284c7; transition: all 0.2s;">
-                                        <i class="bi bi-chevron-right fw-bold"></i>
-                                    </button>
+                        <% 
+                            const allShorts = (typeof shorts !== 'undefined' && shorts) ? shorts : [];
+                            const generalShorts = allShorts.filter(s => s.short_type === 'general');
+                            const aliyotShorts = allShorts.filter(s => s.short_type !== 'general');
+                        %>
+
+                        <!-- ============================================================ -->
+                        <!-- SECCIÓN 1: SLIDER DE SHORTS GENERALES (TEMAS DIVERSOS)       -->
+                        <!-- ============================================================ -->
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 42px; height: 42px; background: linear-gradient(135deg, #7e22ce, #a855f7); color: #fff; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(126,34,206,0.25);">
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="fw-bold mb-0 d-flex align-items-center gap-2" style="color: #6b21a8;">
+                                            🌟 Temas Diversos & Historias Bíblicas
+                                            <span class="badge rounded-pill" style="background: rgba(107,33,168,0.12); color: #6b21a8; font-size: 0.8rem;">
+                                                <%= generalShorts.length %>
+                                            </span>
+                                        </h5>
+                                        <p class="mb-0 text-muted small">Historias bíblicas, valores, reflexiones y enseñanzas cortas en formato vertical.</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Controles del Slider 1 -->
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="small text-muted fst-italic d-none d-md-inline me-1">
+                                        <i class="bi bi-arrows-expand-vertical me-1" style="transform: rotate(90deg); display: inline-block;"></i> Desliza para explorar
+                                    </span>
+                                    <div class="btn-group shadow-sm rounded-pill p-1" style="background: rgba(107,33,168,0.08); border: 1px solid rgba(107,33,168,0.2);">
+                                        <button type="button" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" id="navGeneralPrev" onclick="slideTrack('generalShortsTrack', 'prev')" title="Anterior" style="width: 36px; height: 36px; background: #fff; color: #6b21a8; border: 1px solid #e9d5ff; transition: all 0.2s;">
+                                            <i class="bi bi-chevron-left fw-bold"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center ms-1" id="navGeneralNext" onclick="slideTrack('generalShortsTrack', 'next')" title="Siguiente" style="width: 36px; height: 36px; background: #6b21a8; color: #fff; border: 1px solid #6b21a8; transition: all 0.2s;">
+                                            <i class="bi bi-chevron-right fw-bold"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Carrusel / Slider de Shorts Verticales (4 por pantalla en escritorio) -->
-                        <div class="shorts-carousel-container position-relative mb-4">
-                            <!-- Floating Left Arrow -->
-                            <button type="button" class="shorts-float-arrow shorts-float-left shadow-lg" onclick="slideShorts('prev')" id="floatShortsPrev" title="Anterior">
-                                <i class="bi bi-chevron-left"></i>
-                            </button>
+                            <!-- Slider Container 1 -->
+                            <div class="shorts-carousel-container position-relative">
+                                <button type="button" class="shorts-float-arrow shorts-float-left shadow-lg float-arrow-purple" onclick="slideTrack('generalShortsTrack', 'prev')" id="floatGeneralPrev" title="Anterior">
+                                    <i class="bi bi-chevron-left"></i>
+                                </button>
 
-                            <!-- Slider Track -->
-                            <div class="shorts-slider-track" id="frontendShortsGrid">
-                                <% if (typeof shorts !== 'undefined' && shorts && shorts.length > 0) { %>
-                                    <% shorts.forEach((short, idx) => { %>
-                                        <div class="frontend-short-item" data-type="<%= short.short_type || 'aliya' %>">
-                                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden short-card position-relative h-100" 
-                                                 onclick="openShortModal(<%= idx %>)" 
-                                                 style="cursor: pointer; background: #000; border: 2px solid transparent; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); aspect-ratio: 9 / 16; max-height: 480px;">
-                                                
-                                                <!-- Poster / Image -->
-                                                <img src="<%= short.thumbnail_url || '/assets/img/pagina/semillas_torah_banner.png' %>" 
-                                                     alt="<%= short.title %>" 
-                                                     class="short-thumb w-100 h-100" 
-                                                     style="object-fit: cover; transition: transform 0.5s ease;">
+                                <div class="shorts-slider-track" id="generalShortsTrack">
+                                    <% if (generalShorts && generalShorts.length > 0) { %>
+                                        <% generalShorts.forEach((short) => { %>
+                                            <% const globalIdx = allShorts.indexOf(short); %>
+                                            <div class="frontend-short-item">
+                                                <div class="card border-0 shadow-sm rounded-4 overflow-hidden short-card position-relative h-100" 
+                                                     onclick="openShortModal(<%= globalIdx %>)" 
+                                                     style="cursor: pointer; background: #000; border: 2px solid transparent; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); aspect-ratio: 9 / 16; max-height: 480px;">
+                                                    
+                                                    <img src="<%= short.thumbnail_url || '/assets/img/pagina/semillas_torah_banner.png' %>" 
+                                                         alt="<%= short.title %>" 
+                                                         class="short-thumb w-100 h-100" 
+                                                         style="object-fit: cover; transition: transform 0.5s ease;">
 
-                                                <!-- Gradient Overlay -->
-                                                <div class="position-absolute top-0 start-0 w-100 h-100 short-overlay" 
-                                                     style="background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.88) 100%); pointer-events: none;">
-                                                </div>
+                                                    <div class="position-absolute top-0 start-0 w-100 h-100 short-overlay" 
+                                                         style="background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.88) 100%); pointer-events: none;">
+                                                    </div>
 
-                                                <!-- Top Badges -->
-                                                <div class="position-absolute top-0 start-0 w-100 p-3 d-flex justify-content-between align-items-center z-2">
-                                                    <div class="d-flex gap-1 flex-wrap">
-                                                        <% if (short.is_highlight) { %>
-                                                            <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); font-size: 0.72rem; color: #fff;">
-                                                                <i class="bi bi-star-fill me-1"></i> Destacado
-                                                            </span>
-                                                        <% } %>
-                                                        
-                                                        <% if (short.short_type === 'general') { %>
+                                                    <!-- Top Badges -->
+                                                    <div class="position-absolute top-0 start-0 w-100 p-3 d-flex justify-content-between align-items-center z-2">
+                                                        <div class="d-flex gap-1 flex-wrap">
+                                                            <% if (short.is_highlight) { %>
+                                                                <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); font-size: 0.72rem; color: #fff;">
+                                                                    <i class="bi bi-star-fill me-1"></i> Destacado
+                                                                </span>
+                                                            <% } %>
                                                             <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: rgba(107,33,168,0.9); backdrop-filter: blur(4px); font-size: 0.72rem; color: #fff;">
                                                                 <i class="bi bi-star-fill me-1 text-warning"></i> <%= short.category || 'Tema Diverso' %>
                                                             </span>
-                                                        <% } else { %>
+                                                        </div>
+                                                        <% if (short.video_url || short.youtube_short_url) { %>
+                                                            <span class="badge bg-dark bg-opacity-75 rounded-circle p-2 shadow-sm text-white" title="Video disponible">
+                                                                <i class="bi bi-play-fill fs-6"></i>
+                                                            </span>
+                                                        <% } %>
+                                                    </div>
+
+                                                    <!-- Play Button Overlay -->
+                                                    <div class="position-absolute top-50 start-50 translate-middle play-btn-overlay z-2 text-center" style="transition: all 0.3s ease;">
+                                                        <div class="rounded-circle d-flex align-items-center justify-content-center shadow-lg" 
+                                                             style="width: 58px; height: 58px; background: rgba(255,255,255,0.92); color: #6b21a8; font-size: 1.6rem; backdrop-filter: blur(4px); transition: transform 0.3s ease;">
+                                                            <i class="bi bi-play-fill ms-1"></i>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Bottom Info -->
+                                                    <div class="position-absolute bottom-0 start-0 w-100 p-3 z-2 text-white">
+                                                        <% if (short.category) { %>
+                                                            <div class="d-inline-flex align-items-center gap-1 px-2 py-1 mb-2 rounded-pill shadow-sm" style="background: rgba(14,116,144,0.85); backdrop-filter: blur(4px); font-size: 0.72rem; font-weight: 600;">
+                                                                <i class="bi bi-tag-fill text-warning"></i> <%= short.category %>
+                                                            </div>
+                                                        <% } %>
+
+                                                        <h6 class="fw-bold mb-1 text-white text-truncate-2" style="font-size: 0.95rem; line-height: 1.35; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
+                                                            <%= short.title %>
+                                                        </h6>
+
+                                                        <% if (short.child_name) { %>
+                                                            <div class="small d-flex align-items-center gap-1 text-info fw-semibold mb-1" style="font-size: 0.82rem; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
+                                                                <i class="bi bi-person-heart text-danger"></i> <%= short.child_name %>
+                                                            </div>
+                                                        <% } %>
+
+                                                        <% if (short.verses_reference) { %>
+                                                            <div class="text-white-50 small text-truncate" style="font-size: 0.75rem;">
+                                                                <i class="bi bi-book me-1"></i> <%= short.verses_reference %>
+                                                            </div>
+                                                        <% } %>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <div class="w-100 text-center py-4 bg-light rounded-4 border border-dashed my-2">
+                                            <p class="text-muted mb-0"><i class="bi bi-camera-reels me-1"></i> Pronto se publicarán nuevos videos de historias y temas diversos.</p>
+                                        </div>
+                                    <% } %>
+                                </div>
+
+                                <button type="button" class="shorts-float-arrow shorts-float-right shadow-lg float-arrow-purple" onclick="slideTrack('generalShortsTrack', 'next')" id="floatGeneralNext" title="Siguiente">
+                                    <i class="bi bi-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- ============================================================ -->
+                        <!-- SECCIÓN 2: SLIDER DE ALIYOT CON NIÑOS (LECTURAS DE TORÁ)     -->
+                        <!-- ============================================================ -->
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 42px; height: 42px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: #fff; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(2,132,199,0.25);">
+                                        <i class="bi bi-book-half"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="fw-bold mb-0 d-flex align-items-center gap-2" style="color: #0369a1;">
+                                            📖 Aliyot con Niños · Lecturas y Porciones Semanales
+                                            <span class="badge rounded-pill" style="background: rgba(2,132,199,0.12); color: #0284c7; font-size: 0.8rem;">
+                                                <%= aliyotShorts.length %>
+                                            </span>
+                                        </h5>
+                                        <p class="mb-0 text-muted small">Nuestros pequeños bendiciendo y leyendo las porciones semanales de la Torá.</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Controles del Slider 2 -->
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="small text-muted fst-italic d-none d-md-inline me-1">
+                                        <i class="bi bi-arrows-expand-vertical me-1" style="transform: rotate(90deg); display: inline-block;"></i> Desliza para explorar
+                                    </span>
+                                    <div class="btn-group shadow-sm rounded-pill p-1" style="background: rgba(2, 132, 199, 0.08); border: 1px solid rgba(2, 132, 199, 0.2);">
+                                        <button type="button" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" id="navAliyotPrev" onclick="slideTrack('aliyotShortsTrack', 'prev')" title="Anterior" style="width: 36px; height: 36px; background: #fff; color: #0284c7; border: 1px solid #bae6fd; transition: all 0.2s;">
+                                            <i class="bi bi-chevron-left fw-bold"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center ms-1" id="navAliyotNext" onclick="slideTrack('aliyotShortsTrack', 'next')" title="Siguiente" style="width: 36px; height: 36px; background: #0284c7; color: #fff; border: 1px solid #0284c7; transition: all 0.2s;">
+                                            <i class="bi bi-chevron-right fw-bold"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Slider Container 2 -->
+                            <div class="shorts-carousel-container position-relative">
+                                <button type="button" class="shorts-float-arrow shorts-float-left shadow-lg float-arrow-blue" onclick="slideTrack('aliyotShortsTrack', 'prev')" id="floatAliyotPrev" title="Anterior">
+                                    <i class="bi bi-chevron-left"></i>
+                                </button>
+
+                                <div class="shorts-slider-track" id="aliyotShortsTrack">
+                                    <% if (aliyotShorts && aliyotShorts.length > 0) { %>
+                                        <% aliyotShorts.forEach((short) => { %>
+                                            <% const globalIdx = allShorts.indexOf(short); %>
+                                            <div class="frontend-short-item">
+                                                <div class="card border-0 shadow-sm rounded-4 overflow-hidden short-card position-relative h-100" 
+                                                     onclick="openShortModal(<%= globalIdx %>)" 
+                                                     style="cursor: pointer; background: #000; border: 2px solid transparent; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); aspect-ratio: 9 / 16; max-height: 480px;">
+                                                    
+                                                    <img src="<%= short.thumbnail_url || '/assets/img/pagina/semillas_torah_banner.png' %>" 
+                                                         alt="<%= short.title %>" 
+                                                         class="short-thumb w-100 h-100" 
+                                                         style="object-fit: cover; transition: transform 0.5s ease;">
+
+                                                    <div class="position-absolute top-0 start-0 w-100 h-100 short-overlay" 
+                                                         style="background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.88) 100%); pointer-events: none;">
+                                                    </div>
+
+                                                    <!-- Top Badges -->
+                                                    <div class="position-absolute top-0 start-0 w-100 p-3 d-flex justify-content-between align-items-center z-2">
+                                                        <div class="d-flex gap-1 flex-wrap">
+                                                            <% if (short.is_highlight) { %>
+                                                                <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); font-size: 0.72rem; color: #fff;">
+                                                                    <i class="bi bi-star-fill me-1"></i> Destacado
+                                                                </span>
+                                                            <% } %>
                                                             <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: rgba(2,132,199,0.9); backdrop-filter: blur(4px); font-size: 0.72rem; color: #fff;">
                                                                 <i class="bi bi-camera-reels me-1"></i> Aliyá
                                                             </span>
@@ -244,70 +375,61 @@
                                                                     <%= short.aliyah_number %>ª Aliyá
                                                                 </span>
                                                             <% } %>
+                                                        </div>
+                                                        <% if (short.video_url || short.youtube_short_url) { %>
+                                                            <span class="badge bg-dark bg-opacity-75 rounded-circle p-2 shadow-sm text-white" title="Video disponible">
+                                                                <i class="bi bi-play-fill fs-6"></i>
+                                                            </span>
                                                         <% } %>
                                                     </div>
-                                                    <% if (short.video_url || short.youtube_short_url) { %>
-                                                        <span class="badge bg-dark bg-opacity-75 rounded-circle p-2 shadow-sm text-white" title="Video disponible">
-                                                            <i class="bi bi-play-fill fs-6"></i>
-                                                        </span>
-                                                    <% } %>
-                                                </div>
 
-                                                <!-- Center Play Icon (Revealed on hover) -->
-                                                <div class="position-absolute top-50 start-50 translate-middle play-btn-overlay z-2 text-center" style="transition: all 0.3s ease;">
-                                                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-lg" 
-                                                         style="width: 58px; height: 58px; background: rgba(255,255,255,0.92); color: #6b21a8; font-size: 1.6rem; backdrop-filter: blur(4px); transition: transform 0.3s ease;">
-                                                        <i class="bi bi-play-fill ms-1"></i>
+                                                    <!-- Play Button Overlay -->
+                                                    <div class="position-absolute top-50 start-50 translate-middle play-btn-overlay z-2 text-center" style="transition: all 0.3s ease;">
+                                                        <div class="rounded-circle d-flex align-items-center justify-content-center shadow-lg" 
+                                                             style="width: 58px; height: 58px; background: rgba(255,255,255,0.92); color: #0284c7; font-size: 1.6rem; backdrop-filter: blur(4px); transition: transform 0.3s ease;">
+                                                            <i class="bi bi-play-fill ms-1"></i>
+                                                        </div>
                                                     </div>
+
+                                                    <!-- Bottom Info -->
+                                                    <div class="position-absolute bottom-0 start-0 w-100 p-3 z-2 text-white">
+                                                        <% if (short.parasha_name) { %>
+                                                            <div class="d-inline-flex align-items-center gap-1 px-2 py-1 mb-2 rounded-pill shadow-sm" style="background: rgba(107,33,168,0.85); backdrop-filter: blur(4px); font-size: 0.72rem; font-weight: 600;">
+                                                                <i class="bi bi-journal-bookmark"></i> <%= short.parasha_name %>
+                                                            </div>
+                                                        <% } %>
+
+                                                        <h6 class="fw-bold mb-1 text-white text-truncate-2" style="font-size: 0.95rem; line-height: 1.35; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
+                                                            <%= short.title %>
+                                                        </h6>
+
+                                                        <% if (short.child_name) { %>
+                                                            <div class="small d-flex align-items-center gap-1 text-info fw-semibold mb-1" style="font-size: 0.82rem; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
+                                                                <i class="bi bi-person-heart text-danger"></i> <%= short.child_name %>
+                                                            </div>
+                                                        <% } %>
+
+                                                        <% if (short.verses_reference) { %>
+                                                            <div class="text-white-50 small text-truncate" style="font-size: 0.75rem;">
+                                                                <i class="bi bi-book me-1"></i> <%= short.verses_reference %>
+                                                            </div>
+                                                        <% } %>
+                                                    </div>
+
                                                 </div>
-
-                                                <!-- Bottom Info -->
-                                                <div class="position-absolute bottom-0 start-0 w-100 p-3 z-2 text-white">
-                                                    <% if (short.short_type !== 'general' && short.parasha_name) { %>
-                                                        <div class="d-inline-flex align-items-center gap-1 px-2 py-1 mb-2 rounded-pill shadow-sm" style="background: rgba(107,33,168,0.85); backdrop-filter: blur(4px); font-size: 0.72rem; font-weight: 600;">
-                                                            <i class="bi bi-journal-bookmark"></i> <%= short.parasha_name %>
-                                                        </div>
-                                                    <% } else if (short.short_type === 'general' && short.category) { %>
-                                                        <div class="d-inline-flex align-items-center gap-1 px-2 py-1 mb-2 rounded-pill shadow-sm" style="background: rgba(14,116,144,0.85); backdrop-filter: blur(4px); font-size: 0.72rem; font-weight: 600;">
-                                                            <i class="bi bi-tag-fill text-warning"></i> <%= short.category %>
-                                                        </div>
-                                                    <% } %>
-
-                                                    <h6 class="fw-bold mb-1 text-white text-truncate-2" style="font-size: 0.95rem; line-height: 1.35; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
-                                                        <%= short.title %>
-                                                    </h6>
-
-                                                    <% if (short.child_name) { %>
-                                                        <div class="small d-flex align-items-center gap-1 text-info fw-semibold mb-1" style="font-size: 0.82rem; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
-                                                            <i class="bi bi-person-heart text-danger"></i> <%= short.child_name %>
-                                                        </div>
-                                                    <% } %>
-
-                                                    <% if (short.verses_reference) { %>
-                                                        <div class="text-white-50 small text-truncate" style="font-size: 0.75rem;">
-                                                            <i class="bi bi-book me-1"></i> <%= short.verses_reference %>
-                                                        </div>
-                                                    <% } %>
-                                                </div>
-
                                             </div>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <div class="w-100 text-center py-4 bg-light rounded-4 border border-dashed my-2">
+                                            <p class="text-muted mb-0"><i class="bi bi-camera-reels me-1"></i> Pronto se publicarán nuevos videos de Aliyot con los niños.</p>
                                         </div>
-                                    <% }) %>
-                                <% } else { %>
-                                    <div class="w-100 text-center py-5">
-                                        <div class="d-inline-flex p-4 rounded-circle mb-3" style="background: #e0f2fe; color: #0284c7; font-size: 3rem;">
-                                            <i class="bi bi-camera-reels"></i>
-                                        </div>
-                                        <h4 class="fw-bold" style="color: #0369a1;">Próximamente videos de Aliyot con los Niños</h4>
-                                        <p class="text-muted">Estamos grabando las lecturas y bendiciones de las porciones con los pequeños para compartirlas aquí.</p>
-                                    </div>
-                                <% } %>
-                            </div>
+                                    <% } %>
+                                </div>
 
-                            <!-- Floating Right Arrow -->
-                            <button type="button" class="shorts-float-arrow shorts-float-right shadow-lg" onclick="slideShorts('next')" id="floatShortsNext" title="Siguiente">
-                                <i class="bi bi-chevron-right"></i>
-                            </button>
+                                <button type="button" class="shorts-float-arrow shorts-float-right shadow-lg float-arrow-blue" onclick="slideTrack('aliyotShortsTrack', 'next')" id="floatAliyotNext" title="Siguiente">
+                                    <i class="bi bi-chevron-right"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -681,77 +803,96 @@
             document.getElementById('shortNextBtn').style.opacity = currentShortIndex < SHORTS_DATA.length - 1 ? '1' : '0.35';
         }
 
-        function filterFrontendShorts(type, btn) {
-            if (btn && btn.parentElement) {
-                btn.parentElement.querySelectorAll('button').forEach(b => {
-                    b.classList.remove('active');
-                    b.style.background = '#ffffff';
-                    b.style.color = b.dataset.filter === 'general' ? '#6b21a8' : '#0369a1';
-                });
-                btn.classList.add('active');
-                btn.style.background = type === 'general' ? '#6b21a8' : '#0284c7';
-                btn.style.color = '#ffffff';
-            }
-
-            const items = document.querySelectorAll('#frontendShortsGrid .frontend-short-item');
-            items.forEach(item => {
-                const itemType = item.dataset.type || 'aliya';
-                if (type === 'all' || itemType === type) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-
-            // Reset scroll to first item
-            const track = document.getElementById('frontendShortsGrid');
-            if (track) {
-                track.scrollTo({ left: 0, behavior: 'smooth' });
-                setTimeout(updateSliderArrowStates, 300);
-            }
-        }
-
-        // ==========================================
-        // SLIDER / CAROUSEL CONTROLLER PARA SHORTS
-        // ==========================================
-        function slideShorts(direction) {
-            const track = document.getElementById('frontendShortsGrid');
+        // ========================================================
+        // SLIDER / CAROUSEL CONTROLLER PARA AMBOS SLIDERS DE SHORTS
+        // ========================================================
+        function slideTrack(trackId, direction) {
+            const track = document.getElementById(trackId);
             if (!track) return;
 
-            const visibleItem = track.querySelector('.frontend-short-item:not([style*="display: none"])');
-            const itemWidth = visibleItem ? (visibleItem.offsetWidth + 20) : 300;
+            const item = track.querySelector('.frontend-short-item');
+            const step = item ? (item.offsetWidth + 20) : 300;
             
             if (direction === 'next') {
-                track.scrollBy({ left: itemWidth, behavior: 'smooth' });
+                track.scrollBy({ left: step, behavior: 'smooth' });
             } else {
-                track.scrollBy({ left: -itemWidth, behavior: 'smooth' });
+                track.scrollBy({ left: -step, behavior: 'smooth' });
             }
 
-            setTimeout(updateSliderArrowStates, 350);
+            setTimeout(() => updateTrackArrowStates(trackId), 350);
         }
 
-        function updateSliderArrowStates() {
-            const track = document.getElementById('frontendShortsGrid');
+        function updateTrackArrowStates(trackId) {
+            const track = document.getElementById(trackId);
             if (!track) return;
 
             const atStart = track.scrollLeft <= 5;
             const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 5;
 
-            const prevBtns = [document.getElementById('shortsNavPrev'), document.getElementById('floatShortsPrev')];
-            const nextBtns = [document.getElementById('shortsNavNext'), document.getElementById('floatShortsNext')];
+            let prevBtn, nextBtn, floatPrev, floatNext;
+            if (trackId === 'generalShortsTrack') {
+                prevBtn = document.getElementById('navGeneralPrev');
+                nextBtn = document.getElementById('navGeneralNext');
+                floatPrev = document.getElementById('floatGeneralPrev');
+                floatNext = document.getElementById('floatGeneralNext');
+            } else {
+                prevBtn = document.getElementById('navAliyotPrev');
+                nextBtn = document.getElementById('navAliyotNext');
+                floatPrev = document.getElementById('floatAliyotPrev');
+                floatNext = document.getElementById('floatAliyotNext');
+            }
 
-            prevBtns.forEach(btn => {
-                if (btn) {
-                    btn.style.opacity = atStart ? '0.4' : '1';
-                    btn.style.pointerEvents = atStart ? 'none' : 'auto';
+            [prevBtn, floatPrev].forEach(b => {
+                if (b) {
+                    b.style.opacity = atStart ? '0.35' : '1';
+                    b.style.pointerEvents = atStart ? 'none' : 'auto';
                 }
             });
 
-            nextBtns.forEach(btn => {
-                if (btn) {
-                    btn.style.opacity = atEnd ? '0.4' : '1';
-                    btn.style.pointerEvents = atEnd ? 'none' : 'auto';
+            [nextBtn, floatNext].forEach(b => {
+                if (b) {
+                    b.style.opacity = atEnd ? '0.35' : '1';
+                    b.style.pointerEvents = atEnd ? 'none' : 'auto';
                 }
+            });
+        }
+
+        function setupTrackInteractions(trackId) {
+            const track = document.getElementById(trackId);
+            if (!track) return;
+
+            track.addEventListener('scroll', () => updateTrackArrowStates(trackId));
+            updateTrackArrowStates(trackId);
+
+            // Mouse Drag-to-scroll
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            track.addEventListener('mousedown', (e) => {
+                isDown = true;
+                startX = e.pageX - track.offsetLeft;
+                scrollLeft = track.scrollLeft;
+                track.style.cursor = 'grabbing';
+                track.style.userSelect = 'none';
+            });
+
+            track.addEventListener('mouseleave', () => {
+                isDown = false;
+                track.style.cursor = 'default';
+            });
+
+            track.addEventListener('mouseup', () => {
+                isDown = false;
+                track.style.cursor = 'default';
+            });
+
+            track.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - track.offsetLeft;
+                const walk = (x - startX) * 1.5;
+                track.scrollLeft = scrollLeft - walk;
             });
         }
 
@@ -769,44 +910,10 @@
             }
         }
 
-        // Setup Drag-to-scroll & Keyboard Navigation
+        // Setup Drag-to-scroll & Keyboard Navigation on DOM ready
         document.addEventListener('DOMContentLoaded', () => {
-            const track = document.getElementById('frontendShortsGrid');
-            if (track) {
-                track.addEventListener('scroll', updateSliderArrowStates);
-                updateSliderArrowStates();
-
-                // Mouse Drag-to-scroll
-                let isDown = false;
-                let startX;
-                let scrollLeft;
-
-                track.addEventListener('mousedown', (e) => {
-                    isDown = true;
-                    startX = e.pageX - track.offsetLeft;
-                    scrollLeft = track.scrollLeft;
-                    track.style.cursor = 'grabbing';
-                    track.style.userSelect = 'none';
-                });
-
-                track.addEventListener('mouseleave', () => {
-                    isDown = false;
-                    track.style.cursor = 'default';
-                });
-
-                track.addEventListener('mouseup', () => {
-                    isDown = false;
-                    track.style.cursor = 'default';
-                });
-
-                track.addEventListener('mousemove', (e) => {
-                    if (!isDown) return;
-                    e.preventDefault();
-                    const x = e.pageX - track.offsetLeft;
-                    const walk = (x - startX) * 1.5;
-                    track.scrollLeft = scrollLeft - walk;
-                });
-            }
+            setupTrackInteractions('generalShortsTrack');
+            setupTrackInteractions('aliyotShortsTrack');
 
             const modalEl = document.getElementById('shortsModalViewer');
             if (modalEl) {
@@ -918,10 +1025,28 @@
         }
 
         .shorts-float-arrow:hover {
+            transform: translateY(-50%) scale(1.12);
+        }
+
+        .float-arrow-purple {
+            color: #6b21a8;
+            border-color: #e9d5ff;
+        }
+        .float-arrow-purple:hover {
+            background: #6b21a8;
+            color: #ffffff;
+            border-color: #6b21a8;
+            box-shadow: 0 10px 25px rgba(107, 33, 168, 0.4) !important;
+        }
+
+        .float-arrow-blue {
+            color: #0284c7;
+            border-color: #bae6fd;
+        }
+        .float-arrow-blue:hover {
             background: #0284c7;
             color: #ffffff;
             border-color: #0284c7;
-            transform: translateY(-50%) scale(1.12);
             box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4) !important;
         }
 
