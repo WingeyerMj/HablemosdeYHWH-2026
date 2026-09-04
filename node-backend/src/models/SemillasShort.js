@@ -97,7 +97,7 @@ class SemillasShort {
     static async getPublished() {
         try {
             await SemillasShort.ensureTable();
-            const [rows] = await db.query('SELECT * FROM semillas_shorts WHERE is_published = TRUE ORDER BY id DESC');
+            const [rows] = await db.query('SELECT * FROM semillas_shorts WHERE is_published = 1 OR is_published = TRUE OR is_published IS NULL ORDER BY aliyah_number ASC, id DESC');
             return rows || [];
         } catch (e) {
             console.warn('Aviso en SemillasShort.getPublished:', e.message);
