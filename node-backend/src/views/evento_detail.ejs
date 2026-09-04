@@ -41,16 +41,14 @@
 
                             <div class="row gy-4">
                                 <div class="col-lg-8">
-                                    <% if (evento.subtitle) { %>
-                                        <div class="meta-top mb-4">
-                                            <ul class="list-unstyled">
-                                                <li class="d-flex align-items-center">
-                                                    <i class="bi bi-calendar-event me-2"></i> 
-                                                    <span class="badge bg-primary px-3 py-2 fs-6"><%= evento.subtitle %></span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    <% } %>
+                                    <div class="meta-top mb-4 d-flex align-items-center gap-2 flex-wrap">
+                                        <% if (evento.subtitle) { %>
+                                            <span class="badge bg-primary px-3 py-2 fs-6"><i class="bi bi-calendar-event me-1"></i><%= evento.subtitle %></span>
+                                        <% } %>
+                                        <span class="badge rounded-pill px-3 py-2 shadow-sm d-inline-flex align-items-center" style="background-color: #fdf6e7; color: #8c6a2d; border: 1px solid #ebdccb; font-size: 0.85rem; font-weight: 600;">
+                                            <i class="bi bi-eye-fill me-1 text-info"></i> <%= (evento.views || 0) + 1 %> vistas
+                                        </span>
+                                    </div>
 
                                     <div class="content mt-4" id="evento-content" style="font-size: 1.1rem; line-height: 1.8; color: #444;">
                                         <%- evento.content || evento.description %>

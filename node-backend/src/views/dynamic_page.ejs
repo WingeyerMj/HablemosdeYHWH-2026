@@ -79,10 +79,21 @@
                                                         %>
                                                         
                                                         <div class="col-12">
-                                                            <div class="card-body p-5 d-flex flex-column h-100">
-                                                                <% if (titleField && row[titleField]) { %>
-                                                                    <h3 class="card-title fw-bold mb-1" style="color: #222;"><%= row[titleField] %></h3>
-                                                                <% } %>
+                                                            <div class="card-body p-4 p-md-5 d-flex flex-column h-100">
+                                                                <% 
+                                                                    const viewsField = Object.keys(row).find(k => k.includes('view') || k.includes('vista') || k.includes('visualiza'));
+                                                                    const viewsVal = viewsField && typeof row[viewsField] !== 'undefined' ? row[viewsField] : (typeof row.views !== 'undefined' ? row.views : (typeof row.vistas !== 'undefined' ? row.vistas : (typeof row.visualizaciones !== 'undefined' ? row.visualizaciones : 0)));
+                                                                %>
+                                                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                                                                    <% if (titleField && row[titleField]) { %>
+                                                                        <h3 class="card-title fw-bold mb-0" style="color: #222;"><%= row[titleField] %></h3>
+                                                                    <% } else { %>
+                                                                        <span></span>
+                                                                    <% } %>
+                                                                    <span class="badge rounded-pill px-3 py-2 shadow-sm d-inline-flex align-items-center" style="background: #fdf6e7; color: #8c6a2d; font-size: 0.82rem; font-weight: 600; border: 1px solid #ebdccb;">
+                                                                        <i class="bi bi-eye-fill me-1 text-info"></i> <%= viewsVal %> <%= viewsVal == 1 ? 'visualización' : 'visualizaciones' %>
+                                                                    </span>
+                                                                </div>
                                                                 
                                                                 <% if (subtitleField && row[subtitleField]) { %>
                                                                     <h6 class="card-subtitle mb-4" style="color: #d4b895; font-weight: 600;"><%= row[subtitleField] %></h6>

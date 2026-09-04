@@ -725,6 +725,159 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- ============================================================ -->
+                        <!-- SLIDER DE ALIYOT CON NIÑOS (LECTURAS DE TORÁ - 7 ALIYOT)     -->
+                        <!-- ============================================================ -->
+                        <% 
+                            const allShortsHome = (typeof semillasShorts !== 'undefined' && semillasShorts) ? semillasShorts : [];
+                            const aliyotShortsRaw = allShortsHome.filter(s => s.short_type !== 'general');
+                            const aliyotShortsSorted = [...aliyotShortsRaw].sort((a, b) => {
+                                const numA = parseInt(a.aliyah_number) || 99;
+                                const numB = parseInt(b.aliyah_number) || 99;
+                                return numA - numB;
+                            });
+                            const displayShortsHome = aliyotShortsSorted.length > 0 ? aliyotShortsSorted : allShortsHome;
+                        %>
+                        <% if (displayShortsHome && displayShortsHome.length > 0) { %>
+                            <div class="mt-5 pt-4 border-top" data-aos="fade-up" data-aos-delay="150">
+                                <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: #fff; font-size: 1.25rem; box-shadow: 0 4px 12px rgba(2,132,199,0.25);">
+                                            <i class="bi bi-book-half"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="fw-bold mb-0 d-flex align-items-center gap-2" style="color: #0369a1; font-size: 1.25rem;">
+                                                📖 Aliyot con Niños · Lecturas y Porciones Semanales
+                                                <span class="badge rounded-pill" style="background: rgba(2,132,199,0.12); color: #0284c7; font-size: 0.8rem;">
+                                                    <%= displayShortsHome.length %> <%= displayShortsHome.length === 1 ? 'Aliyá' : 'Aliyot' %>
+                                                </span>
+                                            </h4>
+                                            <p class="mb-0 text-muted small">Nuestros pequeños bendiciendo y leyendo las porciones semanales de la Torá.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Controles del Slider -->
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="small text-muted fst-italic d-none d-md-inline me-1">
+                                            <i class="bi bi-arrows-expand-vertical me-1" style="transform: rotate(90deg); display: inline-block;"></i> Desliza para explorar
+                                        </span>
+                                        <div class="btn-group shadow-sm rounded-pill p-1" style="background: rgba(2, 132, 199, 0.08); border: 1px solid rgba(2, 132, 199, 0.2);">
+                                            <button type="button" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" id="navAliyotHomePrev" onclick="slideTrackHome('aliyotHomeShortsTrack', 'prev')" title="Anterior" style="width: 36px; height: 36px; background: #fff; color: #0284c7; border: 1px solid #bae6fd; transition: all 0.2s;">
+                                                <i class="bi bi-chevron-left fw-bold"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center ms-1" id="navAliyotHomeNext" onclick="slideTrackHome('aliyotHomeShortsTrack', 'next')" title="Siguiente" style="width: 36px; height: 36px; background: #0284c7; color: #fff; border: 1px solid #0284c7; transition: all 0.2s;">
+                                                <i class="bi bi-chevron-right fw-bold"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Slider Container -->
+                                <div class="shorts-carousel-container position-relative">
+                                    <button type="button" class="shorts-float-arrow shorts-float-left shadow-lg float-arrow-blue" onclick="slideTrackHome('aliyotHomeShortsTrack', 'prev')" id="floatAliyotHomePrev" title="Anterior">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </button>
+
+                                    <div class="shorts-slider-track" id="aliyotHomeShortsTrack">
+                                        <% displayShortsHome.forEach((short) => { %>
+                                            <% const globalIdx = allShortsHome.indexOf(short); %>
+                                            <div class="frontend-short-item">
+                                                <div class="card border-0 shadow-sm rounded-4 overflow-hidden short-card position-relative h-100" 
+                                                     onclick="openShortModalHome(<%= globalIdx %>)" 
+                                                     style="cursor: pointer; background: #000; border: 2px solid transparent; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); aspect-ratio: 9 / 16; max-height: 480px;">
+                                                    
+                                                    <img src="<%= short.thumbnail_url || '/assets/img/pagina/semillas_torah_banner.png' %>" 
+                                                         alt="<%= short.title %>" 
+                                                         class="short-thumb w-100 h-100" 
+                                                         style="object-fit: cover; transition: transform 0.5s ease;">
+
+                                                    <div class="position-absolute top-0 start-0 w-100 h-100 short-overlay" 
+                                                         style="background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.88) 100%); pointer-events: none;">
+                                                    </div>
+
+                                                    <!-- Top Badges -->
+                                                    <div class="position-absolute top-0 start-0 w-100 p-3 d-flex justify-content-between align-items-center z-2">
+                                                        <div class="d-flex gap-1 flex-wrap">
+                                                            <% if (short.is_highlight) { %>
+                                                                <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); font-size: 0.72rem; color: #fff;">
+                                                                    <i class="bi bi-star-fill me-1"></i> Destacado
+                                                                </span>
+                                                            <% } %>
+                                                            <span class="badge rounded-pill px-2 py-1 shadow-sm" style="background: rgba(2,132,199,0.9); backdrop-filter: blur(4px); font-size: 0.72rem; color: #fff;">
+                                                                <i class="bi bi-camera-reels me-1"></i> Aliyá
+                                                            </span>
+                                                            <% if (short.aliyah_number) { %>
+                                                                <span class="badge bg-success bg-opacity-90 rounded-pill px-2 py-1 shadow-sm" style="font-size: 0.72rem;">
+                                                                    <%= short.aliyah_number %>ª Aliyá
+                                                                </span>
+                                                            <% } %>
+                                                        </div>
+                                                        <div class="d-flex align-items-center gap-1">
+                                                            <span class="badge rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center" style="background: rgba(0,0,0,0.72); color: #38bdf8; border: 1px solid rgba(56,189,248,0.4); font-size: 0.72rem; font-weight: 700; backdrop-filter: blur(4px);">
+                                                                <i class="bi bi-eye-fill me-1"></i><%= short.views_count || 0 %>
+                                                            </span>
+                                                            <% if (short.video_url || short.youtube_short_url) { %>
+                                                                <span class="badge bg-dark bg-opacity-75 rounded-circle p-2 shadow-sm text-white" title="Video disponible">
+                                                                    <i class="bi bi-play-fill fs-6"></i>
+                                                                </span>
+                                                            <% } %>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Play Button Overlay -->
+                                                    <div class="position-absolute top-50 start-50 translate-middle play-btn-overlay z-2 text-center" style="transition: all 0.3s ease;">
+                                                        <div class="rounded-circle d-flex align-items-center justify-content-center shadow-lg" 
+                                                             style="width: 58px; height: 58px; background: rgba(255,255,255,0.92); color: #0284c7; font-size: 1.6rem; backdrop-filter: blur(4px); transition: transform 0.3s ease;">
+                                                            <i class="bi bi-play-fill ms-1"></i>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Bottom Info -->
+                                                    <div class="position-absolute bottom-0 start-0 w-100 p-3 z-2 text-white">
+                                                        <% if (short.parasha_name) { %>
+                                                            <div class="d-inline-flex align-items-center gap-1 px-2 py-1 mb-2 rounded-pill shadow-sm" style="background: rgba(107,33,168,0.85); backdrop-filter: blur(4px); font-size: 0.72rem; font-weight: 600;">
+                                                                <i class="bi bi-journal-bookmark"></i> <%= short.parasha_name %>
+                                                            </div>
+                                                        <% } %>
+
+                                                        <h6 class="fw-bold mb-1 text-white text-truncate-2" style="font-size: 0.95rem; line-height: 1.35; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
+                                                            <%= short.title %>
+                                                        </h6>
+
+                                                        <% if (short.child_name) { %>
+                                                            <div class="small d-flex align-items-center gap-1 text-info fw-semibold mb-1" style="font-size: 0.82rem; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
+                                                                <i class="bi bi-person-heart text-danger"></i> <%= short.child_name %>
+                                                            </div>
+                                                        <% } %>
+
+                                                        <div class="d-flex align-items-center justify-content-between mt-1 text-white-50" style="font-size: 0.74rem;">
+                                                            <% if (short.verses_reference) { %>
+                                                                <span class="text-truncate me-2"><i class="bi bi-book me-1"></i><%= short.verses_reference %></span>
+                                                            <% } else { %>
+                                                                <span></span>
+                                                            <% } %>
+                                                            <span class="badge bg-black bg-opacity-50 text-light px-2 py-1 rounded-pill"><i class="bi bi-eye me-1 text-info"></i><%= short.views_count || 0 %> vistas</span>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+
+                                    <button type="button" class="shorts-float-arrow shorts-float-right shadow-lg float-arrow-blue" onclick="slideTrackHome('aliyotHomeShortsTrack', 'next')" id="floatAliyotHomeNext" title="Siguiente">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </button>
+                                </div>
+
+                                <div class="text-center mt-4">
+                                    <a href="/semillas-de-torah" class="btn px-4 py-2 rounded-pill fw-bold text-white shadow-sm d-inline-flex align-items-center gap-2" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none;">
+                                        <i class="bi bi-collection-play me-1"></i> Ver todas las Aliyot y Novedades en Semillas de Torah <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        <% } %>
                     </div>
                 </section>
 
@@ -926,6 +1079,8 @@
                                                             const videoField = Object.keys(item).find(k => k.includes('video') || k.includes('youtube'));
                                                             const titleField = Object.keys(item).find(k => k.includes('titulo') || k.includes('nombre') || k.includes('title') || k.includes('name')) || 'id';
                                                             const descField = Object.keys(item).find(k => k.includes('desc') || k.includes('resumen') || k.includes('content')) || '';
+                                                            const viewsField = Object.keys(item).find(k => k.includes('view') || k.includes('vista') || k.includes('visualiza'));
+                                                            const viewsVal = viewsField && typeof item[viewsField] !== 'undefined' ? item[viewsField] : (typeof item.views !== 'undefined' ? item.views : (typeof item.vistas !== 'undefined' ? item.vistas : (typeof item.visualizaciones !== 'undefined' ? item.visualizaciones : 0)));
                                                             
                                                             let finalImgUrl = null;
                                                             if (imgField && item[imgField]) {
@@ -952,17 +1107,29 @@
                                                                 <div style="position: absolute; bottom: 12px; left: 0; right: 0; text-align: center; opacity: 0; transition: opacity 0.3s ease; transform: translateY(5px); transition: opacity 0.3s ease, transform 0.3s ease;" class="card-play-icon">
                                                                     <i class="bi bi-play-circle-fill" style="font-size: 2.5rem; color: #fff; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));"></i>
                                                                 </div>
+                                                                <span class="position-absolute top-0 end-0 m-2 badge px-2 py-1 shadow-sm d-inline-flex align-items-center" style="background: rgba(0,0,0,0.72); color: #38bdf8; border: 1px solid rgba(56,189,248,0.4); font-size: 0.72rem; font-weight: 700; border-radius: 20px; backdrop-filter: blur(4px); z-index: 2;">
+                                                                    <i class="bi bi-eye-fill me-1"></i><%= viewsVal %>
+                                                                </span>
                                                             </div>
                                                         <% } else { %>
-                                                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px; color: #ddd;">
+                                                            <div class="bg-light d-flex align-items-center justify-content-center position-relative" style="height: 200px; color: #ddd;">
                                                                 <i class="bi <%= ds.icon %>" style="font-size: 3rem;"></i>
+                                                                <span class="position-absolute top-0 end-0 m-2 badge px-2 py-1 shadow-sm d-inline-flex align-items-center" style="background: rgba(0,0,0,0.72); color: #38bdf8; border: 1px solid rgba(56,189,248,0.4); font-size: 0.72rem; font-weight: 700; border-radius: 20px; backdrop-filter: blur(4px); z-index: 2;">
+                                                                    <i class="bi bi-eye-fill me-1"></i><%= viewsVal %>
+                                                                </span>
                                                             </div>
                                                         <% } %>
-                                                        <div class="card-body p-3">
-                                                            <h6 class="card-title fw-bold mb-1" style="color: #222; font-size: 0.95rem;"><%= item[titleField] %></h6>
+                                                        <div class="card-body p-3 d-flex flex-column">
+                                                            <h6 class="card-title fw-bold mb-1" style="color: #222; font-size: 0.95rem; line-height: 1.3;"><%= item[titleField] %></h6>
                                                             <% if (descField && item[descField]) { %>
-                                                                <p class="card-text text-muted mb-0" style="font-size: 0.8rem;"><%= item[descField].length > 60 ? item[descField].substring(0, 60) + '...' : item[descField] %></p>
+                                                                <p class="card-text text-muted mb-2" style="font-size: 0.8rem; line-height: 1.4;"><%= item[descField].length > 60 ? item[descField].substring(0, 60) + '...' : item[descField] %></p>
                                                             <% } %>
+                                                            <div class="mt-auto pt-2 border-top d-flex align-items-center justify-content-between text-muted" style="font-size: 0.75rem;">
+                                                                <span class="text-truncate" style="max-width: 55%;"><i class="bi <%= ds.icon || 'bi-collection-play' %> text-warning me-1"></i><%= ds.title %></span>
+                                                                <span class="badge rounded-pill px-2 py-1" style="background: #fdf6e7; color: #8c6a2d; font-size: 0.72rem; font-weight: 600; border: 1px solid #ebdccb;">
+                                                                    <i class="bi bi-eye-fill me-1 text-info"></i><%= viewsVal %> <%= viewsVal == 1 ? 'vista' : 'vistas' %>
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </a>
@@ -1097,6 +1264,424 @@
                                 </section>
 
             </main>
+
+            <!-- ============================================================ -->
+            <!-- MODAL VIEWER PARA SHORTS DE ALIYOT (PANTALLA COMPLETA 9:16) -->
+            <!-- ============================================================ -->
+            <div class="modal fade" id="shortsModalViewerHome" tabindex="-1" aria-hidden="true" style="backdrop-filter: blur(8px); background: rgba(0,0,0,0.85);">
+                <div class="modal-dialog modal-dialog-centered" style="max-width: 420px; margin: 1.75rem auto;">
+                    <div class="modal-content border-0 rounded-4 overflow-hidden shadow-2xl position-relative" style="background: #111; color: #fff;">
+                        
+                        <!-- Header Actions Overlay -->
+                        <div class="position-absolute top-0 start-0 w-100 p-3 d-flex justify-content-between align-items-center z-3" style="background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);">
+                            <span class="badge rounded-pill px-3 py-1" id="shortModalBadgeHome" style="background: rgba(2,132,199,0.9); font-size: 0.78rem;">
+                                📖 Aliyá con Niños
+                            </span>
+                            <button type="button" class="btn btn-sm btn-dark rounded-circle d-flex align-items-center justify-content-center text-white" data-bs-dismiss="modal" style="width: 38px; height: 38px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2);">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+
+                        <!-- Video / Player Container (9:16) -->
+                        <div class="modal-body p-0 position-relative" style="height: 640px; max-height: 80vh; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                            
+                            <!-- HTML5 Video Player -->
+                            <video id="shortModalVideoHome" class="w-100 h-100" style="object-fit: cover; display: none;" playsinline controls autoplay></video>
+
+                            <!-- YouTube Iframe Embed -->
+                            <iframe id="shortModalIframeHome" class="w-100 h-100" style="border: none; display: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+                            <!-- Fallback / Poster Screen -->
+                            <div id="shortModalFallbackHome" class="text-center p-4" style="display: none;">
+                                <div class="mb-3"><i class="bi bi-camera-reels text-info" style="font-size: 3.5rem;"></i></div>
+                                <h5 class="fw-bold" id="shortFallbackTitleHome"></h5>
+                                <p class="text-white-50 small mb-3" id="shortFallbackDescHome"></p>
+                            </div>
+
+                            <!-- Navigation Arrows Overlay -->
+                            <button type="button" class="btn btn-dark rounded-circle position-absolute top-50 start-0 translate-middle-y ms-2 z-3 d-flex align-items-center justify-content-center text-white shadow" 
+                                    id="shortPrevBtnHome" onclick="prevShortHome()" style="width: 42px; height: 42px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2);">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <button type="button" class="btn btn-dark rounded-circle position-absolute top-50 end-0 translate-middle-y me-2 z-3 d-flex align-items-center justify-content-center text-white shadow" 
+                                    id="shortNextBtnHome" onclick="nextShortHome()" style="width: 42px; height: 42px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2);">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+
+                            <!-- Bottom Metadata Overlay in Modal -->
+                            <div class="position-absolute bottom-0 start-0 w-100 p-3 z-3 text-white" style="background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, transparent 100%); pointer-events: auto;">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="badge rounded-pill px-2 py-1" id="shortModalParashaHome" style="font-size: 0.72rem; background: #6b21a8;"></span>
+                                    <span class="text-info small fw-bold" id="shortModalChildHome"></span>
+                                </div>
+                                <h5 class="fw-bold mb-1" id="shortModalTitleHome" style="font-size: 1.05rem; line-height: 1.3;"></h5>
+                                <p class="text-white-50 small mb-0" id="shortModalVersesHome" style="font-size: 0.8rem;"></p>
+                                <p class="text-white-50 small mt-1 mb-0" id="shortModalDescriptionHome" style="font-size: 0.78rem; max-height: 60px; overflow-y: auto;"></p>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Injection for JS Shorts Viewer on Homepage -->
+            <script>
+                const SHORTS_DATA_HOME = <%- JSON.stringify(typeof semillasShorts !== 'undefined' ? semillasShorts : []) %>;
+                let currentShortIndexHome = 0;
+                let shortsModalInstanceHome = null;
+
+                function getEmbedUrlHome(url) {
+                    if (!url) return '';
+                    let match = url.match(/shorts\/([a-zA-Z0-9_-]+)/);
+                    if (match && match[1]) {
+                        return `https://www.youtube.com/embed/${match[1]}?autoplay=1&rel=0`;
+                    }
+                    match = url.match(/(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*)/);
+                    if (match && match[1] && match[1].length === 11) {
+                        return `https://www.youtube.com/embed/${match[1]}?autoplay=1&rel=0`;
+                    }
+                    return url;
+                }
+
+                function openShortModalHome(index) {
+                    if (!SHORTS_DATA_HOME || SHORTS_DATA_HOME.length === 0) return;
+                    currentShortIndexHome = index;
+                    renderCurrentShortHome();
+                    
+                    const modalEl = document.getElementById('shortsModalViewerHome');
+                    if (!shortsModalInstanceHome && modalEl) {
+                        shortsModalInstanceHome = new bootstrap.Modal(modalEl);
+                    }
+                    if (shortsModalInstanceHome) {
+                        shortsModalInstanceHome.show();
+                    }
+                }
+
+                function renderCurrentShortHome() {
+                    const short = SHORTS_DATA_HOME[currentShortIndexHome];
+                    if (!short) return;
+
+                    const videoEl = document.getElementById('shortModalVideoHome');
+                    const iframeEl = document.getElementById('shortModalIframeHome');
+                    const fallbackEl = document.getElementById('shortModalFallbackHome');
+
+                    if (videoEl) { videoEl.pause(); videoEl.src = ''; videoEl.style.display = 'none'; }
+                    if (iframeEl) { iframeEl.src = ''; iframeEl.style.display = 'none'; }
+                    if (fallbackEl) { fallbackEl.style.display = 'none'; }
+
+                    // Fill text metadata
+                    const titleEl = document.getElementById('shortModalTitleHome');
+                    const parashaEl = document.getElementById('shortModalParashaHome');
+                    const badgeEl = document.getElementById('shortModalBadgeHome');
+                    const childEl = document.getElementById('shortModalChildHome');
+                    const versesEl = document.getElementById('shortModalVersesHome');
+                    const descEl = document.getElementById('shortModalDescriptionHome');
+
+                    if (titleEl) titleEl.textContent = short.title || '';
+                    if (short.short_type === 'general') {
+                        if (parashaEl) {
+                            parashaEl.textContent = short.category ? ('🌟 ' + short.category) : '🌟 Tema Diverso';
+                            parashaEl.style.display = 'inline-block';
+                        }
+                        if (badgeEl) badgeEl.textContent = short.category ? `🌟 ${short.category}` : `🌟 Short General`;
+                    } else {
+                        if (parashaEl) {
+                            parashaEl.textContent = short.parasha_name ? ('📖 ' + short.parasha_name) : '';
+                            parashaEl.style.display = short.parasha_name ? 'inline-block' : 'none';
+                        }
+                        if (badgeEl) {
+                            if (short.aliyah_number) {
+                                badgeEl.textContent = `${short.aliyah_number}ª Aliyá Infantil`;
+                            } else {
+                                badgeEl.textContent = `📖 Aliyá con Niños`;
+                            }
+                        }
+                    }
+
+                    if (childEl) childEl.textContent = short.child_name ? ('👧 ' + short.child_name) : '';
+                    if (versesEl) versesEl.textContent = short.verses_reference ? ('📜 ' + short.verses_reference) : '';
+                    if (descEl) descEl.textContent = short.description || '';
+
+                    // Decide video source
+                    if (short.video_url && short.video_url.trim() !== '') {
+                        if (videoEl) {
+                            videoEl.src = short.video_url;
+                            videoEl.style.display = 'block';
+                            videoEl.play().catch(e => console.log('Autoplay prevent:', e));
+                        }
+                    } else if (short.youtube_short_url && short.youtube_short_url.trim() !== '') {
+                        if (iframeEl) {
+                            iframeEl.src = getEmbedUrlHome(short.youtube_short_url);
+                            iframeEl.style.display = 'block';
+                        }
+                    } else {
+                        if (fallbackEl) {
+                            fallbackEl.style.display = 'block';
+                            const fbTitle = document.getElementById('shortFallbackTitleHome');
+                            const fbDesc = document.getElementById('shortFallbackDescHome');
+                            if (fbTitle) fbTitle.textContent = short.title;
+                            if (fbDesc) fbDesc.textContent = short.description || 'Este video estará disponible muy pronto.';
+                        }
+                    }
+
+                    const prevBtn = document.getElementById('shortPrevBtnHome');
+                    const nextBtn = document.getElementById('shortNextBtnHome');
+                    if (prevBtn) prevBtn.style.opacity = currentShortIndexHome > 0 ? '1' : '0.35';
+                    if (nextBtn) nextBtn.style.opacity = currentShortIndexHome < SHORTS_DATA_HOME.length - 1 ? '1' : '0.35';
+                }
+
+                function nextShortHome() {
+                    if (currentShortIndexHome < SHORTS_DATA_HOME.length - 1) {
+                        currentShortIndexHome++;
+                        renderCurrentShortHome();
+                    }
+                }
+
+                function prevShortHome() {
+                    if (currentShortIndexHome > 0) {
+                        currentShortIndexHome--;
+                        renderCurrentShortHome();
+                    }
+                }
+
+                function slideTrackHome(trackId, direction) {
+                    const track = document.getElementById(trackId);
+                    if (!track) return;
+
+                    const item = track.querySelector('.frontend-short-item');
+                    const step = item ? (item.offsetWidth + 20) : 300;
+                    
+                    if (direction === 'next') {
+                        track.scrollBy({ left: step, behavior: 'smooth' });
+                    } else {
+                        track.scrollBy({ left: -step, behavior: 'smooth' });
+                    }
+
+                    setTimeout(() => updateTrackArrowStatesHome(trackId), 350);
+                }
+
+                function updateTrackArrowStatesHome(trackId) {
+                    const track = document.getElementById(trackId);
+                    if (!track) return;
+
+                    const atStart = track.scrollLeft <= 5;
+                    const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 5;
+
+                    const prevBtn = document.getElementById('navAliyotHomePrev');
+                    const nextBtn = document.getElementById('navAliyotHomeNext');
+                    const floatPrev = document.getElementById('floatAliyotHomePrev');
+                    const floatNext = document.getElementById('floatAliyotHomeNext');
+
+                    [prevBtn, floatPrev].forEach(b => {
+                        if (b) {
+                            b.style.opacity = atStart ? '0.35' : '1';
+                            b.style.pointerEvents = atStart ? 'none' : 'auto';
+                        }
+                    });
+
+                    [nextBtn, floatNext].forEach(b => {
+                        if (b) {
+                            b.style.opacity = atEnd ? '0.35' : '1';
+                            b.style.pointerEvents = atEnd ? 'none' : 'auto';
+                        }
+                    });
+                }
+
+                function setupTrackInteractionsHome(trackId) {
+                    const track = document.getElementById(trackId);
+                    if (!track) return;
+
+                    track.addEventListener('scroll', () => updateTrackArrowStatesHome(trackId));
+                    updateTrackArrowStatesHome(trackId);
+
+                    // Mouse Drag-to-scroll
+                    let isDown = false;
+                    let startX;
+                    let scrollLeft;
+
+                    track.addEventListener('mousedown', (e) => {
+                        isDown = true;
+                        startX = e.pageX - track.offsetLeft;
+                        scrollLeft = track.scrollLeft;
+                        track.style.cursor = 'grabbing';
+                        track.style.userSelect = 'none';
+                    });
+
+                    track.addEventListener('mouseleave', () => {
+                        isDown = false;
+                        track.style.cursor = 'default';
+                    });
+
+                    track.addEventListener('mouseup', () => {
+                        isDown = false;
+                        track.style.cursor = 'default';
+                    });
+
+                    track.addEventListener('mousemove', (e) => {
+                        if (!isDown) return;
+                        e.preventDefault();
+                        const x = e.pageX - track.offsetLeft;
+                        const walk = (x - startX) * 1.5;
+                        track.scrollLeft = scrollLeft - walk;
+                    });
+                }
+
+                document.addEventListener('DOMContentLoaded', () => {
+                    setupTrackInteractionsHome('aliyotHomeShortsTrack');
+
+                    const modalEl = document.getElementById('shortsModalViewerHome');
+                    if (modalEl) {
+                        modalEl.addEventListener('hidden.bs.modal', () => {
+                            const videoEl = document.getElementById('shortModalVideoHome');
+                            const iframeEl = document.getElementById('shortModalIframeHome');
+                            if (videoEl) { videoEl.pause(); videoEl.src = ''; }
+                            if (iframeEl) { iframeEl.src = ''; }
+                        });
+                    }
+
+                    document.addEventListener('keydown', (e) => {
+                        const modal = document.getElementById('shortsModalViewerHome');
+                        if (modal && modal.classList.contains('show')) {
+                            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextShortHome();
+                            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prevShortHome();
+                        }
+                    });
+                });
+            </script>
+
+            <style>
+                .shorts-carousel-container {
+                    position: relative;
+                    width: 100%;
+                }
+
+                .shorts-slider-track {
+                    display: flex;
+                    gap: 1.25rem;
+                    overflow-x: auto;
+                    scroll-behavior: smooth;
+                    scroll-snap-type: x mandatory;
+                    padding: 0.5rem 0.25rem 1.25rem 0.25rem;
+                    -webkit-overflow-scrolling: touch;
+                    scrollbar-width: thin;
+                    scrollbar-color: #38bdf8 #f0f9ff;
+                }
+
+                .shorts-slider-track::-webkit-scrollbar {
+                    height: 6px;
+                }
+
+                .shorts-slider-track::-webkit-scrollbar-track {
+                    background: #f0f9ff;
+                    border-radius: 10px;
+                }
+
+                .shorts-slider-track::-webkit-scrollbar-thumb {
+                    background: linear-gradient(90deg, #0284c7, #38bdf8);
+                    border-radius: 10px;
+                }
+
+                .frontend-short-item {
+                    flex: 0 0 calc((100% - 3.75rem) / 4);
+                    min-width: calc((100% - 3.75rem) / 4);
+                    max-width: calc((100% - 3.75rem) / 4);
+                    scroll-snap-align: start;
+                    transition: transform 0.3s ease, opacity 0.3s ease;
+                }
+
+                @media (max-width: 1199.98px) {
+                    .frontend-short-item {
+                        flex: 0 0 calc((100% - 2.5rem) / 3);
+                        min-width: calc((100% - 2.5rem) / 3);
+                        max-width: calc((100% - 2.5rem) / 3);
+                    }
+                }
+
+                @media (max-width: 991.98px) {
+                    .frontend-short-item {
+                        flex: 0 0 calc((100% - 1.25rem) / 2);
+                        min-width: calc((100% - 1.25rem) / 2);
+                        max-width: calc((100% - 1.25rem) / 2);
+                    }
+                }
+
+                @media (max-width: 575.98px) {
+                    .frontend-short-item {
+                        flex: 0 0 85%;
+                        min-width: 85%;
+                        max-width: 85%;
+                    }
+                }
+
+                .shorts-float-arrow {
+                    position: absolute;
+                    top: 48%;
+                    transform: translateY(-50%);
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 50%;
+                    background: #ffffff;
+                    color: #0284c7;
+                    border: 2px solid #bae6fd;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10;
+                    font-size: 1.3rem;
+                    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                    cursor: pointer;
+                }
+
+                .shorts-float-arrow:hover {
+                    transform: translateY(-50%) scale(1.12);
+                }
+
+                .float-arrow-blue {
+                    color: #0284c7;
+                    border-color: #bae6fd;
+                }
+                .float-arrow-blue:hover {
+                    background: #0284c7;
+                    color: #ffffff;
+                    border-color: #0284c7;
+                    box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4) !important;
+                }
+
+                .shorts-float-left {
+                    left: -20px;
+                }
+
+                .shorts-float-right {
+                    right: -20px;
+                }
+
+                @media (max-width: 767.98px) {
+                    .shorts-float-arrow {
+                        display: none;
+                    }
+                }
+
+                .short-card:hover {
+                    transform: translateY(-8px) scale(1.02);
+                    box-shadow: 0 20px 40px rgba(2, 132, 199, 0.28) !important;
+                    border-color: #38bdf8 !important;
+                }
+                .short-card:hover .short-thumb {
+                    transform: scale(1.08);
+                }
+                .short-card:hover .play-btn-overlay div {
+                    transform: scale(1.15);
+                    background: #ffffff !important;
+                    color: #0284c7 !important;
+                }
+                .text-truncate-2 {
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                }
+            </style>
 
             <%- include('partials/footer') %>
 

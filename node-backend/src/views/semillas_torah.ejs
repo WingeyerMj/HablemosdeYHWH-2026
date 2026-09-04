@@ -246,11 +246,16 @@
                                                                 <i class="bi bi-star-fill me-1 text-warning"></i> <%= short.category || 'Tema Diverso' %>
                                                             </span>
                                                         </div>
-                                                        <% if (short.video_url || short.youtube_short_url) { %>
-                                                            <span class="badge bg-dark bg-opacity-75 rounded-circle p-2 shadow-sm text-white" title="Video disponible">
-                                                                <i class="bi bi-play-fill fs-6"></i>
+                                                        <div class="d-flex align-items-center gap-1">
+                                                            <span class="badge rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center" style="background: rgba(0,0,0,0.72); color: #38bdf8; border: 1px solid rgba(56,189,248,0.4); font-size: 0.72rem; font-weight: 700; backdrop-filter: blur(4px);">
+                                                                <i class="bi bi-eye-fill me-1"></i><%= short.views_count || 0 %>
                                                             </span>
-                                                        <% } %>
+                                                            <% if (short.video_url || short.youtube_short_url) { %>
+                                                                <span class="badge bg-dark bg-opacity-75 rounded-circle p-2 shadow-sm text-white" title="Video disponible">
+                                                                    <i class="bi bi-play-fill fs-6"></i>
+                                                                </span>
+                                                            <% } %>
+                                                        </div>
                                                     </div>
 
                                                     <!-- Play Button Overlay -->
@@ -279,11 +284,14 @@
                                                             </div>
                                                         <% } %>
 
-                                                        <% if (short.verses_reference) { %>
-                                                            <div class="text-white-50 small text-truncate" style="font-size: 0.75rem;">
-                                                                <i class="bi bi-book me-1"></i> <%= short.verses_reference %>
-                                                            </div>
-                                                        <% } %>
+                                                        <div class="d-flex align-items-center justify-content-between mt-1 text-white-50" style="font-size: 0.74rem;">
+                                                            <% if (short.verses_reference) { %>
+                                                                <span class="text-truncate me-2"><i class="bi bi-book me-1"></i><%= short.verses_reference %></span>
+                                                            <% } else { %>
+                                                                <span></span>
+                                                            <% } %>
+                                                            <span class="badge bg-black bg-opacity-50 text-light px-2 py-1 rounded-pill"><i class="bi bi-eye me-1 text-info"></i><%= short.views_count || 0 %> vistas</span>
+                                                        </div>
                                                     </div>
 
                                                 </div>
@@ -379,11 +387,16 @@
                                                                 </span>
                                                             <% } %>
                                                         </div>
-                                                        <% if (short.video_url || short.youtube_short_url) { %>
-                                                            <span class="badge bg-dark bg-opacity-75 rounded-circle p-2 shadow-sm text-white" title="Video disponible">
-                                                                <i class="bi bi-play-fill fs-6"></i>
+                                                        <div class="d-flex align-items-center gap-1">
+                                                            <span class="badge rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center" style="background: rgba(0,0,0,0.72); color: #38bdf8; border: 1px solid rgba(56,189,248,0.4); font-size: 0.72rem; font-weight: 700; backdrop-filter: blur(4px);">
+                                                                <i class="bi bi-eye-fill me-1"></i><%= short.views_count || 0 %>
                                                             </span>
-                                                        <% } %>
+                                                            <% if (short.video_url || short.youtube_short_url) { %>
+                                                                <span class="badge bg-dark bg-opacity-75 rounded-circle p-2 shadow-sm text-white" title="Video disponible">
+                                                                    <i class="bi bi-play-fill fs-6"></i>
+                                                                </span>
+                                                            <% } %>
+                                                        </div>
                                                     </div>
 
                                                     <!-- Play Button Overlay -->
@@ -412,11 +425,14 @@
                                                             </div>
                                                         <% } %>
 
-                                                        <% if (short.verses_reference) { %>
-                                                            <div class="text-white-50 small text-truncate" style="font-size: 0.75rem;">
-                                                                <i class="bi bi-book me-1"></i> <%= short.verses_reference %>
-                                                            </div>
-                                                        <% } %>
+                                                        <div class="d-flex align-items-center justify-content-between mt-1 text-white-50" style="font-size: 0.74rem;">
+                                                            <% if (short.verses_reference) { %>
+                                                                <span class="text-truncate me-2"><i class="bi bi-book me-1"></i><%= short.verses_reference %></span>
+                                                            <% } else { %>
+                                                                <span></span>
+                                                            <% } %>
+                                                            <span class="badge bg-black bg-opacity-50 text-light px-2 py-1 rounded-pill"><i class="bi bi-eye me-1 text-info"></i><%= short.views_count || 0 %> vistas</span>
+                                                        </div>
                                                     </div>
 
                                                 </div>

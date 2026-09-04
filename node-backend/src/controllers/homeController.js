@@ -9,12 +9,13 @@ const Pricing = require('../models/Pricing');
 const DynamicSection = require('../models/DynamicSection');
 const EntityModel = require('../models/EntityModel');
 const SiteSettings = require('../models/SiteSettings');
+const SemillasShort = require('../models/SemillasShort');
 const db = require('../config/db');
 
 const homeController = {
     index: async (req, res, next) => {
         try {
-            let allDynamicSections = [], latestParashot = [], portfolio = [], latestEnsenanzas = [], latestHaftarot = [], latestBlogPosts = [], team = [], testimonials = [], pricingRaw = [], siteSettings = {}, eventCategories = [];
+            let allDynamicSections = [], latestParashot = [], portfolio = [], latestEnsenanzas = [], latestHaftarot = [], latestBlogPosts = [], team = [], testimonials = [], pricingRaw = [], siteSettings = {}, eventCategories = [], semillasShorts = [];
             const sectionsObj = {};
 
             try {
@@ -44,6 +45,7 @@ const homeController = {
                 try { latestEnsenanzas = await Ensenanza.getLatest(4); } catch(e) { latestEnsenanzas = []; }
                 try { latestHaftarot = await Haftara.getLatest(4); } catch(e) { latestHaftarot = []; }
                 try { latestBlogPosts = await BlogPost.getLatest(3); } catch(e) { latestBlogPosts = []; }
+                try { semillasShorts = await SemillasShort.getPublished(); } catch(e) { semillasShorts = []; }
                 eventCategories = await Portfolio.getCategories();
                 team = await Team.getAll();
                 testimonials = await Testimonial.getAll();
@@ -102,6 +104,7 @@ const homeController = {
                 ensenanzas: latestEnsenanzas,
                 haftarot: latestHaftarot,
                 blogPosts: latestBlogPosts,
+                semillasShorts: semillasShorts,
                 eventCategories: eventCategories,
                 team: team,
                 testimonials: testimonials,
@@ -284,6 +287,7 @@ const homeController = {
         try {
             const event = await Portfolio.getById(req.params.id);
             if (!event) return next();
+            await Portfolio.incrementViews(event.id);
             res.render('evento_detail', { 
                 title: event.title + ' - Hablemos de YHWH', 
                 page: 'portfolio', 

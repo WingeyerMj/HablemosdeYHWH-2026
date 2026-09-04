@@ -65,6 +65,14 @@ class Portfolio {
         const [rows] = await db.query("SELECT DISTINCT category FROM portfolio WHERE category IS NOT NULL AND category != '' ORDER BY category");
         return rows.map(r => r.category);
     }
+
+    static async incrementViews(id) {
+        try {
+            await db.query('UPDATE portfolio SET views = COALESCE(views, 0) + 1 WHERE id = ?', [id]);
+        } catch(e) {
+            console.warn('Aviso incrementViews portfolio:', e.message);
+        }
+    }
 }
 
 module.exports = Portfolio;
