@@ -119,21 +119,9 @@
                 <!-- Pestañas de Navegación -->
                 <!-- Pestañas de Navegación -->
                 <ul class="nav nav-pills gap-2 mb-4 flex-wrap" id="semillasTabs" role="tablist" data-aos="fade-up" data-aos-delay="100">
-                    <!-- Tab 1: Resúmenes de Parashá & Artículos con Imágenes -->
+                    <!-- Tab 1: Shorts / Novedades -->
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn" 
-                                id="tab-articulos" data-bs-toggle="pill" data-bs-target="#pane-articulos" type="button" role="tab"
-                                style="border-radius: 16px; border: 2px solid #86efac; font-size: 1rem; transition: all 0.3s ease;">
-                            <i class="bi bi-journal-richtext fs-5 text-success"></i> 
-                            Resúmenes de Parashá Ilustrados
-                            <span class="badge rounded-pill" style="background: linear-gradient(135deg, #16a34a, #15803d); color: #fff; font-size: 0.75rem;">
-                                <%= (typeof articulos !== 'undefined' && articulos) ? articulos.length : 0 %> ✨ Destacado
-                            </span>
-                        </button>
-                    </li>
-                    <!-- Tab 2: Shorts / Novedades -->
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn" 
                                 id="tab-shorts" data-bs-toggle="pill" data-bs-target="#pane-shorts" type="button" role="tab"
                                 style="border-radius: 16px; border: 2px solid #bae6fd; font-size: 1rem; transition: all 0.3s ease;">
                             <i class="bi bi-camera-reels-fill fs-5 text-info"></i> 
@@ -143,7 +131,7 @@
                             </span>
                         </button>
                     </li>
-                    <!-- Tab 3: Enseñanzas Infantiles -->
+                    <!-- Tab 2: Enseñanzas Infantiles -->
                     <li class="nav-item" role="presentation">
                         <button class="nav-link px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn" 
                                 id="tab-ensenanzas" data-bs-toggle="pill" data-bs-target="#pane-ensenanzas" type="button" role="tab"
@@ -155,14 +143,26 @@
                             </span>
                         </button>
                     </li>
+                    <!-- Tab 3: Noticias & Resúmenes de Parashá con Imágenes -->
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn" 
+                                id="tab-articulos" data-bs-toggle="pill" data-bs-target="#pane-articulos" type="button" role="tab"
+                                style="border-radius: 16px; border: 2px solid #86efac; font-size: 1rem; transition: all 0.3s ease;">
+                            <i class="bi bi-newspaper fs-5 text-success"></i> 
+                            Noticias & Resúmenes de Parashá
+                            <span class="badge rounded-pill" style="background: linear-gradient(135deg, #16a34a, #15803d); color: #fff; font-size: 0.75rem;">
+                                <%= (typeof articulos !== 'undefined' && articulos) ? articulos.length : 0 %> ✨ Novedad
+                            </span>
+                        </button>
+                    </li>
                 </ul>
 
                 <div class="tab-content" id="semillasTabContent">
 
                     <!-- ============================================================ -->
-                    <!-- PESTAÑA 1: RESÚMENES SEMANALES DE PARASHÁ & ARTÍCULOS ILUSTRADOS -->
+                    <!-- PESTAÑA: NOTICIAS & RESÚMENES SEMANALES CON IMÁGENES         -->
                     <!-- ============================================================ -->
-                    <div class="tab-pane fade show active" id="pane-articulos" role="tabpanel">
+                    <div class="tab-pane fade" id="pane-articulos" role="tabpanel">
                         
                         <!-- Banner Explicativo Resúmenes -->
                         <div class="p-4 mb-4 rounded-4 shadow-sm border-0 d-flex align-items-start gap-3" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #f5f3ff 100%); border-left: 5px solid #22c55e !important;">
@@ -363,9 +363,9 @@
                     </div>
 
                     <!-- ============================================== -->
-                    <!-- PESTAÑA 2: SHORTS · ALIYOT CON NIÑOS Y TEMAS DIVERSOS -->
+                    <!-- PESTAÑA 1: SHORTS · ALIYOT CON NIÑOS Y TEMAS DIVERSOS -->
                     <!-- ============================================== -->
-                    <div class="tab-pane fade" id="pane-shorts" role="tabpanel">
+                    <div class="tab-pane fade show active" id="pane-shorts" role="tabpanel">
                         
                         <!-- Banner Explicativo Novedades -->
                         <div class="p-4 mb-4 rounded-4 shadow-sm border-0 d-flex align-items-start gap-3" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f5f3ff 100%); border-left: 5px solid #0284c7 !important;">
