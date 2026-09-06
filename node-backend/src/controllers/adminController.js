@@ -60,6 +60,10 @@ const adminController = {
                     const SemillasShort = require('../models/SemillasShort');
                     semillasShorts = await SemillasShort.getAll();
                 } catch(e) { semillasShorts = []; }
+                try {
+                    const SemillasArticulo = require('../models/SemillasArticulo');
+                    semillasArticulos = await SemillasArticulo.getAll();
+                } catch(e) { semillasArticulos = []; }
                 team = await Team.getAll();
                 testimonials = await Testimonial.getAll();
                 pricing = await Pricing.getAll();
@@ -128,6 +132,7 @@ const adminController = {
                 blogs,
                 semillas,
                 semillasShorts: typeof semillasShorts !== 'undefined' ? semillasShorts : [],
+                semillasArticulos: typeof semillasArticulos !== 'undefined' ? semillasArticulos : [],
                 team,
                 testimonials,
                 pricing,
@@ -768,6 +773,214 @@ const adminController = {
         } catch (error) {
             console.error('Error deleteSemillasShort:', error);
             res.redirect('/admin/dashboard#admin-semillas-shorts');
+        }
+    },
+
+    // ==================== SEMILLAS ARTÍCULOS & RESÚMENES DE PARASHÁ ====================
+    semillasArticulosIndex: async (req, res, next) => {
+        try {
+            const SemillasArticulo = require('../models/SemillasArticulo');
+            const items = await SemillasArticulo.getAll();
+            const categories = await SemillasArticulo.getCategories();
+            res.render('admin/semillas_articulos_index', {
+                layout: 'admin/layout',
+                items,
+                categories,
+                activePage: 'semillas-articulos'
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    toggleSemillasArticulo: async (req, res) => {
+        try {
+            const SemillasArticulo = require('../models/SemillasArticulo');
+            const item = await SemillasArticulo.getById(req.params.id);
+            if (item) {
+                await SemillasArticulo.update(item.id, {
+                    ...item,
+                    is_published: !item.is_published
+                });
+            }
+            const referer = req.get('Referer') || '/admin/semillas-articulos';
+            res.redirect(referer);
+        } catch (error) {
+            console.error('Error toggleSemillasArticulo:', error);
+            res.redirect('/admin/semillas-articulos');
+        }
+    },
+
+    createSemillasArticulo: async (req, res) => {
+        try {
+            let {
+                title,
+                parasha_name,
+                category,
+                biblical_reference,
+                key_verse,
+                summary,
+                content,
+                main_image,
+                pdf_file,
+                author,
+                tags,
+                is_published
+            } = req.body;
+
+            let galleryImages = [];
+
+            if (req.files) {
+                if (req.files['image_file'] && req.files['image_file'][0]) {
+                    main_image = '/uploads/semillas/' + req.files['image_file'][0].filename;
+                }
+                if (req.files['pdf_upload'] && req.files['pdf_upload'][0]) {
+                    pdf_file = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
+                }
+                if (req.files['gallery_images'] && req.files['gallery_images'].length > 0) {
+                    req.files['gallery_images'].forEach(f => {
+                        galleryImages.push('/uploads/semillas/' + f.filename);
+                    });
+                }
+            }
+
+            const SemillasArticulo = require('../models/SemillasArticulo');
+            await SemillasArticulo.create({
+                title,
+                parasha_name: parasha_name || '',
+                category: category || 'Resumen Semanal de Parashá',
+                biblical_reference: biblical_reference || '',
+                key_verse: key_verse || '',
+                summary: summary || '',
+                content: content || '',
+                main_image: main_image || '',
+                gallery_images: galleryImages,
+                pdf_file: pdf_file || '',
+                author: author || 'Elva Avila',
+                tags: tags || '',
+                is_published: is_published !== '0' && is_published !== false
+            });
+
+            // Notificación automática a todos los suscriptores
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'semillas',
+                    title: title,
+                    subtitle: parasha_name ? ('Parashá ' + parasha_name) : (category || 'Resumen Infantil'),
+                    link: '/semillas-de-torah',
+                    description: summary || key_verse || '',
+                    image_url: main_image || '',
+                    author: author || 'Elva Avila'
+                }).catch(e => console.warn('Aviso en notificación Semillas Articulo:', e.message));
+            } catch(e) {}
+
+            res.redirect('/admin/dashboard#admin-semillas-articulos');
+        } catch (error) {
+            console.error('Error createSemillasArticulo:', error);
+            res.redirect('/admin/dashboard#admin-semillas-articulos');
+        }
+    },
+
+    editSemillasArticuloPage: async (req, res) => {
+        try {
+            const SemillasArticulo = require('../models/SemillasArticulo');
+            const Parasha = require('../models/Parasha');
+            const item = await SemillasArticulo.getById(req.params.id);
+            if (!item) return res.redirect('/admin/dashboard#admin-semillas-articulos');
+
+            let parashot = [];
+            try {
+                parashot = await Parasha.getAll();
+            } catch(e) {}
+
+            res.render('admin/edit_semillas_articulo', { layout: 'admin/layout', item, parashot });
+        } catch (error) {
+            console.error('Error editSemillasArticuloPage:', error);
+            res.redirect('/admin/dashboard#admin-semillas-articulos');
+        }
+    },
+
+    updateSemillasArticulo: async (req, res) => {
+        try {
+            let {
+                id,
+                title,
+                parasha_name,
+                category,
+                biblical_reference,
+                key_verse,
+                summary,
+                content,
+                main_image,
+                existing_gallery_images,
+                pdf_file,
+                author,
+                tags,
+                is_published
+            } = req.body;
+
+            let finalGallery = [];
+            if (existing_gallery_images) {
+                if (Array.isArray(existing_gallery_images)) {
+                    finalGallery = existing_gallery_images.filter(x => x && x.trim() !== '');
+                } else if (typeof existing_gallery_images === 'string') {
+                    try {
+                        const parsed = JSON.parse(existing_gallery_images);
+                        if (Array.isArray(parsed)) finalGallery = parsed;
+                        else finalGallery = [existing_gallery_images];
+                    } catch(e) {
+                        finalGallery = [existing_gallery_images];
+                    }
+                }
+            }
+
+            if (req.files) {
+                if (req.files['image_file'] && req.files['image_file'][0]) {
+                    main_image = '/uploads/semillas/' + req.files['image_file'][0].filename;
+                }
+                if (req.files['pdf_upload'] && req.files['pdf_upload'][0]) {
+                    pdf_file = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
+                }
+                if (req.files['gallery_images'] && req.files['gallery_images'].length > 0) {
+                    req.files['gallery_images'].forEach(f => {
+                        finalGallery.push('/uploads/semillas/' + f.filename);
+                    });
+                }
+            }
+
+            const SemillasArticulo = require('../models/SemillasArticulo');
+            await SemillasArticulo.update(id, {
+                title,
+                parasha_name: parasha_name || '',
+                category: category || 'Resumen Semanal de Parashá',
+                biblical_reference: biblical_reference || '',
+                key_verse: key_verse || '',
+                summary: summary || '',
+                content: content || '',
+                main_image: main_image || '',
+                gallery_images: finalGallery,
+                pdf_file: pdf_file || '',
+                author: author || 'Elva Avila',
+                tags: tags || '',
+                is_published: is_published !== '0' && is_published !== false
+            });
+
+            res.redirect('/admin/dashboard#admin-semillas-articulos');
+        } catch (error) {
+            console.error('Error updateSemillasArticulo:', error);
+            res.redirect('/admin/dashboard#admin-semillas-articulos');
+        }
+    },
+
+    deleteSemillasArticulo: async (req, res) => {
+        try {
+            const SemillasArticulo = require('../models/SemillasArticulo');
+            await SemillasArticulo.delete(req.params.id);
+            res.redirect('/admin/dashboard#admin-semillas-articulos');
+        } catch (error) {
+            console.error('Error deleteSemillasArticulo:', error);
+            res.redirect('/admin/dashboard#admin-semillas-articulos');
         }
     },
 

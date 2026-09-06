@@ -853,6 +853,138 @@
     </div>
 </div>
 
+<!-- MODAL: NUEVO ARTÍCULO / RESUMEN DE PARASHÁ CON IMÁGENES -->
+<div class="modal fade" id="createSemillasArticuloModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content bg-dark text-white border-success">
+            <div class="modal-header border-secondary" style="background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(168,85,247,0.2));">
+                <h5 class="modal-title text-white fw-bold">
+                    <i class="bi bi-journal-richtext me-2 text-success"></i>Añadir Resumen de Parashá / Artículo Ilustrado (Semillas de Torah)
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/semillas-articulos/create" method="POST" enctype="multipart/form-data" id="createSemillasArticuloForm">
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        
+                        <!-- Título & Parashá -->
+                        <div class="col-md-7">
+                            <label class="form-label text-success fw-bold"><i class="bi bi-fonts me-1"></i>Título del Artículo / Resumen *</label>
+                            <input type="text" name="title" class="form-control bg-dark text-white border-success" placeholder="Ej: 📖✨ NITZAVIM–VAYÉLEJ ✨📖" required>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label text-info fw-bold"><i class="bi bi-journal-bookmark me-1"></i>Nombre de la Parashá</label>
+                            <input type="text" name="parasha_name" class="form-control bg-dark text-white border-info" placeholder="Ej: Nitzavim-Vayélej, Bereshit, Nóaj...">
+                        </div>
+
+                        <!-- Cita Bíblica & Categoría -->
+                        <div class="col-md-6">
+                            <label class="form-label text-warning fw-bold"><i class="bi bi-book me-1"></i>Cita Bíblica de la Porción</label>
+                            <input type="text" name="biblical_reference" class="form-control bg-dark text-white border-secondary" placeholder="Ej: Deuteronomio 29:9 – 31:30">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-light fw-bold"><i class="bi bi-tag me-1"></i>Categoría / Tipo de Publicación</label>
+                            <select name="category" class="form-select bg-dark text-white border-secondary">
+                                <option value="Resumen Semanal de Parashá" selected>📖 Resumen Semanal de Parashá</option>
+                                <option value="Infografía Infantil">🎨 Infografía Infantil / Aliyot</option>
+                                <option value="Historias Bíblicas Ilustradas">🌿 Historias Bíblicas Ilustradas</option>
+                                <option value="Valores de la Torá">💚 Valores de la Torá para Niños</option>
+                            </select>
+                        </div>
+
+                        <!-- Versículo Clave -->
+                        <div class="col-12">
+                            <label class="form-label text-warning fw-bold"><i class="bi bi-quote me-1"></i>Versículo Clave o Frase Destacada</label>
+                            <input type="text" name="key_verse" class="form-control bg-dark text-white border-secondary" placeholder="Ej: “Escoge, pues, la vida…” — Deuteronomio 30:19 ❤️">
+                        </div>
+
+                        <!-- Resumen Principal (Emojis & Text) -->
+                        <div class="col-12">
+                            <label class="form-label text-success fw-bold">
+                                <i class="bi bi-card-text me-1"></i>Resumen de la Enseñanza (Con Emojis y Párrafos) *
+                            </label>
+                            <div class="small text-white-50 mb-1">Este texto se mostrará destacado como en las publicaciones semanales (puedes incluir emojis como 📖✨❤️👨‍👩‍👧‍👦📜🌿).</div>
+                            <textarea name="summary" class="form-control bg-dark text-white border-success" rows="6" placeholder="En esta porción de la Torá aprendemos grandes enseñanzas: permanecer firmes delante de Adonai...&#10;&#10;También aprendemos cómo Moisés prepara a Josué..." required></textarea>
+                        </div>
+
+                        <!-- IMAGEN PRINCIPAL / INFOGRAFÍA -->
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 border border-success bg-black bg-opacity-40">
+                                <label class="form-label text-success fw-bold d-block"><i class="bi bi-image me-1"></i>Infografía / Imagen Principal *</label>
+                                <div class="small text-white-50 mb-2">Sube la infografía de la Parashá (con las 4 Aliyot o ilustración principal).</div>
+                                <input type="file" name="image_file" class="form-control bg-dark text-white border-secondary mb-2" accept="image/*" onchange="previewArticuloImage(this, 'createArticuloMainPreview')">
+                                <input type="text" name="main_image" id="create_art_main_image_url" class="form-control form-control-sm bg-dark text-white-50 border-secondary" placeholder="O pega URL de imagen...">
+                                <div class="mt-2 text-center" style="height: 140px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                    <img id="createArticuloMainPreview" src="/assets/img/pagina/semillas_torah_banner.png" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- GALERÍA DE IMÁGENES ADICIONALES (Múltiples Aliyot/Hojas) -->
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 border border-info bg-black bg-opacity-40">
+                                <label class="form-label text-info fw-bold d-block"><i class="bi bi-images me-1"></i>Imágenes Adicionales / Galería</label>
+                                <div class="small text-white-50 mb-2">Puedes seleccionar varias imágenes (por ejemplo: Aliyá 1, Aliyá 2, Aliyá 3, Aliyá 4 por separado o fotos de actividades).</div>
+                                <input type="file" name="gallery_images" class="form-control bg-dark text-white border-secondary mb-2" accept="image/*" multiple>
+                                <div class="p-3 rounded text-center text-white-50 small" style="background: rgba(0,0,0,0.2); border: 1px dashed rgba(56,189,248,0.3);">
+                                    <i class="bi bi-cloud-arrow-up fs-4 text-info d-block mb-1"></i>
+                                    Mantén presionada la tecla <strong>Ctrl</strong> (o Shift) para seleccionar múltiples imágenes a la vez.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PDF Descargable, Autor y Hashtags -->
+                        <div class="col-md-4">
+                            <label class="form-label text-danger fw-bold"><i class="bi bi-file-earmark-pdf me-1"></i>Ficha / Hoja en PDF (Opcional)</label>
+                            <input type="file" name="pdf_upload" class="form-control bg-dark text-white border-secondary" accept="application/pdf">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-light fw-bold"><i class="bi bi-person-circle me-1"></i>Autor(a)</label>
+                            <input type="text" name="author" class="form-control bg-dark text-white border-secondary" value="Elva Avila">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-light fw-bold"><i class="bi bi-hash me-1"></i>Hashtags / Etiquetas</label>
+                            <input type="text" name="tags" class="form-control bg-dark text-white border-secondary" placeholder="#Nitzavim #Parasha #Torá #NiñosEnLaTorá">
+                        </div>
+
+                        <!-- Contenido Extendido Opcional -->
+                        <div class="col-12">
+                            <label class="form-label text-white-50 small"><i class="bi bi-textarea-t me-1"></i>Notas o Explicación Extendida para Maestros / Padres (Opcional)</label>
+                            <textarea name="content" class="form-control bg-dark text-white border-secondary" rows="4" placeholder="Detalles pedagógicos adicionales, preguntas para conversar en familia..."></textarea>
+                        </div>
+
+                        <!-- Publicado -->
+                        <div class="col-12">
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="is_published" value="1" id="art_is_published" checked>
+                                <label class="form-check-label text-white fw-bold" for="art_is_published">Publicar de inmediato en la Web de Semillas de Torah</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success px-4 fw-bold"><i class="bi bi-check-lg me-1"></i>Publicar Artículo / Resumen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewArticuloImage(input, previewId) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.getElementById(previewId);
+            if (img) img.src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+
 <!-- MODAL: NUEVO SHORT / ALIYÁ INFANTIL (NOVEDADES) -->
 <div class="modal fade" id="createSemillasShortModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -1780,8 +1912,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!targetHash) return;
         const hash = targetHash.startsWith('#') ? targetHash : '#' + targetHash;
         
-        // Handle nested subtabs (Semillas Shorts / Enseñanzas)
-        if (hash === '#admin-semillas-shorts' || hash === '#admin-semillas-ensenanzas') {
+        // Handle nested subtabs (Semillas Artículos / Shorts / Enseñanzas)
+        if (hash === '#admin-semillas-articulos' || hash === '#admin-semillas-shorts' || hash === '#admin-semillas-ensenanzas') {
             const parentBtn = document.querySelector(`.nav-pills button[data-bs-target="#pills-semillas"]`);
             if (parentBtn && typeof bootstrap !== 'undefined') {
                 bootstrap.Tab.getOrCreateInstance(parentBtn).show();

@@ -117,20 +117,33 @@
                 </div>
 
                 <!-- Pestañas de Navegación -->
+                <!-- Pestañas de Navegación -->
                 <ul class="nav nav-pills gap-2 mb-4 flex-wrap" id="semillasTabs" role="tablist" data-aos="fade-up" data-aos-delay="100">
-                    <!-- Tab 1: Shorts / Novedades -->
+                    <!-- Tab 1: Resúmenes de Parashá & Artículos con Imágenes -->
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn" 
+                                id="tab-articulos" data-bs-toggle="pill" data-bs-target="#pane-articulos" type="button" role="tab"
+                                style="border-radius: 16px; border: 2px solid #86efac; font-size: 1rem; transition: all 0.3s ease;">
+                            <i class="bi bi-journal-richtext fs-5 text-success"></i> 
+                            Resúmenes de Parashá Ilustrados
+                            <span class="badge rounded-pill" style="background: linear-gradient(135deg, #16a34a, #15803d); color: #fff; font-size: 0.75rem;">
+                                <%= (typeof articulos !== 'undefined' && articulos) ? articulos.length : 0 %> ✨ Destacado
+                            </span>
+                        </button>
+                    </li>
+                    <!-- Tab 2: Shorts / Novedades -->
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn" 
                                 id="tab-shorts" data-bs-toggle="pill" data-bs-target="#pane-shorts" type="button" role="tab"
                                 style="border-radius: 16px; border: 2px solid #bae6fd; font-size: 1rem; transition: all 0.3s ease;">
                             <i class="bi bi-camera-reels-fill fs-5 text-info"></i> 
                             Aliyot con Niños · Shorts
                             <span class="badge rounded-pill" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; font-size: 0.75rem;">
-                                <%= (typeof shorts !== 'undefined' && shorts) ? shorts.length : 0 %> ✨ Novedad
+                                <%= (typeof shorts !== 'undefined' && shorts) ? shorts.length : 0 %>
                             </span>
                         </button>
                     </li>
-                    <!-- Tab 2: Enseñanzas Infantiles -->
+                    <!-- Tab 3: Enseñanzas Infantiles -->
                     <li class="nav-item" role="presentation">
                         <button class="nav-link px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn" 
                                 id="tab-ensenanzas" data-bs-toggle="pill" data-bs-target="#pane-ensenanzas" type="button" role="tab"
@@ -142,15 +155,217 @@
                             </span>
                         </button>
                     </li>
-
                 </ul>
 
                 <div class="tab-content" id="semillasTabContent">
 
+                    <!-- ============================================================ -->
+                    <!-- PESTAÑA 1: RESÚMENES SEMANALES DE PARASHÁ & ARTÍCULOS ILUSTRADOS -->
+                    <!-- ============================================================ -->
+                    <div class="tab-pane fade show active" id="pane-articulos" role="tabpanel">
+                        
+                        <!-- Banner Explicativo Resúmenes -->
+                        <div class="p-4 mb-4 rounded-4 shadow-sm border-0 d-flex align-items-start gap-3" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #f5f3ff 100%); border-left: 5px solid #22c55e !important;">
+                            <div class="rounded-circle p-2 d-flex align-items-center justify-content-center flex-shrink-0" style="background: rgba(34,197,94,0.2); width: 52px; height: 52px; color: #15803d;">
+                                <i class="bi bi-journal-richtext fs-3"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                                    <h5 class="fw-bold mb-0" style="color: #14532d;">Resúmenes de Parashá & Artículos Ilustrados</h5>
+                                    <span class="badge bg-success rounded-pill px-2 py-1 small"><i class="bi bi-palette-fill me-1"></i>Material Visual & Pedagógico</span>
+                                </div>
+                                <p class="mb-0 text-muted" style="font-size: 0.96rem; line-height: 1.6;">
+                                    Encuentra aquí el resumen de las porciones de la Torá enseñadas cada semana a nuestros niños, con infografías de las <strong>Aliyot ilustradas</strong>, versículos bíblicos clave, explicaciones sencillas y fichas de estudio para repasar en familia.
+                                </p>
+                            </div>
+                        </div>
+
+                        <% const allArticulos = (typeof articulos !== 'undefined' && articulos) ? articulos : []; %>
+
+                        <% if (allArticulos && allArticulos.length > 0) { %>
+                            <div class="row g-4">
+                                <% allArticulos.forEach((art, index) => { %>
+                                    <%
+                                        let gallery = [];
+                                        if (art.gallery_images) {
+                                            try {
+                                                gallery = typeof art.gallery_images === 'string' ? JSON.parse(art.gallery_images) : art.gallery_images;
+                                                if (!Array.isArray(gallery)) gallery = [];
+                                            } catch(e) {
+                                                gallery = [];
+                                            }
+                                        }
+                                    %>
+                                    <div class="col-12" data-aos="fade-up" data-aos-delay="<%= (index % 3 + 1) * 100 %>">
+                                        <article class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4 position-relative" style="border: 2px solid #e2e8f0; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                                            
+                                            <!-- Card Header: Autor & Metas -->
+                                            <div class="p-4 p-md-4 pb-0 d-flex flex-wrap align-items-center justify-content-between gap-3 border-bottom pb-3" style="background: #faf7f2;">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <img src="/assets/img/pagina/semillas_torah_logo.png" alt="Elva Avila" style="width: 46px; height: 46px; border-radius: 50%; object-fit: cover; border: 2px solid #6b21a8;">
+                                                    <div>
+                                                        <div class="fw-bold" style="color: #2e1065;"><%= art.author || 'Elva Avila' %></div>
+                                                        <div class="text-muted small">Semillas de Torah • Ministerio Infantil</div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                    <% if (art.parasha_name) { %>
+                                                        <span class="badge rounded-pill px-3 py-1 shadow-sm" style="background: linear-gradient(135deg, #6b21a8, #9333ea); color: #fff; font-size: 0.8rem;">
+                                                            <i class="bi bi-journal-bookmark me-1"></i> Parashá <%= art.parasha_name %>
+                                                        </span>
+                                                    <% } %>
+                                                    <span class="badge rounded-pill px-3 py-1" style="background: rgba(34,197,94,0.15); color: #15803d; border: 1px solid rgba(34,197,94,0.3); font-size: 0.8rem; font-weight: 600;">
+                                                        <%= art.category || 'Resumen Semanal' %>
+                                                    </span>
+                                                    <% if (art.created_at) { %>
+                                                        <span class="text-muted small ms-2">
+                                                            <i class="bi bi-calendar3 me-1 text-purple"></i>
+                                                            <%= new Date(art.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) %>
+                                                        </span>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+
+                                            <div class="card-body p-4 p-md-4">
+                                                <div class="row g-4">
+                                                    
+                                                    <!-- Columna Izquierda: Texto del Resumen -->
+                                                    <div class="col-lg-6 d-flex flex-column justify-content-between">
+                                                        <div>
+                                                            <h3 class="fw-bold mb-2" style="color: #2e1065; font-size: 1.6rem; line-height: 1.35;">
+                                                                <a href="/semillas-de-torah/articulo/<%= art.id %>" class="text-decoration-none text-dark hover-purple">
+                                                                    <%= art.title %>
+                                                                </a>
+                                                            </h3>
+
+                                                            <% if (art.biblical_reference) { %>
+                                                                <div class="d-inline-flex align-items-center gap-1 text-muted small fw-semibold mb-3 px-3 py-1 rounded-pill" style="background: #f1f5f9;">
+                                                                    <i class="bi bi-book-half text-warning fs-6"></i>
+                                                                    <span>Cita: <%= art.biblical_reference %></span>
+                                                                </div>
+                                                            <% } %>
+
+                                                            <!-- Versículo Clave -->
+                                                            <% if (art.key_verse) { %>
+                                                                <div class="p-3 mb-3 rounded-3" style="background: #faf5ff; border-left: 4px solid #6b21a8; color: #4c1d95; font-size: 1.05rem; font-weight: 500;">
+                                                                    <i class="bi bi-quote fs-4 text-purple opacity-50 me-1"></i>
+                                                                    <%= art.key_verse %>
+                                                                </div>
+                                                            <% } %>
+
+                                                            <!-- Texto del Resumen (Preserva Emojis y Párrafos) -->
+                                                            <div class="article-summary-text mb-3" style="font-size: 1.03rem; line-height: 1.8; color: #334155; white-space: pre-line;">
+                                                                <%= art.summary %>
+                                                            </div>
+
+                                                            <!-- Hashtags -->
+                                                            <% if (art.tags) { %>
+                                                                <div class="d-flex flex-wrap gap-1 mb-3">
+                                                                    <% art.tags.split(' ').filter(t => t.trim() !== '').forEach(tag => { %>
+                                                                        <span class="badge bg-light text-primary border" style="font-size: 0.78rem; font-weight: 600;"><%= tag %></span>
+                                                                    <% }) %>
+                                                                </div>
+                                                            <% } %>
+                                                        </div>
+
+                                                        <!-- Botones de Acción -->
+                                                        <div class="pt-3 border-top d-flex flex-wrap align-items-center justify-content-between gap-2 mt-auto">
+                                                            <div class="d-flex gap-2 flex-wrap">
+                                                                <a href="/semillas-de-torah/articulo/<%= art.id %>" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" style="background: linear-gradient(135deg, #6b21a8, #22c55e); border: none;">
+                                                                    <i class="bi bi-book-open me-1"></i> Ver Artículo Completo
+                                                                </a>
+                                                                <% if (art.pdf_file) { %>
+                                                                    <a href="<%= art.pdf_file %>" target="_blank" download class="btn btn-outline-success rounded-pill px-3 fw-semibold">
+                                                                        <i class="bi bi-file-earmark-pdf me-1"></i> Descargar PDF
+                                                                    </a>
+                                                                <% } %>
+                                                            </div>
+
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <!-- Compartir en WhatsApp -->
+                                                                <% 
+                                                                    const shareUrl = "https://hablemosdeyahweh.com/semillas-de-torah/articulo/" + art.id;
+                                                                    const shareText = encodeURIComponent(art.title + "\n\n" + (art.key_verse || '') + "\n\n" + shareUrl);
+                                                                %>
+                                                                <a href="https://api.whatsapp.com/send?text=<%= shareText %>" target="_blank" class="btn btn-sm btn-outline-success rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Compartir por WhatsApp">
+                                                                    <i class="bi bi-whatsapp"></i>
+                                                                </a>
+                                                                <!-- Compartir en Facebook -->
+                                                                <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(shareUrl) %>" target="_blank" class="btn btn-sm btn-outline-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Compartir en Facebook">
+                                                                    <i class="bi bi-facebook"></i>
+                                                                </a>
+                                                                <span class="badge rounded-pill bg-light text-muted border px-2 py-1 small">
+                                                                    <i class="bi bi-eye me-1 text-primary"></i><%= art.views_count || 0 %>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Columna Derecha: Infografía Principal & Galería Aliyot -->
+                                                    <div class="col-lg-6">
+                                                        <div class="infographic-container position-relative rounded-4 overflow-hidden shadow-sm" style="background: #111; border: 2px solid #e2e8f0;">
+                                                            
+                                                            <% if (art.main_image) { %>
+                                                                <div class="position-relative clickable-lightbox-img" onclick="openImageLightbox('<%= art.main_image %>', '<%= art.title.replace(/'/g, "\\'") %>')" style="cursor: zoom-in; overflow: hidden; max-height: 460px; display: flex; align-items: center; justify-content: center; background: #000;">
+                                                                    <img src="<%= art.main_image %>" alt="<%= art.title %>" class="img-fluid w-100" style="object-fit: contain; max-height: 460px; transition: transform 0.4s ease;">
+                                                                    <div class="position-absolute bottom-0 start-0 w-100 p-2 text-center text-white small" style="background: linear-gradient(180deg, transparent, rgba(0,0,0,0.85));">
+                                                                        <span class="badge bg-dark bg-opacity-75 rounded-pill px-3 py-1"><i class="bi bi-arrows-fullscreen me-1 text-warning"></i> Clic para ver infografía en pantalla completa</span>
+                                                                    </div>
+                                                                </div>
+                                                            <% } else { %>
+                                                                <div class="p-5 text-center text-white-50">
+                                                                    <i class="bi bi-image fs-1 d-block mb-2 text-muted"></i>
+                                                                    <span>Resumen de Parashá</span>
+                                                                </div>
+                                                            <% } %>
+
+                                                            <!-- Mini-Galería de Aliyot adicionales si existen -->
+                                                            <% if (gallery && gallery.length > 0) { %>
+                                                                <div class="p-3 bg-light border-top">
+                                                                    <div class="small fw-bold text-muted mb-2 d-flex align-items-center justify-content-between">
+                                                                        <span><i class="bi bi-images me-1 text-info"></i> Fichas / Aliyot adicionales (<%= gallery.length %>)</span>
+                                                                        <span class="small text-muted fst-italic">Clic para ampliar</span>
+                                                                    </div>
+                                                                    <div class="d-flex gap-2 overflow-auto pb-1" style="scrollbar-width: thin;">
+                                                                        <% gallery.forEach((gImg, gIdx) => { %>
+                                                                            <div class="rounded-3 overflow-hidden shadow-sm border position-relative flex-shrink-0" style="width: 80px; height: 80px; cursor: zoom-in;" onclick="openImageLightbox('<%= gImg %>', '<%= art.title.replace(/'/g, "\\'") %> - Ficha <%= gIdx + 1 %>')">
+                                                                                <img src="<%= gImg %>" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                                                                                <span class="position-absolute bottom-0 start-0 w-100 text-center text-white" style="font-size: 0.65rem; background: rgba(0,0,0,0.6); font-weight: 700;">#<%= gIdx + 1 %></span>
+                                                                            </div>
+                                                                        <% }) %>
+                                                                    </div>
+                                                                </div>
+                                                            <% } %>
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </article>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        <% } else { %>
+                            <div class="text-center py-5 bg-white rounded-4 shadow-sm p-4 border">
+                                <div class="d-inline-flex p-4 rounded-circle mb-3" style="background: #f0fdf4; color: #16a34a; font-size: 3.5rem;">
+                                    <i class="bi bi-journal-richtext"></i>
+                                </div>
+                                <h4 class="fw-bold" style="color: #2e1065;">Pronto compartiremos los resúmenes ilustrados de las Parashot</h4>
+                                <p class="text-muted max-w-600 mx-auto">Estamos preparando las infografías de cada porción bíblica para que los niños y familias puedan aprender juntos.</p>
+                                <a href="https://www.facebook.com/profile.php?id=61592294939779" target="_blank" class="btn btn-primary rounded-pill px-4 mt-2" style="background: #1877F2; border: none;">
+                                    <i class="bi bi-facebook me-1"></i> Seguir en Facebook Oficial
+                                </a>
+                            </div>
+                        <% } %>
+
+                    </div>
+
                     <!-- ============================================== -->
-                    <!-- PESTAÑA 1: SHORTS · ALIYOT CON NIÑOS Y TEMAS DIVERSOS -->
+                    <!-- PESTAÑA 2: SHORTS · ALIYOT CON NIÑOS Y TEMAS DIVERSOS -->
                     <!-- ============================================== -->
-                    <div class="tab-pane fade show active" id="pane-shorts" role="tabpanel">
+                    <div class="tab-pane fade" id="pane-shorts" role="tabpanel">
                         
                         <!-- Banner Explicativo Novedades -->
                         <div class="p-4 mb-4 rounded-4 shadow-sm border-0 d-flex align-items-start gap-3" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f5f3ff 100%); border-left: 5px solid #0284c7 !important;">
@@ -1153,9 +1368,50 @@
         .aliyot-recent-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 25px rgba(107,33,168,0.1) !important;
-            border-color: #c084fc !important;
+    <!-- MODAL LIGHTBOX PARA INFOGRAFÍAS Y FICHAS DE PARASHÁ -->
+    <div class="modal fade" id="semillasImageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content bg-dark text-white border-0 shadow-lg rounded-4 overflow-hidden" style="background: rgba(15, 23, 42, 0.96) !important; backdrop-filter: blur(12px);">
+                <div class="modal-header border-0 py-3 px-4 d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-success rounded-pill px-3 py-1"><i class="bi bi-palette-fill me-1"></i>Infografía / Ficha Semillas de Torah</span>
+                        <h6 class="modal-title text-white fw-bold mb-0 text-truncate" id="semillasImageModalTitle" style="max-width: 500px;"></h6>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <a href="#" id="semillasImageModalDownload" download class="btn btn-sm btn-outline-light rounded-pill px-3 fw-semibold">
+                            <i class="bi bi-download me-1"></i> Descargar Imagen
+                        </a>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                </div>
+                <div class="modal-body p-2 text-center position-relative" style="min-height: 350px; display: flex; align-items: center; justify-content: center; background: #000;">
+                    <img id="semillasImageModalImg" src="" alt="Infografía" class="img-fluid" style="max-height: 85vh; width: auto; object-fit: contain; border-radius: 8px;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function openImageLightbox(imgUrl, title) {
+        if (!imgUrl) return;
+        const imgEl = document.getElementById('semillasImageModalImg');
+        const titleEl = document.getElementById('semillasImageModalTitle');
+        const downloadEl = document.getElementById('semillasImageModalDownload');
+        
+        if (imgEl) imgEl.src = imgUrl;
+        if (titleEl) titleEl.innerText = title || 'Infografía de Parashá';
+        if (downloadEl) {
+            downloadEl.href = imgUrl;
+            downloadEl.setAttribute('download', (title || 'infografia_semillas') + '.png');
         }
-    </style>
+
+        const modalEl = document.getElementById('semillasImageModal');
+        if (modalEl && typeof bootstrap !== 'undefined') {
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            modal.show();
+        }
+    }
+    </script>
 
     <%- include('partials/footer') %>
 

@@ -443,17 +443,21 @@ const homeController = {
         try {
             const SemillasTorah = require('../models/SemillasTorah');
             const SemillasShort = require('../models/SemillasShort');
+            const SemillasArticulo = require('../models/SemillasArticulo');
             
             let items = [];
             let shorts = [];
+            let articulos = [];
             try { items = await SemillasTorah.getPublished(); } catch(e) { items = []; }
             try { shorts = await SemillasShort.getPublished(); } catch(e) { shorts = []; }
+            try { articulos = await SemillasArticulo.getPublished(); } catch(e) { articulos = []; }
 
             res.render('semillas_torah', {
                 title: 'Semillas de Torah - Ministerio Infantil - Hablemos de YHWH',
                 page: 'semillas',
                 items,
                 shorts,
+                articulos,
                 layout: false
             });
         } catch (error) {
@@ -479,6 +483,31 @@ const homeController = {
                 page: 'semillas',
                 item,
                 otherItems,
+                layout: false
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    semillasArticuloDetail: async (req, res, next) => {
+        try {
+            const SemillasArticulo = require('../models/SemillasArticulo');
+            const item = await SemillasArticulo.getById(req.params.id);
+            if (!item) return next();
+            await SemillasArticulo.incrementViews(item.id);
+
+            let otherArticulos = [];
+            try {
+                const all = await SemillasArticulo.getPublished();
+                otherArticulos = all.filter(x => x.id !== item.id).slice(0, 4);
+            } catch(e) {}
+
+            res.render('semillas_articulo_detail', {
+                title: item.title + ' - Resumen de Parashá Infantil - Hablemos de YHWH',
+                page: 'semillas',
+                item,
+                otherArticulos,
                 layout: false
             });
         } catch (error) {

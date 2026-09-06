@@ -1,0 +1,262 @@
+<!-- Sidebar -->
+<%- include('partials/_sidebar') %>
+
+<main class="col-md-10 main-content">
+    
+    <!-- Header -->
+    <div class="page-header d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h1 class="text-white fw-bold mb-1">
+                <i class="bi bi-journal-richtext me-2 text-success"></i>Gestión de Artículos & Resúmenes de Parashá
+            </h1>
+            <p class="text-white-50 mb-0">Ministerio Infantil Semillas de Torah • Publicaciones ilustradas, Aliyot e infografías semanales.</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="/semillas-de-torah" target="_blank" class="btn btn-outline-light"><i class="bi bi-eye"></i> Ver en la Web</a>
+            <button type="button" class="btn btn-success fw-bold px-4" data-bs-toggle="modal" data-bs-target="#createSemillasArticuloModal">
+                <i class="bi bi-plus-circle-fill me-1"></i> Nuevo Artículo / Resumen
+            </button>
+        </div>
+    </div>
+
+    <!-- STATS CARDS -->
+    <% 
+        const allItems = typeof items !== 'undefined' && items ? items : [];
+        const publishedCount = allItems.filter(x => x.is_published).length;
+        const draftCount = allItems.length - publishedCount;
+        const totalViews = allItems.reduce((acc, cur) => acc + (cur.views_count || 0), 0);
+    %>
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-dark border-secondary p-3 rounded-4 d-flex flex-row align-items-center gap-3">
+                <div class="rounded-circle p-3 d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background: rgba(34,197,94,0.2); color: #22c55e;">
+                    <i class="bi bi-journal-text fs-4 text-success"></i>
+                </div>
+                <div>
+                    <div class="text-white-50 small">Total de Artículos</div>
+                    <div class="fs-4 fw-bold text-white"><%= allItems.length %></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-dark border-secondary p-3 rounded-4 d-flex flex-row align-items-center gap-3">
+                <div class="rounded-circle p-3 d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background: rgba(16,185,129,0.2); color: #10b981;">
+                    <i class="bi bi-check-circle fs-4 text-success"></i>
+                </div>
+                <div>
+                    <div class="text-white-50 small">Publicados en Web</div>
+                    <div class="fs-4 fw-bold text-success"><%= publishedCount %></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-dark border-secondary p-3 rounded-4 d-flex flex-row align-items-center gap-3">
+                <div class="rounded-circle p-3 d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background: rgba(234,179,8,0.2); color: #eab308;">
+                    <i class="bi bi-pencil-square fs-4 text-warning"></i>
+                </div>
+                <div>
+                    <div class="text-white-50 small">Borradores</div>
+                    <div class="fs-4 fw-bold text-warning"><%= draftCount %></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-dark border-secondary p-3 rounded-4 d-flex flex-row align-items-center gap-3">
+                <div class="rounded-circle p-3 d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background: rgba(56,189,248,0.2); color: #38bdf8;">
+                    <i class="bi bi-eye fs-4 text-info"></i>
+                </div>
+                <div>
+                    <div class="text-white-50 small">Vistas Totales</div>
+                    <div class="fs-4 fw-bold text-info"><%= totalViews %></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILTERS & SEARCH BAR -->
+    <div class="card bg-dark border-secondary p-3 rounded-4 shadow-sm mb-4">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-search"></i></span>
+                    <input type="text" id="crudSearchInput" class="form-control bg-dark text-white border-secondary" placeholder="Buscar por título, parashá, cita bíblica, hashtags..." onkeyup="filterArticulosTable()">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select id="crudCategoryFilter" class="form-select bg-dark text-white border-secondary" onchange="filterArticulosTable()">
+                    <option value="all">Todas las categorías</option>
+                    <option value="Resumen Semanal de Parashá">📖 Resumen Semanal de Parashá</option>
+                    <option value="Infografía Infantil">🎨 Infografía Infantil / Aliyot</option>
+                    <option value="Historias Bíblicas Ilustradas">🌿 Historias Bíblicas Ilustradas</option>
+                    <option value="Valores de la Torá">💚 Valores de la Torá para Niños</option>
+                </select>
+            </div>
+            <div class="col-md-2 text-md-end">
+                <span class="text-white-50 small" id="crudMatchCount">Mostrando <%= allItems.length %> registros</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CRUD TABLE -->
+    <div class="card bg-dark border-secondary rounded-4 overflow-hidden shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle mb-0" id="crudArticulosTable">
+                <thead class="table-dark text-white-50 border-secondary">
+                    <tr>
+                        <th style="width: 80px;">Portada</th>
+                        <th>Título & Parashá</th>
+                        <th>Cita Bíblica</th>
+                        <th>Versículo Clave</th>
+                        <th>Galería / Aliyot</th>
+                        <th>Vistas</th>
+                        <th>Estado</th>
+                        <th class="text-end" style="width: 140px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (allItems && allItems.length > 0) { %>
+                        <% allItems.forEach(art => { %>
+                            <% 
+                                let galleryCount = 0;
+                                if (art.gallery_images) {
+                                    try {
+                                        const g = typeof art.gallery_images === 'string' ? JSON.parse(art.gallery_images) : art.gallery_images;
+                                        if (Array.isArray(g)) galleryCount = g.length;
+                                    } catch(e) {}
+                                }
+                            %>
+                            <tr class="crud-item-row" data-category="<%= art.category || 'Resumen Semanal de Parashá' %>">
+                                <td>
+                                    <% if (art.main_image) { %>
+                                        <div style="width: 65px; height: 65px; border-radius: 8px; overflow: hidden; background: #000; border: 2px solid rgba(34,197,94,0.4); cursor: pointer;" onclick="previewModalImage('<%= art.main_image %>', '<%= art.title.replace(/'/g, "\\'") %>')">
+                                            <img src="<%= art.main_image %>" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
+                                    <% } else { %>
+                                        <div class="d-flex align-items-center justify-content-center bg-secondary text-white-50" style="width: 65px; height: 65px; border-radius: 8px;">
+                                            <i class="bi bi-image fs-4"></i>
+                                        </div>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-white fs-6 item-title"><%= art.title %></div>
+                                    <div class="d-flex align-items-center gap-2 mt-1">
+                                        <% if (art.parasha_name) { %>
+                                            <span class="badge bg-purple" style="font-size: 0.76rem;"><i class="bi bi-journal-bookmark me-1"></i><%= art.parasha_name %></span>
+                                        <% } %>
+                                        <span class="badge bg-dark border border-secondary text-light small item-category"><%= art.category || 'Resumen Semanal' %></span>
+                                    </div>
+                                    <% if (art.tags) { %>
+                                        <div class="text-white-50 small mt-1 item-tags" style="font-size: 0.75rem;"><%= art.tags %></div>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <span class="text-light small item-reference"><i class="bi bi-book text-warning me-1"></i><%= art.biblical_reference || '-' %></span>
+                                </td>
+                                <td>
+                                    <% if (art.key_verse) { %>
+                                        <span class="small text-white-50 text-truncate d-inline-block" style="max-width: 220px;" title="<%= art.key_verse %>">
+                                            <em><%= art.key_verse %></em>
+                                        </span>
+                                    <% } else { %>
+                                        <span class="text-white-50 small">-</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if (galleryCount > 0) { %>
+                                        <span class="badge bg-info text-dark"><i class="bi bi-images me-1"></i><%= galleryCount %> imágenes</span>
+                                    <% } else { %>
+                                        <span class="badge bg-secondary text-white-50">Solo portada</span>
+                                    <% } %>
+                                    <% if (art.pdf_file) { %>
+                                        <a href="<%= art.pdf_file %>" target="_blank" class="badge bg-danger text-decoration-none ms-1" title="PDF descargable"><i class="bi bi-file-pdf"></i> PDF</a>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <span class="badge bg-dark border border-secondary text-info"><i class="bi bi-eye me-1"></i><%= art.views_count || 0 %></span>
+                                </td>
+                                <td>
+                                    <a href="/admin/semillas-articulos/toggle/<%= art.id %>" class="btn btn-sm <%= art.is_published ? 'btn-success' : 'btn-secondary' %> rounded-pill px-3 fw-semibold" title="Clic para alternar estado">
+                                        <i class="bi <%= art.is_published ? 'bi-check-circle-fill' : 'bi-pause-circle' %> me-1"></i>
+                                        <%= art.is_published ? 'Publicado' : 'Borrador' %>
+                                    </a>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="/semillas-de-torah/articulo/<%= art.id %>" target="_blank" class="btn btn-outline-info" title="Ver en la Web"><i class="bi bi-eye"></i></a>
+                                        <a href="/admin/semillas-articulos/edit/<%= art.id %>" class="btn btn-primary" title="Editar artículo"><i class="bi bi-pencil"></i></a>
+                                        <a href="/admin/semillas-articulos/delete/<%= art.id %>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar este artículo infantil?')" title="Eliminar"><i class="bi bi-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-white-50">
+                                <i class="bi bi-journal-richtext fs-1 d-block mb-3 text-success"></i>
+                                <h5 class="text-white">No hay artículos registrados en Semillas de Torah</h5>
+                                <p class="text-white-50 small mb-3">Comienza publicando tu primer resumen ilustrado de Parashá para los niños.</p>
+                                <button type="button" class="btn btn-success fw-bold px-4" data-bs-toggle="modal" data-bs-target="#createSemillasArticuloModal">
+                                    <i class="bi bi-plus-circle me-1"></i> Crear Primer Artículo
+                                </button>
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<!-- MODALS -->
+<%- include('_modals') %>
+
+<!-- PREVIEW MODAL FOR IMAGES -->
+<div class="modal fade" id="crudImagePreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h6 class="modal-title" id="crudPreviewTitle"></h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-2 text-center" style="background: #000;">
+                <img id="crudPreviewImg" src="" style="max-height: 75vh; width: auto; max-width: 100%; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewModalImage(url, title) {
+    document.getElementById('crudPreviewImg').src = url;
+    document.getElementById('crudPreviewTitle').innerText = title || 'Infografía';
+    new bootstrap.Modal(document.getElementById('crudImagePreviewModal')).show();
+}
+
+function filterArticulosTable() {
+    const search = (document.getElementById('crudSearchInput').value || '').toLowerCase();
+    const category = document.getElementById('crudCategoryFilter').value;
+    const rows = document.querySelectorAll('#crudArticulosTable tbody tr.crud-item-row');
+    let matchCount = 0;
+
+    rows.forEach(r => {
+        const text = r.innerText.toLowerCase();
+        const cat = r.dataset.category;
+        const matchesSearch = !search || text.includes(search);
+        const matchesCategory = category === 'all' || cat === category;
+
+        if (matchesSearch && matchesCategory) {
+            r.style.display = '';
+            matchCount++;
+        } else {
+            r.style.display = 'none';
+        }
+    });
+
+    const countEl = document.getElementById('crudMatchCount');
+    if (countEl) countEl.innerText = 'Mostrando ' + matchCount + ' registros';
+}
+</script>

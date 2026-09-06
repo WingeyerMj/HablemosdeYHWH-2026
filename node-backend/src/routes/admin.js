@@ -34,6 +34,7 @@ router.use((req, res, next) => {
         // Determinar activePage basado en la URL
         const path = req.path;
         if (path === '/dashboard') res.locals.activePage = 'dashboard';
+        else if (path.includes('/semillas-articulos')) res.locals.activePage = 'semillas-articulos';
         else if (path.includes('/aliyot')) res.locals.activePage = 'aliyot';
         else if (path.includes('/dynamic-sections')) res.locals.activePage = 'dynamic-sections';
         else if (path.includes('/sections')) res.locals.activePage = 'sections';
@@ -128,6 +129,22 @@ router.post('/semillas-shorts/update', isAuthenticated, upload.fields([
     { name: 'video_upload', maxCount: 1 }
 ]), adminController.updateSemillasShort);
 router.get('/semillas-shorts/delete/:id', isAuthenticated, adminController.deleteSemillasShort);
+
+// Semillas Artículos / Resúmenes de Parashá con Imágenes (Infantil)
+router.get('/semillas-articulos', isAuthenticated, adminController.semillasArticulosIndex);
+router.post('/semillas-articulos/create', isAuthenticated, upload.fields([
+    { name: 'image_file', maxCount: 1 },
+    { name: 'gallery_images', maxCount: 10 },
+    { name: 'pdf_upload', maxCount: 1 }
+]), adminController.createSemillasArticulo);
+router.get('/semillas-articulos/edit/:id', isAuthenticated, adminController.editSemillasArticuloPage);
+router.post('/semillas-articulos/update', isAuthenticated, upload.fields([
+    { name: 'image_file', maxCount: 1 },
+    { name: 'gallery_images', maxCount: 10 },
+    { name: 'pdf_upload', maxCount: 1 }
+]), adminController.updateSemillasArticulo);
+router.get('/semillas-articulos/toggle/:id', isAuthenticated, adminController.toggleSemillasArticulo);
+router.get('/semillas-articulos/delete/:id', isAuthenticated, adminController.deleteSemillasArticulo);
 
 // Blog / Artículos - Admin y Editor
 router.post('/blog/create', isAuthenticated, upload.single('image_file'), adminController.createBlogPost);
