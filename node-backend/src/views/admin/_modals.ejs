@@ -1919,19 +1919,31 @@ document.addEventListener('DOMContentLoaded', function() {
         // Handle nested subtabs (Semillas Artículos / Shorts / Enseñanzas)
         if (hash === '#admin-semillas-articulos' || hash === '#admin-semillas-shorts' || hash === '#admin-semillas-ensenanzas') {
             const parentBtn = document.querySelector(`.nav-pills button[data-bs-target="#pills-semillas"]`);
-            if (parentBtn && typeof bootstrap !== 'undefined') {
-                bootstrap.Tab.getOrCreateInstance(parentBtn).show();
+            if (parentBtn) {
+                if (typeof bootstrap !== 'undefined' && bootstrap.Tab) {
+                    bootstrap.Tab.getOrCreateInstance(parentBtn).show();
+                } else {
+                    parentBtn.click();
+                }
             }
             const subBtn = document.querySelector(`button[data-bs-target="${hash}"]`);
-            if (subBtn && typeof bootstrap !== 'undefined') {
+            if (subBtn) {
                 setTimeout(() => {
-                    bootstrap.Tab.getOrCreateInstance(subBtn).show();
-                }, 30);
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Tab) {
+                        bootstrap.Tab.getOrCreateInstance(subBtn).show();
+                    } else {
+                        subBtn.click();
+                    }
+                }, 50);
             }
         } else {
             const tabBtn = document.querySelector(`.nav-pills button[data-bs-target="${hash}"]`) || document.querySelector(`button[data-bs-target="${hash}"]`);
-            if (tabBtn && typeof bootstrap !== 'undefined') {
-                bootstrap.Tab.getOrCreateInstance(tabBtn).show();
+            if (tabBtn) {
+                if (typeof bootstrap !== 'undefined' && bootstrap.Tab) {
+                    bootstrap.Tab.getOrCreateInstance(tabBtn).show();
+                } else {
+                    tabBtn.click();
+                }
             }
         }
 
@@ -1984,6 +1996,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 else if (href.includes('#pills-') || href.includes('#admin-')) a.classList.remove('active');
             });
         });
+    });
+
     // Auto-detección de número de Aliyá en modales al escribir el título
     function autoDetectAliyahNumber(text, selectEl) {
         if (!text || !selectEl) return;
