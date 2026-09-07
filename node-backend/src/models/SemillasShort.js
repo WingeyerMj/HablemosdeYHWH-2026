@@ -34,6 +34,7 @@ class SemillasShort {
                 { name: 'child_name', type: 'VARCHAR(255) DEFAULT NULL' },
                 { name: 'parasha_name', type: 'VARCHAR(255) DEFAULT NULL' },
                 { name: 'aliyah_number', type: 'INT DEFAULT NULL' },
+                { name: 'reading_date', type: 'DATE DEFAULT NULL' },
                 { name: 'verses_reference', type: 'VARCHAR(255) DEFAULT NULL' },
                 { name: 'video_url', type: 'VARCHAR(500) DEFAULT NULL' },
                 { name: 'youtube_short_url', type: 'VARCHAR(500) DEFAULT NULL' },
@@ -141,7 +142,7 @@ class SemillasShort {
     static async getAll() {
         try {
             await SemillasShort.ensureTable();
-            const [rows] = await db.query('SELECT * FROM semillas_shorts ORDER BY is_highlight DESC, id DESC');
+            const [rows] = await db.query('SELECT * FROM semillas_shorts ORDER BY is_highlight DESC, COALESCE(reading_date, created_at) DESC, id DESC');
             return rows || [];
         } catch (e) {
             console.warn('Aviso en SemillasShort.getAll:', e.message);
@@ -152,7 +153,7 @@ class SemillasShort {
     static async getPublished() {
         try {
             await SemillasShort.ensureTable();
-            const [rows] = await db.query('SELECT * FROM semillas_shorts WHERE is_published = 1 OR is_published = TRUE OR is_published IS NULL ORDER BY CASE WHEN aliyah_number IS NULL THEN 0 ELSE aliyah_number END DESC, created_at DESC, id DESC');
+            const [rows] = await db.query('SELECT * FROM semillas_shorts WHERE is_published = 1 OR is_published = TRUE OR is_published IS NULL ORDER BY COALESCE(reading_date, created_at) DESC, CASE WHEN aliyah_number IS NULL THEN 0 ELSE aliyah_number END DESC, id DESC');
             return rows || [];
         } catch (e) {
             console.warn('Aviso en SemillasShort.getPublished:', e.message);
@@ -163,7 +164,7 @@ class SemillasShort {
     static async getLatest(limit = 6) {
         try {
             await SemillasShort.ensureTable();
-            const [rows] = await db.query('SELECT * FROM semillas_shorts WHERE is_published = TRUE ORDER BY id DESC LIMIT ?', [limit]);
+            const [rows] = await db.query('SELECT * FROM semillas_shorts WHERE is_published = TRUE ORDER BY COALESCE(reading_date, created_at) DESC, id DESC LIMIT ?', [limit]);
             return rows || [];
         } catch (e) {
             console.warn('Aviso en SemillasShort.getLatest:', e.message);
@@ -198,6 +199,7 @@ class SemillasShort {
             child_name,
             parasha_name,
             aliyah_number,
+            reading_date,
             verses_reference,
             video_url,
             youtube_short_url,
@@ -220,8 +222,8 @@ class SemillasShort {
 
         return await db.query(
             `INSERT INTO semillas_shorts 
-             (title, short_type, category, child_name, parasha_name, aliyah_number, verses_reference, video_url, youtube_short_url, youtube_url, thumbnail_url, description, is_highlight, is_published) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+             (title, short_type, category, child_name, parasha_name, aliyah_number, reading_date, verses_reference, video_url, youtube_short_url, youtube_url, thumbnail_url, description, is_highlight, is_published) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 title,
                 type,
@@ -229,6 +231,7 @@ class SemillasShort {
                 child_name || '',
                 parasha_name || '',
                 finalAliyahNumber,
+                reading_date || null,
                 verses_reference || '',
                 video_url || '',
                 ytUrl,
@@ -250,6 +253,7 @@ class SemillasShort {
             child_name,
             parasha_name,
             aliyah_number,
+            reading_date,
             verses_reference,
             video_url,
             youtube_short_url,
@@ -272,7 +276,7 @@ class SemillasShort {
 
         return await db.query(
             `UPDATE semillas_shorts 
-             SET title = ?, short_type = ?, category = ?, child_name = ?, parasha_name = ?, aliyah_number = ?, verses_reference = ?, video_url = ?, youtube_short_url = ?, youtube_url = ?, thumbnail_url = ?, description = ?, is_highlight = ?, is_published = ? 
+             SET title = ?, short_type = ?, category = ?, child_name = ?, parasha_name = ?, aliyah_number = ?, reading_date = ?, verses_reference = ?, video_url = ?, youtube_short_url = ?, youtube_url = ?, thumbnail_url = ?, description = ?, is_highlight = ?, is_published = ? 
              WHERE id = ?`,
             [
                 title,
@@ -281,6 +285,7 @@ class SemillasShort {
                 child_name || '',
                 parasha_name || '',
                 finalAliyahNumber,
+                reading_date || null,
                 verses_reference || '',
                 video_url || '',
                 ytUrl,

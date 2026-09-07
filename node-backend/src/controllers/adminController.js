@@ -664,7 +664,7 @@ const adminController = {
     // ==================== SEMILLAS SHORTS / ALIYOT CON NIÑOS ====================
     createSemillasShort: async (req, res) => {
         try {
-            let { title, short_type, category, child_name, parasha_name, aliyah_number, verses_reference, youtube_short_url, description, is_highlight, is_published, thumbnail_url, video_url } = req.body;
+            let { title, short_type, category, child_name, parasha_name, aliyah_number, reading_date, verses_reference, youtube_short_url, description, is_highlight, is_published, thumbnail_url, video_url } = req.body;
             
             if (req.files) {
                 if (req.files['thumbnail_file'] && req.files['thumbnail_file'][0]) {
@@ -683,6 +683,7 @@ const adminController = {
                 child_name: child_name || '',
                 parasha_name: parasha_name || '',
                 aliyah_number: aliyah_number || (short_type === 'general' ? null : 1),
+                reading_date: reading_date || null,
                 verses_reference: verses_reference || '',
                 video_url: video_url || '',
                 youtube_short_url: youtube_short_url || '',
@@ -731,7 +732,7 @@ const adminController = {
 
     updateSemillasShort: async (req, res) => {
         try {
-            let { id, title, short_type, category, child_name, parasha_name, aliyah_number, verses_reference, youtube_short_url, description, is_highlight, is_published, thumbnail_url, video_url } = req.body;
+            let { id, title, short_type, category, child_name, parasha_name, aliyah_number, reading_date, verses_reference, youtube_short_url, description, is_highlight, is_published, thumbnail_url, video_url } = req.body;
             
             if (req.files) {
                 if (req.files['thumbnail_file'] && req.files['thumbnail_file'][0]) {
@@ -750,6 +751,7 @@ const adminController = {
                 child_name: child_name || '',
                 parasha_name: parasha_name || '',
                 aliyah_number: aliyah_number || (short_type === 'general' ? null : 1),
+                reading_date: reading_date || null,
                 verses_reference: verses_reference || '',
                 video_url: video_url !== undefined ? video_url : '',
                 youtube_short_url: youtube_short_url || '',
