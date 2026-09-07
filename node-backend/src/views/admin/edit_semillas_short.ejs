@@ -157,4 +157,22 @@
             }
         });
     }
+
+    const titleInput = document.querySelector('input[name="title"]');
+    const aliyahSelect = document.querySelector('select[name="aliyah_number"]');
+    if (titleInput && aliyahSelect) {
+        titleInput.addEventListener('input', function() {
+            const clean = this.value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+            let found = null;
+            const m1 = clean.match(/(?:aliya|aliyah)\s*(\d+)/i);
+            if (m1) found = parseInt(m1[1]);
+            if (!found) {
+                const m2 = clean.match(/(\d+)\s*(?:[ª°a]|ra|da|ta|va)?\s*(?:aliya|aliyah)/i);
+                if (m2) found = parseInt(m2[1]);
+            }
+            if (found && found >= 1 && found <= 7) {
+                aliyahSelect.value = String(found);
+            }
+        });
+    }
 </script>

@@ -1980,7 +1980,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 else if (href.includes('#pills-') || href.includes('#admin-')) a.classList.remove('active');
             });
         });
-    });
+    // Auto-detección de número de Aliyá en modales al escribir el título
+    function autoDetectAliyahNumber(text, selectEl) {
+        if (!text || !selectEl) return;
+        const clean = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        let found = null;
+        const m1 = clean.match(/(?:aliya|aliyah)\s*(\d+)/i);
+        if (m1) found = parseInt(m1[1]);
+        if (!found) {
+            const m2 = clean.match(/(\d+)\s*(?:[ª°a]|ra|da|ta|va)?\s*(?:aliya|aliyah)/i);
+            if (m2) found = parseInt(m2[1]);
+        }
+        if (found && found >= 1 && found <= 7) {
+            selectEl.value = String(found);
+        }
+    }
+
+    const createShortTitleInput = document.querySelector('#createSemillasShortModal input[name="title"]');
+    const createShortAliyahSelect = document.querySelector('#createSemillasShortModal select[name="aliyah_number"]');
+    if (createShortTitleInput && createShortAliyahSelect) {
+        createShortTitleInput.addEventListener('input', function() {
+            autoDetectAliyahNumber(this.value, createShortAliyahSelect);
+        });
+    }
 });
 
 function filterAdminShorts(type, btn) {

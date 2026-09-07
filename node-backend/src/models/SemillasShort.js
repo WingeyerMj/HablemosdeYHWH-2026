@@ -78,9 +78,64 @@ class SemillasShort {
                 await db.query(`ALTER TABLE semillas_shorts MODIFY COLUMN verses_reference VARCHAR(255) DEFAULT NULL`);
             } catch(e) {}
 
+            // Auto-corrección de aliyot cuyo aliyah_number quedó en 1 o NULL por defecto pero su título indica 2, 3, 4, 5, 6, 7
+            try {
+                for (let i = 2; i <= 7; i++) {
+                    await db.query(
+                        `UPDATE semillas_shorts 
+                         SET aliyah_number = ? 
+                         WHERE (title LIKE ? OR title LIKE ? OR title LIKE ? OR title LIKE ?) 
+                           AND (aliyah_number = 1 OR aliyah_number IS NULL) 
+                           AND (short_type = 'aliya' OR short_type IS NULL)`,
+                        [i, `%${i}ª%Aliy%`, `%${i}°%Aliy%`, `%${i}a%Aliy%`, `%Aliy%${i}%`]
+                    );
+                }
+            } catch(e) {}
+
         } catch (e) {
             console.warn('Aviso en SemillasShort.ensureTable:', e.message);
         }
+    }
+
+    static detectAliyahFromText(text) {
+        if (!text || typeof text !== 'string') return null;
+        const clean = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        
+        const pattern1 = /(?:aliya|aliyah)\s*(\d+)/i;
+        const match1 = clean.match(pattern1);
+        if (match1) {
+            const val = parseInt(match1[1]);
+            if (val >= 1 && val <= 7) return val;
+        }
+
+        const pattern2 = /(\d+)\s*(?:[ª°a]|ra|da|ta|va)?\s*(?:aliya|aliyah)/i;
+        const match2 = clean.match(pattern2);
+        if (match2) {
+            const val = parseInt(match2[1]);
+            if (val >= 1 && val <= 7) return val;
+        }
+
+        return null;
+    }
+
+    static extractAliyahNumber(title, explicitNumber) {
+        if (explicitNumber !== undefined && explicitNumber !== null && explicitNumber !== '') {
+            const num = parseInt(explicitNumber);
+            if (!isNaN(num)) {
+                // Si el número explícito vino como 1 pero el título indica claramente otra aliyá (ej: Aliyá 4°),
+                // corregimos para evitar que quede mal por el valor por defecto del select
+                if (title && num === 1) {
+                    const detected = SemillasShort.detectAliyahFromText(title);
+                    if (detected && detected !== 1) return detected;
+                }
+                return num;
+            }
+        }
+        if (title) {
+            const detected = SemillasShort.detectAliyahFromText(title);
+            if (detected) return detected;
+        }
+        return 1;
     }
 
     static async getAll() {
@@ -97,7 +152,7 @@ class SemillasShort {
     static async getPublished() {
         try {
             await SemillasShort.ensureTable();
-            const [rows] = await db.query('SELECT * FROM semillas_shorts WHERE is_published = 1 OR is_published = TRUE OR is_published IS NULL ORDER BY aliyah_number ASC, id DESC');
+            const [rows] = await db.query('SELECT * FROM semillas_shorts WHERE is_published = 1 OR is_published = TRUE OR is_published IS NULL ORDER BY CASE WHEN aliyah_number IS NULL THEN 0 ELSE aliyah_number END DESC, created_at DESC, id DESC');
             return rows || [];
         } catch (e) {
             console.warn('Aviso en SemillasShort.getPublished:', e.message);
@@ -161,6 +216,7 @@ class SemillasShort {
 
         const type = short_type || 'aliya';
         const cat = category || (type === 'general' ? 'General / Temas Diversos' : 'Aliyot con Niños');
+        const finalAliyahNumber = type === 'general' ? (parseInt(aliyah_number) || null) : SemillasShort.extractAliyahNumber(title, aliyah_number);
 
         return await db.query(
             `INSERT INTO semillas_shorts 
@@ -172,7 +228,7 @@ class SemillasShort {
                 cat,
                 child_name || '',
                 parasha_name || '',
-                type === 'general' ? (parseInt(aliyah_number) || null) : (parseInt(aliyah_number) || 1),
+                finalAliyahNumber,
                 verses_reference || '',
                 video_url || '',
                 ytUrl,
@@ -212,6 +268,7 @@ class SemillasShort {
 
         const type = short_type || 'aliya';
         const cat = category || (type === 'general' ? 'General / Temas Diversos' : 'Aliyot con Niños');
+        const finalAliyahNumber = type === 'general' ? (parseInt(aliyah_number) || null) : SemillasShort.extractAliyahNumber(title, aliyah_number);
 
         return await db.query(
             `UPDATE semillas_shorts 
@@ -223,7 +280,7 @@ class SemillasShort {
                 cat,
                 child_name || '',
                 parasha_name || '',
-                type === 'general' ? (parseInt(aliyah_number) || null) : (parseInt(aliyah_number) || 1),
+                finalAliyahNumber,
                 verses_reference || '',
                 video_url || '',
                 ytUrl,
