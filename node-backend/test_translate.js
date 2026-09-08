@@ -1,4 +1,27 @@
-const { translateSpanishToHebrewAndPhonetics, fetchVersesFromSefaria, parseBibleReference } = require('./src/utils/hebrewHelper');
+const { transliterateHebrewToSpanish, fetchVersesFromSefaria, parseBibleReference } = require('./src/utils/hebrewHelper');
+
+// Let's implement and test the new batch translate function
+async function translateTextBatch(text, from = 'es', to = 'he') {
+    if (!text || !text.trim()) return '';
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&q=${encodeURIComponent(text.trim())}`;
+        const res = await fetch(url, { 
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+            const data = await res.json();
+            if (data && data[0] && Array.isArray(data[0])) {
+                return data[0].map(item => item[0]).join('');
+            }
+        }
+    } catch(e) {}
+
+    return '';
+}
 
 const testText = `16
 Le despertaron a celos con los dioses ajenos;
@@ -12,46 +35,13 @@ Que no habían temido vuestros padres.
 De la Roca que te creó te olvidaste;
 Te has olvidado de Dios tu creador.`;
 
-async function run() {
-    console.log('1. Test parseBibleReference:');
-    console.log(parseBibleReference('Deuteronomio 32:16-18'));
-    console.log(parseBibleReference('deut 32:16-18'));
+(async () => {
+    console.log('Testing fast translation:');
+    const t0 = Date.now();
+    const tr = await translateTextBatch(testText, 'es', 'he');
+    console.log(`Finished in ${Date.now() - t0}ms`);
+    console.log('Hebrew translation preview:\n' + tr);
 
-    console.log('\n2. Test fetchVersesFromSefaria:');
-    try {
-        const t0 = Date.now();
-        const res1 = await fetchVersesFromSefaria('Deuteronomio 32:16-18');
-        console.log(`fetchVersesFromSefaria took ${Date.now() - t0}ms:`, res1 ? 'Got result' : 'null');
-        if (res1) {
-            console.log('Hebrew preview:', res1.hebrewRaw ? res1.hebrewRaw.slice(0, 100) : 'none');
-        }
-    } catch(e) {
-        console.error('fetchVersesFromSefaria error:', e);
-    }
-
-    console.log('\n3. Test translateSpanishToHebrewAndPhonetics (with reference):');
-    try {
-        const t0 = Date.now();
-        const res2 = await translateSpanishToHebrewAndPhonetics(testText, 'Deuteronomio 32:16-18');
-        console.log(`translateSpanishToHebrewAndPhonetics took ${Date.now() - t0}ms:`, res2 ? 'Got result' : 'null');
-        if (res2) {
-            console.log('Hebrew preview:', res2.hebrew ? res2.hebrew.slice(0, 100) : 'none');
-        }
-    } catch(e) {
-        console.error('translate error:', e);
-    }
-
-    console.log('\n4. Test translateSpanishToHebrewAndPhonetics (WITHOUT reference, line by line):');
-    try {
-        const t0 = Date.now();
-        const res3 = await translateSpanishToHebrewAndPhonetics(testText, '');
-        console.log(`line by line took ${Date.now() - t0}ms:`, res3 ? 'Got result' : 'null');
-        if (res3) {
-            console.log('Hebrew preview:', res3.hebrew ? res3.hebrew.slice(0, 100) : 'none');
-        }
-    } catch(e) {
-        console.error('line by line error:', e);
-    }
-}
-
-run().then(() => process.exit(0)).catch(e => { console.error(e); process.exit(1); });
+    const phonetic = transliterateHebrewToSpanish(tr);
+    console.log('\nPhonetic preview:\n' + phonetic);
+})();
