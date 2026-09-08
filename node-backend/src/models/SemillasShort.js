@@ -85,10 +85,10 @@ class SemillasShort {
                     await db.query(
                         `UPDATE semillas_shorts 
                          SET aliyah_number = ? 
-                         WHERE (title LIKE ? OR title LIKE ? OR title LIKE ? OR title LIKE ?) 
+                         WHERE (title LIKE ? OR title LIKE ? OR title LIKE ? OR title LIKE ? OR title LIKE ? OR title LIKE ?) 
                            AND (aliyah_number = 1 OR aliyah_number IS NULL) 
                            AND (short_type = 'aliya' OR short_type IS NULL)`,
-                        [i, `%${i}ª%Aliy%`, `%${i}°%Aliy%`, `%${i}a%Aliy%`, `%Aliy%${i}%`]
+                        [i, `%${i}ª%Aliy%`, `%${i}°%Aliy%`, `%${i}º%Aliy%`, `%${i}a%Aliy%`, `%${i}da%Aliy%`, `%Aliy%${i}%`]
                     );
                 }
             } catch(e) {}
@@ -109,11 +109,23 @@ class SemillasShort {
             if (val >= 1 && val <= 7) return val;
         }
 
-        const pattern2 = /(\d+)\s*(?:[ª°a]|ra|da|ta|va)?\s*(?:aliya|aliyah)/i;
+        const pattern2 = /(\d+)\s*(?:[ª°ºa]|ra|da|ta|va|ma)?\s*(?:aliya|aliyah)/i;
         const match2 = clean.match(pattern2);
         if (match2) {
             const val = parseInt(match2[1]);
             if (val >= 1 && val <= 7) return val;
+        }
+
+        const words = {
+            'primera': 1, 'primero': 1, 'segunda': 2, 'segundo': 2,
+            'tercera': 3, 'tercero': 3, 'cuarta': 4, 'cuarto': 4,
+            'quinta': 5, 'quinto': 5, 'sexta': 6, 'sexto': 6,
+            'septima': 7, 'septimo': 7
+        };
+        for (const [w, n] of Object.entries(words)) {
+            if (clean.includes(w) && (clean.includes('aliya') || clean.includes('aliyah'))) {
+                return n;
+            }
         }
 
         return null;
@@ -139,11 +151,55 @@ class SemillasShort {
         return 1;
     }
 
+    static sortList(items) {
+        if (!items || !Array.isArray(items)) return [];
+        return [...items].sort((a, b) => {
+            // 1. Destacados primero
+            if (a.is_highlight && !b.is_highlight) return -1;
+            if (!a.is_highlight && b.is_highlight) return 1;
+
+            const parashaA = (a.parasha_name || '').trim().toLowerCase();
+            const parashaB = (b.parasha_name || '').trim().toLowerCase();
+
+            // 2. Si pertenecen a la misma Parashá, ordenar de forma DESCENDENTE por número de Aliyá (2 antes que 1, 7 antes que 6)
+            if (parashaA && parashaB && parashaA === parashaB) {
+                const numA = parseInt(a.aliyah_number) || SemillasShort.extractAliyahNumber(a.title, a.aliyah_number) || 0;
+                const numB = parseInt(b.aliyah_number) || SemillasShort.extractAliyahNumber(b.title, b.aliyah_number) || 0;
+                if (numA !== numB) return numB - numA; // DESC: 2 antes que 1
+            }
+
+            // 3. Comparar fecha (a nivel de día YYYY-MM-DD)
+            const getDateStr = (item) => {
+                if (item.reading_date) {
+                    try { return new Date(item.reading_date).toISOString().slice(0, 10); } catch(e) {}
+                }
+                if (item.created_at) {
+                    try { return new Date(item.created_at).toISOString().slice(0, 10); } catch(e) {}
+                }
+                return '1970-01-01';
+            };
+
+            const dateA = getDateStr(a);
+            const dateB = getDateStr(b);
+
+            if (dateA !== dateB) {
+                return dateB.localeCompare(dateA); // Más reciente primero
+            }
+
+            // 4. Misma fecha: Aliyá mayor primero (2 antes que 1, 7 antes que 6)
+            const numA = parseInt(a.aliyah_number) || SemillasShort.extractAliyahNumber(a.title, a.aliyah_number) || 0;
+            const numB = parseInt(b.aliyah_number) || SemillasShort.extractAliyahNumber(b.title, b.aliyah_number) || 0;
+            if (numA !== numB) return numB - numA;
+
+            return (b.id || 0) - (a.id || 0);
+        });
+    }
+
     static async getAll() {
         try {
             await SemillasShort.ensureTable();
-            const [rows] = await db.query('SELECT * FROM semillas_shorts ORDER BY is_highlight DESC, COALESCE(reading_date, created_at) DESC, id DESC');
-            return rows || [];
+            const [rows] = await db.query('SELECT * FROM semillas_shorts ORDER BY is_highlight DESC, COALESCE(DATE(reading_date), DATE(created_at)) DESC, CASE WHEN aliyah_number IS NULL THEN 0 ELSE aliyah_number END DESC, id DESC');
+            return SemillasShort.sortList(rows || []);
         } catch (e) {
             console.warn('Aviso en SemillasShort.getAll:', e.message);
             return [];
@@ -153,8 +209,8 @@ class SemillasShort {
     static async getPublished() {
         try {
             await SemillasShort.ensureTable();
-            const [rows] = await db.query('SELECT * FROM semillas_shorts WHERE is_published = 1 OR is_published = TRUE OR is_published IS NULL ORDER BY COALESCE(reading_date, created_at) DESC, CASE WHEN aliyah_number IS NULL THEN 0 ELSE aliyah_number END DESC, id DESC');
-            return rows || [];
+            const [rows] = await db.query('SELECT * FROM semillas_shorts WHERE is_published = 1 OR is_published = TRUE OR is_published IS NULL ORDER BY COALESCE(DATE(reading_date), DATE(created_at)) DESC, CASE WHEN aliyah_number IS NULL THEN 0 ELSE aliyah_number END DESC, id DESC');
+            return SemillasShort.sortList(rows || []);
         } catch (e) {
             console.warn('Aviso en SemillasShort.getPublished:', e.message);
             return [];
@@ -164,8 +220,9 @@ class SemillasShort {
     static async getLatest(limit = 6) {
         try {
             await SemillasShort.ensureTable();
-            const [rows] = await db.query('SELECT * FROM semillas_shorts WHERE is_published = TRUE ORDER BY COALESCE(reading_date, created_at) DESC, id DESC LIMIT ?', [limit]);
-            return rows || [];
+            const [rows] = await db.query('SELECT * FROM semillas_shorts WHERE is_published = TRUE ORDER BY COALESCE(DATE(reading_date), DATE(created_at)) DESC, CASE WHEN aliyah_number IS NULL THEN 0 ELSE aliyah_number END DESC, id DESC');
+            const sorted = SemillasShort.sortList(rows || []);
+            return sorted.slice(0, limit);
         } catch (e) {
             console.warn('Aviso en SemillasShort.getLatest:', e.message);
             return [];

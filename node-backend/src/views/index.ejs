@@ -755,7 +755,22 @@
                         <!-- ============================================================ -->
                         <% 
                             const allShortsHome = (typeof semillasShorts !== 'undefined' && semillasShorts) ? semillasShorts : [];
-                            const aliyotShortsHome = allShortsHome.filter(s => s.short_type !== 'general');
+                            const aliyotShortsHome = allShortsHome.filter(s => s.short_type !== 'general').sort((a, b) => {
+                                const parashaA = (a.parasha_name || '').trim().toLowerCase();
+                                const parashaB = (b.parasha_name || '').trim().toLowerCase();
+                                if (parashaA && parashaB && parashaA === parashaB) {
+                                    const numA = parseInt(a.aliyah_number) || 0;
+                                    const numB = parseInt(b.aliyah_number) || 0;
+                                    if (numA !== numB) return numB - numA; // DESC: 2 antes que 1
+                                }
+                                const dateA = a.reading_date ? new Date(a.reading_date).toISOString().slice(0, 10) : (a.created_at ? new Date(a.created_at).toISOString().slice(0, 10) : '');
+                                const dateB = b.reading_date ? new Date(b.reading_date).toISOString().slice(0, 10) : (b.created_at ? new Date(b.created_at).toISOString().slice(0, 10) : '');
+                                if (dateA !== dateB) return dateB.localeCompare(dateA);
+                                const numA = parseInt(a.aliyah_number) || 0;
+                                const numB = parseInt(b.aliyah_number) || 0;
+                                if (numA !== numB) return numB - numA;
+                                return (b.id || 0) - (a.id || 0);
+                            });
                         %>
                         <% if (aliyotShortsHome && aliyotShortsHome.length > 0) { %>
                             <div class="mt-5 pt-4 border-top" data-aos="fade-up" data-aos-delay="150">
