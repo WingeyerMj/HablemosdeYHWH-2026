@@ -2435,17 +2435,24 @@ section,
   font-size: 14px;
 }
 
-/* Animación de moneda giratoria */
-@keyframes coin-spin {
-  0% { transform: rotateY(0deg); }
-  100% { transform: rotateY(360deg); }
+/* Hero Logos en paralelo y estáticos */
+.hero-logos-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
 }
 
-.logo-spin {
-  animation: coin-spin 5s linear infinite;
-  transform-style: preserve-3d;
-  backface-visibility: visible;
+.hero-logo-img {
+  transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+.hero-logo-img:hover {
+  transform: translateY(-5px) scale(1.04);
+  filter: drop-shadow(0 15px 30px rgba(212, 168, 83, 0.4)) !important;
 }
 
 /* Torah Viviente Section */
 .torah-viviente-btn:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(212,168,83,0.6) !important; }
+

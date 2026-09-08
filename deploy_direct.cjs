@@ -81,6 +81,7 @@ conn.on('ready', () => {
         npm install &&
         echo "=== Ejecutando migraciones de base de datos ===" &&
         node src/scripts/migrate_aliyot.js &&
+        node src/scripts/update_about_content.js &&
         node -e "require('./src/models/SemillasShort').ensureTable().then(() => console.log('✅ SemillasShort table verified')).catch(e => console.error(e))" &&
         node -e "require('./src/models/SemillasArticulo').ensureTable().then(() => console.log('✅ SemillasArticulo table verified')).catch(e => console.error(e))" &&
         echo "=== Reiniciando servicio PM2 ===" &&
