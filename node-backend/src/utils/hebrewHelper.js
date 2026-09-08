@@ -59,19 +59,19 @@ const CONSONANTS = {
 
 // Libros bíblicos de la Torá
 const TORA_BOOKS_NUM = {
-    'genesis': 1, 'génesis': 1, 'gen': 1, 'gn': 1, 'bereshit': 1,
-    'exodo': 2, 'éxodo': 2, 'exo': 2, 'ex': 2, 'shemot': 2,
-    'levitico': 3, 'levítico': 3, 'lev': 3, 'lv': 3, 'vayikra': 3, 'vayikrá': 3,
-    'numeros': 4, 'números': 4, 'num': 4, 'nm': 4, 'bemidbar': 4,
-    'deuteronomio': 5, 'deut': 5, 'dt': 5, 'devarim': 5
+    'genesis': 1, 'génesis': 1, 'gen': 1, 'gn': 1, 'ge': 1, 'bereshit': 1, 'bereishit': 1,
+    'exodo': 2, 'éxodo': 2, 'exo': 2, 'ex': 2, 'shemot': 2, 'shemoth': 2,
+    'levitico': 3, 'levítico': 3, 'lev': 3, 'lv': 3, 'le': 3, 'vayikra': 3, 'vayikrá': 3, 'vaikra': 3,
+    'numeros': 4, 'números': 4, 'num': 4, 'nm': 4, 'nu': 4, 'bemidbar': 4, 'bamidbar': 4,
+    'deuteronomio': 5, 'deut': 5, 'dt': 5, 'deu': 5, 'deuteronimio': 5, 'devarim': 5, 'dvarim': 5
 };
 
 const TORA_BOOKS_SEFARIA = {
-    'genesis': 'Genesis', 'génesis': 'Genesis', 'gen': 'Genesis', 'bereshit': 'Genesis',
-    'exodo': 'Exodus', 'éxodo': 'Exodus', 'exo': 'Exodus', 'shemot': 'Exodus',
-    'levitico': 'Leviticus', 'levítico': 'Leviticus', 'lev': 'Leviticus', 'vayikra': 'Leviticus', 'vayikrá': 'Leviticus',
-    'numeros': 'Numbers', 'números': 'Numbers', 'num': 'Numbers', 'bemidbar': 'Numbers',
-    'deuteronomio': 'Deuteronomy', 'deut': 'Deuteronomy', 'dt': 'Deuteronomy', 'devarim': 'Deuteronomy'
+    'genesis': 'Genesis', 'génesis': 'Genesis', 'gen': 'Genesis', 'gn': 'Genesis', 'ge': 'Genesis', 'bereshit': 'Genesis', 'bereishit': 'Genesis',
+    'exodo': 'Exodus', 'éxodo': 'Exodus', 'exo': 'Exodus', 'ex': 'Exodus', 'shemot': 'Exodus', 'shemoth': 'Exodus',
+    'levitico': 'Leviticus', 'levítico': 'Leviticus', 'lev': 'Leviticus', 'lv': 'Leviticus', 'le': 'Leviticus', 'vayikra': 'Leviticus', 'vayikrá': 'Leviticus', 'vaikra': 'Leviticus',
+    'numeros': 'Numbers', 'números': 'Numbers', 'num': 'Numbers', 'nm': 'Numbers', 'nu': 'Numbers', 'bemidbar': 'Numbers', 'bamidbar': 'Numbers',
+    'deuteronomio': 'Deuteronomy', 'deut': 'Deuteronomy', 'dt': 'Deuteronomy', 'deu': 'Deuteronomy', 'deuteronimio': 'Deuteronomy', 'devarim': 'Deuteronomy', 'dvarim': 'Deuteronomy'
 };
 
 /**
@@ -461,7 +461,12 @@ async function fetchVersesFromSefaria(refString) {
             ? `${sefariaBook}.${startChapter}.${startVerse}-${endChapter}.${endVerse}`
             : `${sefariaBook}.${startChapter}.${startVerse}-${endVerse}`;
         const url = `https://www.sefaria.org/api/texts/${encodeURIComponent(sefariaRef)}?context=0&commentary=0`;
-        const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+        const res = await fetch(url, { 
+            headers: { 
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'application/json'
+            } 
+        });
         if (res.ok) {
             const data = await res.json();
             if (data && data.he) {
@@ -487,7 +492,7 @@ async function fetchVersesFromSefaria(refString) {
                     hebrew: hebrewFormatted,
                     phonetic: phoneticText,
                     englishOrSpanish: spanishLines.join('\n'),
-                    hebrewRaw: heArray.join('\n')
+                    hebrewRaw: heArray.map((v, i) => `(${startVerse + i}) ${v}`).join('\n')
                 };
             }
         }
@@ -500,13 +505,32 @@ async function fetchVersesFromSefaria(refString) {
 }
 
 /**
- * Traducir una línea individual de texto
+ * Traducir texto (soporta bloques de múltiples líneas en una sola petición ultrarrápida)
  */
-async function translateSingleLine(text, from = 'es', to = 'he') {
+async function translateText(text, from = 'es', to = 'he') {
     if (!text || text.trim() === '') return '';
+    const cleanText = text.trim();
+
+    // 1. Google Translate clients5 (Rápido y sin bloqueo 429)
     try {
-        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&q=${encodeURIComponent(text.trim())}`;
-        const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+        const url = `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=${from}&tl=${to}&q=${encodeURIComponent(cleanText)}`;
+        const res = await fetch(url, { 
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' } 
+        });
+        if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data) && data[0]) {
+                return data[0];
+            }
+        }
+    } catch(e) {}
+
+    // 2. Google Translate translate_a/single
+    try {
+        const url = `https://translate.googleapis.com/translate_a/single?client=dict-chrome-ex&sl=${from}&tl=${to}&dt=t&q=${encodeURIComponent(cleanText)}`;
+        const res = await fetch(url, { 
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' } 
+        });
         if (res.ok) {
             const data = await res.json();
             if (data && data[0] && Array.isArray(data[0])) {
@@ -515,9 +539,9 @@ async function translateSingleLine(text, from = 'es', to = 'he') {
         }
     } catch(e) {}
 
-    // Fallback a MyMemory
+    // 3. Fallback a MyMemory
     try {
-        const mmUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.substring(0, 450))}&langpair=${from}|${to}`;
+        const mmUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(cleanText.substring(0, 500))}&langpair=${from}|${to}`;
         const mmRes = await fetch(mmUrl);
         if (mmRes.ok) {
             const mmData = await mmRes.json();
@@ -530,13 +554,18 @@ async function translateSingleLine(text, from = 'es', to = 'he') {
     return text;
 }
 
+async function translateSingleLine(text, from = 'es', to = 'he') {
+    return translateText(text, from, to);
+}
+
 async function translateSingleSpanishLine(text) {
-    return translateSingleLine(text, 'en', 'es');
+    return translateText(text, 'en', 'es');
 }
 
 /**
  * Traducir texto de Español a Hebreo y generar Fonética completa.
- * Si se ingresa una cita bíblica (ej: Deuteronomio 26:1-11), obtiene automáticamente todos los versículos en Hebreo con Niqqud, Español y Fonética.
+ * Si se ingresa una cita bíblica (ej: Deuteronomio 26:1-11 o Deuteronomio 32:16-18),
+ * obtiene automáticamente todos los versículos en Hebreo con Niqqud, Español y Fonética.
  */
 async function translateSpanishToHebrewAndPhonetics(spanishText, referenceHint = '') {
     if ((!spanishText || typeof spanishText !== 'string' || spanishText.trim() === '') && !referenceHint) {
@@ -544,13 +573,11 @@ async function translateSpanishToHebrewAndPhonetics(spanishText, referenceHint =
     }
 
     const cleanInput = (spanishText || '').replace(/<[^>]*>/g, ' ').trim();
-    const candidateRef = referenceHint || cleanInput;
+    const candidateRef = (referenceHint || '').trim() || cleanInput.split('\n')[0].trim();
 
-    // 1. Verificar si el texto ingresado es una cita bíblica de la Torá (ej: "Deuteronomio 26:1-11")
+    // 1. Verificar si hay cita bíblica de la Torá (ej: "Deuteronomio 32:16-18", "Deut 32:16-18")
     const parsedRef = parseTorahReference(candidateRef) || parseTorahReference(cleanInput.split('\n')[0]);
     
-    // Si se detecta una referencia bíblica válida, siempre usar la API bíblica
-    // (prioridad: referenceHint, luego primera línea del texto)
     if (parsedRef) {
         try {
             const bibleResult = await fetchVersesFromSefaria(candidateRef || cleanInput);
@@ -566,7 +593,7 @@ async function translateSpanishToHebrewAndPhonetics(spanishText, referenceHint =
         }
     }
 
-    // 2. Si es texto o versículos completos en español pegados, traducir línea a línea / versículo a versículo
+    // 2. Si es texto en español, procesar líneas y traducir en lote a alta velocidad
     const rawLines = (spanishText || '')
         .replace(/<p>/gi, '\n')
         .replace(/<\/p>/gi, '\n')
@@ -579,42 +606,42 @@ async function translateSpanishToHebrewAndPhonetics(spanishText, referenceHint =
         return { hebrew: '', phonetic: '', spanish: '' };
     }
 
-    const hebrewLines = [];
-    const phoneticLines = [];
+    // Traducir todo el bloque en una sola petición
+    const fullSpanishText = rawLines.join('\n');
+    const translatedHebrewBlock = await translateText(fullSpanishText, 'es', 'he');
 
-    for (const line of rawLines) {
-        // Extraer número de versículo si lo tiene (ej: "(1)", "1.", "1 ")
-        const verseMatch = line.match(/^(\(?\d+\)?[\.:\-]?\s*)(.*)$/);
-        let prefix = '';
-        let contentToTranslate = line;
-
-        if (verseMatch) {
-            prefix = verseMatch[1].trim() + ' ';
-            contentToTranslate = verseMatch[2].trim();
-        }
-
-        if (contentToTranslate.length > 0) {
-            const translatedHebrew = await translateSingleLine(contentToTranslate, 'es', 'he');
-            const cleanHe = (translatedHebrew || contentToTranslate).trim();
-            
-            const fullHeLine = prefix ? `${prefix}${cleanHe}` : cleanHe;
-            hebrewLines.push(fullHeLine);
-
-            // Si el hebreo no tiene Niqqud (ej: Google Translate), insertar vocales por defecto
-            // para que la fonética sea legible en español
-            const heForPhonetic = hasNiqqud(cleanHe) ? cleanHe : addDefaultVowels(cleanHe);
-            const linePhonetic = transliterateHebrewToSpanish(heForPhonetic);
-            const fullPhoneticLine = prefix ? `${prefix}${linePhonetic}` : linePhonetic;
-            phoneticLines.push(fullPhoneticLine);
-        }
+    let hebrewLines = [];
+    if (translatedHebrewBlock) {
+        hebrewLines = translatedHebrewBlock.split('\n').map(l => l.trim()).filter(l => l.length > 0);
     }
 
-    const hebrewResult = hebrewLines.join('\n\n');
-    const phoneticResult = phoneticLines.join('\n\n');
+    // Si la cantidad de líneas coincide o difiere, mapear y generar fonética
+    const finalHebrewLines = [];
+    const finalPhoneticLines = [];
+
+    for (let i = 0; i < rawLines.length; i++) {
+        const origLine = rawLines[i];
+        const verseMatch = origLine.match(/^(\(?\d+\)?[\.:\-]?\s*)(.*)$/);
+        const prefix = verseMatch ? verseMatch[1].trim() + ' ' : '';
+
+        let heLine = hebrewLines[i] || origLine;
+        // Limpiar prefijo repetido si el traductor lo mantuvo
+        if (prefix && heLine.startsWith(prefix.trim())) {
+            heLine = heLine.substring(prefix.trim().length).trim();
+        }
+
+        const fullHeLine = prefix ? `${prefix}${heLine}` : heLine;
+        finalHebrewLines.push(fullHeLine);
+
+        const heForPhonetic = hasNiqqud(heLine) ? heLine : addDefaultVowels(heLine);
+        const linePhonetic = transliterateHebrewToSpanish(heForPhonetic);
+        const fullPhoneticLine = prefix ? `${prefix}${linePhonetic}` : linePhonetic;
+        finalPhoneticLines.push(fullPhoneticLine);
+    }
 
     return {
-        hebrew: hebrewResult,
-        phonetic: phoneticResult,
+        hebrew: finalHebrewLines.join('\n'),
+        phonetic: finalPhoneticLines.join('\n'),
         spanish: spanishText
     };
 }
