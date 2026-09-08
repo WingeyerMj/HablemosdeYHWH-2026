@@ -14,6 +14,8 @@ conn.on('ready', () => {
     // Install dependencies
     'cd /var/www/hablemos_yhwh/node-backend && npm install --production 2>&1',
     'echo "=== NPM INSTALL COMPLETADO ==="',
+    'node src/scripts/update_about_content.js 2>&1',
+    'echo "=== UPDATE ABOUT COMPLETADO ==="',
     // Restart the app
     'pm2 restart hablemos-web 2>&1',
     'echo "=== PM2 RESTART COMPLETADO ==="',
