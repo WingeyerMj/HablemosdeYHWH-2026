@@ -2442,15 +2442,53 @@ section,
   align-items: center;
   flex-wrap: wrap;
   gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.hero-logo-box {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .hero-logo-img {
-  transition: transform 0.4s ease, filter 0.4s ease;
+  max-height: 250px;
+  width: auto;
+  border-radius: 50%;
+  object-fit: contain;
+  aspect-ratio: 1/1;
+  filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.65));
+  transition: transform 0.3s ease, filter 0.3s ease;
+  transform: none !important;
 }
 
 .hero-logo-img:hover {
-  transform: translateY(-5px) scale(1.04);
-  filter: drop-shadow(0 15px 30px rgba(212, 168, 83, 0.4)) !important;
+  transform: translateY(-6px) scale(1.03) !important;
+  filter: drop-shadow(0 18px 35px rgba(212, 168, 83, 0.55)) !important;
+}
+
+@media (max-width: 992px) {
+  .hero-logo-img {
+    max-height: 210px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-logos-container {
+    gap: 1.25rem;
+  }
+  .hero-logo-img {
+    max-height: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-logos-container {
+    gap: 0.85rem;
+  }
+  .hero-logo-img {
+    max-height: 130px;
+  }
 }
 
 /* Torah Viviente Section */

@@ -155,10 +155,11 @@ function renderCalendar() {
     moonIcon.className = "moon-icon";
 
     const moonText = document.createElement("span");
+    moonText.className = "moon-text";
     moonText.textContent = `${moonInfo.illumination}%`;
 
-    moonContainer.appendChild(moonIcon);
     moonContainer.appendChild(moonText);
+    moonContainer.appendChild(moonIcon);
 
     // Agregar elementos a la celda
     cell.appendChild(lunisolarDayEl);

@@ -356,13 +356,14 @@ function renderCalendar() {
     moonIcon.textContent = getMoonIcon(moonInfo.illumination);
 
     const moonText = document.createElement("span");
+    moonText.className = "moon-text";
     const illumText = typeof moonInfo.illumination === "string"
       ? moonInfo.illumination
       : `${moonInfo.illumination}%`;
     moonText.textContent = illumText;
 
-    moonContainer.appendChild(moonIcon);
     moonContainer.appendChild(moonText);
+    moonContainer.appendChild(moonIcon);
 
     cell.appendChild(lunisolarDayEl);
     cell.appendChild(gregorianDayEl);
