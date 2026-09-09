@@ -3,7 +3,7 @@ duration 5.192000
 file 'C:/xampp/htdocs/HablemosdeYHWH-2026/video-output/mejorado/escenas_guion_usuario/02.jpg'
 duration 12.656000
 file 'C:/xampp/htdocs/HablemosdeYHWH-2026/video-output/mejorado/escenas_guion_usuario/03.jpg'
-duration 12.824000
+duration 13.232000
 file 'C:/xampp/htdocs/HablemosdeYHWH-2026/video-output/mejorado/escenas_guion_usuario/04.jpg'
 duration 12.440000
 file 'C:/xampp/htdocs/HablemosdeYHWH-2026/video-output/mejorado/escenas_guion_usuario/05.jpg'
