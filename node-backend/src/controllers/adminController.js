@@ -1259,6 +1259,37 @@ const adminController = {
         }
     },
 
+    updateUser: async (req, res) => {
+        try {
+            const { username, password, role, email } = req.body;
+            const userId = req.params.id;
+
+            if (password && password.trim() !== '') {
+                const hashedP = await bcrypt.hash(password, 10);
+                await db.query(
+                    'UPDATE users SET username = ?, password = ?, role = ?, email = ? WHERE id = ?',
+                    [username, hashedP, role, email || null, userId]
+                );
+            } else {
+                await db.query(
+                    'UPDATE users SET username = ?, role = ?, email = ? WHERE id = ?',
+                    [username, role, email || null, userId]
+                );
+            }
+
+            // Si el usuario actualizó su propia sesión
+            if (req.session.userId == userId) {
+                req.session.username = username;
+                req.session.role = role;
+            }
+
+            res.redirect('/admin/users');
+        } catch (error) {
+            console.error('Error updateUser:', error);
+            res.redirect('/admin/users');
+        }
+    },
+
     deleteUser: async (req, res) => {
         try {
             await db.query('DELETE FROM users WHERE id = ?', [req.params.id]);

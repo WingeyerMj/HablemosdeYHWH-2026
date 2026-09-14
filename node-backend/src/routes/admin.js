@@ -176,6 +176,8 @@ router.post('/settings/update', isAuthenticated, isAdmin, adminController.update
 // Gestión de Usuarios (Solo Admin)
 router.get('/users', isAuthenticated, isAdmin, adminController.usersPage);
 router.post('/users/create', isAuthenticated, isAdmin, adminController.createUser);
+router.post('/users/edit/:id', isAuthenticated, isAdmin, adminController.updateUser);
+router.post('/users/update/:id', isAuthenticated, isAdmin, adminController.updateUser);
 router.get('/users/delete/:id', isAuthenticated, isAdmin, adminController.deleteUser);
 
 // Secciones Dinámicas (Solo Admin)
