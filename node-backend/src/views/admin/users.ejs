@@ -1,74 +1,114 @@
 <%- include('partials/_sidebar', { activePage: 'users' }) %>
 
-<main class="col-md-10 p-4">
-    <div
-        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Gestión de Usuarios</h1>
+<main class="col-md-10 main-content">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1><i class="bi bi-people me-2" style="color: var(--primary-color);"></i>Gestión de Usuarios</h1>
+            <p class="text-white-50 mb-0">Crea nuevos usuarios, administra permisos y gestiona el acceso al panel de administración.</p>
+        </div>
     </div>
 
-    <!-- Formulario para Administradores -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-dark text-white">
-            <h5 class="mb-0">Crear Nuevo Usuario</h5>
+    <!-- Formulario para Crear Nuevo Usuario -->
+    <div class="card bg-dark border-secondary mb-4 shadow" style="border: 1px solid rgba(212, 184, 149, 0.2) !important; background: #121212 !important;">
+        <div class="card-header" style="background: rgba(212,184,149,0.08); border-bottom: 1px solid rgba(255,255,255,0.08);">
+            <h5 class="mb-0" style="color: var(--primary-color);">
+                <i class="bi bi-person-plus me-2"></i>Crear Nuevo Usuario
+            </h5>
         </div>
-        <div class="card-body">
-            <form action="/admin/users/create" method="POST" class="row g-3">
+        <div class="card-body p-4" style="background: #161616;">
+            <form action="/admin/users/create" method="POST" class="row g-3 align-items-end">
                 <div class="col-md-3">
-                    <input type="text" name="username" class="form-control" placeholder="Usuario" required>
+                    <label class="form-label small text-white-50 fw-semibold mb-1">
+                        <i class="bi bi-person me-1"></i>Usuario *
+                    </label>
+                    <input type="text" name="username" class="form-control" placeholder="Nombre de usuario" required
+                           style="background: #212121 !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; color: #ffffff !important;">
                 </div>
                 <div class="col-md-3">
-                    <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
+                    <label class="form-label small text-white-50 fw-semibold mb-1">
+                        <i class="bi bi-key me-1"></i>Contraseña *
+                    </label>
+                    <input type="password" name="password" class="form-control" placeholder="Ingresa contraseña" required
+                           style="background: #212121 !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; color: #ffffff !important;">
                 </div>
                 <div class="col-md-3">
-                    <input type="email" name="email" class="form-control" placeholder="Email (opcional)">
+                    <label class="form-label small text-white-50 fw-semibold mb-1">
+                        <i class="bi bi-envelope me-1"></i>Email (opcional)
+                    </label>
+                    <input type="email" name="email" class="form-control" placeholder="ejemplo@correo.com"
+                           style="background: #212121 !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; color: #ffffff !important;">
                 </div>
                 <div class="col-md-2">
-                    <select name="role" class="form-select">
+                    <label class="form-label small text-white-50 fw-semibold mb-1">
+                        <i class="bi bi-shield-lock me-1"></i>Rol & Permisos
+                    </label>
+                    <select name="role" class="form-select" style="background: #212121 !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; color: #ffffff !important;">
                         <option value="editor">Editor (Solo Blog y Eventos)</option>
                         <option value="admin">Administrador (Total)</option>
                     </select>
                 </div>
                 <div class="col-md-1">
-                    <button type="submit" class="btn btn-primary w-100">Crear</button>
+                    <button type="submit" class="btn btn-primary w-100 py-2 d-flex align-items-center justify-content-center gap-1">
+                        <i class="bi bi-plus-lg"></i> Crear
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Lista de Usuarios -->
-    <div class="table-responsive bg-white shadow-sm p-3 rounded">
-        <table class="table table-hover">
-            <thead class="table-light">
-                <tr>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Rol & Permisos</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% users.forEach(u=> { %>
-                    <tr>
-                        <td><strong>
-                                <%= u.username %>
-                            </strong></td>
-                        <td>
-                            <%= u.email || '-' %>
-                        </td>
-                        <td>
-                            <span class="badge <%= u.role === 'admin' ? 'bg-danger' : 'bg-info' %>">
-                                <%= u.role === 'admin' ? 'ADMIN (Control Total)' : 'EDITOR (Solo Blog y Eventos)' %>
-                            </span>
-                        </td>
-                        <td>
-                            <% if (u.username !=='admin' ) { %>
-                                <a href="/admin/users/delete/<%= u.id %>" class="btn btn-sm btn-outline-danger"
-                                    onclick="return confirm('¿Eliminar usuario?')">Eliminar</a>
-                                <% } %>
-                        </td>
-                    </tr>
-                    <% }) %>
-            </tbody>
-        </table>
+    <div class="card bg-dark border-secondary shadow" style="border: 1px solid rgba(255, 255, 255, 0.08) !important;">
+        <div class="card-header d-flex justify-content-between align-items-center" style="background: rgba(212,184,149,0.05); border-bottom: 1px solid rgba(255,255,255,0.06);">
+            <h5 class="mb-0" style="color: var(--primary-color);">
+                <i class="bi bi-people-fill me-2"></i>Usuarios Registrados (<%= users.length %>)
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0 align-middle">
+                    <thead>
+                        <tr>
+                            <th class="ps-4 py-3" style="color: var(--primary-color); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Username</th>
+                            <th class="py-3" style="color: var(--primary-color); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Email</th>
+                            <th class="py-3" style="color: var(--primary-color); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Rol & Permisos</th>
+                            <th class="text-end pe-4 py-3" style="color: var(--primary-color); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (!users || users.length === 0) { %>
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-white-50">No hay usuarios registrados</td>
+                            </tr>
+                        <% } else { %>
+                            <% users.forEach(u => { %>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td class="ps-4 py-3">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                                                 style="width: 34px; height: 34px; background: rgba(212,184,149,0.15); color: var(--primary-color);">
+                                                <i class="bi bi-person-fill"></i>
+                                            </div>
+                                            <strong class="text-white"><%= u.username %></strong>
+                                        </div>
+                                    </td>
+                                    <td class="text-white-50"><%= u.email || '-' %></td>
+                                    <td>
+                                        <span class="badge <%= u.role === 'admin' ? 'bg-danger' : 'bg-info' %> px-2 py-1">
+                                            <%= u.role === 'admin' ? 'ADMIN (Control Total)' : 'EDITOR (Solo Blog y Eventos)' %>
+                                        </span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a href="/admin/users/delete/<%= u.id %>" class="btn btn-sm btn-outline-danger px-3"
+                                            onclick="return confirm('¿Estás seguro de que deseas eliminar al usuario <%= u.username %>?')">
+                                            <i class="bi bi-trash3 me-1"></i> Eliminar
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </main>

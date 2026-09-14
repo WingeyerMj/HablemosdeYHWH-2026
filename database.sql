@@ -23,12 +23,6 @@ CREATE TABLE IF NOT EXISTS sections (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Usuarios iniciales
-INSERT IGNORE INTO users (username, password, role)
-VALUES ('admin', '$2a$10$r.v8z6K8X9hHqB6W1i7kUeA4eF.W5.E6B1D0C4C8A9A9A9A9A9A9', 'admin');
-
-INSERT IGNORE INTO users (username, password, role)
-VALUES ('editor', '$2a$10$r.v8z6K8X9hHqB6W1i7kUeA4eF.W5.E6B1D0C4C8A9A9A9A9A9A9', 'editor');
 
 -- Ejemplos de secciones iniciales
 INSERT IGNORE INTO sections (section_name, title, subtitle, content)
