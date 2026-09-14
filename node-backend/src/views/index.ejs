@@ -1267,7 +1267,7 @@
                                                 <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
                                                     <i class="bi bi-envelope flex-shrink-0"></i>
                                                     <div>
-                                                        <h3>Email</h3>
+                                                <h3>Email</h3>
                                                         <p><%= siteSettings.contact_email || 'info@hablemosdeyhwh.com' %></p>
                                                     </div>
                                                 </div>
@@ -1275,6 +1275,9 @@
                                             <div class="col-lg-8">
                                                 <form id="contactForm" data-aos="fade-up" data-aos-delay="200">
                                                     <div class="row gy-4">
+                                                        <!-- Honeypot invisible anti-bot -->
+                                                        <input type="text" name="b_company_url" style="position: absolute; left: -9999px; opacity: 0; height: 0; width: 0; pointer-events: none;" tabindex="-1" autocomplete="off">
+
                                                         <div class="col-md-6">
                                                             <input type="text" name="name" class="form-control"
                                                                 placeholder="Tu Nombre" required>

@@ -14,15 +14,27 @@ const isAuthenticated = (req, res, next) => {
     res.redirect('/admin/login');
 };
 
-const isAdmin = (req, res, next) => {
+const isStaff = (req, res, next) => {
     if (req.session.role === 'admin' || req.session.role === 'editor') {
         return next();
     }
     if (req.xhr || req.headers.accept?.includes('application/json') || req.path.includes('/api/')) {
         return res.status(403).json({ success: false, error: 'Acceso denegado: Se requieren permisos de Administrador o Editor.' });
     }
-    res.status(403).send('Acceso denegado: Se requieren permisos de Administrador.');
+    res.status(403).send('Acceso denegado.');
 };
+
+const isStrictAdmin = (req, res, next) => {
+    if (req.session.role === 'admin') {
+        return next();
+    }
+    if (req.xhr || req.headers.accept?.includes('application/json') || req.path.includes('/api/')) {
+        return res.status(403).json({ success: false, error: 'Acceso denegado: Se requieren permisos de Administrador Principal.' });
+    }
+    res.status(403).send('Acceso denegado: Se requieren permisos de Administrador Principal.');
+};
+
+const isAdmin = isStaff;
 
 // Middleware para pasar datos del usuario y página activa a todas las vistas
 router.use((req, res, next) => {
@@ -170,42 +182,42 @@ router.get('/sections', isAuthenticated, isAdmin, adminController.sectionsPage);
 router.post('/sections/update', isAuthenticated, isAdmin, upload.single('image_file'), adminController.updateSection);
 
 // Configuración del Sitio (Solo Admin)
-router.get('/settings', isAuthenticated, isAdmin, adminController.settingsPage);
-router.post('/settings/update', isAuthenticated, isAdmin, adminController.updateSettings);
+router.get('/settings', isAuthenticated, isStrictAdmin, adminController.settingsPage);
+router.post('/settings/update', isAuthenticated, isStrictAdmin, adminController.updateSettings);
 
 // Gestión de Usuarios (Solo Admin)
-router.get('/users', isAuthenticated, isAdmin, adminController.usersPage);
-router.post('/users/create', isAuthenticated, isAdmin, adminController.createUser);
-router.post('/users/edit/:id', isAuthenticated, isAdmin, adminController.updateUser);
-router.post('/users/update/:id', isAuthenticated, isAdmin, adminController.updateUser);
-router.get('/users/delete/:id', isAuthenticated, isAdmin, adminController.deleteUser);
+router.get('/users', isAuthenticated, isStrictAdmin, adminController.usersPage);
+router.post('/users/create', isAuthenticated, isStrictAdmin, adminController.createUser);
+router.post('/users/edit/:id', isAuthenticated, isStrictAdmin, adminController.updateUser);
+router.post('/users/update/:id', isAuthenticated, isStrictAdmin, adminController.updateUser);
+router.get('/users/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteUser);
 
 // Secciones Dinámicas (Solo Admin)
-router.get('/dynamic-sections', isAuthenticated, isAdmin, adminController.listDynamicSections);
-router.get('/dynamic-sections/new', isAuthenticated, isAdmin, adminController.createDynamicSectionPage);
-router.post('/dynamic-sections/create', isAuthenticated, isAdmin, adminController.createDynamicSection);
-router.get('/dynamic-sections/edit/:id', isAuthenticated, isAdmin, adminController.editDynamicSection);
-router.post('/dynamic-sections/update', isAuthenticated, isAdmin, adminController.updateDynamicSection);
-router.get('/dynamic-sections/delete/:id', isAuthenticated, isAdmin, adminController.deleteDynamicSection);
-router.get('/dynamic-sections/toggle/:id', isAuthenticated, isAdmin, adminController.toggleDynamicSection);
+router.get('/dynamic-sections', isAuthenticated, isStrictAdmin, adminController.listDynamicSections);
+router.get('/dynamic-sections/new', isAuthenticated, isStrictAdmin, adminController.createDynamicSectionPage);
+router.post('/dynamic-sections/create', isAuthenticated, isStrictAdmin, adminController.createDynamicSection);
+router.get('/dynamic-sections/edit/:id', isAuthenticated, isStrictAdmin, adminController.editDynamicSection);
+router.post('/dynamic-sections/update', isAuthenticated, isStrictAdmin, adminController.updateDynamicSection);
+router.get('/dynamic-sections/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteDynamicSection);
+router.get('/dynamic-sections/toggle/:id', isAuthenticated, isStrictAdmin, adminController.toggleDynamicSection);
 
 // Entidades Dinámicas (Solo Admin)
-router.get('/entity/:table', isAuthenticated, isAdmin, adminController.manageEntity);
-router.post('/entity/:table/add', isAuthenticated, isAdmin, upload.fields([
+router.get('/entity/:table', isAuthenticated, isStrictAdmin, adminController.manageEntity);
+router.post('/entity/:table/add', isAuthenticated, isStrictAdmin, upload.fields([
     { name: 'image_file', maxCount: 1 },
     { name: 'pdf_upload', maxCount: 1 }
 ]), adminController.addEntityData);
-router.get('/entity/:table/edit/:id', isAuthenticated, isAdmin, adminController.editEntityData);
-router.post('/entity/:table/update/:id', isAuthenticated, isAdmin, upload.fields([
+router.get('/entity/:table/edit/:id', isAuthenticated, isStrictAdmin, adminController.editEntityData);
+router.post('/entity/:table/update/:id', isAuthenticated, isStrictAdmin, upload.fields([
     { name: 'image_file', maxCount: 1 },
     { name: 'pdf_upload', maxCount: 1 }
 ]), adminController.updateEntityData);
-router.get('/entity/:table/delete/:id', isAuthenticated, isAdmin, adminController.deleteEntityData);
+router.get('/entity/:table/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteEntityData);
 
 // Suscriptores Boletín (Solo Admin)
-router.post('/subscribers/create', isAuthenticated, isAdmin, adminController.createSubscriber);
-router.post('/subscribers/broadcast', isAuthenticated, isAdmin, adminController.broadcastNewsletter);
-router.get('/subscribers/delete/:id', isAuthenticated, isAdmin, adminController.deleteSubscriber);
+router.post('/subscribers/create', isAuthenticated, isStrictAdmin, adminController.createSubscriber);
+router.post('/subscribers/broadcast', isAuthenticated, isStrictAdmin, adminController.broadcastNewsletter);
+router.get('/subscribers/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteSubscriber);
 
 module.exports = router;
 

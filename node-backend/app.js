@@ -20,6 +20,18 @@ process.on('uncaughtException', (err) => {
 const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
 
+// Ocultar cabeceras de fingerprinting de Express
+app.disable('x-powered-by');
+
+// Cabeceras de Seguridad HTTP (Anti-XSS, Anti-Clickjacking, Anti-MIME sniffing)
+app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    next();
+});
+
 if (isProduction) app.set('trust proxy', 1);
 
 // Settings
@@ -32,8 +44,8 @@ app.use(expressLayouts);
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/calendar', express.static(path.join(__dirname, '../Calendar')));
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(express.urlencoded({ extended: false, limit: '10mb' }));
+app.use(express.json({ limit: '10mb' }));
 
 app.use(session({
     secret: process.env.SESSION_SECRET || (isProduction ? (() => {
