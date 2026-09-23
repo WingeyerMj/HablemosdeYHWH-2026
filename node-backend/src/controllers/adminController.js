@@ -213,6 +213,20 @@ const adminController = {
             console.log('--- Updating Parasha ID:', id, 'with image_url:', image_url);
             const Parasha = require('../models/Parasha');
             await Parasha.update(id, { parasha_number, title, description, subtitle, content, image_url, pdf_file, icon, link, youtube_link });
+
+            // Notificación automática a suscriptores por actualización
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'parasha',
+                    title: `${parasha_number ? '#' + parasha_number + ' ' : ''}${title} (Actualización)`,
+                    subtitle: subtitle || '',
+                    link: '/parashot',
+                    description: description || '',
+                    image_url: image_url || ''
+                }).catch(e => console.warn('Aviso en notificación Parashá (update):', e.message));
+            } catch(e) {}
+
             res.redirect('/admin/dashboard#pills-services');
         } catch (error) {
             console.error('Error updateParasha:', error);
@@ -236,6 +250,20 @@ const adminController = {
             
             const Portfolio = require('../models/Portfolio');
             await Portfolio.create({ title, subtitle, category, description, content, event_date: event_date || null, image_url });
+
+            // Notificación automática a todos los suscriptores
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'evento',
+                    title: title,
+                    subtitle: subtitle || category || '',
+                    link: '/eventos',
+                    description: description || '',
+                    image_url: image_url || ''
+                }).catch(e => console.warn('Aviso en notificación Evento:', e.message));
+            } catch(e) {}
+
             res.redirect('/admin/dashboard#pills-portfolio');
         } catch (error) {
             console.error('Error createPortfolio:', error);
@@ -265,6 +293,20 @@ const adminController = {
 
             const Portfolio = require('../models/Portfolio');
             await Portfolio.update(id, { title, subtitle, category, description, content, event_date: formattedDate, image_url });
+
+            // Notificación automática a suscriptores por actualización
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'evento',
+                    title: `${title} (Actualización)`,
+                    subtitle: subtitle || category || '',
+                    link: '/eventos',
+                    description: description || '',
+                    image_url: image_url || ''
+                }).catch(e => console.warn('Aviso en notificación Evento (update):', e.message));
+            } catch(e) {}
+
             res.redirect('/admin/dashboard#pills-portfolio');
         } catch (error) {
             console.error('Error updatePortfolio:', error);
@@ -390,6 +432,21 @@ const adminController = {
                 author_img: author_img || '/assets/img/team/kaleb.jpg',
                 authors: finalAuthors
             });
+
+            // Notificación automática a suscriptores por actualización
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'ensenanza',
+                    title: `${title} (Actualización)`,
+                    subtitle: subtitle || '',
+                    link: '/ensenanzas',
+                    description: description || '',
+                    image_url: image_url || '',
+                    author: (finalAuthors && finalAuthors[0]) ? finalAuthors[0].name : (author || 'Moréh Kaleb')
+                }).catch(e => console.warn('Aviso en notificación Enseñanza (update):', e.message));
+            } catch(e) {}
+
             res.redirect('/admin/dashboard#pills-ensenanzas');
         } catch (error) {
             console.error('Error updateEnsenanza:', error);
@@ -526,6 +583,21 @@ const adminController = {
                 author_img: author_img || '/assets/img/team/kaleb.jpg',
                 authors: finalAuthors
             });
+
+            // Notificación automática a suscriptores por actualización
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'haftara',
+                    title: `${title} (Actualización)`,
+                    subtitle: subtitle || parasha_reference || '',
+                    link: '/haftara',
+                    description: description || '',
+                    image_url: image_url || '',
+                    author: (finalAuthors && finalAuthors[0]) ? finalAuthors[0].name : (author || 'Moréh Kaleb')
+                }).catch(e => console.warn('Aviso en notificación Haftará (update):', e.message));
+            } catch(e) {}
+
             res.redirect('/admin/dashboard#pills-haftara');
         } catch (error) {
             console.error('Error updateHaftara:', error);
@@ -643,6 +715,21 @@ const adminController = {
                 pdf_file: pdf_file || '',
                 is_published: is_published !== '0' && is_published !== false
             });
+
+            // Notificación automática a suscriptores por actualización
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'semillas',
+                    title: `${title} (Actualización)`,
+                    subtitle: subtitle || '',
+                    link: '/semillas-de-torah',
+                    description: description || '',
+                    image_url: image_url || '',
+                    author: author || 'Elva Avila'
+                }).catch(e => console.warn('Aviso en notificación Semillas (update):', e.message));
+            } catch(e) {}
+
             res.redirect('/admin/dashboard#pills-semillas');
         } catch (error) {
             console.error('Error updateSemillas:', error);
@@ -760,6 +847,20 @@ const adminController = {
                 is_highlight: is_highlight === '1' || is_highlight === true || is_highlight === 'on',
                 is_published: is_published !== '0' && is_published !== false
             });
+
+            // Notificación automática a suscriptores por actualización
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'semillas',
+                    title: `${title} (Actualización)`,
+                    subtitle: child_name ? `Aliyá con ${child_name} · ${parasha_name || ''}` : (parasha_name || category || ''),
+                    link: '/semillas-de-torah',
+                    description: description || '',
+                    image_url: thumbnail_url || ''
+                }).catch(e => console.warn('Aviso en notificación Short Infantil (update):', e.message));
+            } catch(e) {}
+
             res.redirect('/admin/dashboard#admin-semillas-shorts');
         } catch (error) {
             console.error('Error updateSemillasShort:', error);
@@ -968,6 +1069,20 @@ const adminController = {
                 is_published: is_published !== '0' && is_published !== false
             });
 
+            // Notificación automática a suscriptores por actualización
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'semillas',
+                    title: `${title} (Actualización)`,
+                    subtitle: parasha_name ? ('Parashá ' + parasha_name) : (category || 'Resumen Infantil'),
+                    link: '/semillas-de-torah',
+                    description: summary || key_verse || '',
+                    image_url: main_image || '',
+                    author: author || 'Elva Avila'
+                }).catch(e => console.warn('Aviso en notificación Semillas Articulo (update):', e.message));
+            } catch(e) {}
+
             res.redirect('/admin/dashboard#admin-semillas-articulos');
         } catch (error) {
             console.error('Error updateSemillasArticulo:', error);
@@ -1065,6 +1180,21 @@ const adminController = {
                 is_published: is_published !== '0' && is_published !== false,
                 image_url: image_url || ''
             });
+
+            // Notificación automática a suscriptores por actualización
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'blog',
+                    title: `${title} (Actualización)`,
+                    subtitle: subtitle || '',
+                    link: '/blog',
+                    description: summary || '',
+                    image_url: image_url || '',
+                    author: author || 'Hablemos de YHWH'
+                }).catch(e => console.warn('Aviso en notificación Blog (update):', e.message));
+            } catch(e) {}
+
             res.redirect('/admin/dashboard#pills-blog');
         } catch (error) {
             console.error('Error updateBlogPost:', error);
