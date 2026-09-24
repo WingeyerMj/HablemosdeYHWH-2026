@@ -149,7 +149,10 @@ const homeController = {
             const post = await BlogPost.getById(req.params.id);
             if (!post) return next();
             
-            try { await BlogPost.incrementViews(post.id); } catch(e) {}
+            try { 
+                await BlogPost.incrementViews(post.id); 
+                post.views = (post.views || 0) + 1;
+            } catch(e) {}
             
             const relatedPosts = await BlogPost.getRelated(post.id, post.category, 3);
             const categories = await BlogPost.getCategories();
@@ -206,6 +209,7 @@ const homeController = {
             const parasha = await Parasha.getById(req.params.id);
             if (!parasha) return next();
             await Parasha.incrementViews(parasha.id);
+            parasha.views = (parasha.views || 0) + 1;
             const aliyot = await Aliyah.getByParashaId(parasha.id);
             
             // Buscar Haftará vinculada directamente o por título/porción
@@ -288,6 +292,7 @@ const homeController = {
             const event = await Portfolio.getById(req.params.id);
             if (!event) return next();
             await Portfolio.incrementViews(event.id);
+            event.views = (event.views || 0) + 1;
             res.render('evento_detail', { 
                 title: event.title + ' - Hablemos de YHWH', 
                 page: 'portfolio', 
@@ -382,6 +387,7 @@ const homeController = {
             const ensenanza = await Ensenanza.getById(req.params.id);
             if (!ensenanza) return next();
             await Ensenanza.incrementViews(ensenanza.id);
+            ensenanza.views = (ensenanza.views || 0) + 1;
             res.render('ensenanza_detail', {
                 title: ensenanza.title + ' - Hablemos de YHWH',
                 page: 'ensenanzas',
@@ -413,6 +419,7 @@ const homeController = {
             const haftara = await Haftara.getById(req.params.id);
             if (!haftara) return next();
             await Haftara.incrementViews(haftara.id);
+            haftara.views = (haftara.views || 0) + 1;
 
             // Buscar Parashá vinculada
             let parasha = null;
@@ -471,6 +478,7 @@ const homeController = {
             const item = await SemillasTorah.getById(req.params.id);
             if (!item) return next();
             await SemillasTorah.incrementViews(item.id);
+            item.views = (item.views || 0) + 1;
 
             let otherItems = [];
             try {
@@ -496,6 +504,7 @@ const homeController = {
             const item = await SemillasArticulo.getById(req.params.id);
             if (!item) return next();
             await SemillasArticulo.incrementViews(item.id);
+            item.views_count = (item.views_count || 0) + 1;
 
             let otherArticulos = [];
             try {

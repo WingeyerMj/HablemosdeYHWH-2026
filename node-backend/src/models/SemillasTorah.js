@@ -131,7 +131,7 @@ class SemillasTorah {
 
     static async incrementViews(id) {
         try {
-            await db.query('UPDATE semillas_torah SET views = views + 1 WHERE id = ?', [id]);
+            await db.query('UPDATE semillas_torah SET views = COALESCE(views, 0) + 1 WHERE id = ?', [id]);
         } catch (e) {
             console.warn('Aviso incrementViews semillas_torah:', e.message);
         }

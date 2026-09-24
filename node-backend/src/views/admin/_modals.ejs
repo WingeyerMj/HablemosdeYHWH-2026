@@ -2038,3 +2038,116 @@ function filterAdminShorts(type, btn) {
     });
 }
 </script>
+
+<!-- MODAL: NUEVO SEDER -->
+<div class="modal fade" id="createSederModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary" style="background: linear-gradient(135deg, #1a0f2e, #2d1b4e);">
+                <h5 class="modal-title"><i class="bi bi-lamp me-2" style="color: #ffd700;"></i>Crear Nuevo Seder</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/seder/create" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label small text-white-50">Título del Seder <span class="text-danger">*</span></label>
+                            <input type="text" name="title" class="form-control bg-dark text-light border-secondary" required placeholder="Ej: Seder de Pesaj 5785">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Fiesta</label>
+                            <select name="festival" class="form-select bg-dark text-light border-secondary">
+                                <option value="">Seleccionar fiesta...</option>
+                                <option value="Pesaj">Pesaj (Pascua)</option>
+                                <option value="Shavuot">Shavuot (Pentecostés)</option>
+                                <option value="Yom Teruah">Yom Teruah (Trompetas)</option>
+                                <option value="Yom Kippur">Yom Kippur (Expiación)</option>
+                                <option value="Sucot">Sucot (Tabernáculos)</option>
+                                <option value="Shemini Atzeret">Shemini Atzeret</option>
+                                <option value="Janucá">Janucá</option>
+                                <option value="Purim">Purim</option>
+                                <option value="Shabat">Shabat</option>
+                                <option value="Rosh Jodesh">Rosh Jodesh</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label small text-white-50">Subtítulo</label>
+                            <input type="text" name="subtitle" class="form-control bg-dark text-light border-secondary" placeholder="Ej: Orden de la celebración">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Fecha de la Fiesta</label>
+                            <input type="date" name="festival_date" class="form-control bg-dark text-light border-secondary">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Descripción breve</label>
+                            <textarea name="description" class="form-control bg-dark text-light border-secondary" rows="2" placeholder="Resumen del seder..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Contenido completo del Seder (HTML permitido)</label>
+                            <textarea name="content" class="form-control bg-dark text-light border-secondary" rows="6" placeholder="Contenido detallado del seder..."></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50"><i class="bi bi-chat-heart me-1" style="color: #ffd700;"></i> Oraciones y Bendiciones</label>
+                            <textarea name="prayers" class="form-control bg-dark text-light border-secondary" rows="3" placeholder="Baruj Atá YHWH..."></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50"><i class="bi bi-journal-text me-1" style="color: #ffd700;"></i> Lecturas Bíblicas</label>
+                            <textarea name="readings" class="form-control bg-dark text-light border-secondary" rows="3" placeholder="Éxodo 12:1-14, Levítico 23..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small text-white-50"><i class="bi bi-music-note-beamed me-1" style="color: #ffd700;"></i> Canciones y Alabanzas</label>
+                            <textarea name="songs" class="form-control bg-dark text-light border-secondary" rows="2" placeholder="Canciones para la celebración..."></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Imagen del Seder</label>
+                            <input type="file" name="image_file" class="form-control bg-dark text-light border-secondary" accept="image/*">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">O URL de Imagen</label>
+                            <input type="text" name="image_url" class="form-control bg-dark text-light border-secondary" placeholder="https://...">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Archivo PDF del Seder</label>
+                            <input type="file" name="pdf_upload" class="form-control bg-dark text-light border-secondary" accept=".pdf">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Autor</label>
+                            <input type="text" name="author" class="form-control bg-dark text-light border-secondary" value="Moréh Kalev Aquerman">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Rol del Autor</label>
+                            <input type="text" name="author_role" class="form-control bg-dark text-light border-secondary" value="Moreh מורה">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Imagen Autor (URL)</label>
+                            <input type="text" name="author_img" class="form-control bg-dark text-light border-secondary" value="/assets/img/team/kaleb.jpg">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="is_published" value="1" id="seder_is_published" checked>
+                                <label class="form-check-label text-light" for="seder_is_published">
+                                    <i class="bi bi-globe me-1"></i> Publicado
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="is_featured" value="1" id="seder_is_featured">
+                                <label class="form-check-label text-light" for="seder_is_featured">
+                                    <i class="bi bi-award me-1" style="color: #ffd700;"></i> Destacado
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn fw-bold" style="background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; border: none;">
+                        <i class="bi bi-check-lg me-1"></i> Crear Seder
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

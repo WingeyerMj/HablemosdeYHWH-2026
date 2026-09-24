@@ -243,13 +243,33 @@ const adminController = {
     // ==================== EVENTOS (PORTFOLIO) ====================
     createPortfolio: async (req, res) => {
         try {
-            let { title, category, subtitle, description, event_date, content, image_url } = req.body;
-            if (req.file) {
+            let { title, category, subtitle, description, event_date, content, image_url, seder_title, seder_content } = req.body;
+            let seder_pdf = '';
+
+            if (req.files) {
+                if (req.files['image_file'] && req.files['image_file'][0]) {
+                    image_url = '/uploads/portfolio/' + req.files['image_file'][0].filename;
+                }
+                if (req.files['seder_pdf'] && req.files['seder_pdf'][0]) {
+                    seder_pdf = '/uploads/pdf/' + req.files['seder_pdf'][0].filename;
+                }
+            } else if (req.file) {
                 image_url = '/uploads/portfolio/' + req.file.filename;
             }
             
             const Portfolio = require('../models/Portfolio');
-            await Portfolio.create({ title, subtitle, category, description, content, event_date: event_date || null, image_url });
+            await Portfolio.create({ 
+                title, 
+                subtitle, 
+                category, 
+                description, 
+                content, 
+                event_date: event_date || null, 
+                image_url,
+                seder_title,
+                seder_pdf,
+                seder_content
+            });
 
             // Notificación automática a todos los suscriptores
             try {
@@ -284,15 +304,35 @@ const adminController = {
 
     updatePortfolio: async (req, res) => {
         try {
-            let { id, title, category, subtitle, description, event_date, content, image_url } = req.body;
-            if (req.file) {
+            let { id, title, category, subtitle, description, event_date, content, image_url, seder_title, seder_content, existing_seder_pdf } = req.body;
+            let seder_pdf = existing_seder_pdf || '';
+
+            if (req.files) {
+                if (req.files['image_file'] && req.files['image_file'][0]) {
+                    image_url = '/uploads/portfolio/' + req.files['image_file'][0].filename;
+                }
+                if (req.files['seder_pdf'] && req.files['seder_pdf'][0]) {
+                    seder_pdf = '/uploads/pdf/' + req.files['seder_pdf'][0].filename;
+                }
+            } else if (req.file) {
                 image_url = '/uploads/portfolio/' + req.file.filename;
             }
             
             const formattedDate = event_date === '' ? null : event_date;
 
             const Portfolio = require('../models/Portfolio');
-            await Portfolio.update(id, { title, subtitle, category, description, content, event_date: formattedDate, image_url });
+            await Portfolio.update(id, { 
+                title, 
+                subtitle, 
+                category, 
+                description, 
+                content, 
+                event_date: formattedDate, 
+                image_url,
+                seder_title,
+                seder_pdf,
+                seder_content
+            });
 
             // Notificación automática a suscriptores por actualización
             try {
@@ -464,6 +504,8 @@ const adminController = {
             res.redirect('/admin/dashboard#pills-ensenanzas');
         }
     },
+
+
 
     // ==================== HAFTARÁ ====================
     createHaftara: async (req, res) => {

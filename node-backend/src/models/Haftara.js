@@ -28,6 +28,20 @@ class Haftara {
             } catch (errPG) {}
         }
 
+        try {
+            const [colsViews] = await db.query("SHOW COLUMNS FROM haftarot LIKE 'views'");
+            if (!colsViews || colsViews.length === 0) {
+                await db.query("ALTER TABLE haftarot ADD COLUMN views INT DEFAULT 0");
+                console.log('✅ Columna views agregada a haftarot');
+            }
+            await db.query("UPDATE haftarot SET views = 0 WHERE views IS NULL");
+        } catch (e) {
+            try {
+                await db.query("ALTER TABLE haftarot ADD COLUMN IF NOT EXISTS views INT DEFAULT 0");
+                await db.query("UPDATE haftarot SET views = 0 WHERE views IS NULL");
+            } catch (errPG) {}
+        }
+
         // Auto-link Haftarot to Parashot if unlinked
         await Haftara.autoLinkParashot();
 
@@ -507,7 +521,8 @@ class Haftara {
 
     static async incrementViews(id) {
         try {
-            await db.query('UPDATE haftarot SET views = views + 1 WHERE id = ?', [id]);
+            await Haftara.ensureColumns();
+            await db.query('UPDATE haftarot SET views = COALESCE(views, 0) + 1 WHERE id = ?', [id]);
         } catch (e) {
             console.warn('Aviso incrementViews haftarot:', e.message);
         }

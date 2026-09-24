@@ -99,9 +99,15 @@ router.post('/aliyot/api/fetch-verses', isAuthenticated, isAdmin, adminControlle
 router.post('/aliyot/api/translate-spanish', isAuthenticated, isAdmin, adminController.apiTranslateSpanishToHebrew);
 
 // Eventos (Portfolio) - Admin y Editor
-router.post('/portfolio/create', isAuthenticated, upload.single('image_file'), adminController.createPortfolio);
+router.post('/portfolio/create', isAuthenticated, upload.fields([
+    { name: 'image_file', maxCount: 1 },
+    { name: 'seder_pdf', maxCount: 1 }
+]), adminController.createPortfolio);
 router.get('/portfolio/edit/:id', isAuthenticated, adminController.editPortfolioPage);
-router.post('/portfolio/update', isAuthenticated, upload.single('image_file'), adminController.updatePortfolio);
+router.post('/portfolio/update', isAuthenticated, upload.fields([
+    { name: 'image_file', maxCount: 1 },
+    { name: 'seder_pdf', maxCount: 1 }
+]), adminController.updatePortfolio);
 router.get('/portfolio/delete/:id', isAuthenticated, adminController.deletePortfolio);
 
 // Enseñanzas (Solo Admin)

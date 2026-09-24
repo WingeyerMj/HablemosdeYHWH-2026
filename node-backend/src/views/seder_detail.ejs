@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('partials/head') %>
+
+    <body class="seder-detail-page">
+
+        <%- include('partials/header') %>
+
+            <main class="main">
+
+                <!-- Page Title -->
+                <div class="page-title" style="background: linear-gradient(135deg, #1a0f2e 0%, #2d1b4e 40%, #1a1a2e 100%); padding: 60px 0 40px; position: relative; overflow: hidden;">
+                    <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">
+                        <div style="position: absolute; top: 15%; left: 10%; width: 3px; height: 3px; background: #ffd700; border-radius: 50%; box-shadow: 0 0 6px #ffd700; animation: twinkle 2s infinite;"></div>
+                        <div style="position: absolute; top: 25%; right: 15%; width: 2px; height: 2px; background: #fff8dc; border-radius: 50%; box-shadow: 0 0 4px #fff8dc; animation: twinkle 3s infinite 0.5s;"></div>
+                        <div style="position: absolute; top: 45%; left: 30%; width: 2px; height: 2px; background: #ffd700; border-radius: 50%; box-shadow: 0 0 5px #ffd700; animation: twinkle 2.5s infinite 1s;"></div>
+                    </div>
+                    <div class="container position-relative" style="z-index: 2;">
+                        <nav class="breadcrumbs mb-3">
+                            <ol>
+                                <li><a href="/" style="color: #d4b895;">Inicio</a></li>
+                                <li><a href="/seder" style="color: #d4b895;">Seder</a></li>
+                                <li class="current" style="color: #ffd700;"><%= seder.title %></li>
+                            </ol>
+                        </nav>
+                        <% if (seder.festival) { %>
+                            <span class="badge rounded-pill px-3 py-2 mb-3 d-inline-block" style="background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; font-size: 0.85rem; font-weight: 600;">
+                                <i class="bi bi-star-fill me-1"></i><%= seder.festival %>
+                            </span>
+                        <% } %>
+                        <h1 style="color: #ffd700; font-weight: 800; font-size: 2.2rem; text-shadow: 0 2px 10px rgba(255,215,0,0.3); max-width: 800px;">
+                            <%= seder.title %>
+                        </h1>
+                        <% if (seder.subtitle) { %>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 1.15rem; max-width: 600px; margin-top: 10px;">
+                                <%= seder.subtitle %>
+                            </p>
+                        <% } %>
+                        
+                        <!-- Action Buttons -->
+                        <div class="d-flex flex-wrap gap-2 mt-4">
+                            <% if (seder.pdf_file && seder.pdf_file.trim() !== '') { %>
+                                <a href="<%= seder.pdf_file %>" target="_blank" rel="noopener noreferrer" class="btn rounded-pill px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2" style="background: #dc3545; color: white; border: none;">
+                                    <i class="bi bi-file-pdf-fill"></i> Descargar PDF
+                                </a>
+                            <% } %>
+                            <button id="btn-generate-pdf" class="btn rounded-pill px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2" style="background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; border: none;">
+                                <i class="bi bi-filetype-pdf"></i> Generar PDF
+                            </button>
+                            <button id="btn-generate-png" class="btn rounded-pill px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2" style="background: linear-gradient(135deg, #059669, #10b981); color: white; border: none;">
+                                <i class="bi bi-image"></i> Exportar como Imagen
+                            </button>
+                            <button id="btn-share" class="btn btn-outline-light rounded-pill px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2">
+                                <i class="bi bi-share"></i> Compartir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <section class="py-5" style="background-color: #faf9f6;">
+                    <div class="container">
+                        <div class="row g-4">
+                            
+                            <!-- Content Column -->
+                            <div class="col-lg-8">
+                                
+                                <!-- Printable / Exportable Area -->
+                                <div id="seder-exportable" style="background: white;">
+                                    
+                                    <!-- Seder Header for Export -->
+                                    <div class="seder-export-header" style="display: none; text-align: center; padding: 30px; background: linear-gradient(135deg, #1a0f2e, #2d1b4e); color: white; border-radius: 16px 16px 0 0;">
+                                        <h1 style="color: #ffd700; font-size: 1.8rem; margin-bottom: 5px;"><%= seder.title %></h1>
+                                        <% if (seder.subtitle) { %><p style="color: rgba(255,255,255,0.7); margin-bottom: 5px;"><%= seder.subtitle %></p><% } %>
+                                        <% if (seder.festival) { %><span style="background: #7c3aed; color: white; padding: 4px 16px; border-radius: 20px; font-size: 0.85rem;"><%= seder.festival %></span><% } %>
+                                        <p style="color: rgba(255,255,255,0.5); margin-top: 10px; font-size: 0.85rem;">Hablemos de YHWH · hablemosdeyhwh.com</p>
+                                    </div>
+
+                                    <!-- Image -->
+                                    <% if (seder.image_url && seder.image_url.trim() !== '') { %>
+                                        <div class="mb-4" data-aos="fade-up">
+                                            <img src="<%= seder.image_url %>" alt="<%= seder.title %>" class="img-fluid rounded-4 shadow" style="width: 100%; max-height: 400px; object-fit: cover;">
+                                        </div>
+                                    <% } %>
+
+                                    <!-- Meta info -->
+                                    <div class="d-flex flex-wrap align-items-center gap-3 mb-4 pb-3 border-bottom" data-aos="fade-up" data-aos-delay="100">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="<%= seder.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= seder.author %>" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid #7c3aed;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                            <div>
+                                                <div class="fw-bold" style="font-size: 0.95rem; color: #222;"><%= seder.author || 'Moréh Kaleb' %></div>
+                                                <small class="text-muted"><%= seder.author_role || 'Moréh' %></small>
+                                            </div>
+                                        </div>
+                                        <%
+                                            let detailDate = '';
+                                            if (seder.festival_date) {
+                                                const dObj = new Date(seder.festival_date);
+                                                detailDate = dObj.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+                                            }
+                                        %>
+                                        <% if (detailDate) { %>
+                                            <span class="badge rounded-pill px-3 py-2" style="background: #f3f0ff; color: #5b21b6; border: 1px solid #ddd6fe; font-size: 0.85rem;">
+                                                <i class="bi bi-calendar-event me-1"></i> <%= detailDate %>
+                                            </span>
+                                        <% } %>
+                                        <span class="text-muted small d-inline-flex align-items-center gap-1">
+                                            <i class="bi bi-eye"></i> <%= seder.views || 0 %> visualizaciones
+                                        </span>
+                                    </div>
+
+                                    <!-- Description -->
+                                    <% if (seder.description) { %>
+                                        <div class="seder-description mb-4 p-4 rounded-4" data-aos="fade-up" data-aos-delay="200" style="background: linear-gradient(135deg, #f3f0ff, #faf5ff); border-left: 4px solid #7c3aed;">
+                                            <p class="mb-0" style="font-size: 1.05rem; line-height: 1.7; color: #374151;">
+                                                <%= seder.description %>
+                                            </p>
+                                        </div>
+                                    <% } %>
+
+                                    <!-- Content -->
+                                    <% if (seder.content) { %>
+                                        <div class="seder-content mb-5" data-aos="fade-up" data-aos-delay="300">
+                                            <h3 class="fw-bold mb-3" style="color: #1a0f2e;">
+                                                <i class="bi bi-book me-2" style="color: #7c3aed;"></i>Contenido del Seder
+                                            </h3>
+                                            <div class="seder-text-content p-4 bg-white rounded-4 shadow-sm" style="font-size: 1rem; line-height: 1.8; color: #333;">
+                                                <%- seder.content %>
+                                            </div>
+                                        </div>
+                                    <% } %>
+
+                                    <!-- Prayers / Bendiciones -->
+                                    <% if (seder.prayers && seder.prayers.trim()) { %>
+                                        <div class="seder-prayers mb-5" data-aos="fade-up">
+                                            <h3 class="fw-bold mb-3" style="color: #1a0f2e;">
+                                                <i class="bi bi-chat-heart me-2" style="color: #7c3aed;"></i>Oraciones y Bendiciones
+                                            </h3>
+                                            <div class="p-4 rounded-4" style="background: linear-gradient(135deg, #fef3c7, #fdf6e7); border: 1px solid #f7e4a9;">
+                                                <div style="font-size: 1rem; line-height: 1.8; color: #333; white-space: pre-wrap;"><%- seder.prayers %></div>
+                                            </div>
+                                        </div>
+                                    <% } %>
+
+                                    <!-- Readings / Lecturas -->
+                                    <% if (seder.readings && seder.readings.trim()) { %>
+                                        <div class="seder-readings mb-5" data-aos="fade-up">
+                                            <h3 class="fw-bold mb-3" style="color: #1a0f2e;">
+                                                <i class="bi bi-journal-text me-2" style="color: #7c3aed;"></i>Lecturas Bíblicas
+                                            </h3>
+                                            <div class="p-4 rounded-4 bg-white shadow-sm" style="border-left: 4px solid #ffd700;">
+                                                <div style="font-size: 1rem; line-height: 1.8; color: #333; white-space: pre-wrap;"><%- seder.readings %></div>
+                                            </div>
+                                        </div>
+                                    <% } %>
+
+                                    <!-- Songs / Canciones -->
+                                    <% if (seder.songs && seder.songs.trim()) { %>
+                                        <div class="seder-songs mb-5" data-aos="fade-up">
+                                            <h3 class="fw-bold mb-3" style="color: #1a0f2e;">
+                                                <i class="bi bi-music-note-beamed me-2" style="color: #7c3aed;"></i>Canciones y Alabanzas
+                                            </h3>
+                                            <div class="p-4 rounded-4" style="background: linear-gradient(135deg, #ecfdf5, #f0fdf4); border: 1px solid #a7f3d0;">
+                                                <div style="font-size: 1rem; line-height: 1.8; color: #333; white-space: pre-wrap;"><%- seder.songs %></div>
+                                            </div>
+                                        </div>
+                                    <% } %>
+
+                                    <!-- Export Footer (hidden, shown on export) -->
+                                    <div class="seder-export-footer" style="display: none; text-align: center; padding: 20px; border-top: 2px solid #7c3aed; margin-top: 20px;">
+                                        <p style="color: #666; font-size: 0.85rem; margin: 0;">
+                                            📖 Documento generado desde <strong>Hablemos de YHWH</strong> · hablemosdeyhwh.com
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sidebar -->
+                            <div class="col-lg-4">
+                                
+                                <!-- Download Card -->
+                                <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden" data-aos="fade-left" data-aos-delay="200">
+                                    <div class="card-body p-0">
+                                        <div class="p-4 text-center text-white" style="background: linear-gradient(135deg, #1a0f2e, #2d1b4e);">
+                                            <i class="bi bi-download" style="font-size: 2rem; color: #ffd700;"></i>
+                                            <h5 class="fw-bold mt-2 mb-1" style="color: #ffd700;">Descargar y Compartir</h5>
+                                            <p class="small mb-0" style="color: rgba(255,255,255,0.6);">Genera documentos para imprimir o compartir</p>
+                                        </div>
+                                        <div class="p-4">
+                                            <% if (seder.pdf_file && seder.pdf_file.trim() !== '') { %>
+                                                <a href="<%= seder.pdf_file %>" target="_blank" class="btn w-100 mb-2 rounded-pill fw-semibold d-flex align-items-center justify-content-center gap-2" style="background: #dc3545; color: white; border: none; padding: 12px;">
+                                                    <i class="bi bi-file-pdf-fill"></i> Descargar PDF Original
+                                                </a>
+                                            <% } %>
+                                            <button id="btn-sidebar-pdf" class="btn w-100 mb-2 rounded-pill fw-semibold d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; border: none; padding: 12px;">
+                                                <i class="bi bi-filetype-pdf"></i> Generar PDF
+                                            </button>
+                                            <button id="btn-sidebar-png" class="btn w-100 mb-2 rounded-pill fw-semibold d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #059669, #10b981); color: white; border: none; padding: 12px;">
+                                                <i class="bi bi-image"></i> Exportar como PNG
+                                            </button>
+                                            <button id="btn-sidebar-share" class="btn btn-outline-dark w-100 rounded-pill fw-semibold d-flex align-items-center justify-content-center gap-2" style="padding: 12px;">
+                                                <i class="bi bi-share"></i> Compartir Enlace
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Info Card -->
+                                <div class="card border-0 shadow-sm rounded-4 mb-4" data-aos="fade-left" data-aos-delay="300">
+                                    <div class="card-body p-4">
+                                        <h5 class="fw-bold mb-3" style="color: #1a0f2e;">
+                                            <i class="bi bi-info-circle me-2" style="color: #7c3aed;"></i>Información
+                                        </h5>
+                                        <ul class="list-unstyled mb-0">
+                                            <% if (seder.festival) { %>
+                                                <li class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom">
+                                                    <i class="bi bi-star-fill" style="color: #7c3aed;"></i>
+                                                    <div>
+                                                        <small class="text-muted d-block">Fiesta</small>
+                                                        <strong><%= seder.festival %></strong>
+                                                    </div>
+                                                </li>
+                                            <% } %>
+                                            <% if (detailDate) { %>
+                                                <li class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom">
+                                                    <i class="bi bi-calendar-event" style="color: #7c3aed;"></i>
+                                                    <div>
+                                                        <small class="text-muted d-block">Fecha</small>
+                                                        <strong><%= detailDate %></strong>
+                                                    </div>
+                                                </li>
+                                            <% } %>
+                                            <li class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom">
+                                                <i class="bi bi-person" style="color: #7c3aed;"></i>
+                                                <div>
+                                                    <small class="text-muted d-block">Autor</small>
+                                                    <strong><%= seder.author || 'Moréh Kaleb' %></strong>
+                                                </div>
+                                            </li>
+                                            <li class="d-flex align-items-center gap-2">
+                                                <i class="bi bi-eye" style="color: #7c3aed;"></i>
+                                                <div>
+                                                    <small class="text-muted d-block">Visualizaciones</small>
+                                                    <strong><%= seder.views || 0 %></strong>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- Back button -->
+                                <a href="/seder" class="btn btn-outline-dark w-100 rounded-pill fw-semibold d-flex align-items-center justify-content-center gap-2" style="padding: 12px;" data-aos="fade-left" data-aos-delay="400">
+                                    <i class="bi bi-arrow-left"></i> Volver a Seder
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Export Loading Overlay -->
+                <div id="export-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 99999; justify-content: center; align-items: center;">
+                    <div class="text-center p-5 bg-white rounded-4 shadow-lg" style="max-width: 400px;">
+                        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem; color: #7c3aed !important;">
+                            <span class="visually-hidden">Generando...</span>
+                        </div>
+                        <h5 class="fw-bold" id="export-status-text">Generando documento...</h5>
+                        <p class="text-muted mb-0">Esto puede tomar unos segundos</p>
+                    </div>
+                </div>
+
+                <style>
+                    @keyframes twinkle {
+                        0%, 100% { opacity: 0.3; }
+                        50% { opacity: 1; }
+                    }
+                    .seder-text-content h1, .seder-text-content h2, .seder-text-content h3 {
+                        color: #1a0f2e;
+                        margin-top: 1.5rem;
+                        margin-bottom: 0.75rem;
+                    }
+                    .seder-text-content p {
+                        margin-bottom: 1rem;
+                    }
+                    .seder-text-content ul, .seder-text-content ol {
+                        margin-bottom: 1rem;
+                        padding-left: 1.5rem;
+                    }
+                    .seder-text-content blockquote {
+                        border-left: 4px solid #7c3aed;
+                        padding: 1rem 1.5rem;
+                        background: #f3f0ff;
+                        border-radius: 0 12px 12px 0;
+                        margin: 1rem 0;
+                        font-style: italic;
+                        color: #4c1d95;
+                    }
+                    @media print {
+                        .page-title, header, footer, #scroll-top, #preloader, .col-lg-4, .btn-share-seder {
+                            display: none !important;
+                        }
+                        .col-lg-8 { width: 100% !important; max-width: 100% !important; flex: 0 0 100% !important; }
+                        .seder-export-header, .seder-export-footer { display: block !important; }
+                    }
+                </style>
+
+                <!-- html2canvas CDN for PNG export -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+                <!-- jsPDF CDN for PDF generation -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+                <script>
+                    const overlay = document.getElementById('export-overlay');
+                    const statusText = document.getElementById('export-status-text');
+
+                    function showOverlay(text) {
+                        statusText.textContent = text || 'Generando documento...';
+                        overlay.style.display = 'flex';
+                    }
+                    function hideOverlay() {
+                        overlay.style.display = 'none';
+                    }
+
+                    // === GENERATE PDF ===
+                    async function generatePDF() {
+                        showOverlay('Generando PDF...');
+                        try {
+                            const el = document.getElementById('seder-exportable');
+                            // Show export header/footer
+                            el.querySelectorAll('.seder-export-header, .seder-export-footer').forEach(e => e.style.display = 'block');
+                            
+                            const canvas = await html2canvas(el, {
+                                scale: 2,
+                                useCORS: true,
+                                allowTaint: true,
+                                backgroundColor: '#ffffff',
+                                logging: false
+                            });
+
+                            // Hide export header/footer
+                            el.querySelectorAll('.seder-export-header, .seder-export-footer').forEach(e => e.style.display = 'none');
+
+                            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                            const { jsPDF } = window.jspdf;
+                            
+                            const pdfWidth = 210; // A4 width in mm
+                            const pdfHeight = 297; // A4 height in mm
+                            const imgWidth = pdfWidth - 20; // 10mm margins
+                            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                            
+                            const pdf = new jsPDF('p', 'mm', 'a4');
+                            
+                            let heightLeft = imgHeight;
+                            let position = 10; // top margin
+                            
+                            // First page
+                            pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+                            heightLeft -= (pdfHeight - 20);
+                            
+                            // Add more pages if needed
+                            while (heightLeft > 0) {
+                                position = heightLeft - imgHeight + 10;
+                                pdf.addPage();
+                                pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+                                heightLeft -= (pdfHeight - 20);
+                            }
+
+                            const filename = '<%= seder.title.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, "").replace(/\s+/g, "_") %>_Seder.pdf';
+                            pdf.save(filename);
+                        } catch (err) {
+                            console.error('Error generando PDF:', err);
+                            alert('Error al generar el PDF. Por favor intenta de nuevo.');
+                        }
+                        hideOverlay();
+                    }
+
+                    // === GENERATE PNG ===
+                    async function generatePNG() {
+                        showOverlay('Exportando como imagen...');
+                        try {
+                            const el = document.getElementById('seder-exportable');
+                            // Show export header/footer
+                            el.querySelectorAll('.seder-export-header, .seder-export-footer').forEach(e => e.style.display = 'block');
+                            
+                            const canvas = await html2canvas(el, {
+                                scale: 2,
+                                useCORS: true,
+                                allowTaint: true,
+                                backgroundColor: '#ffffff',
+                                logging: false
+                            });
+
+                            // Hide export header/footer
+                            el.querySelectorAll('.seder-export-header, .seder-export-footer').forEach(e => e.style.display = 'none');
+
+                            const link = document.createElement('a');
+                            link.download = '<%= seder.title.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, "").replace(/\s+/g, "_") %>_Seder.png';
+                            link.href = canvas.toDataURL('image/png');
+                            link.click();
+                        } catch (err) {
+                            console.error('Error exportando PNG:', err);
+                            alert('Error al exportar la imagen. Por favor intenta de nuevo.');
+                        }
+                        hideOverlay();
+                    }
+
+                    // === SHARE ===
+                    function shareSeder() {
+                        const url = window.location.href;
+                        const title = '<%= seder.title %> - Seder - Hablemos de YHWH';
+                        if (navigator.share) {
+                            navigator.share({ title, url });
+                        } else {
+                            navigator.clipboard.writeText(url).then(() => {
+                                alert('¡Enlace copiado al portapapeles!');
+                            });
+                        }
+                    }
+
+                    // Event listeners
+                    document.getElementById('btn-generate-pdf').addEventListener('click', generatePDF);
+                    document.getElementById('btn-generate-png').addEventListener('click', generatePNG);
+                    document.getElementById('btn-share').addEventListener('click', shareSeder);
+                    document.getElementById('btn-sidebar-pdf').addEventListener('click', generatePDF);
+                    document.getElementById('btn-sidebar-png').addEventListener('click', generatePNG);
+                    document.getElementById('btn-sidebar-share').addEventListener('click', shareSeder);
+                </script>
+
+            </main>
+
+            <%- include('partials/footer') %>
+
+    </body>
+
+</html>

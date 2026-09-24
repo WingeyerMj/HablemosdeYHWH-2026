@@ -1,7 +1,7 @@
 const db = require('../config/db');
 
 class Ensenanza {
-    static async ensureAuthorsColumn() {
+    static async ensureColumns() {
         try {
             const [cols] = await db.query("SHOW COLUMNS FROM ensenanzas LIKE 'authors'");
             if (!cols || cols.length === 0) {
@@ -13,6 +13,24 @@ class Ensenanza {
                 await db.query("ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS authors TEXT DEFAULT NULL");
             } catch (errPG) {}
         }
+
+        try {
+            const [colsViews] = await db.query("SHOW COLUMNS FROM ensenanzas LIKE 'views'");
+            if (!colsViews || colsViews.length === 0) {
+                await db.query("ALTER TABLE ensenanzas ADD COLUMN views INT DEFAULT 0 AFTER is_published");
+                console.log('✅ Columna views agregada a ensenanzas');
+            }
+            await db.query("UPDATE ensenanzas SET views = 0 WHERE views IS NULL");
+        } catch (e) {
+            try {
+                await db.query("ALTER TABLE ensenanzas ADD COLUMN IF NOT EXISTS views INT DEFAULT 0");
+                await db.query("UPDATE ensenanzas SET views = 0 WHERE views IS NULL");
+            } catch (errPG) {}
+        }
+    }
+
+    static async ensureAuthorsColumn() {
+        return await Ensenanza.ensureColumns();
     }
 
     static normalize(row) {
@@ -266,7 +284,8 @@ class Ensenanza {
 
     static async incrementViews(id) {
         try {
-            await db.query('UPDATE ensenanzas SET views = views + 1 WHERE id = ?', [id]);
+            await Ensenanza.ensureColumns();
+            await db.query('UPDATE ensenanzas SET views = COALESCE(views, 0) + 1 WHERE id = ?', [id]);
         } catch (e) {
             console.warn('Aviso incrementViews ensenanzas:', e.message);
         }

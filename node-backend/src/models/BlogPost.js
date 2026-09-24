@@ -145,7 +145,7 @@ class BlogPost {
 
     // Incrementar contador de visitas
     static async incrementViews(id) {
-        return await db.query('UPDATE blog_posts SET views = views + 1 WHERE id = ?', [id]);
+        return await db.query('UPDATE blog_posts SET views = COALESCE(views, 0) + 1 WHERE id = ?', [id]);
     }
 
     // Eliminar artículo
