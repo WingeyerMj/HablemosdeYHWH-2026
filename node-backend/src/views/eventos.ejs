@@ -97,10 +97,17 @@
                                                     <% } %>
                                                 </td>
                                                 <td style="padding: 12px 20px;">
-                                                    <div class="d-flex align-items-center justify-content-between gap-2">
-                                                        <a href="/eventos/<%= evento.id %>" style="font-weight: 600; color: #222; text-decoration: none; font-size: 0.95rem; transition: color 0.2s;">
-                                                            <%= evento.title %>
-                                                        </a>
+                                                    <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <a href="/eventos/<%= evento.id %>" style="font-weight: 600; color: #222; text-decoration: none; font-size: 0.95rem; transition: color 0.2s;">
+                                                                <%= evento.title %>
+                                                            </a>
+                                                            <% if (evento.seder_pdf || evento.seder_image) { %>
+                                                                <span class="badge rounded-pill" style="background: rgba(212,168,83,0.18); color: #8c6a2d; border: 1px solid rgba(212,168,83,0.45); font-size: 0.7rem; font-weight: 600;">
+                                                                    <i class="bi bi-book-half me-1"></i>Séder
+                                                                </span>
+                                                            <% } %>
+                                                        </div>
                                                         <span class="badge rounded-pill px-2 py-1 flex-shrink-0" style="background: #fdf6e7; color: #8c6a2d; font-size: 0.72rem; font-weight: 600; border: 1px solid #ebdccb;">
                                                             <i class="bi bi-eye-fill me-1 text-info"></i><%= evento.views || 0 %>
                                                         </span>

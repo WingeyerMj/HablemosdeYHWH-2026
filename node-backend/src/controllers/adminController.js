@@ -245,6 +245,7 @@ const adminController = {
         try {
             let { title, category, subtitle, description, event_date, content, image_url, seder_title, seder_content } = req.body;
             let seder_pdf = '';
+            let seder_image = '';
 
             if (req.files) {
                 if (req.files['image_file'] && req.files['image_file'][0]) {
@@ -252,6 +253,9 @@ const adminController = {
                 }
                 if (req.files['seder_pdf'] && req.files['seder_pdf'][0]) {
                     seder_pdf = '/uploads/pdf/' + req.files['seder_pdf'][0].filename;
+                }
+                if (req.files['seder_image'] && req.files['seder_image'][0]) {
+                    seder_image = '/uploads/seder/' + req.files['seder_image'][0].filename;
                 }
             } else if (req.file) {
                 image_url = '/uploads/portfolio/' + req.file.filename;
@@ -268,6 +272,7 @@ const adminController = {
                 image_url,
                 seder_title,
                 seder_pdf,
+                seder_image,
                 seder_content
             });
 
@@ -304,8 +309,9 @@ const adminController = {
 
     updatePortfolio: async (req, res) => {
         try {
-            let { id, title, category, subtitle, description, event_date, content, image_url, seder_title, seder_content, existing_seder_pdf } = req.body;
-            let seder_pdf = existing_seder_pdf || '';
+            let { id, title, category, subtitle, description, event_date, content, image_url, seder_title, seder_content, existing_seder_pdf, existing_seder_image, remove_seder_pdf, remove_seder_image } = req.body;
+            let seder_pdf = remove_seder_pdf === '1' ? '' : (existing_seder_pdf || '');
+            let seder_image = remove_seder_image === '1' ? '' : (existing_seder_image || '');
 
             if (req.files) {
                 if (req.files['image_file'] && req.files['image_file'][0]) {
@@ -313,6 +319,9 @@ const adminController = {
                 }
                 if (req.files['seder_pdf'] && req.files['seder_pdf'][0]) {
                     seder_pdf = '/uploads/pdf/' + req.files['seder_pdf'][0].filename;
+                }
+                if (req.files['seder_image'] && req.files['seder_image'][0]) {
+                    seder_image = '/uploads/seder/' + req.files['seder_image'][0].filename;
                 }
             } else if (req.file) {
                 image_url = '/uploads/portfolio/' + req.file.filename;
@@ -331,6 +340,7 @@ const adminController = {
                 image_url,
                 seder_title,
                 seder_pdf,
+                seder_image,
                 seder_content
             });
 

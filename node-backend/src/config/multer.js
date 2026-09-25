@@ -51,8 +51,11 @@ const storage = multer.diskStorage({
         else if (req.originalUrl.includes('/team')) folder = 'team';
         else if (req.originalUrl.includes('/entity')) folder = 'entity';
 
-        // Si es PDF, va a la carpeta de PDFs
-        if (file.mimetype === 'application/pdf' || ext === 'pdf') folder = 'pdf';
+        if (file.fieldname === 'seder_image') {
+            folder = 'seder';
+        } else if (file.mimetype === 'application/pdf' || ext === 'pdf' || file.fieldname === 'seder_pdf') {
+            folder = 'pdf';
+        }
 
         // Si es video, va a la carpeta de videos
         if (file.mimetype && file.mimetype.startsWith('video/')) folder = 'videos';

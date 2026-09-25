@@ -101,12 +101,14 @@ router.post('/aliyot/api/translate-spanish', isAuthenticated, isAdmin, adminCont
 // Eventos (Portfolio) - Admin y Editor
 router.post('/portfolio/create', isAuthenticated, upload.fields([
     { name: 'image_file', maxCount: 1 },
-    { name: 'seder_pdf', maxCount: 1 }
+    { name: 'seder_pdf', maxCount: 1 },
+    { name: 'seder_image', maxCount: 1 }
 ]), adminController.createPortfolio);
 router.get('/portfolio/edit/:id', isAuthenticated, adminController.editPortfolioPage);
 router.post('/portfolio/update', isAuthenticated, upload.fields([
     { name: 'image_file', maxCount: 1 },
-    { name: 'seder_pdf', maxCount: 1 }
+    { name: 'seder_pdf', maxCount: 1 },
+    { name: 'seder_image', maxCount: 1 }
 ]), adminController.updatePortfolio);
 router.get('/portfolio/delete/:id', isAuthenticated, adminController.deletePortfolio);
 

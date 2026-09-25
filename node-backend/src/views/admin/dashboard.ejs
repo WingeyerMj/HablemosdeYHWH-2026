@@ -92,13 +92,31 @@
             </div>
             <div class="table-responsive">
                 <table class="table table-dark table-hover">
-                    <thead><tr><th>Título</th><th>Categoría</th><th>Fecha</th><th>Acciones</th></tr></thead>
+                    <thead><tr><th>Título</th><th>Categoría</th><th>Fecha</th><th>Séder</th><th>Acciones</th></tr></thead>
                     <tbody>
                         <% portfolio.forEach(item => { %>
                         <tr>
                             <td><%= item.title %></td>
                             <td><%= item.category %></td>
                             <td><%= item.event_date ? new Date(item.event_date).toLocaleDateString('es-ES') : '-' %></td>
+                            <td>
+                                <% if (item.seder_pdf || item.seder_image) { %>
+                                    <div class="d-flex gap-1 flex-wrap">
+                                        <% if (item.seder_pdf) { %>
+                                            <a href="<%= item.seder_pdf %>" target="_blank" class="badge bg-danger text-decoration-none" title="Descargar PDF">
+                                                <i class="bi bi-file-pdf"></i> PDF
+                                            </a>
+                                        <% } %>
+                                        <% if (item.seder_image) { %>
+                                            <a href="<%= item.seder_image %>" target="_blank" class="badge bg-info text-dark text-decoration-none" title="Ver/Descargar Imagen">
+                                                <i class="bi bi-image"></i> Imagen
+                                            </a>
+                                        <% } %>
+                                    </div>
+                                <% } else { %>
+                                    <span class="text-white-50 small">Sin séder</span>
+                                <% } %>
+                            </td>
                             <td>
                                 <a href="/admin/portfolio/edit/<%= item.id %>" class="btn btn-sm btn-primary me-1"><i class="bi bi-pencil me-1"></i>Editar</a>
                                 <a href="/admin/portfolio/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este Evento?')">Eliminar</a>

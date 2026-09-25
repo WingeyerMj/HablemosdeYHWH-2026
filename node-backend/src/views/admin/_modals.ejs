@@ -126,6 +126,32 @@
                                 <img id="portImgPreview" src="/assets/img/blog/blog-1.jpg" style="max-width:100%;max-height:100%;object-fit:contain;">
                             </div>
                         </div>
+                        <!-- SÉDER DE LA CELEBRACIÓN -->
+                        <div class="col-12">
+                            <div class="p-3 rounded border border-warning border-opacity-50" style="background: rgba(212,168,83,0.06);">
+                                <h6 class="text-warning mb-2 fw-bold"><i class="bi bi-book-half me-1"></i>Séder de la Celebración (Mikra Kodesh / Moedim)</h6>
+                                <p class="small text-white-50 mb-3">Puedes subir el Séder u orden de celebración en PDF e Imagen (JPG / PNG) para que las personas puedan descargarlo.</p>
+                                <div class="row g-2">
+                                    <div class="col-12">
+                                        <label class="form-label small text-white-50">Título del Séder</label>
+                                        <input type="text" name="seder_title" class="form-control form-control-sm" placeholder="Ej: Séder de Pésaj 2026">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small text-danger fw-bold"><i class="bi bi-file-earmark-pdf-fill me-1"></i>Archivo PDF del Séder</label>
+                                        <input type="file" name="seder_pdf" class="form-control form-control-sm" accept="application/pdf">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small text-info fw-bold"><i class="bi bi-file-earmark-image-fill me-1"></i>Archivo Imagen del Séder (JPG / PNG)</label>
+                                        <input type="file" name="seder_image" class="form-control form-control-sm" accept="image/jpeg,image/png,image/webp">
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        <label class="form-label small text-white-50">Notas o Instrucciones breves del Séder (Opcional)</label>
+                                        <textarea name="seder_content" class="form-control form-control-sm" rows="2" placeholder="Indicaciones para la cena, copas, matzá, etc..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="col-12">
                             <label class="form-label small text-white-50">Detalle del Evento</label>
                             <div id="port-editor-container" style="height:300px;background:white;color:black;border-radius:5px;"></div>
@@ -162,6 +188,35 @@
                         <div class="col-md-4"><label class="form-label small text-white-50">Subir Imagen</label><input type="file" id="edit_port_image_file" name="image_file" class="form-control" accept="image/*"></div>
                         <div class="col-md-4"><label class="form-label small text-white-50">URL Imagen</label><input type="text" id="edit_port_image_url" name="image_url" class="form-control"></div>
                         <div class="col-md-4 text-center"><div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height:100px;background:rgba(0,0,0,0.2);"><img id="editPortImgPreview" src="" style="max-width:100%;max-height:100%;object-fit:contain;"></div></div>
+                        <!-- SÉDER DE LA CELEBRACIÓN -->
+                        <div class="col-12">
+                            <div class="p-3 rounded border border-warning border-opacity-50" style="background: rgba(212,168,83,0.06);">
+                                <h6 class="text-warning mb-2 fw-bold"><i class="bi bi-book-half me-1"></i>Séder de la Celebración (Mikra Kodesh / Moedim)</h6>
+                                <p class="small text-white-50 mb-3">Sube o actualiza el Séder en PDF e Imagen (JPG / PNG) para descarga comunitaria.</p>
+                                <div class="row g-2">
+                                    <div class="col-12">
+                                        <label class="form-label small text-white-50">Título del Séder</label>
+                                        <input type="text" name="seder_title" id="edit_port_seder_title" class="form-control form-control-sm" placeholder="Ej: Séder de Pésaj 2026">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small text-danger fw-bold"><i class="bi bi-file-earmark-pdf-fill me-1"></i>Archivo PDF del Séder</label>
+                                        <input type="hidden" name="existing_seder_pdf" id="edit_port_existing_seder_pdf">
+                                        <div id="edit_port_seder_pdf_info" class="small mb-1 text-info" style="display:none;"></div>
+                                        <input type="file" name="seder_pdf" class="form-control form-control-sm" accept="application/pdf">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small text-info fw-bold"><i class="bi bi-file-earmark-image-fill me-1"></i>Archivo Imagen del Séder (JPG / PNG)</label>
+                                        <input type="hidden" name="existing_seder_image" id="edit_port_existing_seder_image">
+                                        <div id="edit_port_seder_img_info" class="small mb-1 text-info" style="display:none;"></div>
+                                        <input type="file" name="seder_image" class="form-control form-control-sm" accept="image/jpeg,image/png,image/webp">
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        <label class="form-label small text-white-50">Notas o Instrucciones breves del Séder (Opcional)</label>
+                                        <textarea name="seder_content" id="edit_port_seder_content" class="form-control form-control-sm" rows="2"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-12"><label class="form-label small text-white-50">Contenido</label><div id="edit-port-editor-container" style="height:300px;background:white;color:black;border-radius:5px;"></div><input type="hidden" name="content" id="editPortContentInput"></div>
                     </div>
                 </div>
@@ -1482,7 +1537,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 const imgEl = document.getElementById('edit_port_image_url');
                 if (imgEl) imgEl.value = d.image;
                 const prevEl = document.getElementById('editPortImgPreview');
-                if (prevEl) prevEl.src = d.image || '/assets/img/blog/blog-1.jpg';
+                const sederTitleEl = document.getElementById('edit_port_seder_title');
+                if (sederTitleEl) sederTitleEl.value = d.sederTitle || '';
+                const sederPdfHidden = document.getElementById('edit_port_existing_seder_pdf');
+                if (sederPdfHidden) sederPdfHidden.value = d.sederPdf || '';
+                const sederPdfInfo = document.getElementById('edit_port_seder_pdf_info');
+                if (sederPdfInfo) {
+                    if (d.sederPdf) {
+                        sederPdfInfo.style.display = 'block';
+                        sederPdfInfo.innerHTML = '<i class="bi bi-file-pdf text-danger me-1"></i>Actual: <a href="' + d.sederPdf + '" target="_blank" class="text-info">' + d.sederPdf.split('/').pop() + '</a>';
+                    } else {
+                        sederPdfInfo.style.display = 'none';
+                    }
+                }
+                const sederImgHidden = document.getElementById('edit_port_existing_seder_image');
+                if (sederImgHidden) sederImgHidden.value = d.sederImage || '';
+                const sederImgInfo = document.getElementById('edit_port_seder_img_info');
+                if (sederImgInfo) {
+                    if (d.sederImage) {
+                        sederImgInfo.style.display = 'block';
+                        sederImgInfo.innerHTML = '<i class="bi bi-image text-info me-1"></i>Actual: <a href="' + d.sederImage + '" target="_blank" class="text-info">' + d.sederImage.split('/').pop() + '</a>';
+                    } else {
+                        sederImgInfo.style.display = 'none';
+                    }
+                }
+                const sederContentEl = document.getElementById('edit_port_seder_content');
+                if (sederContentEl) sederContentEl.value = d.sederContent || '';
                 if (qEditPort) qEditPort.root.innerHTML = d.content;
                 editPortModal.show();
             };

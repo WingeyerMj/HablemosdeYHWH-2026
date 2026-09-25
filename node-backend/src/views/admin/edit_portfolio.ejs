@@ -69,8 +69,113 @@
                         </div>
                     </div>
 
+                    <!-- SECCIÓN: SÉDER DE LA CELEBRACIÓN (MIKRA KODESH / MOEDIM) -->
+                    <div class="col-12 mt-4">
+                        <div class="card border-warning border-opacity-50" style="background: rgba(212, 168, 83, 0.05); border-radius: 12px;">
+                            <div class="card-header bg-transparent border-warning border-opacity-25 d-flex align-items-center justify-content-between">
+                                <h5 class="mb-0 text-warning" style="font-size: 1.05rem;">
+                                    <i class="bi bi-book-half me-2"></i>Séder de la Celebración (Mikra Kodesh / Moedim)
+                                </h5>
+                                <span class="badge bg-warning text-dark"><i class="bi bi-cloud-arrow-down-fill me-1"></i>Descargable por los usuarios</span>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-white-50 small mb-3">
+                                    Aquí puedes subir el archivo del <strong>Séder u orden de la celebración</strong> tanto en <strong>PDF</strong> como en <strong>formato Imagen (JPG, PNG)</strong> para que las personas puedan descargarlo y seguir la fiesta bíblica.
+                                </p>
+
+                                <div class="row g-3">
+                                    <!-- Título del Seder -->
+                                    <div class="col-md-12">
+                                        <label class="form-label small text-white-50">Título o Nombre del Séder</label>
+                                        <input type="text" name="seder_title" class="form-control" 
+                                               value="<%= evento.seder_title || '' %>" 
+                                               placeholder="Ej: Séder de Pésaj - Orden y Guía de la Celebración">
+                                    </div>
+
+                                    <!-- Séder en Formato PDF -->
+                                    <div class="col-md-6">
+                                        <div class="p-3 rounded border border-secondary" style="background: rgba(0,0,0,0.25);">
+                                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                                <label class="form-label small fw-bold text-danger mb-0">
+                                                    <i class="bi bi-file-earmark-pdf-fill me-1"></i>Séder en PDF
+                                                </label>
+                                                <% if (evento.seder_pdf) { %>
+                                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                                        <i class="bi bi-check-circle me-1"></i>Cargado
+                                                    </span>
+                                                <% } %>
+                                            </div>
+
+                                            <% if (evento.seder_pdf) { %>
+                                                <div class="mb-2 p-2 rounded bg-dark border border-secondary d-flex align-items-center justify-content-between">
+                                                    <a href="<%= evento.seder_pdf %>" target="_blank" class="text-info text-decoration-none small text-truncate me-2">
+                                                        <i class="bi bi-file-pdf me-1 text-danger"></i><%= evento.seder_pdf.split('/').pop() %>
+                                                    </a>
+                                                    <div class="form-check form-check-inline mb-0">
+                                                        <input class="form-check-input" type="checkbox" name="remove_seder_pdf" value="1" id="remove_seder_pdf">
+                                                        <label class="form-check-label text-danger small" for="remove_seder_pdf">Eliminar</label>
+                                                    </div>
+                                                </div>
+                                            <% } %>
+
+                                            <input type="hidden" name="existing_seder_pdf" value="<%= evento.seder_pdf || '' %>">
+                                            <label class="form-label small text-white-50"><%= evento.seder_pdf ? 'Reemplazar archivo PDF:' : 'Subir archivo PDF:' %></label>
+                                            <input type="file" name="seder_pdf" class="form-control" accept="application/pdf">
+                                            <small class="text-white-50 d-block mt-1">Formato .pdf (máx. 250MB)</small>
+                                        </div>
+                                    </div>
+
+                                    <!-- Séder en Formato Imagen (JPG / PNG) -->
+                                    <div class="col-md-6">
+                                        <div class="p-3 rounded border border-secondary" style="background: rgba(0,0,0,0.25);">
+                                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                                <label class="form-label small fw-bold text-info mb-0">
+                                                    <i class="bi bi-file-earmark-image-fill me-1"></i>Séder en Imagen (JPG / PNG)
+                                                </label>
+                                                <% if (evento.seder_image) { %>
+                                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                                        <i class="bi bi-check-circle me-1"></i>Cargado
+                                                    </span>
+                                                <% } %>
+                                            </div>
+
+                                            <% if (evento.seder_image) { %>
+                                                <div class="mb-2 p-2 rounded bg-dark border border-secondary d-flex align-items-center justify-content-between">
+                                                    <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
+                                                        <img src="<%= evento.seder_image %>" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px;">
+                                                        <a href="<%= evento.seder_image %>" target="_blank" class="text-info text-decoration-none small text-truncate">
+                                                            <%= evento.seder_image.split('/').pop() %>
+                                                        </a>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mb-0">
+                                                        <input class="form-check-input" type="checkbox" name="remove_seder_image" value="1" id="remove_seder_image">
+                                                        <label class="form-check-label text-danger small" for="remove_seder_image">Eliminar</label>
+                                                    </div>
+                                                </div>
+                                            <% } %>
+
+                                            <input type="hidden" name="existing_seder_image" value="<%= evento.seder_image || '' %>">
+                                            <label class="form-label small text-white-50"><%= evento.seder_image ? 'Reemplazar imagen del Séder:' : 'Subir imagen del Séder:' %></label>
+                                            <input type="file" name="seder_image" id="seder_image_input" class="form-control" accept="image/jpeg,image/png,image/webp">
+                                            <small class="text-white-50 d-block mt-1">Formatos .jpg, .png o .webp para lectura o descarga directa</small>
+                                            <div id="sederImgPreviewWrap" class="mt-2 text-center" style="display: none;">
+                                                <img id="sederImgPreview" src="" style="max-height: 140px; border-radius: 6px;" class="border border-secondary">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Instrucciones / Resumen del Seder -->
+                                    <div class="col-12">
+                                        <label class="form-label small text-white-50">Notas o Instrucciones del Séder (Opcional)</label>
+                                        <textarea name="seder_content" class="form-control" rows="3" placeholder="Instrucciones para la congregación, preparación de elementos, etc..."><%= evento.seder_content || '' %></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Editor de Texto Enriquecido -->
-                    <div class="col-12">
+                    <div class="col-12 mt-4">
                         <label class="form-label small text-white-50">Contenido Detallado del Evento</label>
                         <div id="editor-container" style="height: 350px; background: white; color: black; border-radius: 5px;"></div>
                         <input type="hidden" name="content" id="contentInput">
@@ -130,6 +235,26 @@
             reader.readAsDataURL(file);
         }
     });
+
+    // Sincronizar previsualización de imagen del Seder
+    const sederImgInput = document.getElementById('seder_image_input');
+    const sederImgPreview = document.getElementById('sederImgPreview');
+    const sederImgWrap = document.getElementById('sederImgPreviewWrap');
+    if (sederImgInput) {
+        sederImgInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    sederImgPreview.src = e.target.result;
+                    sederImgWrap.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                sederImgWrap.style.display = 'none';
+            }
+        });
+    }
 
     // Antes de enviar el formulario, pasar el HTML del editor al input hidden
     const form = document.getElementById('eventoForm');

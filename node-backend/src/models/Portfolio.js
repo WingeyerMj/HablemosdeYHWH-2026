@@ -39,6 +39,18 @@ class Portfolio {
         }
 
         try {
+            const [colsImage] = await db.query("SHOW COLUMNS FROM portfolio LIKE 'seder_image'");
+            if (!colsImage || colsImage.length === 0) {
+                await db.query("ALTER TABLE portfolio ADD COLUMN seder_image VARCHAR(500) DEFAULT NULL");
+                console.log('✅ Columna seder_image agregada a portfolio');
+            }
+        } catch (e) {
+            try {
+                await db.query("ALTER TABLE portfolio ADD COLUMN IF NOT EXISTS seder_image VARCHAR(500) DEFAULT NULL");
+            } catch (errPG) {}
+        }
+
+        try {
             const [colsViews] = await db.query("SHOW COLUMNS FROM portfolio LIKE 'views'");
             if (!colsViews || colsViews.length === 0) {
                 await db.query("ALTER TABLE portfolio ADD COLUMN views INT DEFAULT 0");
@@ -89,20 +101,20 @@ class Portfolio {
 
     static async create(data) {
         await Portfolio.ensureColumns();
-        const { title, subtitle, category, description, content, event_date, image_url, seder_title, seder_pdf, seder_content } = data;
+        const { title, subtitle, category, description, content, event_date, image_url, seder_title, seder_pdf, seder_image, seder_content } = data;
         const img = image_url || '';
         return await db.query(
-            'INSERT INTO portfolio (title, subtitle, category, description, content, event_date, image_url, img, seder_title, seder_pdf, seder_content) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [title, subtitle || '', category || '', description || '', content || '', event_date || null, image_url || '', img, seder_title || '', seder_pdf || '', seder_content || '']
+            'INSERT INTO portfolio (title, subtitle, category, description, content, event_date, image_url, img, seder_title, seder_pdf, seder_image, seder_content) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [title, subtitle || '', category || '', description || '', content || '', event_date || null, image_url || '', img, seder_title || '', seder_pdf || '', seder_image || '', seder_content || '']
         );
     }
 
     static async update(id, data) {
         await Portfolio.ensureColumns();
-        const { title, subtitle, category, description, content, event_date, image_url, seder_title, seder_pdf, seder_content } = data;
+        const { title, subtitle, category, description, content, event_date, image_url, seder_title, seder_pdf, seder_image, seder_content } = data;
         return await db.query(
-            'UPDATE portfolio SET title = ?, subtitle = ?, category = ?, description = ?, content = ?, event_date = ?, image_url = ?, img = ?, seder_title = ?, seder_pdf = ?, seder_content = ? WHERE id = ?',
-            [title, subtitle || '', category || '', description || '', content || '', event_date || null, image_url || '', image_url || '', seder_title || '', seder_pdf || '', seder_content || '', id]
+            'UPDATE portfolio SET title = ?, subtitle = ?, category = ?, description = ?, content = ?, event_date = ?, image_url = ?, img = ?, seder_title = ?, seder_pdf = ?, seder_image = ?, seder_content = ? WHERE id = ?',
+            [title, subtitle || '', category || '', description || '', content || '', event_date || null, image_url || '', image_url || '', seder_title || '', seder_pdf || '', seder_image || '', seder_content || '', id]
         );
     }
 

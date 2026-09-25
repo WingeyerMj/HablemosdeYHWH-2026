@@ -54,26 +54,156 @@
                                         <%- evento.content || evento.description %>
                                     </div>
 
-                                    <!-- Botón Descargar PDF -->
+                                    <!-- SECCIÓN DEL SÉDER DE LA CELEBRACIÓN -->
+                                    <% if (evento.seder_pdf || evento.seder_image || evento.seder_title || evento.seder_content) { %>
+                                        <div class="seder-card-section mt-5 p-4 rounded-4 shadow-sm no-print" 
+                                             style="background: linear-gradient(135deg, #fdfbf7 0%, #f6f0e4 100%); border: 2px solid #ebdccb;">
+                                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" 
+                                                         style="width: 52px; height: 52px; background: linear-gradient(135deg, #d4a853, #b8860b); color: #fff; font-size: 1.6rem; flex-shrink: 0;">
+                                                        <i class="bi bi-book-half"></i>
+                                                    </div>
+                                                    <div>
+                                                        <span class="badge rounded-pill text-uppercase px-2 py-1" style="background: rgba(184,134,11,0.15); color: #8c6a2d; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px;">
+                                                            Mikra Kodesh &bull; Orden del Servicio
+                                                        </span>
+                                                        <h3 class="mb-0 fw-bold" style="color: #2b231d; font-size: 1.35rem;">
+                                                            <%= evento.seder_title || 'Séder de la Celebración' %>
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <span class="badge bg-white text-dark border px-3 py-2 rounded-pill shadow-sm" style="font-size: 0.8rem; font-weight: 600;">
+                                                    <i class="bi bi-cloud-arrow-down-fill text-warning me-1"></i>Material Descargable
+                                                </span>
+                                            </div>
+
+                                            <p class="text-muted mb-4" style="font-size: 0.95rem; line-height: 1.6;">
+                                                Ponemos a disposición de la congregación el <strong>Séder de la Celebración</strong> para seguir las lecturas, bendiciones y el orden sagrado de esta festividad bíblica. Puedes descargarlo en formato <strong>PDF</strong> para imprimir o en formato <strong>Imagen (JPG / PNG)</strong> para tu teléfono o tablet.
+                                            </p>
+
+                                            <% if (evento.seder_content) { %>
+                                                <div class="seder-instructions p-3 mb-4 rounded-3 bg-white border border-light-subtle" style="font-size: 0.95rem; color: #4a3e35; line-height: 1.6;">
+                                                    <strong class="d-block mb-1 text-dark"><i class="bi bi-info-circle-fill text-warning me-1"></i>Instrucciones y Notas del Séder:</strong>
+                                                    <div style="white-space: pre-line;"><%= evento.seder_content %></div>
+                                                </div>
+                                            <% } %>
+
+                                            <!-- Botones de Descarga y Visualización -->
+                                            <div class="d-flex flex-wrap gap-3 align-items-center">
+                                                <% if (evento.seder_pdf) { %>
+                                                    <a href="<%= evento.seder_pdf %>" download="<%= (evento.seder_title || 'Seder').replace(/[^a-zA-Z0-9_-]/g, '_') %>.pdf" target="_blank"
+                                                       class="btn btn-lg d-inline-flex align-items-center gap-2 px-4 py-3 shadow-sm rounded-pill text-white fw-bold"
+                                                       style="background: linear-gradient(135deg, #e11d48, #be123c); border: none; font-size: 0.98rem; transition: transform 0.2s, box-shadow 0.2s;">
+                                                        <i class="bi bi-file-earmark-pdf-fill fs-5"></i>
+                                                        <span>Descargar Séder en PDF</span>
+                                                    </a>
+                                                <% } %>
+
+                                                <% if (evento.seder_image) { %>
+                                                    <a href="<%= evento.seder_image %>" download="<%= (evento.seder_title || 'Seder').replace(/[^a-zA-Z0-9_-]/g, '_') %>" target="_blank"
+                                                       class="btn btn-lg d-inline-flex align-items-center gap-2 px-4 py-3 shadow-sm rounded-pill text-white fw-bold"
+                                                       style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none; font-size: 0.98rem; transition: transform 0.2s, box-shadow 0.2s;">
+                                                        <i class="bi bi-file-earmark-image-fill fs-5"></i>
+                                                        <span>Descargar Séder en Imagen</span>
+                                                    </a>
+
+                                                    <button type="button" class="btn btn-outline-dark d-inline-flex align-items-center gap-1 px-3 py-3 rounded-pill fw-semibold"
+                                                            data-bs-toggle="modal" data-bs-target="#sederImageModal" style="font-size: 0.95rem;">
+                                                        <i class="bi bi-zoom-in"></i> Ver Imagen
+                                                    </button>
+                                                <% } %>
+                                            </div>
+
+                                            <% if (evento.seder_image) { %>
+                                                <!-- Miniatura con enlace para ver completa -->
+                                                <div class="mt-4 pt-3 border-top border-warning border-opacity-25">
+                                                    <small class="text-muted d-block mb-2 fw-semibold"><i class="bi bi-image me-1"></i>Vista previa del Séder:</small>
+                                                    <div class="position-relative d-inline-block rounded-3 overflow-hidden shadow-sm border border-2 border-white" style="cursor: pointer; max-width: 280px;"
+                                                         data-bs-toggle="modal" data-bs-target="#sederImageModal">
+                                                        <img src="<%= evento.seder_image %>" alt="<%= evento.seder_title || 'Séder' %>" class="img-fluid" style="display: block; max-height: 200px; object-fit: cover;">
+                                                        <div class="position-absolute bottom-0 start-0 w-100 p-2 text-center text-white small" style="background: rgba(0,0,0,0.65); backdrop-filter: blur(2px);">
+                                                            <i class="bi bi-zoom-in me-1"></i>Clic para ampliar
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Modal para Ver Imagen en Grande -->
+                                                <div class="modal fade" id="sederImageModal" tabindex="-1" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered modal-xl">
+                                                        <div class="modal-content bg-dark text-white border-0 shadow-lg">
+                                                            <div class="modal-header border-secondary">
+                                                                <h5 class="modal-title fs-6"><i class="bi bi-image me-2 text-warning"></i><%= evento.seder_title || 'Séder de la Celebración' %></h5>
+                                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body text-center p-2" style="background: #111;">
+                                                                <img src="<%= evento.seder_image %>" alt="<%= evento.seder_title || 'Séder' %>" class="img-fluid rounded" style="max-height: 85vh; object-fit: contain;">
+                                                            </div>
+                                                            <div class="modal-footer border-secondary justify-content-between">
+                                                                <span class="small text-white-50">Haz clic en Descargar para guardar en tu dispositivo</span>
+                                                                <div>
+                                                                    <a href="<%= evento.seder_image %>" download target="_blank" class="btn btn-primary btn-sm rounded-pill px-3">
+                                                                        <i class="bi bi-download me-1"></i>Descargar Imagen
+                                                                    </a>
+                                                                    <button type="button" class="btn btn-secondary btn-sm rounded-pill px-3 ms-2" data-bs-dismiss="modal">Cerrar</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    <% } %>
+
+                                    <!-- Botón Descargar PDF del artículo completo -->
                                     <div class="text-center mt-5 mb-4 no-print">
-                                        <button onclick="descargarPDF()" class="btn btn-lg d-inline-flex align-items-center gap-2 shadow-sm" 
-                                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 14px 35px; border-radius: 30px; font-weight: 600; transition: all 0.3s ease;">
-                                            <i class="bi bi-file-earmark-pdf" style="font-size: 1.4rem;"></i>
-                                            <span>Descargar Evento como PDF</span>
+                                        <button onclick="descargarPDF()" class="btn btn-outline-secondary btn-md d-inline-flex align-items-center gap-2" 
+                                                style="border-radius: 30px; padding: 10px 25px; font-weight: 500;">
+                                            <i class="bi bi-printer"></i>
+                                            <span>Imprimir / Guardar Evento Completo</span>
                                         </button>
                                     </div>
                                 </div>
 
                                 <div class="col-lg-4">
-                                    <% if (evento.image_url || evento.img) { %>
-                                        <div class="post-img p-2" style="background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: sticky; top: 100px;">
-                                            <img src="<%= evento.image_url || evento.img %>" alt="<%= evento.title %>" class="img-fluid rounded" style="width: 100%; height: auto; object-fit: contain;">
-                                        </div>
-                                    <% } else { %>
-                                        <div class="post-img p-4 text-center rounded" style="background: #f8f9fa; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: sticky; top: 100px;">
-                                            <i class="bi bi-calendar-event text-muted" style="font-size: 5rem;"></i>
-                                        </div>
-                                    <% } %>
+                                    <div style="position: sticky; top: 100px;">
+                                        <% if (evento.image_url || evento.img) { %>
+                                            <div class="post-img p-2 mb-3" style="background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                                                <img src="<%= evento.image_url || evento.img %>" alt="<%= evento.title %>" class="img-fluid rounded" style="width: 100%; height: auto; object-fit: contain;">
+                                            </div>
+                                        <% } else { %>
+                                            <div class="post-img p-4 text-center rounded mb-3" style="background: #f8f9fa; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                                                <i class="bi bi-calendar-event text-muted" style="font-size: 5rem;"></i>
+                                            </div>
+                                        <% } %>
+
+                                        <% if (evento.seder_pdf || evento.seder_image) { %>
+                                            <!-- Widget lateral de descarga del Séder -->
+                                            <div class="card border-0 shadow-sm rounded-4 p-3 mb-3 no-print" style="background: #fdfaf3; border: 1px solid #ebdccb !important;">
+                                                <div class="d-flex align-items-center gap-2 mb-2">
+                                                    <i class="bi bi-file-earmark-arrow-down-fill text-warning fs-4"></i>
+                                                    <div>
+                                                        <h6 class="mb-0 fw-bold" style="color: #2b231d; font-size: 0.92rem;">Séder Disponible</h6>
+                                                        <small class="text-muted" style="font-size: 0.76rem;">Descarga para la celebración</small>
+                                                    </div>
+                                                </div>
+                                                <div class="d-grid gap-2 mt-2">
+                                                    <% if (evento.seder_pdf) { %>
+                                                        <a href="<%= evento.seder_pdf %>" download target="_blank" class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-between px-3 py-2 rounded-pill">
+                                                            <span><i class="bi bi-file-pdf me-1"></i>Séder en PDF</span>
+                                                            <i class="bi bi-download"></i>
+                                                        </a>
+                                                    <% } %>
+                                                    <% if (evento.seder_image) { %>
+                                                        <a href="<%= evento.seder_image %>" download target="_blank" class="btn btn-sm btn-outline-primary d-flex align-items-center justify-content-between px-3 py-2 rounded-pill">
+                                                            <span><i class="bi bi-image me-1"></i>Séder en Imagen</span>
+                                                            <i class="bi bi-download"></i>
+                                                        </a>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    </div>
                                 </div>
                             </div>
 
