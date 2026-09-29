@@ -244,41 +244,49 @@ const adminController = {
     // ==================== EVENTOS (PORTFOLIO) ====================
     createPortfolio: async (req, res) => {
         try {
-let { title, category, subtitle, description, event_date, content, image_url, seder_title, seder_content, seder_url } = req.body;
+            let { title, category, subtitle, description, event_date, content, image_url, seder_title, seder_content, seder_url } = req.body;
             let seder_pdf = '';
             let seder_image = '';
             let seder_file = (seder_url && seder_url.trim()) ? seder_url.trim() : null;
 
-            if (req.files) {
-                if (req.files['image_file'] && req.files['image_file'][0]) {
-                    image_url = '/uploads/portfolio/' + req.files['image_file'][0].filename;
+            const getUploadedFile = (fieldName) => {
+                if (!req.files) return null;
+                if (Array.isArray(req.files)) {
+                    return req.files.find(f => f.fieldname === fieldName) || null;
                 }
-if (req.files['seder_pdf'] && req.files['seder_pdf'][0]) {
-                    seder_pdf = '/uploads/pdf/' + req.files['seder_pdf'][0].filename;
-                    seder_file = seder_pdf;
+                return (req.files[fieldName] && req.files[fieldName][0]) ? req.files[fieldName][0] : null;
+            };
+
+            const imgF = getUploadedFile('image_file');
+            if (imgF) image_url = '/uploads/portfolio/' + imgF.filename;
+            else if (req.file) image_url = '/uploads/portfolio/' + req.file.filename;
+
+            const pdfF = getUploadedFile('seder_pdf');
+            if (pdfF) {
+                seder_pdf = '/uploads/pdf/' + pdfF.filename;
+                seder_file = seder_pdf;
+            }
+
+            const imgSederF = getUploadedFile('seder_image');
+            if (imgSederF) {
+                seder_image = '/uploads/seder/' + imgSederF.filename;
+                if (!seder_file) seder_file = seder_image;
+            }
+
+            const fileF = getUploadedFile('seder_file');
+            if (fileF) {
+                const ext = path.extname(fileF.originalname).toLowerCase();
+                if (fileF.mimetype === 'application/pdf' || ext === '.pdf') {
+                    seder_file = '/uploads/pdf/' + fileF.filename;
+                    if (!seder_pdf) seder_pdf = seder_file;
+                } else {
+                    seder_file = '/uploads/portfolio/' + fileF.filename;
+                    if (!seder_image) seder_image = seder_file;
                 }
-                if (req.files['seder_image'] && req.files['seder_image'][0]) {
-                    seder_image = '/uploads/seder/' + req.files['seder_image'][0].filename;
-                    if (!seder_file) seder_file = seder_image;
-                }
-                if (req.files['seder_file'] && req.files['seder_file'][0]) {
-                    const f = req.files['seder_file'][0];
-                    const ext = path.extname(f.originalname).toLowerCase();
-                    if (f.mimetype === 'application/pdf' || ext === '.pdf') {
-                        seder_file = '/uploads/pdf/' + f.filename;
-                        if (!seder_pdf) seder_pdf = seder_file;
-                    } else {
-                        seder_file = '/uploads/portfolio/' + f.filename;
-                        if (!seder_image) seder_image = seder_file;
-                    }
-                }
-                }
-            } else if (req.file) {
-                image_url = '/uploads/portfolio/' + req.file.filename;
             }
             
             const Portfolio = require('../models/Portfolio');
-await Portfolio.create({ 
+            await Portfolio.create({ 
                 title, 
                 subtitle, 
                 category, 
@@ -291,7 +299,6 @@ await Portfolio.create({
                 seder_image,
                 seder_content: seder_content || '',
                 seder_file
-            });
             });
 
             // Notificación automática a todos los suscriptores
@@ -327,7 +334,7 @@ await Portfolio.create({
 
     updatePortfolio: async (req, res) => {
         try {
-let { id, title, category, subtitle, description, event_date, content, image_url, seder_title, seder_content, seder_url, existing_seder_pdf, existing_seder_image, existing_seder_file, remove_seder_pdf, remove_seder_image, remove_seder } = req.body;
+            let { id, title, category, subtitle, description, event_date, content, image_url, seder_title, seder_content, seder_url, existing_seder_pdf, existing_seder_image, existing_seder_file, remove_seder_pdf, remove_seder_image, remove_seder } = req.body;
             let seder_pdf = remove_seder_pdf === '1' ? '' : (existing_seder_pdf || '');
             let seder_image = remove_seder_image === '1' ? '' : (existing_seder_image || '');
             let seder_file = (existing_seder_file && existing_seder_file.trim()) ? existing_seder_file.trim() : (seder_pdf || seder_image || null);
@@ -340,38 +347,46 @@ let { id, title, category, subtitle, description, event_date, content, image_url
                 seder_file = seder_url.trim();
             }
 
-            if (req.files) {
-                if (req.files['image_file'] && req.files['image_file'][0]) {
-                    image_url = '/uploads/portfolio/' + req.files['image_file'][0].filename;
+            const getUploadedFile = (fieldName) => {
+                if (!req.files) return null;
+                if (Array.isArray(req.files)) {
+                    return req.files.find(f => f.fieldname === fieldName) || null;
                 }
-if (req.files['seder_pdf'] && req.files['seder_pdf'][0]) {
-                    seder_pdf = '/uploads/pdf/' + req.files['seder_pdf'][0].filename;
-                    seder_file = seder_pdf;
+                return (req.files[fieldName] && req.files[fieldName][0]) ? req.files[fieldName][0] : null;
+            };
+
+            const imgF = getUploadedFile('image_file');
+            if (imgF) image_url = '/uploads/portfolio/' + imgF.filename;
+            else if (req.file) image_url = '/uploads/portfolio/' + req.file.filename;
+
+            const pdfF = getUploadedFile('seder_pdf');
+            if (pdfF) {
+                seder_pdf = '/uploads/pdf/' + pdfF.filename;
+                seder_file = seder_pdf;
+            }
+
+            const imgSederF = getUploadedFile('seder_image');
+            if (imgSederF) {
+                seder_image = '/uploads/seder/' + imgSederF.filename;
+                if (!seder_file) seder_file = seder_image;
+            }
+
+            const fileF = getUploadedFile('seder_file');
+            if (fileF) {
+                const ext = path.extname(fileF.originalname).toLowerCase();
+                if (fileF.mimetype === 'application/pdf' || ext === '.pdf') {
+                    seder_file = '/uploads/pdf/' + fileF.filename;
+                    if (!seder_pdf) seder_pdf = seder_file;
+                } else {
+                    seder_file = '/uploads/portfolio/' + fileF.filename;
+                    if (!seder_image) seder_image = seder_file;
                 }
-                if (req.files['seder_image'] && req.files['seder_image'][0]) {
-                    seder_image = '/uploads/seder/' + req.files['seder_image'][0].filename;
-                    if (!seder_file) seder_file = seder_image;
-                }
-                if (req.files['seder_file'] && req.files['seder_file'][0]) {
-                    const f = req.files['seder_file'][0];
-                    const ext = path.extname(f.originalname).toLowerCase();
-                    if (f.mimetype === 'application/pdf' || ext === '.pdf') {
-                        seder_file = '/uploads/pdf/' + f.filename;
-                        if (!seder_pdf) seder_pdf = seder_file;
-                    } else {
-                        seder_file = '/uploads/portfolio/' + f.filename;
-                        if (!seder_image) seder_image = seder_file;
-                    }
-                }
-                }
-            } else if (req.file) {
-                image_url = '/uploads/portfolio/' + req.file.filename;
             }
             
             const formattedDate = event_date === '' ? null : event_date;
 
             const Portfolio = require('../models/Portfolio');
-await Portfolio.update(id, { 
+            await Portfolio.update(id, { 
                 title, 
                 subtitle, 
                 category, 
@@ -384,7 +399,6 @@ await Portfolio.update(id, {
                 seder_image,
                 seder_content: seder_content || '',
                 seder_file
-            });
             });
 
             // Notificación automática a suscriptores por actualización
@@ -409,6 +423,7 @@ await Portfolio.update(id, {
 
     deletePortfolio: async (req, res) => {
         try {
+            const db = require('../config/db');
             await db.query('DELETE FROM portfolio WHERE id = ?', [req.params.id]);
             res.redirect('/admin/dashboard#pills-portfolio');
         } catch (error) {
