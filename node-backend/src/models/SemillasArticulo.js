@@ -16,6 +16,8 @@ class SemillasArticulo {
                     main_image VARCHAR(500) DEFAULT NULL,
                     gallery_images LONGTEXT DEFAULT NULL,
                     pdf_file VARCHAR(500) DEFAULT NULL,
+                    video_file VARCHAR(500) DEFAULT NULL,
+                    youtube_link VARCHAR(500) DEFAULT NULL,
                     author VARCHAR(255) DEFAULT 'Elva Avila',
                     tags VARCHAR(500) DEFAULT NULL,
                     is_published BOOLEAN DEFAULT TRUE,
@@ -37,6 +39,8 @@ class SemillasArticulo {
                 { name: 'main_image', type: 'VARCHAR(500) DEFAULT NULL' },
                 { name: 'gallery_images', type: 'LONGTEXT DEFAULT NULL' },
                 { name: 'pdf_file', type: 'VARCHAR(500) DEFAULT NULL' },
+                { name: 'video_file', type: 'VARCHAR(500) DEFAULT NULL' },
+                { name: 'youtube_link', type: 'VARCHAR(500) DEFAULT NULL' },
                 { name: 'author', type: "VARCHAR(255) DEFAULT 'Elva Avila'" },
                 { name: 'tags', type: 'VARCHAR(500) DEFAULT NULL' },
                 { name: 'is_published', type: 'BOOLEAN DEFAULT TRUE' },
@@ -117,6 +121,8 @@ class SemillasArticulo {
             main_image,
             gallery_images,
             pdf_file,
+            video_file,
+            youtube_link,
             author,
             tags,
             is_published
@@ -131,8 +137,8 @@ class SemillasArticulo {
 
         return await db.query(
             `INSERT INTO semillas_articulos 
-             (title, parasha_name, category, biblical_reference, key_verse, summary, content, main_image, gallery_images, pdf_file, author, tags, is_published) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+             (title, parasha_name, category, biblical_reference, key_verse, summary, content, main_image, gallery_images, pdf_file, video_file, youtube_link, author, tags, is_published) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 title,
                 parasha_name || '',
@@ -144,6 +150,8 @@ class SemillasArticulo {
                 main_image || '',
                 galleryJson || '[]',
                 pdf_file || '',
+                video_file || '',
+                youtube_link || '',
                 author || 'Elva Avila',
                 tags || '',
                 is_published !== undefined ? (is_published ? 1 : 0) : 1
@@ -164,6 +172,8 @@ class SemillasArticulo {
             main_image,
             gallery_images,
             pdf_file,
+            video_file,
+            youtube_link,
             author,
             tags,
             is_published
@@ -178,7 +188,7 @@ class SemillasArticulo {
 
         return await db.query(
             `UPDATE semillas_articulos 
-             SET title = ?, parasha_name = ?, category = ?, biblical_reference = ?, key_verse = ?, summary = ?, content = ?, main_image = ?, gallery_images = ?, pdf_file = ?, author = ?, tags = ?, is_published = ? 
+             SET title = ?, parasha_name = ?, category = ?, biblical_reference = ?, key_verse = ?, summary = ?, content = ?, main_image = ?, gallery_images = ?, pdf_file = ?, video_file = ?, youtube_link = ?, author = ?, tags = ?, is_published = ? 
              WHERE id = ?`,
             [
                 title,
@@ -191,6 +201,8 @@ class SemillasArticulo {
                 main_image || '',
                 galleryJson || '[]',
                 pdf_file || '',
+                video_file || '',
+                youtube_link || '',
                 author || 'Elva Avila',
                 tags || '',
                 is_published !== undefined ? (is_published ? 1 : 0) : 1,

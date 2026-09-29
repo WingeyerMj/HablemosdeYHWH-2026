@@ -270,6 +270,9 @@ const homeController = {
             let tableData = null;
             let tableColumns = null;
             if (section.data_table) {
+                if (req.query.view_id) {
+                    await EntityModel.incrementViews(section.data_table, req.query.view_id);
+                }
                 tableData = await EntityModel.getAll(section.data_table);
                 tableColumns = await EntityModel.getColumns(section.data_table);
             }

@@ -45,7 +45,7 @@
                                                     <% if (parasha.subtitle) { %>
                                                         <span class="badge bg-primary px-3 py-2 fs-6"><i class="bi bi-book me-1"></i> <%= parasha.subtitle %></span>
                                                     <% } %>
-                                                    <span class="badge bg-dark px-3 py-2 fs-6 shadow-sm"><i class="bi bi-eye text-info me-1"></i> <%= (parasha.views || 0) + 1 %> vistas</span>
+                                                    <span class="badge bg-dark px-3 py-2 fs-6 shadow-sm"><i class="bi bi-eye text-info me-1"></i> <%= (parasha.views || 0) + 1 %> <%= ((parasha.views || 0) + 1) == 1 ? 'vista' : 'vistas' %></span>
                                                 </li>
                                             </ul>
                                         </div>

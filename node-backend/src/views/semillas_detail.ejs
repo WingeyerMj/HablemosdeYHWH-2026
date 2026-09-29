@@ -11,25 +11,29 @@
 
         <!-- Page Title Header -->
         <div class="page-title accent-background" style="background: linear-gradient(135deg, #4a154b 0%, #6b21a8 50%, #2e7d32 100%); padding: 130px 0 50px 0;">
-            <div class="container d-lg-flex justify-content-between align-items-center">
-                <div data-aos="fade-right">
-                    <span class="badge mb-2 px-3 py-2 text-uppercase" style="background: rgba(255,255,255,0.25); backdrop-filter: blur(5px); font-size: 0.82rem; letter-spacing: 1px; color: #fff; border-radius: 20px;">
-                        🌱 Semillas de Torah • <%= item.category || 'Material Infantil' %>
-                    </span>
-                    <h1 class="mb-2 text-white fw-bold" style="font-size: 2.2rem; line-height: 1.3;"><%= item.title %></h1>
-                    <% if (item.subtitle) { %>
-                        <p class="text-white-50 mb-0" style="font-size: 1.1rem;"><%= item.subtitle %></p>
-                    <% } %>
+            <div class="container">
+                <div class="row align-items-center gy-3">
+                    <div class="col-lg-8" data-aos="fade-right">
+                        <span class="badge mb-2 px-3 py-2 text-uppercase" style="background: rgba(255,255,255,0.25); backdrop-filter: blur(5px); font-size: 0.82rem; letter-spacing: 1px; color: #fff; border-radius: 20px;">
+                            🌱 Semillas de Torah • <%= item.category || 'Material Infantil' %>
+                        </span>
+                        <h1 class="mb-2 text-white fw-bold" style="font-size: 2.2rem; line-height: 1.3;"><%= item.title %></h1>
+                        <% if (item.subtitle) { %>
+                            <p class="text-white-50 mb-0" style="font-size: 1.1rem;"><%= item.subtitle %></p>
+                        <% } %>
+                    </div>
+                    <div class="col-lg-4 text-lg-end" data-aos="fade-left">
+                        <nav class="breadcrumbs">
+                            <ol class="d-inline-flex list-unstyled gap-2 m-0 p-0 text-white-50 flex-wrap justify-content-lg-end align-items-center">
+                                <li><a href="/" class="text-white text-decoration-none">Inicio</a></li>
+                                <li class="text-white-50">/</li>
+                                <li><a href="/semillas-de-torah" class="text-white text-decoration-none">Semillas de Torah</a></li>
+                                <li class="text-white-50">/</li>
+                                <li class="current text-white fw-semibold text-truncate d-inline-block" style="max-width: 200px;"><%= item.title %></li>
+                            </ol>
+                        </nav>
+                    </div>
                 </div>
-                <nav class="breadcrumbs mt-3 mt-lg-0" data-aos="fade-left">
-                    <ol class="d-flex list-unstyled gap-2 m-0 p-0 text-white-50">
-                        <li><a href="/" class="text-white text-decoration-none">Inicio</a></li>
-                        <li class="text-white-50">/</li>
-                        <li><a href="/semillas-de-torah" class="text-white text-decoration-none">Semillas de Torah</a></li>
-                        <li class="text-white-50">/</li>
-                        <li class="current text-white fw-semibold text-truncate" style="max-width: 200px;"><%= item.title %></li>
-                    </ol>
-                </nav>
             </div>
         </div><!-- End Page Title -->
 
@@ -57,7 +61,7 @@
                                         <span><%= item.created_at ? new Date(item.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }) : '' %></span>
                                     </div>
                                     <span class="badge rounded-pill px-3 py-1 shadow-sm" style="background: #f3e8ff; color: #6b21a8; font-size: 0.8rem; font-weight: 600; border: 1px solid #e9d5ff;">
-                                        <i class="bi bi-eye-fill me-1 text-primary"></i> <%= (item.views || 0) + 1 %> vistas
+                                        <i class="bi bi-eye-fill me-1 text-primary"></i> <%= (item.views || 0) + 1 %> <%= ((item.views || 0) + 1) == 1 ? 'vista' : 'vistas' %>
                                     </span>
                                 </div>
                             </div>

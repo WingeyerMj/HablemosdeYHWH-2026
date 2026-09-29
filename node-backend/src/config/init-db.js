@@ -121,8 +121,14 @@ async function initDB(db) {
             "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'" :
             "SHOW TABLES");
         console.log('--- Tablas detectadas en la DB:', tables.map(t => t.table_name || Object.values(t)[0]).join(', '));
-        // Las credenciales nunca deben modificarse durante el arranque.
-        // Para una recuperación explícita existe el script update-pw.js.
+
+        // Ejecutar migración para asegurar columnas de vistas en todas las tablas y secciones dinámicas
+        try {
+            const runMigration = require('../scripts/migrate_views_all');
+            await runMigration();
+        } catch (mErr) {
+            console.warn('Aviso en migración de vistas:', mErr.message);
+        }
     } catch (error) {
         console.error('--- ERROR CRÍTICO AL INICIALIZAR LA BASE DE DATOS ---');
         console.error(error);

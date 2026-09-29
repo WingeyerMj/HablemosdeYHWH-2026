@@ -18,18 +18,30 @@
                 <input type="hidden" name="id" value="<%= evento.id %>">
                 
                 <div class="row g-3">
-                    <!-- Título y Subtítulo -->
-                    <div class="col-md-4">
+                    <!-- Título, Subtítulo, Categoría y Fecha -->
+                    <div class="col-md-3">
                         <label class="form-label small text-white-50">Título del Evento *</label>
                         <input type="text" name="title" class="form-control" 
                                value="<%= evento.title %>" required placeholder="Pesaj 2026...">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label small text-white-50">Subtítulo</label>
                         <input type="text" name="subtitle" class="form-control" 
                                value="<%= evento.subtitle || '' %>" placeholder="Fiesta de los Panes sin Levadura...">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <label class="form-label small text-white-50">Categoría</label>
+                        <select name="category" class="form-select">
+                            <option value="Mikra Kodesh" <%= (evento.category === 'Mikra Kodesh') ? 'selected' : '' %>>Mikra Kodesh (Santa Convocación)</option>
+                            <option value="Moedim" <%= (evento.category === 'Moedim') ? 'selected' : '' %>>Moedim (Fiestas Solemnes)</option>
+                            <option value="Enseñanzas" <%= (evento.category === 'Enseñanzas') ? 'selected' : '' %>>Enseñanzas</option>
+                            <option value="Especiales" <%= (evento.category === 'Especiales') ? 'selected' : '' %>>Especiales</option>
+                            <% if (evento.category && !['Mikra Kodesh','Moedim','Enseñanzas','Especiales'].includes(evento.category)) { %>
+                                <option value="<%= evento.category %>" selected><%= evento.category %></option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label small text-white-50">Fecha del Evento</label>
                         <% 
                             let dateVal = ''; 
@@ -69,7 +81,7 @@
                         </div>
                     </div>
 
-                    <!-- SECCIÓN: SÉDER DE LA CELEBRACIÓN (MIKRA KODESH / MOEDIM) -->
+<!-- SECCIÓN: SÉDER DE LA CELEBRACIÓN (MIKRA KODESH / MOEDIM) -->
                     <div class="col-12 mt-4">
                         <div class="card border-warning border-opacity-50" style="background: rgba(212, 168, 83, 0.05); border-radius: 12px;">
                             <div class="card-header bg-transparent border-warning border-opacity-25 d-flex align-items-center justify-content-between">

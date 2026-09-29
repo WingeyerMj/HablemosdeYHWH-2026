@@ -64,7 +64,7 @@
                                 <% if (typeof tableData !=='undefined' && tableData && tableData.length> 0) { %>
                                     <div class="row gy-4 mt-5" data-aos="fade-up">
                                         <% tableData.forEach((row, i) => { %>
-                                            <div class="col-12 mb-4">
+                                            <div class="col-12 mb-4" id="item-<%= row.id %>" data-item-id="<%= row.id %>">
                                                 <div class="card shadow-sm border-0" style="border-radius: 15px; overflow: hidden; background: #fff;">
                                                     <div class="row g-0">
                                                         <% 

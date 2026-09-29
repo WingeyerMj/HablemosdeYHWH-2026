@@ -115,16 +115,20 @@
                 <textarea name="description" class="form-control" rows="3"><%= item.description || '' %></textarea>
             </div>
 
-            <div class="col-md-6">
-                <div class="form-check form-switch mt-2">
+            <div class="col-md-4">
+                <label class="form-label small text-info fw-bold"><i class="bi bi-eye-fill me-1"></i>Contador de Visualizaciones / Vistas</label>
+                <input type="number" name="views_count" class="form-control bg-dark text-white border-info" min="0" value="<%= item.views_count || 0 %>">
+            </div>
+            <div class="col-md-4">
+                <div class="form-check form-switch mt-4 pt-2">
                     <input class="form-check-input" type="checkbox" name="is_highlight" value="1" id="edit_short_highlight" <%= item.is_highlight ? 'checked' : '' %>>
                     <label class="form-check-label text-warning small fw-bold" for="edit_short_highlight">
-                        <i class="bi bi-star-fill me-1"></i> Destacado como Novedad Principal
+                        <i class="bi bi-star-fill me-1"></i> Destacado como Novedad
                     </label>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="form-check form-switch mt-2">
+            <div class="col-md-4">
+                <div class="form-check form-switch mt-4 pt-2">
                     <input class="form-check-input" type="checkbox" name="is_published" value="1" id="edit_short_published" <%= item.is_published ? 'checked' : '' %>>
                     <label class="form-check-label text-white small" for="edit_short_published">Publicado en la Web</label>
                 </div>

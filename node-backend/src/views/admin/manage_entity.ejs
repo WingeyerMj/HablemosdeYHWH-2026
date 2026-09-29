@@ -41,6 +41,8 @@
                                     <input type="hidden" name="<%= col.Field %>" id="hidden-<%= col.Field %>">
                                 <% } else if (col.Field.includes('video') || col.Field.includes('youtube')) { %>
                                     <input type="url" name="<%= col.Field %>" class="form-control bg-secondary text-white border-0" placeholder="Ej: https://youtube.com/watch?v=...">
+                                <% } else if (col.Field.includes('view') || col.Field.includes('vista')) { %>
+                                    <input type="number" name="<%= col.Field %>" class="form-control bg-secondary text-white border-0" min="0" value="0">
                                 <% } else if (col.Type.includes('text')) { %>
                                     <textarea name="<%= col.Field %>" class="form-control bg-secondary text-white border-0" rows="3"></textarea>
                                 <% } else { %>

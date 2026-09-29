@@ -330,6 +330,34 @@ class SemillasShort {
         const type = short_type || 'aliya';
         const cat = category || (type === 'general' ? 'General / Temas Diversos' : 'Aliyot con Niños');
         const finalAliyahNumber = type === 'general' ? (parseInt(aliyah_number) || null) : SemillasShort.extractAliyahNumber(title, aliyah_number);
+        const viewsCountVal = data.views_count !== undefined && data.views_count !== '' ? parseInt(data.views_count) : null;
+
+        if (viewsCountVal !== null && !isNaN(viewsCountVal)) {
+            return await db.query(
+                `UPDATE semillas_shorts 
+                 SET title = ?, short_type = ?, category = ?, child_name = ?, parasha_name = ?, aliyah_number = ?, reading_date = ?, verses_reference = ?, video_url = ?, youtube_short_url = ?, youtube_url = ?, thumbnail_url = ?, description = ?, is_highlight = ?, is_published = ?, views_count = ? 
+                 WHERE id = ?`,
+                [
+                    title,
+                    type,
+                    cat,
+                    child_name || '',
+                    parasha_name || '',
+                    finalAliyahNumber,
+                    reading_date || null,
+                    verses_reference || '',
+                    video_url || '',
+                    ytUrl,
+                    ytUrl,
+                    thumb || '/assets/img/pagina/semillas_torah_banner.png',
+                    description || '',
+                    is_highlight ? 1 : 0,
+                    is_published !== undefined ? (is_published ? 1 : 0) : 1,
+                    viewsCountVal,
+                    id
+                ]
+            );
+        }
 
         return await db.query(
             `UPDATE semillas_shorts 
@@ -364,9 +392,12 @@ class SemillasShort {
     static async incrementViews(id) {
         try {
             await SemillasShort.ensureTable();
-            await db.query('UPDATE semillas_shorts SET views_count = views_count + 1 WHERE id = ?', [id]);
+            await db.query('UPDATE semillas_shorts SET views_count = COALESCE(views_count, 0) + 1 WHERE id = ?', [id]);
+            const [rows] = await db.query('SELECT views_count FROM semillas_shorts WHERE id = ?', [id]);
+            return rows && rows[0] ? rows[0].views_count : 1;
         } catch (e) {
             console.warn('Aviso incrementViews:', e.message);
+            return null;
         }
     }
 }

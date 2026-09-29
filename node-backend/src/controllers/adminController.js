@@ -1,3 +1,4 @@
+const path = require('path');
 const DynamicSection = require('../models/DynamicSection');
 const EntityModel = require('../models/EntityModel');
 const SiteSettings = require('../models/SiteSettings');
@@ -243,26 +244,41 @@ const adminController = {
     // ==================== EVENTOS (PORTFOLIO) ====================
     createPortfolio: async (req, res) => {
         try {
-            let { title, category, subtitle, description, event_date, content, image_url, seder_title, seder_content } = req.body;
+let { title, category, subtitle, description, event_date, content, image_url, seder_title, seder_content, seder_url } = req.body;
             let seder_pdf = '';
             let seder_image = '';
+            let seder_file = (seder_url && seder_url.trim()) ? seder_url.trim() : null;
 
             if (req.files) {
                 if (req.files['image_file'] && req.files['image_file'][0]) {
                     image_url = '/uploads/portfolio/' + req.files['image_file'][0].filename;
                 }
-                if (req.files['seder_pdf'] && req.files['seder_pdf'][0]) {
+if (req.files['seder_pdf'] && req.files['seder_pdf'][0]) {
                     seder_pdf = '/uploads/pdf/' + req.files['seder_pdf'][0].filename;
+                    seder_file = seder_pdf;
                 }
                 if (req.files['seder_image'] && req.files['seder_image'][0]) {
                     seder_image = '/uploads/seder/' + req.files['seder_image'][0].filename;
+                    if (!seder_file) seder_file = seder_image;
+                }
+                if (req.files['seder_file'] && req.files['seder_file'][0]) {
+                    const f = req.files['seder_file'][0];
+                    const ext = path.extname(f.originalname).toLowerCase();
+                    if (f.mimetype === 'application/pdf' || ext === '.pdf') {
+                        seder_file = '/uploads/pdf/' + f.filename;
+                        if (!seder_pdf) seder_pdf = seder_file;
+                    } else {
+                        seder_file = '/uploads/portfolio/' + f.filename;
+                        if (!seder_image) seder_image = seder_file;
+                    }
+                }
                 }
             } else if (req.file) {
                 image_url = '/uploads/portfolio/' + req.file.filename;
             }
             
             const Portfolio = require('../models/Portfolio');
-            await Portfolio.create({ 
+await Portfolio.create({ 
                 title, 
                 subtitle, 
                 category, 
@@ -270,10 +286,12 @@ const adminController = {
                 content, 
                 event_date: event_date || null, 
                 image_url,
-                seder_title,
+                seder_title: seder_title || '',
                 seder_pdf,
                 seder_image,
-                seder_content
+                seder_content: seder_content || '',
+                seder_file
+            });
             });
 
             // Notificación automática a todos los suscriptores
@@ -309,19 +327,42 @@ const adminController = {
 
     updatePortfolio: async (req, res) => {
         try {
-            let { id, title, category, subtitle, description, event_date, content, image_url, seder_title, seder_content, existing_seder_pdf, existing_seder_image, remove_seder_pdf, remove_seder_image } = req.body;
+let { id, title, category, subtitle, description, event_date, content, image_url, seder_title, seder_content, seder_url, existing_seder_pdf, existing_seder_image, existing_seder_file, remove_seder_pdf, remove_seder_image, remove_seder } = req.body;
             let seder_pdf = remove_seder_pdf === '1' ? '' : (existing_seder_pdf || '');
             let seder_image = remove_seder_image === '1' ? '' : (existing_seder_image || '');
+            let seder_file = (existing_seder_file && existing_seder_file.trim()) ? existing_seder_file.trim() : (seder_pdf || seder_image || null);
+
+            if (remove_seder === '1' || remove_seder === 'true') {
+                seder_file = null;
+                seder_pdf = '';
+                seder_image = '';
+            } else if (seder_url && seder_url.trim()) {
+                seder_file = seder_url.trim();
+            }
 
             if (req.files) {
                 if (req.files['image_file'] && req.files['image_file'][0]) {
                     image_url = '/uploads/portfolio/' + req.files['image_file'][0].filename;
                 }
-                if (req.files['seder_pdf'] && req.files['seder_pdf'][0]) {
+if (req.files['seder_pdf'] && req.files['seder_pdf'][0]) {
                     seder_pdf = '/uploads/pdf/' + req.files['seder_pdf'][0].filename;
+                    seder_file = seder_pdf;
                 }
                 if (req.files['seder_image'] && req.files['seder_image'][0]) {
                     seder_image = '/uploads/seder/' + req.files['seder_image'][0].filename;
+                    if (!seder_file) seder_file = seder_image;
+                }
+                if (req.files['seder_file'] && req.files['seder_file'][0]) {
+                    const f = req.files['seder_file'][0];
+                    const ext = path.extname(f.originalname).toLowerCase();
+                    if (f.mimetype === 'application/pdf' || ext === '.pdf') {
+                        seder_file = '/uploads/pdf/' + f.filename;
+                        if (!seder_pdf) seder_pdf = seder_file;
+                    } else {
+                        seder_file = '/uploads/portfolio/' + f.filename;
+                        if (!seder_image) seder_image = seder_file;
+                    }
+                }
                 }
             } else if (req.file) {
                 image_url = '/uploads/portfolio/' + req.file.filename;
@@ -330,7 +371,7 @@ const adminController = {
             const formattedDate = event_date === '' ? null : event_date;
 
             const Portfolio = require('../models/Portfolio');
-            await Portfolio.update(id, { 
+await Portfolio.update(id, { 
                 title, 
                 subtitle, 
                 category, 
@@ -338,10 +379,12 @@ const adminController = {
                 content, 
                 event_date: formattedDate, 
                 image_url,
-                seder_title,
+                seder_title: seder_title || '',
                 seder_pdf,
                 seder_image,
-                seder_content
+                seder_content: seder_content || '',
+                seder_file
+            });
             });
 
             // Notificación automática a suscriptores por actualización
@@ -871,7 +914,7 @@ const adminController = {
 
     updateSemillasShort: async (req, res) => {
         try {
-            let { id, title, short_type, category, child_name, parasha_name, aliyah_number, reading_date, verses_reference, youtube_short_url, description, is_highlight, is_published, thumbnail_url, video_url } = req.body;
+            let { id, title, short_type, category, child_name, parasha_name, aliyah_number, reading_date, verses_reference, youtube_short_url, description, is_highlight, is_published, thumbnail_url, video_url, views_count } = req.body;
             
             if (req.files) {
                 if (req.files['thumbnail_file'] && req.files['thumbnail_file'][0]) {
@@ -897,7 +940,8 @@ const adminController = {
                 thumbnail_url: thumbnail_url || '',
                 description: description || '',
                 is_highlight: is_highlight === '1' || is_highlight === true || is_highlight === 'on',
-                is_published: is_published !== '0' && is_published !== false
+                is_published: is_published !== '0' && is_published !== false,
+                views_count: views_count !== undefined ? views_count : null
             });
 
             // Notificación automática a suscriptores por actualización
@@ -978,6 +1022,8 @@ const adminController = {
                 content,
                 main_image,
                 pdf_file,
+                video_file,
+                youtube_link,
                 author,
                 tags,
                 is_published
@@ -991,6 +1037,9 @@ const adminController = {
                 }
                 if (req.files['pdf_upload'] && req.files['pdf_upload'][0]) {
                     pdf_file = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
+                }
+                if (req.files['video_upload'] && req.files['video_upload'][0]) {
+                    video_file = '/uploads/semillas/' + req.files['video_upload'][0].filename;
                 }
                 if (req.files['gallery_images'] && req.files['gallery_images'].length > 0) {
                     req.files['gallery_images'].forEach(f => {
@@ -1011,6 +1060,8 @@ const adminController = {
                 main_image: main_image || '',
                 gallery_images: galleryImages,
                 pdf_file: pdf_file || '',
+                video_file: video_file || '',
+                youtube_link: youtube_link || '',
                 author: author || 'Elva Avila',
                 tags: tags || '',
                 is_published: is_published !== '0' && is_published !== false
@@ -1070,6 +1121,10 @@ const adminController = {
                 main_image,
                 existing_gallery_images,
                 pdf_file,
+                video_file,
+                existing_video_file,
+                remove_video,
+                youtube_link,
                 author,
                 tags,
                 is_published
@@ -1090,12 +1145,22 @@ const adminController = {
                 }
             }
 
+            if (!video_file && existing_video_file) {
+                video_file = existing_video_file;
+            }
+            if (remove_video === '1') {
+                video_file = '';
+            }
+
             if (req.files) {
                 if (req.files['image_file'] && req.files['image_file'][0]) {
                     main_image = '/uploads/semillas/' + req.files['image_file'][0].filename;
                 }
                 if (req.files['pdf_upload'] && req.files['pdf_upload'][0]) {
                     pdf_file = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
+                }
+                if (req.files['video_upload'] && req.files['video_upload'][0]) {
+                    video_file = '/uploads/semillas/' + req.files['video_upload'][0].filename;
                 }
                 if (req.files['gallery_images'] && req.files['gallery_images'].length > 0) {
                     req.files['gallery_images'].forEach(f => {
@@ -1116,6 +1181,8 @@ const adminController = {
                 main_image: main_image || '',
                 gallery_images: finalGallery,
                 pdf_file: pdf_file || '',
+                video_file: video_file || '',
+                youtube_link: youtube_link || '',
                 author: author || 'Elva Avila',
                 tags: tags || '',
                 is_published: is_published !== '0' && is_published !== false

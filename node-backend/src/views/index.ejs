@@ -510,7 +510,7 @@
                                                         </div>
                                                     <% } %>
                                                     <span style="position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.75); color: #d4a853; border: 1px solid rgba(212,168,83,0.6); font-size: 0.72rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
-                                                         <%= cat.name %>
+<%= cat.name %>
                                                      </span>
                                                      <% if (item.seder_pdf || item.seder_image) { %>
                                                          <span style="position: absolute; bottom: 12px; left: 12px; background: rgba(212,168,83,0.92); color: #000; font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; backdrop-filter: blur(4px); box-shadow: 0 2px 6px rgba(0,0,0,0.3); z-index: 2;">
@@ -534,7 +534,7 @@
                                                     <% } %>
                                                     <div class="mt-auto pt-2 border-top d-flex align-items-center justify-content-between text-muted small" style="font-size: 0.75rem;">
                                                         <span>
-                                                            <% if (item.seder_pdf || item.seder_image) { %>
+<% if (item.seder_pdf || item.seder_image) { %>
                                                                 <i class="bi bi-book-half me-1 text-warning"></i>Incluye Séder
                                                             <% } else { %>
                                                                 <i class="bi bi-collection-play me-1 text-warning"></i>Serie / Tema
@@ -903,7 +903,7 @@
                                                         </div>
                                                         <div class="d-flex align-items-center gap-1">
                                                             <span class="badge rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center" style="background: rgba(0,0,0,0.72); color: #38bdf8; border: 1px solid rgba(56,189,248,0.4); font-size: 0.72rem; font-weight: 700; backdrop-filter: blur(4px);">
-                                                                <i class="bi bi-eye-fill me-1"></i><%= short.views_count || 0 %>
+                                                                <i class="bi bi-eye-fill me-1"></i><span data-short-views="<%= short.id %>"><%= short.views_count || 0 %></span>
                                                             </span>
                                                             <% if (short.video_url || short.youtube_short_url) { %>
                                                                 <span class="badge bg-dark bg-opacity-75 rounded-circle p-2 shadow-sm text-white" title="Video disponible">
@@ -945,7 +945,7 @@
                                                             <% } else { %>
                                                                 <span></span>
                                                             <% } %>
-                                                            <span class="badge bg-black bg-opacity-50 text-light px-2 py-1 rounded-pill"><i class="bi bi-eye me-1 text-info"></i><%= short.views_count || 0 %> vistas</span>
+                                                            <span class="badge bg-black bg-opacity-50 text-light px-2 py-1 rounded-pill"><i class="bi bi-eye me-1 text-info"></i><span data-short-views="<%= short.id %>"><%= short.views_count || 0 %></span> vistas</span>
                                                         </div>
                                                     </div>
 
@@ -1159,7 +1159,7 @@
                                     <div class="row gy-4">
                                         <% ds.items.forEach((item, i) => { %>
                                             <div class="col-lg-3 col-md-6 col-6" data-aos="fade-up" data-aos-delay="<%= (i+1)*100 %>">
-                                                <a href="/s/<%= ds.slug %>" class="text-decoration-none" style="display: block;">
+                                                <a href="/s/<%= ds.slug %>?view_id=<%= item.id %>#item-<%= item.id %>" class="text-decoration-none" style="display: block;" onclick="if(window.fetch && '<%= ds.data_table %>'){ fetch('/api/entity/<%= ds.data_table %>/<%= item.id %>/view', {method:'POST'}).catch(function(){}); }">
                                                     <div class="card h-100 shadow-sm border-0 dynamic-card-hover" style="border-radius: 15px; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer;">
                                                         <% 
                                                             // Intentar encontrar una imagen o video en los campos
@@ -1449,9 +1449,43 @@
                     }
                 }
 
+                const viewedShortsHomeSession = new Set();
+
+                function registerShortViewHome(shortId) {
+                    if (!shortId || viewedShortsHomeSession.has(shortId)) return;
+                    viewedShortsHomeSession.add(shortId);
+
+                    const shortObj = SHORTS_DATA_HOME.find(s => s.id === shortId);
+                    if (shortObj) {
+                        shortObj.views_count = (parseInt(shortObj.views_count) || 0) + 1;
+                        document.querySelectorAll(`[data-short-views="${shortId}"]`).forEach(el => {
+                            el.textContent = shortObj.views_count;
+                        });
+                    }
+
+                    fetch(`/api/semillas-shorts/${shortId}/view`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.ok && data.views_count !== undefined) {
+                            if (shortObj) shortObj.views_count = data.views_count;
+                            document.querySelectorAll(`[data-short-views="${shortId}"]`).forEach(el => {
+                                el.textContent = data.views_count;
+                            });
+                        }
+                    })
+                    .catch(err => console.warn('Aviso registrando vista home:', err));
+                }
+
                 function renderCurrentShortHome() {
                     const short = SHORTS_DATA_HOME[currentShortIndexHome];
                     if (!short) return;
+
+                    if (short.id) {
+                        registerShortViewHome(short.id);
+                    }
 
                     const videoEl = document.getElementById('shortModalVideoHome');
                     const iframeEl = document.getElementById('shortModalIframeHome');

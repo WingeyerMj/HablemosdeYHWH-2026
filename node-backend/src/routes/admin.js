@@ -102,13 +102,15 @@ router.post('/aliyot/api/translate-spanish', isAuthenticated, isAdmin, adminCont
 router.post('/portfolio/create', isAuthenticated, upload.fields([
     { name: 'image_file', maxCount: 1 },
     { name: 'seder_pdf', maxCount: 1 },
-    { name: 'seder_image', maxCount: 1 }
+    { name: 'seder_image', maxCount: 1 },
+    { name: 'seder_file', maxCount: 1 }
 ]), adminController.createPortfolio);
 router.get('/portfolio/edit/:id', isAuthenticated, adminController.editPortfolioPage);
 router.post('/portfolio/update', isAuthenticated, upload.fields([
     { name: 'image_file', maxCount: 1 },
     { name: 'seder_pdf', maxCount: 1 },
-    { name: 'seder_image', maxCount: 1 }
+    { name: 'seder_image', maxCount: 1 },
+    { name: 'seder_file', maxCount: 1 }
 ]), adminController.updatePortfolio);
 router.get('/portfolio/delete/:id', isAuthenticated, adminController.deletePortfolio);
 
@@ -155,13 +157,15 @@ router.get('/semillas-articulos', isAuthenticated, adminController.semillasArtic
 router.post('/semillas-articulos/create', isAuthenticated, upload.fields([
     { name: 'image_file', maxCount: 1 },
     { name: 'gallery_images', maxCount: 10 },
-    { name: 'pdf_upload', maxCount: 1 }
+    { name: 'pdf_upload', maxCount: 1 },
+    { name: 'video_upload', maxCount: 1 }
 ]), adminController.createSemillasArticulo);
 router.get('/semillas-articulos/edit/:id', isAuthenticated, adminController.editSemillasArticuloPage);
 router.post('/semillas-articulos/update', isAuthenticated, upload.fields([
     { name: 'image_file', maxCount: 1 },
     { name: 'gallery_images', maxCount: 10 },
-    { name: 'pdf_upload', maxCount: 1 }
+    { name: 'pdf_upload', maxCount: 1 },
+    { name: 'video_upload', maxCount: 1 }
 ]), adminController.updateSemillasArticulo);
 router.get('/semillas-articulos/toggle/:id', isAuthenticated, adminController.toggleSemillasArticulo);
 router.get('/semillas-articulos/delete/:id', isAuthenticated, adminController.deleteSemillasArticulo);

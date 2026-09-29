@@ -126,7 +126,7 @@
                                 <img id="portImgPreview" src="/assets/img/blog/blog-1.jpg" style="max-width:100%;max-height:100%;object-fit:contain;">
                             </div>
                         </div>
-                        <!-- SÉDER DE LA CELEBRACIÓN -->
+<!-- SÉDER DE LA CELEBRACIÓN -->
                         <div class="col-12">
                             <div class="p-3 rounded border border-warning border-opacity-50" style="background: rgba(212,168,83,0.06);">
                                 <h6 class="text-warning mb-2 fw-bold"><i class="bi bi-book-half me-1"></i>Séder de la Celebración (Mikra Kodesh / Moedim)</h6>
@@ -188,7 +188,7 @@
                         <div class="col-md-4"><label class="form-label small text-white-50">Subir Imagen</label><input type="file" id="edit_port_image_file" name="image_file" class="form-control" accept="image/*"></div>
                         <div class="col-md-4"><label class="form-label small text-white-50">URL Imagen</label><input type="text" id="edit_port_image_url" name="image_url" class="form-control"></div>
                         <div class="col-md-4 text-center"><div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height:100px;background:rgba(0,0,0,0.2);"><img id="editPortImgPreview" src="" style="max-width:100%;max-height:100%;object-fit:contain;"></div></div>
-                        <!-- SÉDER DE LA CELEBRACIÓN -->
+<!-- SÉDER DE LA CELEBRACIÓN -->
                         <div class="col-12">
                             <div class="p-3 rounded border border-warning border-opacity-50" style="background: rgba(212,168,83,0.06);">
                                 <h6 class="text-warning mb-2 fw-bold"><i class="bi bi-book-half me-1"></i>Séder de la Celebración (Mikra Kodesh / Moedim)</h6>
@@ -217,6 +217,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-12"><label class="form-label small text-white-50">Contenido</label><div id="edit-port-editor-container" style="height:300px;background:white;color:black;border-radius:5px;"></div><input type="hidden" name="content" id="editPortContentInput"></div>
                     </div>
                 </div>
@@ -1002,6 +1003,26 @@
                             <input type="text" name="tags" class="form-control bg-dark text-white border-secondary" placeholder="#Nitzavim #Parasha #Torá #NiñosEnLaTorá">
                         </div>
 
+                        <!-- VIDEO DE LA ENSEÑANZA / NIÑOS (Archivo o YouTube) -->
+                        <div class="col-12">
+                            <div class="p-3 rounded-3 border border-primary bg-black bg-opacity-40">
+                                <label class="form-label text-primary fw-bold d-block">
+                                    <i class="bi bi-play-circle me-1"></i>Video de la Enseñanza (Grabación / Ilustración / Niños)
+                                </label>
+                                <div class="small text-white-50 mb-2">Sube un archivo de video (MP4/WebM) o añade el enlace de YouTube de la enseñanza.</div>
+                                <div class="row g-2">
+                                    <div class="col-md-6">
+                                        <label class="form-label text-white-50 small mb-1"><i class="bi bi-upload me-1"></i>Subir Video (MP4 / WebM)</label>
+                                        <input type="file" name="video_upload" class="form-control bg-dark text-white border-secondary" accept="video/mp4,video/webm,video/ogg,video/*">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label text-white-50 small mb-1"><i class="bi bi-youtube text-danger me-1"></i>O Enlace de YouTube</label>
+                                        <input type="text" name="youtube_link" class="form-control bg-dark text-white border-secondary" placeholder="https://www.youtube.com/watch?v=...">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Contenido Extendido Opcional -->
                         <div class="col-12">
                             <label class="form-label text-white-50 small"><i class="bi bi-textarea-t me-1"></i>Notas o Explicación Extendida para Maestros / Padres (Opcional)</label>
@@ -1268,9 +1289,13 @@ function previewArticuloImage(input, previewId) {
                             <label class="form-label small text-white-50">Título</label>
                             <input type="text" name="title" class="form-control" required placeholder="Ej: Bereshit">
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label small text-white-50">Subtítulo / Versículo</label>
                             <input type="text" name="subtitle" class="form-control" placeholder="Ej: Génesis 1:1">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small text-info fw-bold"><i class="bi bi-eye-fill me-1"></i>Vistas</label>
+                            <input type="number" name="views" id="create_dyn_views" class="form-control bg-dark text-white border-info" min="0" value="0">
                         </div>
                         <div class="col-md-12">
                             <label class="form-label small text-white-50">Resumen Breve (Descripción)</label>
@@ -1335,9 +1360,13 @@ function previewArticuloImage(input, previewId) {
                             <label class="form-label small text-white-50">Título</label>
                             <input type="text" name="title" id="edit_dyn_title" class="form-control" required placeholder="Ej: Bereshit">
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label small text-white-50">Subtítulo / Versículo</label>
                             <input type="text" name="subtitle" id="edit_dyn_subtitle" class="form-control" placeholder="Ej: Génesis 1:1">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small text-info fw-bold"><i class="bi bi-eye-fill me-1"></i>Vistas</label>
+                            <input type="number" name="views" id="edit_dyn_views" class="form-control bg-dark text-white border-info" min="0" placeholder="0">
                         </div>
                         <div class="col-md-12">
                             <label class="form-label small text-white-50">Resumen Breve</label>
@@ -1537,7 +1566,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const imgEl = document.getElementById('edit_port_image_url');
                 if (imgEl) imgEl.value = d.image;
                 const prevEl = document.getElementById('editPortImgPreview');
-                const sederTitleEl = document.getElementById('edit_port_seder_title');
+const sederTitleEl = document.getElementById('edit_port_seder_title');
                 if (sederTitleEl) sederTitleEl.value = d.sederTitle || '';
                 const sederPdfHidden = document.getElementById('edit_port_existing_seder_pdf');
                 if (sederPdfHidden) sederPdfHidden.value = d.sederPdf || '';
@@ -1979,6 +2008,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const pnEl = document.getElementById('edit_dyn_parasha_number'); if (pnEl) pnEl.value = r.parasha_number || '';
                 const titEl = document.getElementById('edit_dyn_title'); if (titEl) titEl.value = r.title || r.titulo || '';
                 const subEl = document.getElementById('edit_dyn_subtitle'); if (subEl) subEl.value = r.subtitle || r.subtitulo || '';
+                const vEl = document.getElementById('edit_dyn_views'); if (vEl) vEl.value = typeof r.views !== 'undefined' ? r.views : (typeof r.vistas !== 'undefined' ? r.vistas : (typeof r.views_count !== 'undefined' ? r.views_count : 0));
                 const descEl = document.getElementById('edit_dyn_description'); if (descEl) descEl.value = r.description || r.descripcion || '';
                 const ytEl = document.getElementById('edit_dyn_youtube_link'); if (ytEl) ytEl.value = r.youtube_link || r.video_url || '';
                 const imgEl = document.getElementById('dyn_edit_image_url'); if (imgEl) imgEl.value = r.image_url || r.imagen_url || '';

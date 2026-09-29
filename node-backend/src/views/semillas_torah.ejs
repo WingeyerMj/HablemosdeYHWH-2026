@@ -11,21 +11,25 @@
 
         <!-- Page Title Banner -->
         <div class="page-title accent-background" style="background: linear-gradient(135deg, #4a154b 0%, #6b21a8 50%, #2e7d32 100%); padding: 130px 0 60px 0;">
-            <div class="container d-lg-flex justify-content-between align-items-center">
-                <div data-aos="fade-right">
-                    <span class="badge mb-2 px-3 py-2 text-uppercase" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); font-size: 0.85rem; letter-spacing: 1px; color: #fff; border-radius: 20px;">
-                        🌱 Ministerio Infantil • By Elva Avila
-                    </span>
-                    <h1 class="mb-2 text-white fw-bold" style="font-size: 2.6rem;">Semillas de Torah</h1>
-                    <p class="text-white-50 mb-0" style="font-size: 1.15rem;">Sembrando la Palabra, cosechando vida 💚</p>
+            <div class="container">
+                <div class="row align-items-center gy-3">
+                    <div class="col-lg-8" data-aos="fade-right">
+                        <span class="badge mb-2 px-3 py-2 text-uppercase" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); font-size: 0.85rem; letter-spacing: 1px; color: #fff; border-radius: 20px;">
+                            🌱 Ministerio Infantil • By Elva Avila
+                        </span>
+                        <h1 class="mb-2 text-white fw-bold" style="font-size: 2.6rem;">Semillas de Torah</h1>
+                        <p class="text-white-50 mb-0" style="font-size: 1.15rem;">Sembrando la Palabra, cosechando vida 💚</p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end" data-aos="fade-left">
+                        <nav class="breadcrumbs">
+                            <ol class="d-inline-flex list-unstyled gap-2 m-0 p-0 text-white-50 flex-wrap justify-content-lg-end align-items-center">
+                                <li><a href="/" class="text-white text-decoration-none">Inicio</a></li>
+                                <li class="text-white-50">/</li>
+                                <li class="current text-white fw-semibold">Semillas de Torah</li>
+                            </ol>
+                        </nav>
+                    </div>
                 </div>
-                <nav class="breadcrumbs mt-3 mt-lg-0" data-aos="fade-left">
-                    <ol class="d-flex list-unstyled gap-2 m-0 p-0 text-white-50">
-                        <li><a href="/" class="text-white text-decoration-none">Inicio</a></li>
-                        <li class="text-white-50">/</li>
-                        <li class="current text-white fw-semibold">Semillas de Torah</li>
-                    </ol>
-                </nav>
             </div>
         </div><!-- End Page Title -->
 
@@ -218,6 +222,11 @@
                                                     <span class="badge rounded-pill px-3 py-1" style="background: rgba(34,197,94,0.15); color: #15803d; border: 1px solid rgba(34,197,94,0.3); font-size: 0.8rem; font-weight: 600;">
                                                         <%= art.category || 'Resumen Semanal' %>
                                                     </span>
+                                                    <% if (art.video_file || art.youtube_link) { %>
+                                                        <span class="badge rounded-pill px-3 py-1" style="background: rgba(147, 51, 234, 0.15); color: #7e22ce; border: 1px solid rgba(147, 51, 234, 0.3); font-size: 0.8rem; font-weight: 600;">
+                                                            <i class="bi bi-play-circle-fill me-1 text-purple"></i> Con Video
+                                                        </span>
+                                                    <% } %>
                                                     <% if (art.created_at) { %>
                                                         <span class="text-muted small ms-2">
                                                             <i class="bi bi-calendar3 me-1 text-purple"></i>
@@ -275,6 +284,11 @@
                                                                 <a href="/semillas-de-torah/articulo/<%= art.id %>" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" style="background: linear-gradient(135deg, #6b21a8, #22c55e); border: none;">
                                                                     <i class="bi bi-book-open me-1"></i> Ver Artículo Completo
                                                                 </a>
+                                                                <% if (art.video_file || art.youtube_link) { %>
+                                                                    <a href="/semillas-de-torah/articulo/<%= art.id %>" class="btn btn-outline-dark rounded-pill px-3 fw-semibold" style="border-color: #6b21a8; color: #6b21a8;">
+                                                                        <i class="bi bi-play-circle-fill me-1 text-purple"></i> Ver Video
+                                                                    </a>
+                                                                <% } %>
                                                                 <% if (art.pdf_file) { %>
                                                                     <a href="<%= art.pdf_file %>" target="_blank" download class="btn btn-outline-success rounded-pill px-3 fw-semibold">
                                                                         <i class="bi bi-file-earmark-pdf me-1"></i> Descargar PDF
@@ -478,7 +492,7 @@
                                                         </div>
                                                         <div class="d-flex align-items-center gap-1">
                                                             <span class="badge rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center" style="background: rgba(0,0,0,0.72); color: #38bdf8; border: 1px solid rgba(56,189,248,0.4); font-size: 0.72rem; font-weight: 700; backdrop-filter: blur(4px);">
-                                                                <i class="bi bi-eye-fill me-1"></i><%= short.views_count || 0 %>
+                                                                <i class="bi bi-eye-fill me-1"></i><span data-short-views="<%= short.id %>"><%= short.views_count || 0 %></span>
                                                             </span>
                                                             <% if (short.video_url || short.youtube_short_url) { %>
                                                                 <span class="badge bg-dark bg-opacity-75 rounded-circle p-2 shadow-sm text-white" title="Video disponible">
@@ -520,7 +534,7 @@
                                                             <% } else { %>
                                                                 <span></span>
                                                             <% } %>
-                                                            <span class="badge bg-black bg-opacity-50 text-light px-2 py-1 rounded-pill"><i class="bi bi-eye me-1 text-info"></i><%= short.views_count || 0 %> vistas</span>
+                                                            <span class="badge bg-black bg-opacity-50 text-light px-2 py-1 rounded-pill"><i class="bi bi-eye me-1 text-info"></i><span data-short-views="<%= short.id %>"><%= short.views_count || 0 %></span> vistas</span>
                                                         </div>
                                                     </div>
 
@@ -619,7 +633,7 @@
                                                         </div>
                                                         <div class="d-flex align-items-center gap-1">
                                                             <span class="badge rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center" style="background: rgba(0,0,0,0.72); color: #38bdf8; border: 1px solid rgba(56,189,248,0.4); font-size: 0.72rem; font-weight: 700; backdrop-filter: blur(4px);">
-                                                                <i class="bi bi-eye-fill me-1"></i><%= short.views_count || 0 %>
+                                                                <i class="bi bi-eye-fill me-1"></i><span data-short-views="<%= short.id %>"><%= short.views_count || 0 %></span>
                                                             </span>
                                                             <% if (short.video_url || short.youtube_short_url) { %>
                                                                 <span class="badge bg-dark bg-opacity-75 rounded-circle p-2 shadow-sm text-white" title="Video disponible">
@@ -633,7 +647,7 @@
                                                     <div class="position-absolute top-50 start-50 translate-middle play-btn-overlay z-2 text-center" style="transition: all 0.3s ease;">
                                                         <div class="rounded-circle d-flex align-items-center justify-content-center shadow-lg" 
                                                              style="width: 58px; height: 58px; background: rgba(255,255,255,0.92); color: #0284c7; font-size: 1.6rem; backdrop-filter: blur(4px); transition: transform 0.3s ease;">
-                                                            <i class="bi bi-play-fill ms-1"></i>
+                                                             <i class="bi bi-play-fill ms-1"></i>
                                                         </div>
                                                     </div>
 
@@ -661,7 +675,7 @@
                                                             <% } else { %>
                                                                 <span></span>
                                                             <% } %>
-                                                            <span class="badge bg-black bg-opacity-50 text-light px-2 py-1 rounded-pill"><i class="bi bi-eye me-1 text-info"></i><%= short.views_count || 0 %> vistas</span>
+                                                            <span class="badge bg-black bg-opacity-50 text-light px-2 py-1 rounded-pill"><i class="bi bi-eye me-1 text-info"></i><span data-short-views="<%= short.id %>"><%= short.views_count || 0 %></span> vistas</span>
                                                         </div>
                                                     </div>
 
@@ -997,9 +1011,46 @@
             shortsModalInstance.show();
         }
 
+        const viewedShortsSession = new Set();
+
+        function registerShortView(shortId) {
+            if (!shortId || viewedShortsSession.has(shortId)) return;
+            viewedShortsSession.add(shortId);
+
+            const shortObj = SHORTS_DATA.find(s => s.id === shortId);
+            if (shortObj) {
+                shortObj.views_count = (parseInt(shortObj.views_count) || 0) + 1;
+                updateShortViewsDOM(shortId, shortObj.views_count);
+            }
+
+            fetch(`/api/semillas-shorts/${shortId}/view`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.ok && data.views_count !== undefined) {
+                    if (shortObj) shortObj.views_count = data.views_count;
+                    updateShortViewsDOM(shortId, data.views_count);
+                }
+            })
+            .catch(err => console.warn('Aviso registrando vista:', err));
+        }
+
+        function updateShortViewsDOM(shortId, count) {
+            document.querySelectorAll(`[data-short-views="${shortId}"]`).forEach(el => {
+                el.textContent = count;
+            });
+        }
+
         function renderCurrentShort() {
             const short = SHORTS_DATA[currentShortIndex];
             if (!short) return;
+
+            // Registrar vista automáticamente
+            if (short.id) {
+                registerShortView(short.id);
+            }
 
             const videoEl = document.getElementById('shortModalVideo');
             const iframeEl = document.getElementById('shortModalIframe');

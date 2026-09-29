@@ -42,19 +42,92 @@
                             <div class="row gy-4">
                                 <div class="col-lg-8">
                                     <div class="meta-top mb-4 d-flex align-items-center gap-2 flex-wrap">
+                                        <% if (evento.category) { %>
+                                            <span class="badge px-3 py-2 fs-6 <%= (evento.category === 'Mikra Kodesh') ? 'bg-warning text-dark' : 'bg-primary' %>">
+                                                <i class="bi bi-tag-fill me-1"></i><%= evento.category %>
+                                            </span>
+                                        <% } %>
                                         <% if (evento.subtitle) { %>
-                                            <span class="badge bg-primary px-3 py-2 fs-6"><i class="bi bi-calendar-event me-1"></i><%= evento.subtitle %></span>
+                                            <span class="badge bg-secondary px-3 py-2 fs-6"><i class="bi bi-calendar-event me-1"></i><%= evento.subtitle %></span>
+                                        <% } %>
+                                        <% if (evento.seder_file) { %>
+                                            <span class="badge rounded-pill px-3 py-2 shadow-sm d-inline-flex align-items-center" style="background: linear-gradient(135deg, #fef3c7, #fde68a); color: #92400e; border: 1px solid #f59e0b; font-size: 0.85rem; font-weight: 700;">
+                                                <i class="bi bi-book-half me-1 text-warning"></i> Seder Incluido
+                                            </span>
                                         <% } %>
                                         <span class="badge rounded-pill px-3 py-2 shadow-sm d-inline-flex align-items-center" style="background-color: #fdf6e7; color: #8c6a2d; border: 1px solid #ebdccb; font-size: 0.85rem; font-weight: 600;">
-                                            <i class="bi bi-eye-fill me-1 text-info"></i> <%= (evento.views || 0) + 1 %> vistas
+                                            <i class="bi bi-eye-fill me-1 text-info"></i> <%= (evento.views || 0) + 1 %> <%= ((evento.views || 0) + 1) == 1 ? 'vista' : 'vistas' %>
                                         </span>
                                     </div>
+
+                                    <% if (evento.seder_file) { %>
+                                        <% const isPdf = (evento.seder_file || '').toLowerCase().endsWith('.pdf'); %>
+                                        <!-- CAJA DESTACADA DEL SEDER DE LA CELEBRACIÓN -->
+                                        <div class="seder-box mb-5 p-4 rounded-4 shadow-sm" style="background: linear-gradient(145deg, #fffdf8, #fdf8eb); border: 2px solid #d4a853; position: relative; overflow: hidden;">
+                                            <div style="position: absolute; top: -10px; right: -10px; font-size: 6rem; color: rgba(212, 168, 83, 0.08); pointer-events: none; transform: rotate(15deg);">
+                                                <i class="bi bi-book"></i>
+                                            </div>
+
+                                            <div class="d-flex align-items-center gap-3 mb-3">
+                                                <div class="seder-icon-wrap d-flex align-items-center justify-content-center rounded-circle" style="width: 54px; height: 54px; background: linear-gradient(135deg, #d4a853, #b8860b); color: #fff; font-size: 1.6rem; flex-shrink: 0; box-shadow: 0 4px 12px rgba(212, 168, 83, 0.35);">
+                                                    <i class="bi <%= isPdf ? 'bi-file-earmark-pdf' : 'bi-file-earmark-image' %>"></i>
+                                                </div>
+                                                <div>
+                                                    <span class="badge mb-1 text-uppercase" style="background: rgba(212, 168, 83, 0.2); color: #855b0a; border: 1px solid rgba(212, 168, 83, 0.4); font-size: 0.72rem; letter-spacing: 0.5px; font-weight: 700;">
+                                                        📜 Seder de la Celebración &bull; Mikrá Kódesh
+                                                    </span>
+                                                    <h3 class="mb-0 fw-bold" style="color: #2c2114; font-size: 1.35rem;">
+                                                        <%= evento.seder_title || 'Seder y Orden de la Festividad' %>
+                                                    </h3>
+                                                </div>
+                                            </div>
+
+                                            <p style="color: #6b5847; font-size: 0.96rem; line-height: 1.6; margin-bottom: 1.25rem;">
+                                                A continuación encontrarás la guía litúrgica (Seder) para seguir el orden de la celebración, bendiciones, oraciones y lecturas correspondientes a esta santa convocación.
+                                            </p>
+
+                                            <!-- Botones de Acción para el Seder -->
+                                            <div class="d-flex flex-wrap align-items-center gap-2 mb-3 no-print">
+                                                <a href="<%= evento.seder_file %>" target="_blank" class="btn d-inline-flex align-items-center gap-2" style="background: linear-gradient(135deg, #d4a853, #b8860b); color: #fff; border: none; padding: 10px 22px; border-radius: 25px; font-weight: 600; box-shadow: 0 4px 12px rgba(212, 168, 83, 0.3); text-decoration: none; transition: transform 0.2s;">
+                                                    <i class="bi bi-box-arrow-up-right"></i>
+                                                    <span>Abrir Seder (<%= isPdf ? 'PDF' : 'Imagen' %>)</span>
+                                                </a>
+
+                                                <a href="<%= evento.seder_file %>" download class="btn btn-outline-dark d-inline-flex align-items-center gap-2" style="padding: 10px 22px; border-radius: 25px; font-weight: 600; border-color: #d4a853; color: #6b5847; background: #fff;">
+                                                    <i class="bi bi-download"></i>
+                                                    <span>Descargar Archivo</span>
+                                                </a>
+
+                                                <% if (isPdf) { %>
+                                                    <button type="button" class="btn btn-sm btn-light border d-inline-flex align-items-center gap-1 ms-auto" onclick="togglePdfViewer()" style="border-radius: 20px; padding: 8px 16px; font-size: 0.85rem;">
+                                                        <i class="bi bi-eye"></i> <span id="pdfToggleText">Mostrar Visor PDF</span>
+                                                    </button>
+                                                <% } %>
+                                            </div>
+
+                                            <!-- Previsualización Integrada -->
+                                            <% if (isPdf) { %>
+                                                <div id="pdfViewerContainer" style="display: none; margin-top: 15px; border-radius: 12px; overflow: hidden; border: 1px solid #ebdccb;">
+                                                    <iframe src="<%= evento.seder_file %>" width="100%" height="550px" style="border: none;"></iframe>
+                                                </div>
+                                            <% } else { %>
+                                                <div class="seder-image-preview text-center mt-3 p-2 rounded-3 bg-white border" style="border-color: #ebdccb !important;">
+                                                    <a href="<%= evento.seder_file %>" target="_blank" title="Clic para ampliar en pantalla completa">
+                                                        <img src="<%= evento.seder_file %>" alt="<%= evento.seder_title || 'Seder' %>" class="img-fluid rounded" style="max-height: 600px; object-fit: contain; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                                                    </a>
+                                                    <div class="text-muted small mt-2">
+                                                        <i class="bi bi-zoom-in me-1"></i> Clic en la imagen para ver en alta resolución
+                                                    </div>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    <% } %>
 
                                     <div class="content mt-4" id="evento-content" style="font-size: 1.1rem; line-height: 1.8; color: #444;">
                                         <%- evento.content || evento.description %>
                                     </div>
 
-                                    <!-- SECCIÓN DEL SÉDER DE LA CELEBRACIÓN -->
+<!-- SECCIÓN DEL SÉDER DE LA CELEBRACIÓN -->
                                     <% if (evento.seder_pdf || evento.seder_image || evento.seder_title || evento.seder_content) { %>
                                         <div class="seder-card-section mt-5 p-4 rounded-4 shadow-sm no-print" 
                                              style="background: linear-gradient(135deg, #fdfbf7 0%, #f6f0e4 100%); border: 2px solid #ebdccb;">
@@ -166,7 +239,7 @@
                                 </div>
 
                                 <div class="col-lg-4">
-                                    <div style="position: sticky; top: 100px;">
+<div style="position: sticky; top: 100px;">
                                         <% if (evento.image_url || evento.img) { %>
                                             <div class="post-img p-2 mb-3" style="background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
                                                 <img src="<%= evento.image_url || evento.img %>" alt="<%= evento.title %>" class="img-fluid rounded" style="width: 100%; height: auto; object-fit: contain;">
@@ -314,6 +387,20 @@
     <script>
         function descargarPDF() {
             window.print();
+        }
+
+        function togglePdfViewer() {
+            const container = document.getElementById('pdfViewerContainer');
+            const toggleText = document.getElementById('pdfToggleText');
+            if (container) {
+                if (container.style.display === 'none' || !container.style.display) {
+                    container.style.display = 'block';
+                    if (toggleText) toggleText.textContent = 'Ocultar Visor PDF';
+                } else {
+                    container.style.display = 'none';
+                    if (toggleText) toggleText.textContent = 'Mostrar Visor PDF';
+                }
+            }
         }
     </script>
 

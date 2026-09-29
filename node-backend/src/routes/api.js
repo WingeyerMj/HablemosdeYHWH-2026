@@ -260,4 +260,49 @@ router.post('/newsletter', async (req, res) => {
     }
 });
 
+// POST /api/semillas-shorts/:id/view - Registrar visualización de short
+router.post('/semillas-shorts/:id/view', async (req, res) => {
+    try {
+        const shortId = parseInt(req.params.id);
+        if (!shortId || isNaN(shortId)) {
+            return res.status(400).json({ ok: false, error: 'ID inválido' });
+        }
+        const SemillasShort = require('../models/SemillasShort');
+        const newCount = await SemillasShort.incrementViews(shortId);
+        return res.json({ ok: true, views_count: newCount });
+    } catch (e) {
+        return res.status(500).json({ ok: false, error: e.message });
+    }
+});
+
+router.post('/shorts/:id/view', async (req, res) => {
+    try {
+        const shortId = parseInt(req.params.id);
+        if (!shortId || isNaN(shortId)) {
+            return res.status(400).json({ ok: false, error: 'ID inválido' });
+        }
+        const SemillasShort = require('../models/SemillasShort');
+        const newCount = await SemillasShort.incrementViews(shortId);
+        return res.json({ ok: true, views_count: newCount });
+    } catch (e) {
+        return res.status(500).json({ ok: false, error: e.message });
+    }
+});
+
+// POST /api/entity/:table/:id/view - Registrar visualización de item de sección dinámica
+router.post('/entity/:table/:id/view', async (req, res) => {
+    try {
+        const { table, id } = req.params;
+        const itemId = parseInt(id);
+        if (!table || !itemId || isNaN(itemId)) {
+            return res.status(400).json({ ok: false, error: 'Parámetros inválidos' });
+        }
+        const EntityModel = require('../models/EntityModel');
+        await EntityModel.incrementViews(table, itemId);
+        return res.json({ ok: true });
+    } catch (e) {
+        return res.status(500).json({ ok: false, error: e.message });
+    }
+});
+
 module.exports = router;
