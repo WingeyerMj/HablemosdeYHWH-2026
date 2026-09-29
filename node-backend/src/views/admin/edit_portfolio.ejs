@@ -81,27 +81,27 @@
                         </div>
                     </div>
 
-<!-- SECCIÓN: SÉDER DE LA CELEBRACIÓN (MIKRA KODESH / MOEDIM) -->
+<!-- SECCIÓN: SÉDER / SIDUR DE LA CELEBRACIÓN (MIKRA KODESH / MOEDIM) -->
                     <div class="col-12 mt-4">
                         <div class="card border-warning border-opacity-50" style="background: rgba(212, 168, 83, 0.05); border-radius: 12px;">
                             <div class="card-header bg-transparent border-warning border-opacity-25 d-flex align-items-center justify-content-between">
                                 <h5 class="mb-0 text-warning" style="font-size: 1.05rem;">
-                                    <i class="bi bi-book-half me-2"></i>Séder de la Celebración (Mikra Kodesh / Moedim)
+                                    <i class="bi bi-book-half me-2"></i>Séder / Sidur de la Celebración (Itinerario, Oraciones y Bendiciones)
                                 </h5>
-                                <span class="badge bg-warning text-dark"><i class="bi bi-cloud-arrow-down-fill me-1"></i>Descargable por los usuarios</span>
+                                <span class="badge bg-warning text-dark"><i class="bi bi-cloud-arrow-down-fill me-1"></i>Descargable y Visor Web</span>
                             </div>
                             <div class="card-body">
                                 <p class="text-white-50 small mb-3">
-                                    Aquí puedes subir el archivo del <strong>Séder u orden de la celebración</strong> tanto en <strong>PDF</strong> como en <strong>formato Imagen (JPG, PNG)</strong> para que las personas puedan descargarlo y seguir la fiesta bíblica.
+                                    Aquí puedes cargar el archivo del <strong>Séder o Sidur</strong> (itinerario, bendiciones, oraciones y estructura litúrgica de la fiesta) tanto en <strong>PDF</strong> como en <strong>formato Imagen (PNG, JPG)</strong> para que la congregación pueda seguir el orden de la celebración.
                                 </p>
 
                                 <div class="row g-3">
-                                    <!-- Título del Seder -->
+                                    <!-- Título del Seder / Sidur -->
                                     <div class="col-md-12">
-                                        <label class="form-label small text-white-50">Título o Nombre del Séder</label>
+                                        <label class="form-label small text-white-50">Título del Séder o Sidur de la Fiesta</label>
                                         <input type="text" name="seder_title" class="form-control" 
                                                value="<%= evento.seder_title || '' %>" 
-                                               placeholder="Ej: Séder de Pésaj - Orden y Guía de la Celebración">
+                                               placeholder="Ej: Séder / Sidur de la Fiesta - Guía e Itinerario de Bendiciones">
                                     </div>
 
                                     <!-- Séder en Formato PDF -->
@@ -109,7 +109,7 @@
                                         <div class="p-3 rounded border border-secondary" style="background: rgba(0,0,0,0.25);">
                                             <div class="d-flex align-items-center justify-content-between mb-2">
                                                 <label class="form-label small fw-bold text-danger mb-0">
-                                                    <i class="bi bi-file-earmark-pdf-fill me-1"></i>Séder en PDF
+                                                    <i class="bi bi-file-earmark-pdf-fill me-1"></i>Séder / Sidur en PDF
                                                 </label>
                                                 <% if (evento.seder_pdf) { %>
                                                     <span class="badge bg-success-subtle text-success border border-success-subtle">
@@ -131,9 +131,9 @@
                                             <% } %>
 
                                             <input type="hidden" name="existing_seder_pdf" value="<%= evento.seder_pdf || '' %>">
-                                            <label class="form-label small text-white-50"><%= evento.seder_pdf ? 'Reemplazar archivo PDF:' : 'Subir archivo PDF:' %></label>
+                                            <label class="form-label small text-white-50"><%= evento.seder_pdf ? 'Reemplazar archivo PDF:' : 'Subir archivo PDF del Séder / Sidur:' %></label>
                                             <input type="file" name="seder_pdf" class="form-control" accept="application/pdf">
-                                            <small class="text-white-50 d-block mt-1">Formato .pdf (máx. 250MB)</small>
+                                            <small class="text-white-50 d-block mt-1">Formato .pdf (permite visor interactivo y descarga)</small>
                                         </div>
                                     </div>
 
@@ -142,7 +142,7 @@
                                         <div class="p-3 rounded border border-secondary" style="background: rgba(0,0,0,0.25);">
                                             <div class="d-flex align-items-center justify-content-between mb-2">
                                                 <label class="form-label small fw-bold text-info mb-0">
-                                                    <i class="bi bi-file-earmark-image-fill me-1"></i>Séder en Imagen (JPG / PNG)
+                                                    <i class="bi bi-file-earmark-image-fill me-1"></i>Séder / Sidur en Imagen (PNG / JPG)
                                                 </label>
                                                 <% if (evento.seder_image) { %>
                                                     <span class="badge bg-success-subtle text-success border border-success-subtle">
@@ -167,9 +167,9 @@
                                             <% } %>
 
                                             <input type="hidden" name="existing_seder_image" value="<%= evento.seder_image || '' %>">
-                                            <label class="form-label small text-white-50"><%= evento.seder_image ? 'Reemplazar imagen del Séder:' : 'Subir imagen del Séder:' %></label>
+                                            <label class="form-label small text-white-50"><%= evento.seder_image ? 'Reemplazar imagen:' : 'Subir imagen del Séder / Sidur (PNG / JPG):' %></label>
                                             <input type="file" name="seder_image" id="seder_image_input" class="form-control" accept="image/jpeg,image/png,image/webp">
-                                            <small class="text-white-50 d-block mt-1">Formatos .jpg, .png o .webp para lectura o descarga directa</small>
+                                            <small class="text-white-50 d-block mt-1">Formatos .png, .jpg o .webp con vista previa y descarga</small>
                                             <div id="sederImgPreviewWrap" class="mt-2 text-center" style="display: none;">
                                                 <img id="sederImgPreview" src="" style="max-height: 140px; border-radius: 6px;" class="border border-secondary">
                                             </div>
@@ -178,8 +178,8 @@
 
                                     <!-- Instrucciones / Resumen del Seder -->
                                     <div class="col-12">
-                                        <label class="form-label small text-white-50">Notas o Instrucciones del Séder (Opcional)</label>
-                                        <textarea name="seder_content" class="form-control" rows="3" placeholder="Instrucciones para la congregación, preparación de elementos, etc..."><%= evento.seder_content || '' %></textarea>
+                                        <label class="form-label small text-white-50">Notas, Itinerario o Instrucciones breves de las Bendiciones (Opcional)</label>
+                                        <textarea name="seder_content" class="form-control" rows="3" placeholder="Paso a paso de la celebración: encendido de velas, kidush, lavado de manos, bendiciones..."><%= evento.seder_content || '' %></textarea>
                                     </div>
                                 </div>
                             </div>

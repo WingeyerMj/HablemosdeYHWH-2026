@@ -169,8 +169,13 @@
                                                        class="btn btn-lg d-inline-flex align-items-center gap-2 px-4 py-3 shadow-sm rounded-pill text-white fw-bold"
                                                        style="background: linear-gradient(135deg, #e11d48, #be123c); border: none; font-size: 0.98rem; transition: transform 0.2s, box-shadow 0.2s;">
                                                         <i class="bi bi-file-earmark-pdf-fill fs-5"></i>
-                                                        <span>Descargar Séder en PDF</span>
+                                                        <span>Descargar Séder / Sidur en PDF</span>
                                                     </a>
+
+                                                    <button type="button" class="btn btn-outline-danger d-inline-flex align-items-center gap-2 px-3 py-3 rounded-pill fw-semibold"
+                                                            onclick="toggleSederPdfViewer()" style="font-size: 0.95rem;">
+                                                        <i class="bi bi-eye"></i> <span id="togglePdfText">Ver PDF en Pantalla</span>
+                                                    </button>
                                                 <% } %>
 
                                                 <% if (evento.seder_image) { %>
@@ -178,7 +183,7 @@
                                                        class="btn btn-lg d-inline-flex align-items-center gap-2 px-4 py-3 shadow-sm rounded-pill text-white fw-bold"
                                                        style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none; font-size: 0.98rem; transition: transform 0.2s, box-shadow 0.2s;">
                                                         <i class="bi bi-file-earmark-image-fill fs-5"></i>
-                                                        <span>Descargar Séder en Imagen</span>
+                                                        <span>Descargar Séder / Sidur en Imagen</span>
                                                     </a>
 
                                                     <button type="button" class="btn btn-outline-dark d-inline-flex align-items-center gap-1 px-3 py-3 rounded-pill fw-semibold"
@@ -188,10 +193,21 @@
                                                 <% } %>
                                             </div>
 
+                                            <% if (evento.seder_pdf) { %>
+                                                <!-- Visor Interactivo Integrado de PDF -->
+                                                <div id="inlineSederPdfViewer" style="display: none; margin-top: 20px; border-radius: 12px; overflow: hidden; border: 2px solid #e11d48; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                                    <div class="p-2 bg-dark text-white d-flex justify-content-between align-items-center px-3">
+                                                        <span class="small fw-semibold text-warning"><i class="bi bi-file-pdf me-1 text-danger"></i>Visor del Séder / Sidur</span>
+                                                        <button type="button" class="btn btn-sm btn-outline-light py-0 px-2" onclick="toggleSederPdfViewer()">Cerrar ✕</button>
+                                                    </div>
+                                                    <iframe src="<%= evento.seder_pdf %>" width="100%" height="600px" style="border: none; background: #fff;"></iframe>
+                                                </div>
+                                            <% } %>
+
                                             <% if (evento.seder_image) { %>
                                                 <!-- Miniatura con enlace para ver completa -->
                                                 <div class="mt-4 pt-3 border-top border-warning border-opacity-25">
-                                                    <small class="text-muted d-block mb-2 fw-semibold"><i class="bi bi-image me-1"></i>Vista previa del Séder:</small>
+                                                    <small class="text-muted d-block mb-2 fw-semibold"><i class="bi bi-image me-1"></i>Vista previa del Séder / Sidur:</small>
                                                     <div class="position-relative d-inline-block rounded-3 overflow-hidden shadow-sm border border-2 border-white" style="cursor: pointer; max-width: 280px;"
                                                          data-bs-toggle="modal" data-bs-target="#sederImageModal">
                                                         <img src="<%= evento.seder_image %>" alt="<%= evento.seder_title || 'Séder' %>" class="img-fluid" style="display: block; max-height: 200px; object-fit: cover;">
@@ -206,7 +222,7 @@
                                                     <div class="modal-dialog modal-dialog-centered modal-xl">
                                                         <div class="modal-content bg-dark text-white border-0 shadow-lg">
                                                             <div class="modal-header border-secondary">
-                                                                <h5 class="modal-title fs-6"><i class="bi bi-image me-2 text-warning"></i><%= evento.seder_title || 'Séder de la Celebración' %></h5>
+                                                                <h5 class="modal-title fs-6"><i class="bi bi-image me-2 text-warning"></i><%= evento.seder_title || 'Séder / Sidur de la Celebración' %></h5>
                                                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                                             </div>
                                                             <div class="modal-body text-center p-2" style="background: #111;">
@@ -218,6 +234,12 @@
                                                                     <a href="<%= evento.seder_image %>" download target="_blank" class="btn btn-primary btn-sm rounded-pill px-3">
                                                                         <i class="bi bi-download me-1"></i>Descargar Imagen
                                                                     </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <% } %>
                                                                     <button type="button" class="btn btn-secondary btn-sm rounded-pill px-3 ms-2" data-bs-dismiss="modal">Cerrar</button>
                                                                 </div>
                                                             </div>
@@ -399,6 +421,20 @@
                 } else {
                     container.style.display = 'none';
                     if (toggleText) toggleText.textContent = 'Mostrar Visor PDF';
+                }
+            }
+        }
+
+        function toggleSederPdfViewer() {
+            const container = document.getElementById('inlineSederPdfViewer');
+            const toggleText = document.getElementById('togglePdfText');
+            if (container) {
+                if (container.style.display === 'none' || !container.style.display) {
+                    container.style.display = 'block';
+                    if (toggleText) toggleText.textContent = 'Ocultar PDF';
+                } else {
+                    container.style.display = 'none';
+                    if (toggleText) toggleText.textContent = 'Ver PDF en Pantalla';
                 }
             }
         }
