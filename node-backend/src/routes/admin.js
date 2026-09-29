@@ -117,46 +117,22 @@ router.post('/haftara/update', isAuthenticated, isAdmin, upload.single('image_fi
 router.get('/haftara/delete/:id', isAuthenticated, isAdmin, adminController.deleteHaftara);
 
 // Semillas de Torah (Infantil) - Admin y Editor
-router.post('/semillas/create', isAuthenticated, upload.fields([
-    { name: 'image_file', maxCount: 1 },
-    { name: 'pdf_upload', maxCount: 1 },
-    { name: 'video_upload', maxCount: 1 }
-]), adminController.createSemillas);
+router.post('/semillas/create', isAuthenticated, upload.any(), adminController.createSemillas);
 router.get('/semillas/edit/:id', isAuthenticated, adminController.editSemillasPage);
-router.post('/semillas/update', isAuthenticated, upload.fields([
-    { name: 'image_file', maxCount: 1 },
-    { name: 'pdf_upload', maxCount: 1 },
-    { name: 'video_upload', maxCount: 1 }
-]), adminController.updateSemillas);
+router.post('/semillas/update', isAuthenticated, upload.any(), adminController.updateSemillas);
 router.get('/semillas/delete/:id', isAuthenticated, adminController.deleteSemillas);
 
 // Semillas Shorts / Aliyot con Niños (Novedades)
-router.post('/semillas-shorts/create', isAuthenticated, upload.fields([
-    { name: 'thumbnail_file', maxCount: 1 },
-    { name: 'video_upload', maxCount: 1 }
-]), adminController.createSemillasShort);
+router.post('/semillas-shorts/create', isAuthenticated, upload.any(), adminController.createSemillasShort);
 router.get('/semillas-shorts/edit/:id', isAuthenticated, adminController.editSemillasShortPage);
-router.post('/semillas-shorts/update', isAuthenticated, upload.fields([
-    { name: 'thumbnail_file', maxCount: 1 },
-    { name: 'video_upload', maxCount: 1 }
-]), adminController.updateSemillasShort);
+router.post('/semillas-shorts/update', isAuthenticated, upload.any(), adminController.updateSemillasShort);
 router.get('/semillas-shorts/delete/:id', isAuthenticated, adminController.deleteSemillasShort);
 
 // Semillas Artículos / Resúmenes de Parashá con Imágenes (Infantil)
 router.get('/semillas-articulos', isAuthenticated, adminController.semillasArticulosIndex);
-router.post('/semillas-articulos/create', isAuthenticated, upload.fields([
-    { name: 'image_file', maxCount: 1 },
-    { name: 'gallery_images', maxCount: 10 },
-    { name: 'pdf_upload', maxCount: 1 },
-    { name: 'video_upload', maxCount: 1 }
-]), adminController.createSemillasArticulo);
+router.post('/semillas-articulos/create', isAuthenticated, upload.any(), adminController.createSemillasArticulo);
 router.get('/semillas-articulos/edit/:id', isAuthenticated, adminController.editSemillasArticuloPage);
-router.post('/semillas-articulos/update', isAuthenticated, upload.fields([
-    { name: 'image_file', maxCount: 1 },
-    { name: 'gallery_images', maxCount: 10 },
-    { name: 'pdf_upload', maxCount: 1 },
-    { name: 'video_upload', maxCount: 1 }
-]), adminController.updateSemillasArticulo);
+router.post('/semillas-articulos/update', isAuthenticated, upload.any(), adminController.updateSemillasArticulo);
 router.get('/semillas-articulos/toggle/:id', isAuthenticated, adminController.toggleSemillasArticulo);
 router.get('/semillas-articulos/delete/:id', isAuthenticated, adminController.deleteSemillasArticulo);
 
