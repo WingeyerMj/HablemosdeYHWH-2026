@@ -742,15 +742,12 @@ const adminController = {
         try {
             let { title, subtitle, category, author, description, content, youtube_link, is_published, image_url, pdf_file, video_file } = req.body;
             
-            if (req.files) {
-                if (req.files['image_file'] && req.files['image_file'][0]) {
-                    image_url = '/uploads/semillas/' + req.files['image_file'][0].filename;
-                }
-                if (req.files['pdf_upload'] && req.files['pdf_upload'][0]) {
-                    pdf_file = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
-                }
-                if (req.files['video_upload'] && req.files['video_upload'][0]) {
-                    video_file = '/uploads/videos/' + req.files['video_upload'][0].filename;
+            if (req.files && req.files.length > 0) {
+                const filesList = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
+                for (const f of filesList) {
+                    if (f.fieldname === 'image_file') image_url = '/uploads/semillas/' + f.filename;
+                    else if (f.fieldname === 'pdf_upload') pdf_file = '/uploads/pdf/' + f.filename;
+                    else if (f.fieldname === 'video_upload') video_file = '/uploads/videos/' + f.filename;
                 }
             } else if (req.file) {
                 image_url = '/uploads/semillas/' + req.file.filename;
@@ -808,15 +805,12 @@ const adminController = {
         try {
             let { id, title, subtitle, category, author, description, content, youtube_link, is_published, image_url, pdf_file, video_file } = req.body;
             
-            if (req.files) {
-                if (req.files['image_file'] && req.files['image_file'][0]) {
-                    image_url = '/uploads/semillas/' + req.files['image_file'][0].filename;
-                }
-                if (req.files['pdf_upload'] && req.files['pdf_upload'][0]) {
-                    pdf_file = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
-                }
-                if (req.files['video_upload'] && req.files['video_upload'][0]) {
-                    video_file = '/uploads/videos/' + req.files['video_upload'][0].filename;
+            if (req.files && req.files.length > 0) {
+                const filesList = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
+                for (const f of filesList) {
+                    if (f.fieldname === 'image_file') image_url = '/uploads/semillas/' + f.filename;
+                    else if (f.fieldname === 'pdf_upload') pdf_file = '/uploads/pdf/' + f.filename;
+                    else if (f.fieldname === 'video_upload') video_file = '/uploads/videos/' + f.filename;
                 }
             } else if (req.file) {
                 image_url = '/uploads/semillas/' + req.file.filename;
@@ -874,12 +868,11 @@ const adminController = {
         try {
             let { title, short_type, category, child_name, parasha_name, aliyah_number, reading_date, verses_reference, youtube_short_url, description, is_highlight, is_published, thumbnail_url, video_url } = req.body;
             
-            if (req.files) {
-                if (req.files['thumbnail_file'] && req.files['thumbnail_file'][0]) {
-                    thumbnail_url = '/uploads/semillas/' + req.files['thumbnail_file'][0].filename;
-                }
-                if (req.files['video_upload'] && req.files['video_upload'][0]) {
-                    video_url = '/uploads/videos/' + req.files['video_upload'][0].filename;
+            if (req.files && req.files.length > 0) {
+                const filesList = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
+                for (const f of filesList) {
+                    if (f.fieldname === 'thumbnail_file') thumbnail_url = '/uploads/semillas/' + f.filename;
+                    else if (f.fieldname === 'video_upload') video_url = '/uploads/videos/' + f.filename;
                 }
             }
 
@@ -942,12 +935,11 @@ const adminController = {
         try {
             let { id, title, short_type, category, child_name, parasha_name, aliyah_number, reading_date, verses_reference, youtube_short_url, description, is_highlight, is_published, thumbnail_url, video_url, views_count } = req.body;
             
-            if (req.files) {
-                if (req.files['thumbnail_file'] && req.files['thumbnail_file'][0]) {
-                    thumbnail_url = '/uploads/semillas/' + req.files['thumbnail_file'][0].filename;
-                }
-                if (req.files['video_upload'] && req.files['video_upload'][0]) {
-                    video_url = '/uploads/videos/' + req.files['video_upload'][0].filename;
+            if (req.files && req.files.length > 0) {
+                const filesList = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
+                for (const f of filesList) {
+                    if (f.fieldname === 'thumbnail_file') thumbnail_url = '/uploads/semillas/' + f.filename;
+                    else if (f.fieldname === 'video_upload') video_url = '/uploads/videos/' + f.filename;
                 }
             }
 
@@ -1057,20 +1049,13 @@ const adminController = {
 
             let galleryImages = [];
 
-            if (req.files) {
-                if (req.files['image_file'] && req.files['image_file'][0]) {
-                    main_image = '/uploads/semillas/' + req.files['image_file'][0].filename;
-                }
-                if (req.files['pdf_upload'] && req.files['pdf_upload'][0]) {
-                    pdf_file = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
-                }
-                if (req.files['video_upload'] && req.files['video_upload'][0]) {
-                    video_file = '/uploads/semillas/' + req.files['video_upload'][0].filename;
-                }
-                if (req.files['gallery_images'] && req.files['gallery_images'].length > 0) {
-                    req.files['gallery_images'].forEach(f => {
-                        galleryImages.push('/uploads/semillas/' + f.filename);
-                    });
+            if (req.files && req.files.length > 0) {
+                const filesList = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
+                for (const f of filesList) {
+                    if (f.fieldname === 'image_file') main_image = '/uploads/semillas/' + f.filename;
+                    else if (f.fieldname === 'pdf_upload') pdf_file = '/uploads/pdf/' + f.filename;
+                    else if (f.fieldname === 'video_upload') video_file = '/uploads/videos/' + f.filename;
+                    else if (f.fieldname === 'gallery_images') galleryImages.push('/uploads/semillas/' + f.filename);
                 }
             }
 
@@ -1178,20 +1163,13 @@ const adminController = {
                 video_file = '';
             }
 
-            if (req.files) {
-                if (req.files['image_file'] && req.files['image_file'][0]) {
-                    main_image = '/uploads/semillas/' + req.files['image_file'][0].filename;
-                }
-                if (req.files['pdf_upload'] && req.files['pdf_upload'][0]) {
-                    pdf_file = '/uploads/pdf/' + req.files['pdf_upload'][0].filename;
-                }
-                if (req.files['video_upload'] && req.files['video_upload'][0]) {
-                    video_file = '/uploads/semillas/' + req.files['video_upload'][0].filename;
-                }
-                if (req.files['gallery_images'] && req.files['gallery_images'].length > 0) {
-                    req.files['gallery_images'].forEach(f => {
-                        finalGallery.push('/uploads/semillas/' + f.filename);
-                    });
+            if (req.files && req.files.length > 0) {
+                const filesList = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
+                for (const f of filesList) {
+                    if (f.fieldname === 'image_file') main_image = '/uploads/semillas/' + f.filename;
+                    else if (f.fieldname === 'pdf_upload') pdf_file = '/uploads/pdf/' + f.filename;
+                    else if (f.fieldname === 'video_upload') video_file = '/uploads/videos/' + f.filename;
+                    else if (f.fieldname === 'gallery_images') finalGallery.push('/uploads/semillas/' + f.filename);
                 }
             }
 
