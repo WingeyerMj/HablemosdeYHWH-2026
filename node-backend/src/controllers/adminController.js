@@ -43,7 +43,7 @@ const adminController = {
             const Testimonial = require('../models/Testimonial');
             const Pricing = require('../models/Pricing');
 
-            let parashot = [], portfolio = [], ensenanzas = [], haftarot = [], blogs = [], noticias = [], noticiasShorts = [], team = [], testimonials = [], pricing = [], sections = [], semillas = [], semillasShorts = [], subscribers = [];
+            let parashot = [], portfolio = [], ensenanzas = [], haftarot = [], blogs = [], noticias = [], noticiasShorts = [], team = [], testimonials = [], pricing = [], sections = [], semillas = [], semillasShorts = [], semillasArticulos = [], subscribers = [];
             
             try {
                 parashot = await Parasha.getAll();
