@@ -145,7 +145,7 @@ class Interaction {
         return rows[0] ? rows[0].total : 0;
     }
 
-    static async addComment({ entity_type, entity_id, user_name, user_email, comment_text, parent_id = null, auto_approve = false }) {
+    static async addComment({ entity_type, entity_id, user_name, user_email, comment_text, parent_id = null }) {
         await Interaction.ensureTable();
 
         // Generar un color armónico para el avatar
@@ -158,14 +158,13 @@ class Interaction {
 
         if (!cleanText) throw new Error('El comentario no puede estar vacío');
 
-        // Por defecto, los comentarios requieren aprobación previa (is_approved = FALSE)
-        const isApproved = auto_approve ? 1 : 0;
-
+        // TODOS los comentarios requieren aprobación previa obligatoria (is_approved = FALSE / 0)
+        // Solo un administrador puede aprobarlos manualmente desde /admin/comentarios
         const [result] = await db.query(
             `INSERT INTO item_comments 
             (entity_type, entity_id, user_name, user_email, comment_text, parent_id, avatar_color, is_approved) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [entity_type, entity_id, cleanName, cleanEmail, cleanText, parent_id ? parseInt(parent_id) : null, avatarColor, isApproved]
+            VALUES (?, ?, ?, ?, ?, ?, ?, FALSE)`,
+            [entity_type, entity_id, cleanName, cleanEmail, cleanText, parent_id ? parseInt(parent_id) : null, avatarColor]
         );
 
         return {
@@ -175,8 +174,8 @@ class Interaction {
             user_name: cleanName,
             comment_text: cleanText,
             avatar_color: avatarColor,
-            is_approved: isApproved === 1,
-            pending_approval: isApproved === 0,
+            is_approved: false,
+            pending_approval: true,
             created_at: new Date()
         };
     }
