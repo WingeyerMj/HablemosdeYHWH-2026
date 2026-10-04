@@ -2471,6 +2471,7 @@ const adminController = {
             });
 
             res.render('admin/comments', {
+                layout: 'admin/layout',
                 comments,
                 stats,
                 currentFilter: filter,

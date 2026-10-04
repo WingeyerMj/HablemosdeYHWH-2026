@@ -41,6 +41,7 @@ app.set('views', path.join(__dirname, 'src/views'));
 
 // Middlewares
 app.use(expressLayouts);
+app.set('layout', false);
 const fs = require('fs');
 app.use('/uploads', (req, res, next) => {
     const filename = path.basename(req.path);
