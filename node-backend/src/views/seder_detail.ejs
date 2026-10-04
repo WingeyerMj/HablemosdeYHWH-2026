@@ -173,6 +173,16 @@
                                             📖 Documento generado desde <strong>Hablemos de YHWH</strong> · hablemosdeyhwh.com
                                         </p>
                                     </div>
+
+                                    <!-- Interacciones: Likes y Comentarios -->
+                                    <div class="no-print mt-4">
+                                        <%- include('partials/_interactions', {
+                                            entityType: 'seders',
+                                            entityId: seder.id,
+                                            shareTitle: seder.title || 'Séder',
+                                            shareUrl: ''
+                                        }) %>
+                                    </div>
                                 </div>
                             </div>
 

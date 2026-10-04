@@ -252,6 +252,16 @@
                                             <span>Imprimir / Guardar Evento Completo</span>
                                         </button>
                                     </div>
+
+                                    <!-- Interacciones: Likes y Comentarios -->
+                                    <div class="no-print mt-4">
+                                        <%- include('partials/_interactions', {
+                                            entityType: 'eventos',
+                                            entityId: evento.id,
+                                            shareTitle: evento.title,
+                                            shareUrl: ''
+                                        }) %>
+                                    </div>
                                 </div>
 
                                 <div class="col-lg-4">

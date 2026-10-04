@@ -102,6 +102,9 @@
                                             </a>
                                         </div>
                                     </div>
+
+                                    <!-- Interacciones: Likes, Compartir y Comentarios -->
+                                    <%- include('partials/_interactions', { entityType: 'noticias', entityId: item.id, shareTitle: item.title }) %>
                                 </article>
                             </div>
 

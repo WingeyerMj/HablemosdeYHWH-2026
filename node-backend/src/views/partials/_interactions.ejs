@@ -1,0 +1,373 @@
+<% 
+    const currentEntityType = typeof entityType !== 'undefined' ? entityType : 'general';
+    const currentEntityId = typeof entityId !== 'undefined' ? entityId : 0;
+    const currentShareTitle = typeof shareTitle !== 'undefined' ? shareTitle : '';
+%>
+
+<div class="interactions-container mt-5 pt-4 border-top no-print" id="interactions-section-<%= currentEntityType %>-<%= currentEntityId %>">
+    
+    <!-- BARRA DE REACCIONES Y COMPARTIR -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 p-3 p-md-4 rounded-4 shadow-sm mb-4" 
+         style="background: linear-gradient(135deg, #ffffff, #faf7f2); border: 1px solid #ebdccb;">
+        
+        <!-- Botón de Like / Me Gusta -->
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+            <button type="button" 
+                    class="btn d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill fw-bold shadow-sm like-action-btn" 
+                    id="likeBtn-<%= currentEntityType %>-<%= currentEntityId %>"
+                    onclick="toggleInteractionLike('<%= currentEntityType %>', <%= currentEntityId %>)"
+                    style="border: 1px solid #d4a853; background: #ffffff; color: #2b231d; transition: all 0.25s ease;">
+                <i class="bi bi-heart fs-5 like-icon" id="likeIcon-<%= currentEntityType %>-<%= currentEntityId %>" style="color: #e11d48; transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);"></i>
+                <span class="like-label" id="likeLabel-<%= currentEntityType %>-<%= currentEntityId %>">Me gusta</span>
+                <span class="badge rounded-pill px-2 py-1 like-count-badge" id="likeCount-<%= currentEntityType %>-<%= currentEntityId %>" 
+                      style="background: rgba(212,168,83,0.15); color: #b8860b; font-size: 0.82rem;">0</span>
+            </button>
+
+            <!-- Acceso directo a Comentar -->
+            <a href="#comments-box-<%= currentEntityType %>-<%= currentEntityId %>" 
+               class="btn btn-outline-secondary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill fw-semibold"
+               style="font-size: 0.9rem;">
+                <i class="bi bi-chat-left-text text-primary"></i>
+                <span>Comentar</span>
+                <span class="badge bg-light text-dark border rounded-pill" id="commentCountBadge-<%= currentEntityType %>-<%= currentEntityId %>">0</span>
+            </a>
+        </div>
+
+        <!-- Botones de Compartir -->
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="text-muted small fw-bold me-1"><i class="bi bi-share me-1"></i>Compartir:</span>
+            
+            <a href="https://api.whatsapp.com/send?text=<%= encodeURIComponent(currentShareTitle + '\n\n' + 'https://hablemosdeyhwh.com') %>" 
+               target="_blank" rel="noopener noreferrer"
+               class="btn btn-sm text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm share-btn" 
+               style="background-color: #25D366; width: 36px; height: 36px;" title="WhatsApp">
+                <i class="bi bi-whatsapp"></i>
+            </a>
+
+            <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('https://hablemosdeyhwh.com') %>" 
+               target="_blank" rel="noopener noreferrer"
+               class="btn btn-sm text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm share-btn" 
+               style="background-color: #1877F2; width: 36px; height: 36px;" title="Facebook">
+                <i class="bi bi-facebook"></i>
+            </a>
+
+            <a href="https://t.me/share/url?url=<%= encodeURIComponent('https://hablemosdeyhwh.com') %>&text=<%= encodeURIComponent(currentShareTitle) %>" 
+               target="_blank" rel="noopener noreferrer"
+               class="btn btn-sm text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm share-btn" 
+               style="background-color: #229ED9; width: 36px; height: 36px;" title="Telegram">
+                <i class="bi bi-telegram"></i>
+            </a>
+
+            <button type="button" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-1 fw-semibold d-inline-flex align-items-center gap-1"
+                    onclick="navigator.clipboard.writeText(window.location.href); showToastNotification('¡Enlace copiado al portapapeles!');" title="Copiar enlace">
+                <i class="bi bi-link-45deg"></i> Copiar
+            </button>
+        </div>
+    </div>
+
+    <!-- SECCIÓN DE COMENTARIOS -->
+    <div class="comments-section bg-white p-4 p-md-5 rounded-4 shadow-sm border mb-4" 
+         id="comments-box-<%= currentEntityType %>-<%= currentEntityId %>"
+         style="border-color: #ebdccb !important;">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+            <h4 class="fw-bold mb-0 d-flex align-items-center gap-2" style="color: #2b231d;">
+                <i class="bi bi-chat-dots-fill" style="color: #d4a853;"></i>
+                <span>Comentarios y Reflexiones</span>
+                <span class="badge rounded-pill px-3 py-1 text-white" 
+                      id="totalCommentsCount-<%= currentEntityType %>-<%= currentEntityId %>"
+                      style="background: linear-gradient(135deg, #d4a853, #b8860b); font-size: 0.8rem;">0</span>
+            </h4>
+        </div>
+
+        <!-- FORMULARIO PARA NUEVO COMENTARIO -->
+        <form id="commentForm-<%= currentEntityType %>-<%= currentEntityId %>" 
+              onsubmit="submitComment(event, '<%= currentEntityType %>', <%= currentEntityId %>)" 
+              class="mb-5 p-4 rounded-4 shadow-xs" 
+              style="background: #faf8f5; border: 1px solid #ebdccb;">
+            
+            <h6 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2">
+                <i class="bi bi-pencil-square text-warning"></i> Deja tu comentario o bendición
+            </h6>
+
+            <!-- Honeypot invisible anti-spam -->
+            <input type="text" name="b_company_url" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;" tabindex="-1" autocomplete="off">
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label small text-muted fw-semibold">Tu Nombre o Alias *</label>
+                    <input type="text" name="user_name" class="form-control" required placeholder="Ej: Daniel, Miriam, Familia Pérez..." maxlength="80">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small text-muted fw-semibold">Tu Correo Electrónico (Opcional, no será visible)</label>
+                    <input type="email" name="user_email" class="form-control" placeholder="ejemplo@correo.com" maxlength="100">
+                </div>
+                <div class="col-12">
+                    <label class="form-label small text-muted fw-semibold">Escribe tu comentario o reflexión *</label>
+                    <textarea name="comment_text" class="form-control" rows="3" required placeholder="Comparte una palabra de bendición, duda o reflexión sobre este estudio..." maxlength="2000"></textarea>
+                </div>
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn px-4 py-2 rounded-pill fw-bold text-white shadow-sm submit-comment-btn" 
+                            id="submitCommentBtn-<%= currentEntityType %>-<%= currentEntityId %>"
+                            style="background: linear-gradient(135deg, #d4a853, #b8860b); border: none;">
+                        <i class="bi bi-send-fill me-1"></i> Publicar Comentario
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- LISTA DINÁMICA DE COMENTARIOS -->
+        <div class="comments-list" id="commentsList-<%= currentEntityType %>-<%= currentEntityId %>">
+            <div class="text-center py-4 text-muted loading-comments-spinner" id="loadingComments-<%= currentEntityType %>-<%= currentEntityId %>">
+                <div class="spinner-border spinner-border-sm text-warning me-2" role="status"></div>
+                <span>Cargando comentarios...</span>
+            </div>
+            
+            <!-- Estado vacío (por defecto oculto) -->
+            <div class="text-center py-4 text-muted empty-comments-notice" id="emptyComments-<%= currentEntityType %>-<%= currentEntityId %>" style="display: none;">
+                <i class="bi bi-chat-heart text-muted mb-2 d-block" style="font-size: 2.2rem; color: #d4a853 !important;"></i>
+                <p class="mb-0 small">Aún no hay comentarios. ¡Sé el primero en compartir tu bendición o reflexión!</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .like-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(212,168,83,0.3) !important;
+        background: #fffdfa !important;
+    }
+    .like-action-btn.active {
+        background: #ffe4e6 !important;
+        border-color: #f43f5e !important;
+        color: #e11d48 !important;
+    }
+    .like-action-btn.active .like-icon {
+        color: #e11d48 !important;
+        transform: scale(1.2);
+    }
+    .like-action-btn.active .like-count-badge {
+        background: #e11d48 !important;
+        color: #ffffff !important;
+    }
+    .share-btn:hover {
+        transform: translateY(-2px) scale(1.08);
+        transition: transform 0.2s ease;
+    }
+    .comment-item {
+        transition: all 0.3s ease;
+        border-bottom: 1px solid #f2ece4;
+        padding-bottom: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+    .comment-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    .avatar-circle {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #fff;
+        font-size: 1.05rem;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+    @keyframes heartPop {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.4); }
+        100% { transform: scale(1.2); }
+    }
+    .heart-animated {
+        animation: heartPop 0.35s ease forwards;
+    }
+</style>
+
+<script>
+    // Carga inicial de datos de interacciones
+    document.addEventListener('DOMContentLoaded', function() {
+        loadInteractions('<%= currentEntityType %>', <%= currentEntityId %>);
+    });
+
+    async function loadInteractions(entityType, entityId) {
+        try {
+            const res = await fetch(`/api/interactions/${entityType}/${entityId}`);
+            const data = await res.json();
+            if (!data.ok) return;
+
+            // 1. Render Likes
+            const countEl = document.getElementById(`likeCount-${entityType}-${entityId}`);
+            const btnEl = document.getElementById(`likeBtn-${entityType}-${entityId}`);
+            const iconEl = document.getElementById(`likeIcon-${entityType}-${entityId}`);
+            
+            if (countEl) countEl.textContent = data.likesCount || 0;
+
+            const isLikedLocally = localStorage.getItem(`liked_${entityType}_${entityId}`) === 'true';
+            if (data.userLiked || isLikedLocally) {
+                if (btnEl) btnEl.classList.add('active');
+                if (iconEl) {
+                    iconEl.classList.remove('bi-heart');
+                    iconEl.classList.add('bi-heart-fill');
+                }
+            }
+
+            // 2. Render Comments
+            const totalCountBadge = document.getElementById(`totalCommentsCount-${entityType}-${entityId}`);
+            const commentCountBadge = document.getElementById(`commentCountBadge-${entityType}-${entityId}`);
+            if (totalCountBadge) totalCountBadge.textContent = data.commentsCount || 0;
+            if (commentCountBadge) commentCountBadge.textContent = data.commentsCount || 0;
+
+            renderCommentsList(entityType, entityId, data.comments || []);
+        } catch (e) {
+            console.warn('Error loading interactions:', e);
+        }
+    }
+
+    async function toggleInteractionLike(entityType, entityId) {
+        const btnEl = document.getElementById(`likeBtn-${entityType}-${entityId}`);
+        const iconEl = document.getElementById(`likeIcon-${entityType}-${entityId}`);
+        const countEl = document.getElementById(`likeCount-${entityType}-${entityId}`);
+
+        try {
+            iconEl.classList.add('heart-animated');
+            setTimeout(() => iconEl.classList.remove('heart-animated'), 400);
+
+            const res = await fetch(`/api/interactions/like/${entityType}/${entityId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await res.json();
+
+            if (data.ok) {
+                if (countEl) countEl.textContent = data.likesCount;
+                if (data.liked) {
+                    btnEl.classList.add('active');
+                    iconEl.classList.remove('bi-heart');
+                    iconEl.classList.add('bi-heart-fill');
+                    localStorage.setItem(`liked_${entityType}_${entityId}`, 'true');
+                } else {
+                    btnEl.classList.remove('active');
+                    iconEl.classList.remove('bi-heart-fill');
+                    iconEl.classList.add('bi-heart');
+                    localStorage.removeItem(`liked_${entityType}_${entityId}`);
+                }
+            }
+        } catch (e) {
+            console.error('Error toggling like:', e);
+        }
+    }
+
+    function renderCommentsList(entityType, entityId, comments) {
+        const container = document.getElementById(`commentsList-${entityType}-${entityId}`);
+        const spinner = document.getElementById(`loadingComments-${entityType}-${entityId}`);
+        const emptyNotice = document.getElementById(`emptyComments-${entityType}-${entityId}`);
+
+        if (spinner) spinner.style.display = 'none';
+
+        if (!comments || comments.length === 0) {
+            if (emptyNotice) emptyNotice.style.display = 'block';
+            return;
+        }
+
+        if (emptyNotice) emptyNotice.style.display = 'none';
+
+        // Construir HTML de comentarios
+        let html = '';
+        comments.forEach(c => {
+            const initial = (c.user_name || 'U').charAt(0).toUpperCase();
+            const dateStr = c.created_at ? new Date(c.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Reciente';
+            
+            html += `
+                <div class="comment-item d-flex gap-3 align-items-start" id="comment-node-${c.id}">
+                    <div class="avatar-circle" style="background-color: ${c.avatar_color || '#d4a853'};">
+                        ${initial}
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h6 class="fw-bold mb-0 text-dark" style="font-size: 0.95rem;">
+                                ${escapeString(c.user_name)}
+                            </h6>
+                            <span class="text-muted small" style="font-size: 0.78rem;">
+                                <i class="bi bi-clock me-1"></i>${dateStr}
+                            </span>
+                        </div>
+                        <p class="mb-0 text-secondary" style="font-size: 0.94rem; line-height: 1.6; white-space: pre-line;">
+                            ${escapeString(c.comment_text)}
+                        </p>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    async function submitComment(event, entityType, entityId) {
+        event.preventDefault();
+        const form = event.target;
+        const btn = document.getElementById(`submitCommentBtn-${entityType}-${entityId}`);
+        const originalBtnText = btn.innerHTML;
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Publicando...';
+
+        try {
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+
+            const res = await fetch(`/api/interactions/comment/${entityType}/${entityId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+            if (result.ok && result.comment) {
+                form.reset();
+                showToastNotification('¡Comentario publicado con éxito!');
+                
+                // Recargar comentarios
+                await loadInteractions(entityType, entityId);
+            } else {
+                alert(result.error || 'No se pudo publicar el comentario. Intenta nuevamente.');
+            }
+        } catch (e) {
+            console.error('Error submitting comment:', e);
+            alert('Error de conexión. Intenta nuevamente.');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalBtnText;
+        }
+    }
+
+    function escapeString(str) {
+        if (!str) return '';
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function showToastNotification(message) {
+        const toast = document.createElement('div');
+        toast.className = 'position-fixed bottom-0 end-0 m-3 p-3 text-white rounded-3 shadow-lg z-3 d-flex align-items-center gap-2';
+        toast.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        toast.style.zIndex = '99999';
+        toast.innerHTML = `<i class="bi bi-check-circle-fill fs-5"></i> <span>${message}</span>`;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.4s ease';
+            setTimeout(() => toast.remove(), 400);
+        }, 3000);
+    }
+</script>

@@ -164,6 +164,16 @@
                                             <span>Imprimir / Guardar PDF</span>
                                         </button>
                                     </div>
+
+                                    <!-- Interacciones: Likes y Comentarios -->
+                                    <div class="no-print mt-4">
+                                        <%- include('partials/_interactions', {
+                                            entityType: 'haftara',
+                                            entityId: haftara.id,
+                                            shareTitle: haftara.title,
+                                            shareUrl: ''
+                                        }) %>
+                                    </div>
                                 </div>
 
                                 <!-- Columna Lateral con Expositor y Portada -->

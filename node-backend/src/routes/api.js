@@ -305,4 +305,125 @@ router.post('/entity/:table/:id/view', async (req, res) => {
     }
 });
 
+// ==========================================
+// INTERACCIONES: LIKES Y COMENTARIOS
+// ==========================================
+const Interaction = require('../models/Interaction');
+
+// GET /api/interactions/:entity_type/:entity_id - Obtener likes y comentarios
+router.get('/interactions/:entity_type/:entity_id', async (req, res) => {
+    try {
+        const { entity_type, entity_id } = req.params;
+        const id = parseInt(entity_id);
+        const ip = req.ip || req.connection?.remoteAddress || req.headers['x-forwarded-for'] || '0.0.0.0';
+        const userId = req.session?.userId || null;
+
+        if (!entity_type || !id) {
+            return res.status(400).json({ ok: false, error: 'Parámetros inválidos' });
+        }
+
+        const [likesCount, userLiked, comments] = await Promise.all([
+            Interaction.getLikesCount(entity_type, id),
+            Interaction.hasUserLiked(entity_type, id, ip, userId),
+            Interaction.getComments(entity_type, id)
+        ]);
+
+        return res.json({
+            ok: true,
+            likesCount,
+            userLiked,
+            commentsCount: comments.length,
+            comments
+        });
+    } catch (error) {
+        console.error('Error GET /api/interactions:', error.message);
+        return res.status(500).json({ ok: false, error: error.message });
+    }
+});
+
+// POST /api/interactions/like/:entity_type/:entity_id - Dar o quitar Like
+router.post('/interactions/like/:entity_type/:entity_id', async (req, res) => {
+    try {
+        const { entity_type, entity_id } = req.params;
+        const id = parseInt(entity_id);
+        const ip = req.ip || req.connection?.remoteAddress || req.headers['x-forwarded-for'] || '0.0.0.0';
+        const userId = req.session?.userId || null;
+
+        if (!entity_type || !id) {
+            return res.status(400).json({ ok: false, error: 'Parámetros inválidos' });
+        }
+
+        const result = await Interaction.toggleLike(entity_type, id, ip, userId);
+        return res.json({
+            ok: true,
+            liked: result.liked,
+            likesCount: result.count
+        });
+    } catch (error) {
+        console.error('Error POST /api/interactions/like:', error.message);
+        return res.status(500).json({ ok: false, error: error.message });
+    }
+});
+
+// POST /api/interactions/comment/:entity_type/:entity_id - Publicar comentario
+router.post('/interactions/comment/:entity_type/:entity_id', async (req, res) => {
+    try {
+        const { entity_type, entity_id } = req.params;
+        const id = parseInt(entity_id);
+        const ip = req.ip || req.connection?.remoteAddress || req.headers['x-forwarded-for'] || '0.0.0.0';
+
+        // 1. Anti-Bot Honeypot
+        const { user_name, user_email, comment_text, hp_field, b_company_url } = req.body;
+        if (hp_field || b_company_url) {
+            return res.json({ ok: true, message: 'Comentario recibido' });
+        }
+
+        // 2. Rate limiting (máx 5 comentarios por minuto)
+        if (rateLimit(ip, 60000, 5)) {
+            return res.status(429).json({ ok: false, error: 'Has publicado varios comentarios recientemente. Por favor espera un momento.' });
+        }
+
+        if (!entity_type || !id || !comment_text || !comment_text.trim()) {
+            return res.status(400).json({ ok: false, error: 'El comentario no puede estar vacío.' });
+        }
+
+        const safeName = escapeHTML((user_name || 'Hermano/a').trim().substring(0, 80));
+        const safeEmail = escapeHTML((user_email || '').trim().substring(0, 100));
+        const safeText = escapeHTML(comment_text.trim().substring(0, 2500));
+
+        const newComment = await Interaction.addComment({
+            entity_type,
+            entity_id: id,
+            user_name: safeName || 'Hermano/a en la Fe',
+            user_email: safeEmail,
+            comment_text: safeText
+        });
+
+        const totalComments = await Interaction.getCommentsCount(entity_type, id);
+
+        return res.json({
+            ok: true,
+            comment: newComment,
+            commentsCount: totalComments
+        });
+    } catch (error) {
+        console.error('Error POST /api/interactions/comment:', error.message);
+        return res.status(500).json({ ok: false, error: error.message });
+    }
+});
+
+// DELETE /api/interactions/comment/:id - Eliminar comentario (Moderación)
+router.delete('/interactions/comment/:id', async (req, res) => {
+    try {
+        if (!req.session || !req.session.userId) {
+            return res.status(403).json({ ok: false, error: 'No autorizado' });
+        }
+        const commentId = parseInt(req.params.id);
+        await Interaction.deleteComment(commentId);
+        return res.json({ ok: true });
+    } catch (error) {
+        return res.status(500).json({ ok: false, error: error.message });
+    }
+});
+
 module.exports = router;

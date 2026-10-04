@@ -142,6 +142,16 @@
                                 </a>
                             </div>
 
+                            <!-- Interacciones: Likes y Comentarios -->
+                            <div class="mt-4">
+                                <%- include('partials/_interactions', {
+                                    entityType: 'semillas',
+                                    entityId: item.id,
+                                    shareTitle: item.title,
+                                    shareUrl: ''
+                                }) %>
+                            </div>
+
                         </article>
                     </div>
 

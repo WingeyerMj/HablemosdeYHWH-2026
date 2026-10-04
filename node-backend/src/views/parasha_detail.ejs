@@ -422,6 +422,18 @@
                                             <span>Descargar Parashá como PDF</span>
                                         </button>
                                     </div>
+
+                                    <!-- ============================================== -->
+                                    <!-- INTERACCIONES (LIKES Y COMENTARIOS)            -->
+                                    <!-- ============================================== -->
+                                    <div class="no-print mt-4">
+                                        <%- include('partials/_interactions', {
+                                            entityType: 'parashot',
+                                            entityId: parasha.id,
+                                            shareTitle: parasha.title,
+                                            shareUrl: ''
+                                        }) %>
+                                    </div>
                                 </div>
 
                                 <div class="col-lg-4">
