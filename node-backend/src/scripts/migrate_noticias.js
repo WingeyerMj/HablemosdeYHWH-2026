@@ -7,7 +7,11 @@ async function migrate() {
         await Noticia.ensureTable();
         console.log('✅ Tablas verificadas o creadas.');
 
-        // Verificar si hay noticias
+        // Actualizar título de sección Blog para que sea estrictamente 'Blog'
+        try {
+            await db.query(`UPDATE home_section_blog SET title = 'Blog' WHERE id = 1 OR title LIKE '%Noticias%'`);
+            console.log('✅ Sección Blog actualizada a solo Blog.');
+        } catch (e) {}
         const [newsCount] = await db.query('SELECT COUNT(*) as total FROM noticias');
         if (newsCount[0].total === 0) {
             console.log('📰 Insertando noticias de ejemplo...');

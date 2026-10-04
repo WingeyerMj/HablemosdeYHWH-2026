@@ -1248,11 +1248,11 @@
                     </div>
                 </section>
 
-                <!-- Blog & Estudios Bíblicos Section -->
+                <!-- Blog Section -->
                 <section id="blog" class="blog-home section" style="background-color: #faf9f6; padding: 70px 0;">
                     <div class="container section-title" data-aos="fade-up">
-                        <h2><%= (sections.Blog && sections.Blog.title) || 'Blog & Estudios Bíblicos' %></h2>
-                        <p><%= (sections.Blog && sections.Blog.subtitle) || 'Reflexiones de fe, estudios bíblicos profundos y raíces hebreas' %></p>
+                        <h2><%= (sections.Blog && sections.Blog.title && sections.Blog.title !== 'Blog & Noticias' && sections.Blog.title !== 'Blog & Estudios Bíblicos') ? sections.Blog.title : 'Blog' %></h2>
+                        <p><%= (sections.Blog && sections.Blog.subtitle) || 'Reflexiones, artículos y novedades de nuestra comunidad' %></p>
                     </div>
                     <div class="container" data-aos="fade-up" data-aos-delay="100">
                         <% if (typeof blogPosts !== 'undefined' && blogPosts && blogPosts.length > 0) { %>
