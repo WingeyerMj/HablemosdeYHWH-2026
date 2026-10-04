@@ -37,8 +37,9 @@ const isStrictAdmin = (req, res, next) => {
 const isAdmin = isStaff;
 
 // Middleware para pasar datos del usuario y página activa a todas las vistas
-router.use((req, res, next) => {
+router.use(async (req, res, next) => {
     res.locals.activePage = ''; // Inicializar siempre
+    res.locals.pendingCommentsCount = 0;
     if (req.session.userId) {
         res.locals.username = req.session.username;
         res.locals.role = req.session.role;
@@ -46,6 +47,7 @@ router.use((req, res, next) => {
         // Determinar activePage basado en la URL
         const path = req.path;
         if (path === '/dashboard') res.locals.activePage = 'dashboard';
+        else if (path.includes('/comentarios')) res.locals.activePage = 'comentarios';
         else if (path.includes('/semillas-articulos')) res.locals.activePage = 'semillas-articulos';
         else if (path.includes('/aliyot')) res.locals.activePage = 'aliyot';
         else if (path.includes('/dynamic-sections')) res.locals.activePage = 'dynamic-sections';
@@ -53,6 +55,13 @@ router.use((req, res, next) => {
         else if (path.includes('/entity/footer_links')) res.locals.activePage = 'footer';
         else if (path.includes('/settings')) res.locals.activePage = 'settings';
         else if (path.includes('/users')) res.locals.activePage = 'users';
+
+        try {
+            const Interaction = require('../models/Interaction');
+            res.locals.pendingCommentsCount = await Interaction.getPendingCount();
+        } catch (e) {
+            res.locals.pendingCommentsCount = 0;
+        }
     }
     next();
 });
@@ -62,6 +71,15 @@ router.post('/login', adminController.login);
 router.get('/logout', adminController.logout);
 
 router.get('/dashboard', isAuthenticated, adminController.dashboard);
+
+// Moderación y Gestión de Comentarios
+router.get('/comentarios', isAuthenticated, adminController.commentsPage);
+router.post('/comentarios/approve/:id', isAuthenticated, adminController.approveComment);
+router.post('/comentarios/unapprove/:id', isAuthenticated, adminController.unapproveComment);
+router.post('/comentarios/reply/:id', isAuthenticated, adminController.replyComment);
+router.post('/comentarios/delete-reply/:id', isAuthenticated, adminController.deleteReply);
+router.post('/comentarios/delete/:id', isAuthenticated, adminController.deleteComment);
+router.get('/comentarios/delete/:id', isAuthenticated, adminController.deleteComment);
 
 // Parashot (Solo Admin)
 router.post('/parashot/create', isAuthenticated, isAdmin, upload.fields([

@@ -391,18 +391,25 @@ router.post('/interactions/comment/:entity_type/:entity_id', async (req, res) =>
         const safeEmail = escapeHTML((user_email || '').trim().substring(0, 100));
         const safeText = escapeHTML(comment_text.trim().substring(0, 2500));
 
+        const isAdminUser = !!(req.session && (req.session.role === 'admin' || req.session.role === 'editor'));
+
         const newComment = await Interaction.addComment({
             entity_type,
             entity_id: id,
-            user_name: safeName || 'Hermano/a en la Fe',
+            user_name: safeName || (isAdminUser ? req.session.username : 'Hermano/a en la Fe'),
             user_email: safeEmail,
-            comment_text: safeText
+            comment_text: safeText,
+            auto_approve: isAdminUser
         });
 
         const totalComments = await Interaction.getCommentsCount(entity_type, id);
 
         return res.json({
             ok: true,
+            pending_approval: !newComment.is_approved,
+            message: newComment.is_approved 
+                ? '¡Comentario publicado exitosamente!' 
+                : '¡Muchas gracias por tu comentario! Ha sido enviado y se publicará en la página tan pronto sea revisado por un administrador.',
             comment: newComment,
             commentsCount: totalComments
         });

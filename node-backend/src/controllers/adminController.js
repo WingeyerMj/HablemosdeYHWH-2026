@@ -2452,6 +2452,143 @@ const adminController = {
             console.error('Error apiTranslateSpanishToHebrew:', e);
             res.status(500).json({ success: false, error: e.message });
         }
+    },
+
+    // ==================== MODERACIÓN Y GESTIÓN DE COMENTARIOS ====================
+    commentsPage: async (req, res) => {
+        try {
+            const Interaction = require('../models/Interaction');
+            const filter = req.query.filter || 'pending';
+            const entity_type = req.query.entity_type || 'all';
+            const search = req.query.search || '';
+
+            const stats = await Interaction.getStats();
+            const comments = await Interaction.getAllComments({
+                filter,
+                entity_type,
+                search,
+                limit: 200
+            });
+
+            res.render('admin/comments', {
+                comments,
+                stats,
+                currentFilter: filter,
+                currentEntity: entity_type,
+                search,
+                activePage: 'comentarios',
+                username: req.session.username,
+                role: req.session.role,
+                pendingCommentsCount: stats.pending,
+                msg: req.query.msg || null,
+                error: req.query.error || null
+            });
+        } catch (error) {
+            console.error('Error commentsPage:', error);
+            res.redirect('/admin/dashboard');
+        }
+    },
+
+    approveComment: async (req, res) => {
+        try {
+            const Interaction = require('../models/Interaction');
+            const id = parseInt(req.params.id);
+            await Interaction.approveComment(id);
+
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.json({ success: true, message: 'Comentario aprobado exitosamente.' });
+            }
+            res.redirect('/admin/comentarios?msg=approved');
+        } catch (error) {
+            console.error('Error approveComment:', error);
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.status(500).json({ success: false, error: error.message });
+            }
+            res.redirect('/admin/comentarios?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    unapproveComment: async (req, res) => {
+        try {
+            const Interaction = require('../models/Interaction');
+            const id = parseInt(req.params.id);
+            await Interaction.unapproveComment(id);
+
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.json({ success: true, message: 'Comentario pausado / desaprobado.' });
+            }
+            res.redirect('/admin/comentarios?msg=unapproved');
+        } catch (error) {
+            console.error('Error unapproveComment:', error);
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.status(500).json({ success: false, error: error.message });
+            }
+            res.redirect('/admin/comentarios?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    replyComment: async (req, res) => {
+        try {
+            const Interaction = require('../models/Interaction');
+            const id = parseInt(req.params.id);
+            const { admin_reply } = req.body;
+            const adminName = req.session.username || 'Administración';
+
+            if (!admin_reply || !admin_reply.trim()) {
+                throw new Error('La respuesta no puede estar vacía.');
+            }
+
+            await Interaction.replyComment(id, admin_reply.trim(), adminName);
+
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.json({ success: true, message: 'Respuesta guardada y publicada exitosamente.' });
+            }
+            res.redirect('/admin/comentarios?msg=replied');
+        } catch (error) {
+            console.error('Error replyComment:', error);
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.status(500).json({ success: false, error: error.message });
+            }
+            res.redirect('/admin/comentarios?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    deleteReply: async (req, res) => {
+        try {
+            const Interaction = require('../models/Interaction');
+            const id = parseInt(req.params.id);
+            await Interaction.deleteReply(id);
+
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.json({ success: true, message: 'Respuesta eliminada.' });
+            }
+            res.redirect('/admin/comentarios?msg=reply_deleted');
+        } catch (error) {
+            console.error('Error deleteReply:', error);
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.status(500).json({ success: false, error: error.message });
+            }
+            res.redirect('/admin/comentarios?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    deleteComment: async (req, res) => {
+        try {
+            const Interaction = require('../models/Interaction');
+            const id = parseInt(req.params.id);
+            await Interaction.deleteComment(id);
+
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.json({ success: true, message: 'Comentario eliminado permanentemente.' });
+            }
+            res.redirect('/admin/comentarios?msg=deleted');
+        } catch (error) {
+            console.error('Error deleteComment:', error);
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.status(500).json({ success: false, error: error.message });
+            }
+            res.redirect('/admin/comentarios?error=' + encodeURIComponent(error.message));
+        }
     }
 };
 
