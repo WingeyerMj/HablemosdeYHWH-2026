@@ -81,8 +81,10 @@ conn.on('ready', () => {
         npm install &&
         echo "=== Ejecutando migraciones de base de datos ===" &&
         node src/scripts/migrate_aliyot.js &&
+        node src/scripts/migrate_noticias.js &&
         node src/scripts/update_about_content.js &&
         node src/scripts/delete_default_users.js &&
+        node -e "require('./src/models/Noticia').ensureTable().then(() => console.log('✅ Noticia table verified')).catch(e => console.error(e))" &&
         node -e "require('./src/models/SemillasShort').ensureTable().then(() => console.log('✅ SemillasShort table verified')).catch(e => console.error(e))" &&
         node -e "require('./src/models/SemillasArticulo').ensureTable().then(() => console.log('✅ SemillasArticulo table verified')).catch(e => console.error(e))" &&
         node -e "require('./src/models/Portfolio').ensureColumns().then(() => console.log('✅ Portfolio columns verified')).catch(e => console.error(e))" &&

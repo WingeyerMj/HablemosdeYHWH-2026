@@ -136,6 +136,18 @@ router.post('/semillas-articulos/update', isAuthenticated, upload.any(), adminCo
 router.get('/semillas-articulos/toggle/:id', isAuthenticated, adminController.toggleSemillasArticulo);
 router.get('/semillas-articulos/delete/:id', isAuthenticated, adminController.deleteSemillasArticulo);
 
+// Noticias & Acontecimientos Mundiales - Admin y Editor
+router.post('/noticias/create', isAuthenticated, upload.single('image_file'), adminController.createNoticia);
+router.get('/noticias/edit/:id', isAuthenticated, adminController.editNoticiaPage);
+router.post('/noticias/update', isAuthenticated, upload.single('image_file'), adminController.updateNoticia);
+router.get('/noticias/delete/:id', isAuthenticated, adminController.deleteNoticia);
+
+// Shorts de Noticias (Videos Rápidos)
+router.post('/noticias-shorts/create', isAuthenticated, upload.any(), adminController.createNoticiaShort);
+router.get('/noticias-shorts/edit/:id', isAuthenticated, adminController.editNoticiaShortPage);
+router.post('/noticias-shorts/update', isAuthenticated, upload.any(), adminController.updateNoticiaShort);
+router.get('/noticias-shorts/delete/:id', isAuthenticated, adminController.deleteNoticiaShort);
+
 // Blog / Artículos - Admin y Editor
 router.post('/blog/create', isAuthenticated, upload.single('image_file'), adminController.createBlogPost);
 router.get('/blog/edit/:id', isAuthenticated, adminController.editBlogPostPage);

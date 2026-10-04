@@ -648,6 +648,189 @@
     </div>
 </div>
 
+<!-- MODAL: NUEVA NOTICIA MUNDIAL -->
+<div class="modal fade" id="createNoticiaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title"><i class="bi bi-globe-americas me-2 text-warning"></i>Nueva Noticia / Acontecimiento Mundial</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/noticias/create" method="POST" enctype="multipart/form-data" id="createNoticiaForm">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Título de la Noticia</label>
+                            <input type="text" name="title" class="form-control" required placeholder="Ej: Avances y acontecimientos en Jerusalén">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-white-50">Categoría</label>
+                            <select name="category" class="form-select" id="create_noticia_category" onchange="if(this.value==='__custom__'){this.style.display='none';document.getElementById('create_noticia_cat_wrap').style.display='flex';}">
+                                <option value="Mundial">Mundial</option>
+                                <option value="Israel & Medio Oriente">Israel & Medio Oriente</option>
+                                <option value="Profecía & Actualidad">Profecía & Actualidad</option>
+                                <option value="Arqueología Bíblica">Arqueología Bíblica</option>
+                                <option value="Comunidad">Comunidad</option>
+                                <% if (typeof noticiasCategories !== 'undefined' && noticiasCategories.length > 0) { %>
+                                    <% noticiasCategories.forEach(cat => { %>
+                                        <% if (!['Mundial','Israel & Medio Oriente','Profecía & Actualidad','Arqueología Bíblica','Comunidad'].includes(cat.category)) { %>
+                                            <option value="<%= cat.category %>"><%= cat.category %></option>
+                                        <% } %>
+                                    <% }) %>
+                                <% } %>
+                                <option value="__custom__">+ Nueva categoría...</option>
+                            </select>
+                            <div id="create_noticia_cat_wrap" style="display:none;" class="input-group mt-1">
+                                <input type="text" id="create_noticia_cat_custom" class="form-control" placeholder="Nombre de categoría">
+                                <button type="button" class="btn btn-outline-light btn-sm" onclick="var inp=document.getElementById('create_noticia_cat_custom');var sel=document.getElementById('create_noticia_category');if(inp.value.trim()){var opt=document.createElement('option');opt.value=inp.value.trim();opt.textContent=inp.value.trim();sel.insertBefore(opt,sel.querySelector('[value=__custom__]'));sel.value=inp.value.trim();inp.value='';this.parentNode.style.display='none';sel.style.display='';}">✓</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="this.parentNode.style.display='none';document.getElementById('create_noticia_category').style.display='';">✕</button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-white-50">Autor / Redacción</label>
+                            <input type="text" name="author" class="form-control" value="Redacción YHWH">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subtítulo / Bajada informativa</label>
+                            <input type="text" name="subtitle" class="form-control" placeholder="Frase corta del suceso...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-white-50">Enlace a Fuente Original (Opcional)</label>
+                            <input type="url" name="source_url" class="form-control" placeholder="https://...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-white-50">Etiquetas / Tags</label>
+                            <input type="text" name="tags" class="form-control" placeholder="Ej: Israel, Medio Oriente, Geopolítica">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label small text-white-50">Resumen Breve (Noticia corta para tarjeta rápida)</label>
+                            <textarea name="summary" class="form-control" rows="2" placeholder="Resumen directo del acontecimiento..."></textarea>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Subir Imagen</label>
+                            <input type="file" id="create_noticia_image_file" name="image_file" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">O URL de Imagen</label>
+                            <input type="text" id="create_noticia_image_url" name="image_url" class="form-control" placeholder="https://...">
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="border border-secondary rounded overflow-hidden d-flex align-items-center justify-content-center" style="height:100px;background:rgba(0,0,0,0.2);">
+                                <img id="createNoticiaImgPreview" src="/assets/img/blog/blog-1.jpg" style="max-width:100%;max-height:100%;object-fit:contain;">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small text-white-50">Contenido Extendido / Análisis (Opcional si es artículo breve)</label>
+                            <div id="noticia-create-editor-container" style="height:220px;background:white;color:black;border-radius:5px;"></div>
+                            <input type="hidden" name="content" id="createNoticiaContentInput">
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="is_breaking" value="1" id="create_breaking">
+                                <label class="form-check-label text-warning fw-bold" for="create_breaking"><i class="bi bi-lightning-fill me-1"></i> Noticia Urgente / Último Momento</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="is_published" value="1" id="create_published_noticia" checked>
+                                <label class="form-check-label text-white" for="create_published_noticia">Publicar inmediatamente</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success px-4"><i class="bi bi-check-lg me-1"></i>Publicar Noticia</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: NUEVO SHORT DE NOTICIAS -->
+<div class="modal fade" id="createNoticiaShortModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title"><i class="bi bi-camera-reels me-2 text-info"></i>Nuevo Short de Noticias / Video Rápido</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/noticias-shorts/create" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label small text-white-50">Título del Short</label>
+                            <input type="text" name="title" class="form-control" required placeholder="Ej: Señales astronómicas y los tiempos señalados">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Categoría</label>
+                            <input type="text" name="category" class="form-control" value="Actualidad" placeholder="Ej: Actualidad, Profecía">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Enlace a YouTube Short</label>
+                            <input type="url" name="youtube_short_url" class="form-control" placeholder="https://www.youtube.com/shorts/...">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">O Enlace a YouTube Video</label>
+                            <input type="url" name="youtube_url" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Miniatura (Subir imagen)</label>
+                            <input type="file" name="thumbnail_file" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">O URL de Miniatura</label>
+                            <input type="text" name="thumbnail_url" class="form-control" placeholder="https://...">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Subir Video MP4 (Opcional)</label>
+                            <input type="file" name="video_file" class="form-control" accept="video/mp4,video/webm">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">O URL directa de Video MP4</label>
+                            <input type="text" name="video_url" class="form-control" placeholder="https://...">
+                        </div>
+
+                        <div class="col-md-8">
+                            <label class="form-label small text-white-50">Descripción Breve</label>
+                            <textarea name="description" class="form-control" rows="2" placeholder="Cápsula explicativa..."></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-white-50">Fuente / Crédito</label>
+                            <input type="text" name="source_name" class="form-control" value="Hablemos de YHWH">
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="is_highlight" value="1" id="short_create_highlight">
+                                <label class="form-check-label text-warning fw-bold" for="short_create_highlight">⭐ Destacar en primera posición</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="is_published" value="1" id="short_create_published" checked>
+                                <label class="form-check-label text-white" for="short_create_published">Publicado</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-info px-4 fw-bold"><i class="bi bi-check-lg me-1"></i>Guardar Short</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- MODAL: NUEVA PUBLICACIÓN DE BLOG -->
 <div class="modal fade" id="createBlogModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -1501,6 +1684,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const qHafEdit = initSafeQuill('haftara-edit-editor-container', qCfg);
     const qBlogCreate = initSafeQuill('blog-create-editor-container', qCfg);
     const qBlogEdit = initSafeQuill('blog-edit-editor-container', qCfg);
+    const qNoticiaCreate = initSafeQuill('noticia-create-editor-container', qCfg);
     const qDynCreate = initSafeQuill('dyn-create-editor-container', qCfg);
     const qDynEdit = initSafeQuill('dyn-edit-editor-container', qCfg);
 
@@ -1526,6 +1710,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupPreview('edit_haf_image_url','edit_haf_image_file','editHafImgPreview');
     setupPreview('create_blog_image_url','create_blog_image_file','createBlogImgPreview');
     setupPreview('edit_blog_image_url','edit_blog_image_file','editBlogImgPreview');
+    setupPreview('create_noticia_image_url','create_noticia_image_file','createNoticiaImgPreview');
     setupPreview('dyn_create_image_url','dyn_create_image_file','dynCreateImgPreview');
     setupPreview('dyn_edit_image_url','dyn_edit_image_file','dynEditImgPreview');
 
@@ -1940,6 +2125,12 @@ const sederTitleEl = document.getElementById('edit_port_seder_title');
         serializeAuthors('edit-haf-authors-container', 'edit_haf_authors_json');
         const inp = document.getElementById('editHaftaraContentInput');
         if (inp && qHafEdit) inp.value = qHafEdit.root.innerHTML;
+        return true;
+    };
+    const cNoticiaForm = document.getElementById('createNoticiaForm');
+    if (cNoticiaForm) cNoticiaForm.onsubmit = function() {
+        const inp = document.getElementById('createNoticiaContentInput');
+        if (inp && qNoticiaCreate) inp.value = qNoticiaCreate.root.innerHTML;
         return true;
     };
     const cBlogForm = document.getElementById('createBlogForm');

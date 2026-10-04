@@ -38,11 +38,12 @@ const adminController = {
             const Portfolio = require('../models/Portfolio');
             const Ensenanza = require('../models/Ensenanza');
             const BlogPost = require('../models/BlogPost');
+            const Noticia = require('../models/Noticia');
             const Team = require('../models/Team');
             const Testimonial = require('../models/Testimonial');
             const Pricing = require('../models/Pricing');
 
-            let parashot = [], portfolio = [], ensenanzas = [], haftarot = [], blogs = [], team = [], testimonials = [], pricing = [], sections = [], semillas = [], semillasShorts = [], subscribers = [];
+            let parashot = [], portfolio = [], ensenanzas = [], haftarot = [], blogs = [], noticias = [], noticiasShorts = [], team = [], testimonials = [], pricing = [], sections = [], semillas = [], semillasShorts = [], subscribers = [];
             
             try {
                 parashot = await Parasha.getAll();
@@ -53,6 +54,8 @@ const adminController = {
                     haftarot = await Haftara.getAll(); 
                 } catch(e) { haftarot = []; }
                 try { blogs = await BlogPost.getAll(); } catch(e) { blogs = []; }
+                try { noticias = await Noticia.getAll(); } catch(e) { noticias = []; }
+                try { noticiasShorts = await Noticia.getAllShorts(); } catch(e) { noticiasShorts = []; }
                 try { 
                     const SemillasTorah = require('../models/SemillasTorah');
                     semillas = await SemillasTorah.getAll(); 
@@ -74,7 +77,7 @@ const adminController = {
                 } catch(e) {
                     subscribers = [];
                 }
-                const sectionNames = ['hero', 'calendario', 'about', 'parashot', 'eventos', 'ensenanzas', 'blog', 'equipo', 'footer'];
+                const sectionNames = ['hero', 'noticias', 'calendario', 'about', 'parashot', 'eventos', 'ensenanzas', 'blog', 'equipo', 'footer'];
                 for (const name of sectionNames) {
                     try {
                         const [rows] = await db.query(`SELECT * FROM home_section_${name} LIMIT 1`);
@@ -118,6 +121,11 @@ const adminController = {
                 blogCategories = await BlogPost.getCategories();
             } catch(e) {}
 
+            let noticiasCategories = [];
+            try {
+                noticiasCategories = await Noticia.getCategories();
+            } catch(e) {}
+
             let semillasCategories = [];
             try {
                 const SemillasTorah = require('../models/SemillasTorah');
@@ -131,6 +139,8 @@ const adminController = {
                 ensenanzas,
                 haftarot,
                 blogs,
+                noticias,
+                noticiasShorts,
                 semillas,
                 semillasShorts: typeof semillasShorts !== 'undefined' ? semillasShorts : [],
                 semillasArticulos: typeof semillasArticulos !== 'undefined' ? semillasArticulos : [],
@@ -141,6 +151,7 @@ const adminController = {
                 dashboardDynamicSections,
                 eventCategories,
                 blogCategories,
+                noticiasCategories,
                 semillasCategories,
                 subscribers: typeof subscribers !== 'undefined' ? subscribers : []
             });
@@ -1344,6 +1355,203 @@ const adminController = {
         } catch (error) {
             console.error('Error deleteBlogPost:', error);
             res.redirect('/admin/dashboard#pills-blog');
+        }
+    },
+
+    // ==================== NOTICIAS MUNDIALES & ACONTECIMIENTOS ====================
+    createNoticia: async (req, res) => {
+        try {
+            let { title, subtitle, category, author, summary, content, source_url, tags, is_breaking, is_published, image_url } = req.body;
+            if (req.file) {
+                image_url = '/uploads/blog/' + req.file.filename;
+            }
+            
+            const Noticia = require('../models/Noticia');
+            await Noticia.create({
+                title,
+                subtitle: subtitle || '',
+                category: category || 'Mundial',
+                author: author || 'Redacción YHWH',
+                summary: summary || '',
+                content: content || '',
+                source_url: source_url || '',
+                tags: tags || '',
+                is_breaking: is_breaking === '1' || is_breaking === 'true' || is_breaking === true,
+                is_published: is_published !== '0' && is_published !== false,
+                image_url: image_url || ''
+            });
+
+            // Notificación a suscriptores
+            try {
+                const NotificationService = require('../utils/notificationService');
+                NotificationService.notifySubscribers({
+                    type: 'noticias',
+                    title: `[NOTICIA] ${title}`,
+                    subtitle: subtitle || '',
+                    link: '/noticias',
+                    description: summary || '',
+                    image_url: image_url || '',
+                    author: author || 'Redacción YHWH'
+                }).catch(e => console.warn('Aviso en notificación Noticia:', e.message));
+            } catch(e) {}
+
+            res.redirect('/admin/dashboard#pills-noticias');
+        } catch (error) {
+            console.error('Error createNoticia:', error);
+            res.redirect('/admin/dashboard#pills-noticias');
+        }
+    },
+
+    editNoticiaPage: async (req, res) => {
+        try {
+            const Noticia = require('../models/Noticia');
+            const item = await Noticia.getById(req.params.id);
+            if (!item) return res.redirect('/admin/dashboard#pills-noticias');
+            
+            let noticiasCategories = [];
+            try {
+                noticiasCategories = await Noticia.getCategories();
+            } catch(e) {}
+
+            res.render('admin/edit_noticia', { layout: 'admin/layout', item, noticiasCategories });
+        } catch (error) {
+            console.error('Error editNoticiaPage:', error);
+            res.redirect('/admin/dashboard#pills-noticias');
+        }
+    },
+
+    updateNoticia: async (req, res) => {
+        try {
+            let { id, title, subtitle, category, author, summary, content, source_url, tags, is_breaking, is_published, image_url } = req.body;
+            if (req.file) {
+                image_url = '/uploads/blog/' + req.file.filename;
+            }
+            
+            const Noticia = require('../models/Noticia');
+            await Noticia.update(id, {
+                title,
+                subtitle: subtitle || '',
+                category: category || 'Mundial',
+                author: author || 'Redacción YHWH',
+                summary: summary || '',
+                content: content || '',
+                source_url: source_url || '',
+                tags: tags || '',
+                is_breaking: is_breaking === '1' || is_breaking === 'true' || is_breaking === true,
+                is_published: is_published !== '0' && is_published !== false,
+                image_url: image_url || ''
+            });
+
+            res.redirect('/admin/dashboard#pills-noticias');
+        } catch (error) {
+            console.error('Error updateNoticia:', error);
+            res.redirect('/admin/dashboard#pills-noticias');
+        }
+    },
+
+    deleteNoticia: async (req, res) => {
+        try {
+            const Noticia = require('../models/Noticia');
+            await Noticia.delete(req.params.id);
+            res.redirect('/admin/dashboard#pills-noticias');
+        } catch (error) {
+            console.error('Error deleteNoticia:', error);
+            res.redirect('/admin/dashboard#pills-noticias');
+        }
+    },
+
+    // ==================== SHORTS DE NOTICIAS ====================
+    createNoticiaShort: async (req, res) => {
+        try {
+            let { title, category, video_url, youtube_short_url, youtube_url, thumbnail_url, description, source_name, is_highlight, is_published } = req.body;
+            
+            if (req.files && req.files.length > 0) {
+                for (const f of req.files) {
+                    if (f.fieldname === 'thumbnail_file') {
+                        thumbnail_url = '/uploads/blog/' + f.filename;
+                    } else if (f.fieldname === 'video_file') {
+                        video_url = '/uploads/videos/' + f.filename;
+                    }
+                }
+            }
+
+            const Noticia = require('../models/Noticia');
+            await Noticia.createShort({
+                title,
+                category: category || 'Actualidad',
+                video_url: video_url || null,
+                youtube_short_url: youtube_short_url || null,
+                youtube_url: youtube_url || null,
+                thumbnail_url: thumbnail_url || null,
+                description: description || null,
+                source_name: source_name || 'Hablemos de YHWH',
+                is_highlight: is_highlight === '1' || is_highlight === 'true' || is_highlight === true,
+                is_published: is_published !== '0' && is_published !== false
+            });
+
+            res.redirect('/admin/dashboard#pills-noticias-shorts');
+        } catch (error) {
+            console.error('Error createNoticiaShort:', error);
+            res.redirect('/admin/dashboard#pills-noticias-shorts');
+        }
+    },
+
+    editNoticiaShortPage: async (req, res) => {
+        try {
+            const Noticia = require('../models/Noticia');
+            const item = await Noticia.getShortById(req.params.id);
+            if (!item) return res.redirect('/admin/dashboard#pills-noticias-shorts');
+
+            res.render('admin/edit_noticia_short', { layout: 'admin/layout', item });
+        } catch (error) {
+            console.error('Error editNoticiaShortPage:', error);
+            res.redirect('/admin/dashboard#pills-noticias-shorts');
+        }
+    },
+
+    updateNoticiaShort: async (req, res) => {
+        try {
+            let { id, title, category, video_url, youtube_short_url, youtube_url, thumbnail_url, description, source_name, is_highlight, is_published } = req.body;
+            
+            if (req.files && req.files.length > 0) {
+                for (const f of req.files) {
+                    if (f.fieldname === 'thumbnail_file') {
+                        thumbnail_url = '/uploads/blog/' + f.filename;
+                    } else if (f.fieldname === 'video_file') {
+                        video_url = '/uploads/videos/' + f.filename;
+                    }
+                }
+            }
+
+            const Noticia = require('../models/Noticia');
+            await Noticia.updateShort(id, {
+                title,
+                category: category || 'Actualidad',
+                video_url: video_url || null,
+                youtube_short_url: youtube_short_url || null,
+                youtube_url: youtube_url || null,
+                thumbnail_url: thumbnail_url || null,
+                description: description || null,
+                source_name: source_name || 'Hablemos de YHWH',
+                is_highlight: is_highlight === '1' || is_highlight === 'true' || is_highlight === true,
+                is_published: is_published !== '0' && is_published !== false
+            });
+
+            res.redirect('/admin/dashboard#pills-noticias-shorts');
+        } catch (error) {
+            console.error('Error updateNoticiaShort:', error);
+            res.redirect('/admin/dashboard#pills-noticias-shorts');
+        }
+    },
+
+    deleteNoticiaShort: async (req, res) => {
+        try {
+            const Noticia = require('../models/Noticia');
+            await Noticia.deleteShort(req.params.id);
+            res.redirect('/admin/dashboard#pills-noticias-shorts');
+        } catch (error) {
+            console.error('Error deleteNoticiaShort:', error);
+            res.redirect('/admin/dashboard#pills-noticias-shorts');
         }
     },
 

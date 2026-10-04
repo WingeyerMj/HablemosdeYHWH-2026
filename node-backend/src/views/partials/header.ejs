@@ -41,12 +41,15 @@
                     </ul>
                 </li>
 
+                <li><a href="/noticias" class="<%= typeof page !== 'undefined' && page === 'noticias' ? 'active' : '' %>"><i class="bi bi-globe-americas"></i>
+                        Noticias</a></li>
+
                 <li><a href="/blog" class="<%= typeof page !== 'undefined' && page === 'blog' ? 'active' : '' %>"><i class="bi bi-newspaper"></i>
                         Blog</a></li>
 
                 <% if (typeof navbarDynamicSections !=='undefined' && navbarDynamicSections.length> 0) { %>
                     <% 
-                        const excludedSlugs = ['hero', 'calendario', 'about', 'identidad', 'ensenanzas', 'blog', 'parashot', 'contact', 'contacto', 'inicio', 'home', 'semillas', 'semillas-de-torah'];
+                        const excludedSlugs = ['hero', 'noticias', 'calendario', 'about', 'identidad', 'ensenanzas', 'blog', 'parashot', 'contact', 'contacto', 'inicio', 'home', 'semillas', 'semillas-de-torah'];
                     %>
                     <% navbarDynamicSections.forEach(ds=> { %>
                         <% 

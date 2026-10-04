@@ -3,6 +3,7 @@ const Portfolio = require('../models/Portfolio');
 const Ensenanza = require('../models/Ensenanza');
 const Haftara = require('../models/Haftara');
 const BlogPost = require('../models/BlogPost');
+const Noticia = require('../models/Noticia');
 const Team = require('../models/Team');
 const Testimonial = require('../models/Testimonial');
 const Pricing = require('../models/Pricing');
@@ -15,12 +16,12 @@ const db = require('../config/db');
 const homeController = {
     index: async (req, res, next) => {
         try {
-            let allDynamicSections = [], latestParashot = [], portfolio = [], latestEnsenanzas = [], latestHaftarot = [], latestBlogPosts = [], team = [], testimonials = [], pricingRaw = [], siteSettings = {}, eventCategories = [], semillasShorts = [];
+            let allDynamicSections = [], latestParashot = [], portfolio = [], latestEnsenanzas = [], latestHaftarot = [], latestBlogPosts = [], latestNoticias = [], noticiasShorts = [], team = [], testimonials = [], pricingRaw = [], siteSettings = {}, eventCategories = [], semillasShorts = [];
             const sectionsObj = {};
 
             try {
                 // 1. Cargar Secciones Base desde tablas individuales
-                const sectionNames = ['hero', 'calendario', 'about', 'parashot', 'eventos', 'ensenanzas', 'blog', 'equipo', 'footer'];
+                const sectionNames = ['hero', 'noticias', 'calendario', 'about', 'parashot', 'eventos', 'ensenanzas', 'blog', 'equipo', 'footer'];
                 for (const name of sectionNames) {
                     try {
                         const tableName = `home_section_${name}`;
@@ -45,6 +46,8 @@ const homeController = {
                 try { latestEnsenanzas = await Ensenanza.getLatest(4); } catch(e) { latestEnsenanzas = []; }
                 try { latestHaftarot = await Haftara.getLatest(4); } catch(e) { latestHaftarot = []; }
                 try { latestBlogPosts = await BlogPost.getLatest(3); } catch(e) { latestBlogPosts = []; }
+                try { latestNoticias = await Noticia.getLatest(4); } catch(e) { latestNoticias = []; }
+                try { noticiasShorts = await Noticia.getPublishedShorts(8); } catch(e) { noticiasShorts = []; }
                 try { semillasShorts = await SemillasShort.getPublished(); } catch(e) { semillasShorts = []; }
                 eventCategories = await Portfolio.getCategories();
                 team = await Team.getAll();
@@ -57,7 +60,7 @@ const homeController = {
 
             // 3. Procesar secciones dinámicas y cargar sus datos
             const dynamicInline = [];
-            const baseSlugs = ['hero', 'about', 'calendario', 'parashot', 'eventos', 'ensenanzas', 'blog', 'equipo', 'footer'];
+            const baseSlugs = ['hero', 'noticias', 'about', 'calendario', 'parashot', 'eventos', 'ensenanzas', 'blog', 'equipo', 'footer'];
 
             for (const ds of allDynamicSections) {
                 if (ds.is_active) {
@@ -104,6 +107,8 @@ const homeController = {
                 ensenanzas: latestEnsenanzas,
                 haftarot: latestHaftarot,
                 blogPosts: latestBlogPosts,
+                noticias: latestNoticias,
+                noticiasShorts: noticiasShorts,
                 semillasShorts: semillasShorts,
                 eventCategories: eventCategories,
                 team: team,
@@ -129,7 +134,7 @@ const homeController = {
             const recentPosts = await BlogPost.getLatest(4);
             
             res.render('blog', {
-                title: 'Blog & Noticias - Hablemos de YHWH',
+                title: 'Blog & Reflexiones de Fe - Hablemos de YHWH',
                 page: 'blog',
                 posts,
                 categories,
@@ -520,6 +525,60 @@ const homeController = {
                 page: 'semillas',
                 item,
                 otherArticulos,
+                layout: false
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    noticias: async (req, res, next) => {
+        try {
+            const { category, q } = req.query;
+            const newsList = await Noticia.getPublished({ category, search: q, limit: 12 });
+            const categories = await Noticia.getCategories();
+            const totalCount = await Noticia.countPublished({ category, search: q });
+            const recentNews = await Noticia.getLatest(4);
+            const shorts = await Noticia.getPublishedShorts(12);
+            
+            res.render('noticias', {
+                title: 'Noticias & Acontecimientos Mundiales - Hablemos de YHWH',
+                page: 'noticias',
+                newsList,
+                categories,
+                totalCount,
+                recentNews,
+                shorts,
+                activeCategory: category || 'all',
+                searchQuery: q || '',
+                layout: false
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    noticiaDetail: async (req, res, next) => {
+        try {
+            const item = await Noticia.getById(req.params.id);
+            if (!item) return next();
+            
+            try { 
+                await Noticia.incrementViews(item.id); 
+                item.views = (item.views || 0) + 1;
+            } catch(e) {}
+            
+            const relatedNews = await Noticia.getRelated(item.id, item.category, 3);
+            const categories = await Noticia.getCategories();
+            const shorts = await Noticia.getPublishedShorts(6);
+
+            res.render('noticia_detail', {
+                title: item.title + ' - Noticias Hablemos de YHWH',
+                page: 'noticias',
+                item,
+                relatedNews,
+                categories,
+                shorts,
                 layout: false
             });
         } catch (error) {

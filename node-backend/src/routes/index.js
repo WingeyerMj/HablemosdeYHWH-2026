@@ -5,6 +5,8 @@ const DynamicSection = require('../models/DynamicSection');
 const FooterModel = require('../models/FooterModel');
 
 router.get('/', homeController.index);
+router.get('/noticias', homeController.noticias);
+router.get('/noticias/:id', homeController.noticiaDetail);
 router.get('/blog', homeController.blog);
 router.get('/blog/:id', homeController.blogDetail);
 router.get('/calendar', homeController.calendar);
