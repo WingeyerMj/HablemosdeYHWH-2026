@@ -764,39 +764,53 @@
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-md-8">
-                            <label class="form-label small text-white-50">Título del Short</label>
+                            <label class="form-label small text-white-50">Título del Short / Video</label>
                             <input type="text" name="title" class="form-control" required placeholder="Ej: Señales astronómicas y los tiempos señalados">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small text-white-50">Categoría</label>
-                            <input type="text" name="category" class="form-control" value="Actualidad" placeholder="Ej: Actualidad, Profecía">
+                            <input type="text" name="category" class="form-control" value="Actualidad" placeholder="Ej: Actualidad, Profecía, Israel">
                         </div>
 
-                        <div class="col-md-6">
-                            <label class="form-label small text-white-50">Enlace a YouTube Short</label>
-                            <input type="url" name="youtube_short_url" class="form-control" placeholder="https://www.youtube.com/shorts/...">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small text-white-50">O Enlace a YouTube Video</label>
-                            <input type="url" name="youtube_url" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                        <!-- ENLACE MULTI-PLATAFORMA -->
+                        <div class="col-12">
+                            <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,168,83,0.35);">
+                                <label class="form-label fw-bold text-warning d-flex align-items-center justify-content-between flex-wrap gap-1">
+                                    <span><i class="bi bi-link-45deg me-1 fs-5"></i> Enlace del Video o Short (Multi-Plataforma)</span>
+                                    <div class="d-flex gap-1 flex-wrap" style="font-size: 0.78rem;">
+                                        <span class="badge bg-danger"><i class="bi bi-youtube me-1"></i>YouTube</span>
+                                        <span class="badge bg-dark border text-white"><i class="bi bi-tiktok me-1"></i>TikTok</span>
+                                        <span class="badge" style="background: #E1306C;"><i class="bi bi-instagram me-1"></i>Instagram</span>
+                                        <span class="badge bg-primary"><i class="bi bi-facebook me-1"></i>Facebook</span>
+                                        <span class="badge bg-info text-dark"><i class="bi bi-vimeo me-1"></i>Vimeo</span>
+                                    </div>
+                                </label>
+                                <input type="text" name="youtube_short_url" class="form-control form-control-lg" 
+                                       placeholder="Pega el enlace de YouTube Short, TikTok, Instagram Reel, Facebook, Vimeo o MP4...">
+                                <small class="text-white-50 mt-1 d-block">
+                                    Soporta cualquier plataforma: <code>youtube.com/shorts/...</code>, <code>tiktok.com/@.../video/...</code>, <code>instagram.com/reel/...</code>, <code>fb.watch/...</code>, o links directos.
+                                </small>
+                            </div>
                         </div>
 
+                        <!-- SUBIDA DE ARCHIVO DIRECTO (OPCIONAL) -->
                         <div class="col-md-6">
-                            <label class="form-label small text-white-50">Miniatura (Subir imagen)</label>
+                            <label class="form-label small text-white-50">O Subir Archivo de Video MP4/WebM desde tu PC</label>
+                            <input type="file" name="video_file" class="form-control" accept="video/mp4,video/webm,video/quicktime">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">O URL de Video MP4 Directo</label>
+                            <input type="text" name="video_url" class="form-control" placeholder="https://dominio.com/video.mp4">
+                        </div>
+
+                        <!-- MINIATURA -->
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Miniatura (Subir imagen 9:16 o cuadrada)</label>
                             <input type="file" name="thumbnail_file" class="form-control" accept="image/*">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small text-white-50">O URL de Miniatura</label>
                             <input type="text" name="thumbnail_url" class="form-control" placeholder="https://...">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label small text-white-50">Subir Video MP4 (Opcional)</label>
-                            <input type="file" name="video_file" class="form-control" accept="video/mp4,video/webm">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small text-white-50">O URL directa de Video MP4</label>
-                            <input type="text" name="video_url" class="form-control" placeholder="https://...">
                         </div>
 
                         <div class="col-md-8">
