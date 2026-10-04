@@ -1516,7 +1516,7 @@ const adminController = {
             if (req.files && req.files.length > 0) {
                 for (const f of req.files) {
                     if (f.fieldname === 'thumbnail_file') {
-                        thumbnail_url = '/uploads/blog/' + f.filename;
+                        thumbnail_url = '/uploads/noticias/' + f.filename;
                     } else if (f.fieldname === 'video_file') {
                         video_url = '/uploads/videos/' + f.filename;
                     }
