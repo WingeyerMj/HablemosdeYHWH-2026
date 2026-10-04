@@ -85,7 +85,7 @@
                                              onclick="openNoticiaShortModal('<%= s.title.replace(/'/g, "\\'") %>', '<%= videoLink %>', '<%= isDirectVideo %>')"
                                              onmouseover="this.style.transform='translateY(-6px)'; this.style.borderColor='#d4a853';"
                                              onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(212,168,83,0.35)';">
-                                            <img src="<%= s.thumbnail_url || '/assets/img/blog/blog-1.jpg' %>" alt="<%= s.title %>" class="w-100 h-100 object-fit-cover" style="filter: brightness(0.82);">
+                                            <img src="<%= s.thumbnail_url || '/assets/img/blog/blog-1.jpg' %>" alt="<%= s.title %>" class="w-100 h-100 object-fit-cover" style="filter: brightness(0.82);" onerror="this.onerror=null; this.src='/assets/img/blog/blog-1.jpg';">
                                             
                                             <div class="position-absolute top-0 start-0 m-2">
                                                 <span class="badge px-2 py-1 rounded-pill" style="background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); font-size: 0.65rem; color: #f5cf7c; border: 1px solid rgba(212,168,83,0.3);">
@@ -120,6 +120,7 @@
                                                 <a href="/noticias/<%= item.id %>" class="d-block w-100 h-100">
                                                     <% if (item.image_url && item.image_url.trim() !== '') { %>
                                                         <img src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;"
+                                                             onerror="this.onerror=null; this.src='/assets/img/blog/blog-1.jpg';"
                                                              onmouseover="this.style.transform='scale(1.08)'"
                                                              onmouseout="this.style.transform='scale(1)'">
                                                     <% } else { %>

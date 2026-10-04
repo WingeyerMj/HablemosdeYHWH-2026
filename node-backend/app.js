@@ -41,6 +41,34 @@ app.set('views', path.join(__dirname, 'src/views'));
 
 // Middlewares
 app.use(expressLayouts);
+const fs = require('fs');
+app.use('/uploads', (req, res, next) => {
+    const filename = path.basename(req.path);
+    const subfolders = ['noticias', 'blog', 'general', 'portfolio', 'ensenanzas', 'haftara', 'semillas', 'team', 'pdf', 'videos'];
+    
+    // 1. Buscar en path primario
+    const primaryPath1 = path.join(__dirname, '../public/uploads', req.path);
+    if (fs.existsSync(primaryPath1) && fs.statSync(primaryPath1).isFile()) {
+        return res.sendFile(primaryPath1);
+    }
+    const primaryPath2 = path.join(__dirname, 'public/uploads', req.path);
+    if (fs.existsSync(primaryPath2) && fs.statSync(primaryPath2).isFile()) {
+        return res.sendFile(primaryPath2);
+    }
+
+    // 2. Fallback: buscar por nombre de archivo en subcarpetas de uploads
+    for (const folder of subfolders) {
+        const candidate1 = path.join(__dirname, '../public/uploads', folder, filename);
+        if (fs.existsSync(candidate1) && fs.statSync(candidate1).isFile()) {
+            return res.sendFile(candidate1);
+        }
+        const candidate2 = path.join(__dirname, 'public/uploads', folder, filename);
+        if (fs.existsSync(candidate2) && fs.statSync(candidate2).isFile()) {
+            return res.sendFile(candidate2);
+        }
+    }
+    next();
+});
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/calendar', express.static(path.join(__dirname, '../Calendar')));

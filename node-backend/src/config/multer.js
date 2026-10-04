@@ -9,6 +9,7 @@ const uploadDirs = [
     path.join(__dirname, '../../public/uploads/ensenanzas'),
     path.join(__dirname, '../../public/uploads/haftara'),
     path.join(__dirname, '../../public/uploads/blog'),
+    path.join(__dirname, '../../public/uploads/noticias'),
     path.join(__dirname, '../../public/uploads/team'),
     path.join(__dirname, '../../public/uploads/pdf'),
     path.join(__dirname, '../../public/uploads/audios'),
@@ -47,6 +48,7 @@ const storage = multer.diskStorage({
         else if (req.originalUrl.includes('/haftara')) folder = 'haftara';
         else if (req.originalUrl.includes('/semillas')) folder = 'semillas';
         else if (req.originalUrl.includes('/seder')) folder = 'seder';
+        else if (req.originalUrl.includes('/noticias')) folder = 'noticias';
         else if (req.originalUrl.includes('/blog')) folder = 'blog';
         else if (req.originalUrl.includes('/team')) folder = 'team';
         else if (req.originalUrl.includes('/entity')) folder = 'entity';
