@@ -1344,34 +1344,39 @@ const adminController = {
                 image_url = '/uploads/noticias/' + req.file.filename;
             }
             
+            const isPublishedBool = is_published === '1' || is_published === 'true' || is_published === true || is_published === 'on';
+            const isBreakingBool = is_breaking === '1' || is_breaking === 'true' || is_breaking === true || is_breaking === 'on';
+
             const Noticia = require('../models/Noticia');
             await Noticia.create({
-                title,
-                subtitle: subtitle || '',
-                category: category || 'Mundial',
-                author: author || 'Redacción YHWH',
-                summary: summary || '',
+                title: title ? title.trim() : 'Sin título',
+                subtitle: subtitle ? subtitle.trim() : '',
+                category: category ? category.trim() : 'Mundial',
+                author: author ? author.trim() : 'Redacción YHWH',
+                summary: summary ? summary.trim() : '',
                 content: content || '',
-                source_url: source_url || '',
-                tags: tags || '',
-                is_breaking: is_breaking === '1' || is_breaking === 'true' || is_breaking === true,
-                is_published: is_published !== '0' && is_published !== false,
+                source_url: source_url ? source_url.trim() : '',
+                tags: tags ? tags.trim() : '',
+                is_breaking: isBreakingBool,
+                is_published: isPublishedBool,
                 image_url: image_url || ''
             });
 
-            // Notificación a suscriptores
-            try {
-                const NotificationService = require('../utils/notificationService');
-                NotificationService.notifySubscribers({
-                    type: 'noticias',
-                    title: `[NOTICIA] ${title}`,
-                    subtitle: subtitle || '',
-                    link: '/noticias',
-                    description: summary || '',
-                    image_url: image_url || '',
-                    author: author || 'Redacción YHWH'
-                }).catch(e => console.warn('Aviso en notificación Noticia:', e.message));
-            } catch(e) {}
+            // Notificación a suscriptores (solo si está publicada)
+            if (isPublishedBool) {
+                try {
+                    const NotificationService = require('../utils/notificationService');
+                    NotificationService.notifySubscribers({
+                        type: 'general',
+                        title: `[NOTICIA] ${title}`,
+                        subtitle: subtitle || '',
+                        link: '/noticias',
+                        description: summary || '',
+                        image_url: image_url || '',
+                        author: author || 'Redacción YHWH'
+                    }).catch(e => console.warn('Aviso en notificación Noticia:', e.message));
+                } catch(e) {}
+            }
 
             res.redirect('/admin/dashboard#pills-noticias');
         } catch (error) {
@@ -1405,18 +1410,21 @@ const adminController = {
                 image_url = '/uploads/noticias/' + req.file.filename;
             }
             
+            const isPublishedBool = is_published === '1' || is_published === 'true' || is_published === true || is_published === 'on';
+            const isBreakingBool = is_breaking === '1' || is_breaking === 'true' || is_breaking === true || is_breaking === 'on';
+
             const Noticia = require('../models/Noticia');
             await Noticia.update(id, {
-                title,
-                subtitle: subtitle || '',
-                category: category || 'Mundial',
-                author: author || 'Redacción YHWH',
-                summary: summary || '',
+                title: title ? title.trim() : 'Sin título',
+                subtitle: subtitle ? subtitle.trim() : '',
+                category: category ? category.trim() : 'Mundial',
+                author: author ? author.trim() : 'Redacción YHWH',
+                summary: summary ? summary.trim() : '',
                 content: content || '',
-                source_url: source_url || '',
-                tags: tags || '',
-                is_breaking: is_breaking === '1' || is_breaking === 'true' || is_breaking === true,
-                is_published: is_published !== '0' && is_published !== false,
+                source_url: source_url ? source_url.trim() : '',
+                tags: tags ? tags.trim() : '',
+                is_breaking: isBreakingBool,
+                is_published: isPublishedBool,
                 image_url: image_url || ''
             });
 
@@ -1453,9 +1461,12 @@ const adminController = {
                 }
             }
 
+            const isPublishedBool = is_published === '1' || is_published === 'true' || is_published === true || is_published === 'on';
+            const isHighlightBool = is_highlight === '1' || is_highlight === 'true' || is_highlight === true || is_highlight === 'on';
+
             const Noticia = require('../models/Noticia');
             await Noticia.createShort({
-                title,
+                title: title ? title.trim() : 'Sin título',
                 category: category || 'Actualidad',
                 video_url: video_url || null,
                 youtube_short_url: youtube_short_url || null,
@@ -1463,8 +1474,8 @@ const adminController = {
                 thumbnail_url: thumbnail_url || null,
                 description: description || null,
                 source_name: source_name || 'Hablemos de YHWH',
-                is_highlight: is_highlight === '1' || is_highlight === 'true' || is_highlight === true,
-                is_published: is_published !== '0' && is_published !== false
+                is_highlight: isHighlightBool,
+                is_published: isPublishedBool
             });
 
             res.redirect('/admin/dashboard#pills-noticias-shorts');
@@ -1501,9 +1512,12 @@ const adminController = {
                 }
             }
 
+            const isPublishedBool = is_published === '1' || is_published === 'true' || is_published === true || is_published === 'on';
+            const isHighlightBool = is_highlight === '1' || is_highlight === 'true' || is_highlight === true || is_highlight === 'on';
+
             const Noticia = require('../models/Noticia');
             await Noticia.updateShort(id, {
-                title,
+                title: title ? title.trim() : 'Sin título',
                 category: category || 'Actualidad',
                 video_url: video_url || null,
                 youtube_short_url: youtube_short_url || null,
@@ -1511,8 +1525,8 @@ const adminController = {
                 thumbnail_url: thumbnail_url || null,
                 description: description || null,
                 source_name: source_name || 'Hablemos de YHWH',
-                is_highlight: is_highlight === '1' || is_highlight === 'true' || is_highlight === true,
-                is_published: is_published !== '0' && is_published !== false
+                is_highlight: isHighlightBool,
+                is_published: isPublishedBool
             });
 
             res.redirect('/admin/dashboard#pills-noticias-shorts');
