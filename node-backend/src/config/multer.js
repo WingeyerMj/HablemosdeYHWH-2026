@@ -76,7 +76,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
     storage: storage,
-    limits: { fileSize: 250 * 1024 * 1024 }, // Límite de 250MB para audios/videos
+    limits: { 
+        fileSize: 250 * 1024 * 1024, // Límite de 250MB para audios/videos/archivos
+        fieldSize: 50 * 1024 * 1024   // Límite de 50MB para campos de texto / contenido HTML / base64
+    },
     fileFilter: (req, file, cb) => {
         const imageTypes = /jpeg|jpg|png|webp|gif|svg/;
         const videoTypes = /mp4|webm|mov|avi|mkv/;
