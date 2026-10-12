@@ -21,19 +21,46 @@ class Parasha {
         return rows;
     }
 
+    static async ensureColumns() {
+        try {
+            const [cols] = await db.query("SHOW COLUMNS FROM parashot LIKE 'cycle_id'");
+            if (!cols || cols.length === 0) {
+                await db.query("ALTER TABLE parashot ADD COLUMN cycle_id INT NULL");
+            }
+            const [colsName] = await db.query("SHOW COLUMNS FROM parashot LIKE 'cycle_name'");
+            if (!colsName || colsName.length === 0) {
+                await db.query("ALTER TABLE parashot ADD COLUMN cycle_name VARCHAR(150) NULL");
+            }
+
+            // Asignar el ciclo activo a las parashot que no tengan ciclo asignado
+            const TorahCycle = require('./TorahCycle');
+            const currentCycle = await TorahCycle.getCurrentCycle();
+            if (currentCycle) {
+                await db.query(
+                    "UPDATE parashot SET cycle_id = ?, cycle_name = ? WHERE cycle_id IS NULL OR cycle_name IS NULL OR cycle_name = ''",
+                    [currentCycle.id, currentCycle.name]
+                );
+            }
+        } catch(err) {
+            console.warn('Aviso en ensureColumns Parasha:', err.message);
+        }
+    }
+
     static async create(data) {
-        const { parasha_number, title, description, icon, link, subtitle, content, image_url, pdf_file, youtube_link } = data;
+        await this.ensureColumns();
+        const { parasha_number, title, description, icon, link, subtitle, content, image_url, pdf_file, youtube_link, cycle_id, cycle_name } = data;
         return await db.query(
-            'INSERT INTO parashot (parasha_number, title, subtitle, description, content, image_url, pdf_file, icon, link, youtube_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [parasha_number || null, title, subtitle || '', description || '', content || '', image_url || '', pdf_file || '', icon || 'bi-journal-text', link || '', youtube_link || '']
+            'INSERT INTO parashot (parasha_number, title, subtitle, description, content, image_url, pdf_file, icon, link, youtube_link, cycle_id, cycle_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [parasha_number || null, title, subtitle || '', description || '', content || '', image_url || '', pdf_file || '', icon || 'bi-journal-text', link || '', youtube_link || '', cycle_id || null, cycle_name || null]
         );
     }
 
     static async update(id, data) {
-        const { parasha_number, title, description, icon, link, subtitle, content, image_url, pdf_file, youtube_link } = data;
+        await this.ensureColumns();
+        const { parasha_number, title, description, icon, link, subtitle, content, image_url, pdf_file, youtube_link, cycle_id, cycle_name } = data;
         return await db.query(
-            'UPDATE parashot SET parasha_number = ?, title = ?, subtitle = ?, description = ?, content = ?, image_url = ?, pdf_file = ?, icon = ?, link = ?, youtube_link = ? WHERE id = ?',
-            [parasha_number || null, title, subtitle || '', description || '', content || '', image_url || '', pdf_file || '', icon || 'bi-journal-text', link || '', youtube_link || '', id]
+            'UPDATE parashot SET parasha_number = ?, title = ?, subtitle = ?, description = ?, content = ?, image_url = ?, pdf_file = ?, icon = ?, link = ?, youtube_link = ?, cycle_id = ?, cycle_name = ? WHERE id = ?',
+            [parasha_number || null, title, subtitle || '', description || '', content || '', image_url || '', pdf_file || '', icon || 'bi-journal-text', link || '', youtube_link || '', cycle_id || null, cycle_name || null, id]
         );
     }
 

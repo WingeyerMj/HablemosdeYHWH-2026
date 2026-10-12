@@ -153,6 +153,13 @@
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group btn-group-sm">
+                                        <% if (!c.is_current) { %>
+                                            <form action="/admin/ciclos-tora/set-current/<%= c.id %>" method="POST" class="d-inline" onsubmit="return confirm('¿Establecer este ciclo como el Activo?');">
+                                                <button type="submit" class="btn btn-outline-warning" title="Establecer como Ciclo Activo">
+                                                    <i class="bi bi-star me-1"></i>Activar
+                                                </button>
+                                            </form>
+                                        <% } %>
                                         <a href="/parashot?cycle=<%= c.id %>" target="_blank" class="btn btn-outline-info" title="Ver en la Web">
                                             <i class="bi bi-eye"></i> Ver Web
                                         </a>

@@ -12,6 +12,59 @@
     <form action="/admin/parashot/update" method="POST" enctype="multipart/form-data" id="editParashaForm">
         <input type="hidden" name="id" value="<%= parasha.id %>">
         <div class="row g-3">
+            <!-- IDENTIFICACIÓN DEL CICLO DE LECTURA DE LA TORÁ -->
+            <div class="col-12">
+                <div class="p-3 rounded-3 border border-warning" style="background: rgba(212, 168, 83, 0.08); box-shadow: 0 0 15px rgba(212, 168, 83, 0.05);">
+                    <div class="row align-items-center g-2">
+                        <div class="col-lg-5 col-md-12">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-warning text-dark p-2 rounded-circle fs-6">
+                                    <i class="bi bi-clock-history"></i>
+                                </span>
+                                <div>
+                                    <label class="form-label mb-0 fw-bold text-warning small text-uppercase" style="letter-spacing: 0.5px;">
+                                        Ciclo de Lectura de la Torá
+                                    </label>
+                                    <div class="text-white-50 small" style="font-size: 0.76rem;">
+                                        Ciclo anual al que pertenece esta Parashá
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 col-md-12">
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-warning">
+                                    <i class="bi bi-bookmark-star-fill"></i>
+                                </span>
+                                <select name="cycle_id" id="edit_parasha_cycle_id" class="form-select bg-dark text-white border-secondary" onchange="var box=document.getElementById('edit_new_cycle_box'); var hid=document.getElementById('edit_cycle_name_hidden'); if(this.value==='__new__'){box.style.display='block';}else{box.style.display='none'; var opt=this.options[this.selectedIndex]; if(hid&&opt) hid.value=opt.getAttribute('data-name')||'';}">
+                                    <% if (typeof currentCycle !== 'undefined' && currentCycle) { %>
+                                        <option value="<%= currentCycle.id %>" data-name="<%= currentCycle.name %>" <%= (!parasha.cycle_id || parasha.cycle_id == currentCycle.id) ? 'selected' : '' %>>
+                                            ⭐ <%= currentCycle.name %> (Ciclo Activo Actual)
+                                        </option>
+                                    <% } %>
+                                    <% if (typeof allCycles !== 'undefined' && allCycles && allCycles.length > 0) { %>
+                                        <% allCycles.filter(c => !currentCycle || c.id !== currentCycle.id).forEach(c => { %>
+                                            <option value="<%= c.id %>" data-name="<%= c.name %>" <%= (parasha.cycle_id == c.id || parasha.cycle_name == c.name) ? 'selected' : '' %>>
+                                                📁 <%= c.name %> <%= c.year_label ? '(' + c.year_label + ')' : '' %>
+                                            </option>
+                                        <% }) %>
+                                    <% } %>
+                                    <option value="__new__">➕ + Registrar / Crear Nuevo Ciclo...</option>
+                                </select>
+                            </div>
+                            <div id="edit_new_cycle_box" class="mt-2" style="display: none;">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark border-warning text-warning"><i class="bi bi-plus-circle"></i></span>
+                                    <input type="text" name="new_cycle_name" id="edit_new_cycle_name" class="form-control bg-dark text-white border-warning" placeholder="Ej: Ciclo 2026 - 2027">
+                                </div>
+                                <small class="text-warning-50 d-block mt-1" style="font-size: 0.74rem;">Se creará automáticamente este nuevo ciclo de lectura.</small>
+                            </div>
+                            <input type="hidden" name="cycle_name" id="edit_cycle_name_hidden" value="<%= parasha.cycle_name || (typeof currentCycle !== 'undefined' && currentCycle ? currentCycle.name : 'Ciclo Activo') %>">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-md-2">
                 <label class="form-label small text-white-50">Nº</label>
                 <input type="number" name="parasha_number" class="form-control" value="<%= parasha.parasha_number || '' %>" min="1">

@@ -132,6 +132,18 @@ const adminController = {
                 semillasCategories = await SemillasTorah.getCategories();
             } catch(e) {}
 
+            let currentCycle = null;
+            let allCycles = [];
+            try {
+                const TorahCycle = require('../models/TorahCycle');
+                const ParashaModel = require('../models/Parasha');
+                await ParashaModel.ensureColumns();
+                currentCycle = await TorahCycle.getCurrentCycle();
+                allCycles = await TorahCycle.getAllCycles();
+            } catch(e) {
+                console.warn('Aviso ciclos dashboard:', e.message);
+            }
+
             res.render('admin/dashboard', {
                 layout: 'admin/layout',
                 parashot,
@@ -153,7 +165,9 @@ const adminController = {
                 blogCategories,
                 noticiasCategories,
                 semillasCategories,
-                subscribers: typeof subscribers !== 'undefined' ? subscribers : []
+                subscribers: typeof subscribers !== 'undefined' ? subscribers : [],
+                currentCycle,
+                allCycles
             });
         } catch (error) {
             next(error);
@@ -163,7 +177,7 @@ const adminController = {
     // ==================== PARASHOT ====================
     createParasha: async (req, res) => {
         try {
-            let { parasha_number, title, description, subtitle, content, image_url, pdf_file, icon, link, youtube_link } = req.body;
+            let { parasha_number, title, description, subtitle, content, image_url, pdf_file, icon, link, youtube_link, cycle_id, cycle_name, new_cycle_name } = req.body;
             
             if (req.files) {
                 if (req.files['image_file'] && req.files['image_file'][0]) {
@@ -174,9 +188,34 @@ const adminController = {
                 }
             }
 
-            console.log('--- Saving Parasha with image_url:', image_url);
+            const TorahCycle = require('../models/TorahCycle');
             const Parasha = require('../models/Parasha');
-            await Parasha.create({ parasha_number, title, description, subtitle, content, image_url, pdf_file, icon, link, youtube_link });
+            await Parasha.ensureColumns();
+
+            if (cycle_id === '__new__' && new_cycle_name && new_cycle_name.trim()) {
+                const createdCycle = await TorahCycle.createCycle({
+                    name: new_cycle_name.trim(),
+                    yearLabel: '',
+                    notes: 'Creado al registrar nueva Parashá',
+                    isCurrent: true
+                });
+                cycle_id = createdCycle.id;
+                cycle_name = createdCycle.name;
+            } else if (cycle_id && cycle_id !== '__new__') {
+                const cycleObj = await TorahCycle.getCycleById(cycle_id);
+                if (cycleObj) {
+                    cycle_name = cycleObj.name;
+                }
+            } else {
+                const currentCycle = await TorahCycle.getCurrentCycle();
+                if (currentCycle) {
+                    cycle_id = currentCycle.id;
+                    cycle_name = currentCycle.name;
+                }
+            }
+
+            console.log('--- Saving Parasha with cycle:', cycle_name, 'image_url:', image_url);
+            await Parasha.create({ parasha_number, title, description, subtitle, content, image_url, pdf_file, icon, link, youtube_link, cycle_id, cycle_name });
 
             // Notificación automática a todos los suscriptores
             try {
@@ -201,9 +240,20 @@ const adminController = {
     editParashaPage: async (req, res) => {
         try {
             const Parasha = require('../models/Parasha');
+            const TorahCycle = require('../models/TorahCycle');
+            await Parasha.ensureColumns();
             const parasha = await Parasha.getById(req.params.id);
             if (!parasha) return res.redirect('/admin/dashboard');
-            res.render('admin/edit_parasha', { layout: 'admin/layout', parasha });
+
+            const currentCycle = await TorahCycle.getCurrentCycle();
+            const allCycles = await TorahCycle.getAllCycles();
+
+            res.render('admin/edit_parasha', { 
+                layout: 'admin/layout', 
+                parasha, 
+                currentCycle, 
+                allCycles 
+            });
         } catch (error) {
             res.redirect('/admin/dashboard');
         }
@@ -211,7 +261,7 @@ const adminController = {
 
     updateParasha: async (req, res) => {
         try {
-            let { id, parasha_number, title, description, subtitle, content, image_url, pdf_file, icon, link, youtube_link } = req.body;
+            let { id, parasha_number, title, description, subtitle, content, image_url, pdf_file, icon, link, youtube_link, cycle_id, cycle_name, new_cycle_name } = req.body;
             
             if (req.files) {
                 if (req.files['image_file'] && req.files['image_file'][0]) {
@@ -222,9 +272,28 @@ const adminController = {
                 }
             }
 
-            console.log('--- Updating Parasha ID:', id, 'with image_url:', image_url);
+            const TorahCycle = require('../models/TorahCycle');
             const Parasha = require('../models/Parasha');
-            await Parasha.update(id, { parasha_number, title, description, subtitle, content, image_url, pdf_file, icon, link, youtube_link });
+            await Parasha.ensureColumns();
+
+            if (cycle_id === '__new__' && new_cycle_name && new_cycle_name.trim()) {
+                const createdCycle = await TorahCycle.createCycle({
+                    name: new_cycle_name.trim(),
+                    yearLabel: '',
+                    notes: 'Creado al actualizar Parashá',
+                    isCurrent: true
+                });
+                cycle_id = createdCycle.id;
+                cycle_name = createdCycle.name;
+            } else if (cycle_id && cycle_id !== '__new__') {
+                const cycleObj = await TorahCycle.getCycleById(cycle_id);
+                if (cycleObj) {
+                    cycle_name = cycleObj.name;
+                }
+            }
+
+            console.log('--- Updating Parasha ID:', id, 'with cycle:', cycle_name, 'image_url:', image_url);
+            await Parasha.update(id, { parasha_number, title, description, subtitle, content, image_url, pdf_file, icon, link, youtube_link, cycle_id, cycle_name });
 
             // Notificación automática a suscriptores por actualización
             try {
@@ -2672,6 +2741,18 @@ const adminController = {
             res.redirect('/admin/ciclos-tora?msg=' + encodeURIComponent('Ciclo histórico eliminado correctamente.'));
         } catch (error) {
             console.error('Error deleteTorahCycle:', error);
+            res.redirect('/admin/ciclos-tora?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    setCurrentTorahCycle: async (req, res) => {
+        try {
+            const TorahCycle = require('../models/TorahCycle');
+            const id = parseInt(req.params.id);
+            await TorahCycle.setCurrentCycle(id);
+            res.redirect('/admin/ciclos-tora?msg=' + encodeURIComponent('Ciclo activo actualizado correctamente.'));
+        } catch (error) {
+            console.error('Error setCurrentTorahCycle:', error);
             res.redirect('/admin/ciclos-tora?error=' + encodeURIComponent(error.message));
         }
     }

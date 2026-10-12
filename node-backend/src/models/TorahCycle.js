@@ -105,6 +105,64 @@ class TorahCycle {
     }
 
     /**
+     * Obtener o inicializar el ciclo activo actual
+     */
+    static async getCurrentCycle() {
+        await this.ensureTables();
+        let [rows] = await db.query('SELECT * FROM torah_cycles WHERE is_current = 1 ORDER BY id DESC LIMIT 1');
+        if (!rows || rows.length === 0) {
+            const [all] = await db.query('SELECT * FROM torah_cycles ORDER BY id DESC LIMIT 1');
+            if (all && all.length > 0) {
+                await db.query('UPDATE torah_cycles SET is_current = 1 WHERE id = ?', [all[0].id]);
+                rows = all;
+            } else {
+                const currentYear = new Date().getFullYear();
+                const defaultName = `Ciclo ${currentYear} - ${currentYear + 1}`;
+                const [insertRes] = await db.query(
+                    'INSERT INTO torah_cycles (name, year_label, start_date, is_current, notes) VALUES (?, ?, CURDATE(), 1, ?)',
+                    [defaultName, `${currentYear}-${currentYear + 1}`, 'Ciclo activo actual de lectura de la Torá']
+                );
+                const [created] = await db.query('SELECT * FROM torah_cycles WHERE id = ?', [insertRes.insertId]);
+                rows = created;
+            }
+        }
+        return rows && rows[0] ? rows[0] : null;
+    }
+
+    /**
+     * Establecer un ciclo como el activo
+     */
+    static async setCurrentCycle(id) {
+        await this.ensureTables();
+        await db.query('UPDATE torah_cycles SET is_current = 0');
+        await db.query('UPDATE torah_cycles SET is_current = 1 WHERE id = ?', [id]);
+        const current = await this.getCycleById(id);
+        if (current) {
+            await db.query('UPDATE parashot SET cycle_id = ?, cycle_name = ?', [current.id, current.name]);
+        }
+        return current;
+    }
+
+    /**
+     * Crear un nuevo ciclo
+     */
+    static async createCycle({ name, yearLabel = '', notes = '', isCurrent = true }) {
+        await this.ensureTables();
+        if (isCurrent) {
+            await db.query('UPDATE torah_cycles SET is_current = 0');
+        }
+        const [res] = await db.query(
+            'INSERT INTO torah_cycles (name, year_label, start_date, is_current, notes) VALUES (?, ?, CURDATE(), ?, ?)',
+            [name.trim(), yearLabel.trim(), isCurrent ? 1 : 0, notes.trim()]
+        );
+        const newCycle = await this.getCycleById(res.insertId);
+        if (isCurrent && newCycle) {
+            await db.query('UPDATE parashot SET cycle_id = ?, cycle_name = ?', [newCycle.id, newCycle.name]);
+        }
+        return newCycle;
+    }
+
+    /**
      * Obtener todos los ciclos archivados
      */
     static async getAllCycles() {
@@ -119,7 +177,7 @@ class TorahCycle {
             LEFT JOIN historical_aliyot ha ON c.id = ha.cycle_id
             LEFT JOIN historical_haftarot hh ON c.id = hh.cycle_id
             GROUP BY c.id
-            ORDER BY c.archived_at DESC, c.id DESC
+            ORDER BY c.is_current DESC, c.archived_at DESC, c.id DESC
         `);
         return rows || [];
     }
@@ -521,10 +579,23 @@ class TorahCycle {
 
         // 8. Crear el registro del Nuevo Ciclo Activo
         const newCycleTitle = newCycleName && newCycleName.trim() ? newCycleName.trim() : `Ciclo ${new Date().getFullYear()} - ${new Date().getFullYear() + 1}`;
-        await db.query(`
+        await db.query('UPDATE torah_cycles SET is_current = 0');
+        const [ncRes] = await db.query(`
             INSERT INTO torah_cycles (name, year_label, start_date, notes, is_current)
             VALUES (?, ?, CURDATE(), 'Ciclo activo actual de la Torá iniciado después de Sucot', 1)
         `, [newCycleTitle, `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`]);
+        const newCycleId = ncRes.insertId;
+
+        // 9. Actualizar ciclo en parashot activas
+        try {
+            await db.query(`
+                UPDATE parashot 
+                SET cycle_id = ?, 
+                    cycle_name = ?
+            `, [newCycleId, newCycleTitle]);
+        } catch (colErr) {
+            console.warn('Aviso al actualizar cycle en parashot:', colErr.message);
+        }
 
         return {
             success: true,

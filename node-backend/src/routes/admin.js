@@ -231,6 +231,7 @@ router.get('/subscribers/delete/:id', isAuthenticated, isStrictAdmin, adminContr
 // Ciclos de Torá & Pasaje Histórico (Sucot) (Solo Admin)
 router.get('/ciclos-tora', isAuthenticated, isStrictAdmin, adminController.ciclosToraPage);
 router.post('/ciclos-tora/archive-reset', isAuthenticated, isStrictAdmin, adminController.archiveResetCycle);
+router.post('/ciclos-tora/set-current/:id', isAuthenticated, isStrictAdmin, adminController.setCurrentTorahCycle);
 router.post('/ciclos-tora/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteTorahCycle);
 
 module.exports = router;
