@@ -117,9 +117,11 @@
                                 <% } %>
                                 <select name="parasha" class="form-select form-select-lg" onchange="document.getElementById('parashaSelectForm').submit()" style="border-radius: 12px; border-color: #d4a853;">
                                     <% if (typeof parashot !== 'undefined' && parashot.length > 0) { %>
-                                        <% parashot.forEach(p => { %>
+                                        <% parashot.forEach(p => { 
+                                            const pC = (p.parasha_number == 1 || (p.cycle_name && p.cycle_name.includes('2026 - 2027'))) ? '⭐ Ciclo 2026 - 2027' : 'Ciclo 2025 - 2026';
+                                        %>
                                             <option value="<%= p.id %>" <%= (selectedParasha && selectedParasha.id === p.id) ? 'selected' : '' %>>
-                                                <%= p.parasha_number ? `Nº ${p.parasha_number} - ` : '' %><%= p.title %> <%= p.subtitle ? `(${p.subtitle})` : '' %>
+                                                <%= p.parasha_number ? `Nº ${p.parasha_number} - ` : '' %><%= p.title %> <%= p.subtitle ? `(${p.subtitle})` : '' %> — <%= pC %>
                                             </option>
                                         <% }) %>
                                     <% } %>
@@ -127,8 +129,14 @@
                             </form>
                         </div>
 
-                        <% if (selectedParasha) { %>
-                            <div class="col-lg-6 d-flex align-items-center justify-content-lg-end gap-2">
+                        <% if (selectedParasha) { 
+                            const selCycle = (selectedParasha.parasha_number == 1 || (selectedParasha.cycle_name && selectedParasha.cycle_name.includes('2026 - 2027'))) ? 'Ciclo 2026 - 2027' : (selectedParasha.cycle_name || 'Ciclo 2025 - 2026');
+                            const isSelNew = selCycle.includes('2026');
+                        %>
+                            <div class="col-lg-6 d-flex align-items-center justify-content-lg-end gap-2 flex-wrap">
+                                <span class="badge rounded-pill px-3 py-2 shadow-sm d-inline-flex align-items-center" style="<%= isSelNew ? 'background: rgba(212, 168, 83, 0.15); color: #8c6a2d; border: 1px solid rgba(212, 168, 83, 0.35);' : 'background: #f1f3f5; color: #495057; border: 1px solid #dee2e6;' %> font-size: 0.85rem; font-weight: 600;">
+                                    <i class="bi <%= isSelNew ? 'bi-star-fill text-warning' : 'bi-clock-history text-secondary' %> me-1"></i><%= selCycle %>
+                                </span>
                                 <a href="/parashot/<%= selectedParasha.id %><%= (typeof selectedCycle !== 'undefined' && selectedCycle) ? '?cycle=' + selectedCycle.id : '' %>" class="btn btn-outline-dark rounded-pill px-3 py-2 fw-semibold">
                                     <i class="bi bi-book me-1"></i> Ir al Estudio Completo de Shabat
                                 </a>

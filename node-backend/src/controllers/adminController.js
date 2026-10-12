@@ -46,7 +46,7 @@ const adminController = {
             let parashot = [], portfolio = [], ensenanzas = [], haftarot = [], blogs = [], noticias = [], noticiasShorts = [], team = [], testimonials = [], pricing = [], sections = [], semillas = [], semillasShorts = [], semillasArticulos = [], subscribers = [];
             
             try {
-                parashot = await Parasha.getAll();
+                parashot = await Parasha.getAllAsc();
                 portfolio = await Portfolio.getAll();
                 try { ensenanzas = await Ensenanza.getAll(); } catch(e) { ensenanzas = []; }
                 try { 

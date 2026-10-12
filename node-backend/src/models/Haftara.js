@@ -60,6 +60,31 @@ class Haftara {
                   AND p.image_url IS NOT NULL AND p.image_url != ''
             `);
         } catch(e) {}
+
+        // Asegurar columnas de ciclo en haftarot
+        try {
+            const [colsCycle] = await db.query("SHOW COLUMNS FROM haftarot LIKE 'cycle_name'");
+            if (!colsCycle || colsCycle.length === 0) {
+                await db.query("ALTER TABLE haftarot ADD COLUMN cycle_name VARCHAR(150) NULL");
+            }
+            const [colsCycleId] = await db.query("SHOW COLUMNS FROM haftarot LIKE 'cycle_id'");
+            if (!colsCycleId || colsCycleId.length === 0) {
+                await db.query("ALTER TABLE haftarot ADD COLUMN cycle_id INT NULL");
+            }
+
+            // Sincronizar ciclo desde parashot
+            await db.query(`
+                UPDATE haftarot h
+                JOIN parashot p ON h.parasha_id = p.id
+                SET h.cycle_name = p.cycle_name,
+                    h.cycle_id = p.cycle_id
+            `);
+
+            // Haftará de Bereshit (#1) es del nuevo ciclo 2026 - 2027
+            await db.query("UPDATE haftarot SET cycle_name = 'Ciclo 2026 - 2027' WHERE parasha_id IN (SELECT id FROM parashot WHERE parasha_number = 1) OR title LIKE '%Bereshit%'");
+            // Todas las demás Haftarot son del ciclo 2025 - 2026
+            await db.query("UPDATE haftarot SET cycle_name = 'Ciclo 2025 - 2026' WHERE title NOT LIKE '%Bereshit%' AND (cycle_name LIKE '%2026%' OR cycle_name IS NULL OR cycle_name = '')");
+        } catch(e) {}
     }
 
     static async autoLinkParashot() {
@@ -202,7 +227,8 @@ class Haftara {
                    COALESCE(p.title, p_match.title) AS parasha_title, 
                    COALESCE(p.subtitle, p_match.subtitle) AS parasha_subtitle, 
                    COALESCE(p.parasha_number, p_match.parasha_number) AS parasha_number,
-                   COALESCE(p.image_url, p_match.image_url) AS parasha_image_url
+                   COALESCE(p.image_url, p_match.image_url) AS parasha_image_url,
+                   COALESCE(h.cycle_name, p.cycle_name, p_match.cycle_name, 'Ciclo 2025 - 2026') AS cycle_name
             FROM haftarot h
             LEFT JOIN parashot p ON h.parasha_id = p.id
             LEFT JOIN parashot p_match ON (
@@ -212,7 +238,7 @@ class Haftara {
                     OR p_match.title LIKE CONCAT('%', REPLACE(REPLACE(h.title, 'Haftará', ''), 'Parashá', ''), '%')
                 )
             )
-            ORDER BY COALESCE(p.parasha_number, p_match.parasha_number, 0) DESC, h.id DESC
+            ORDER BY COALESCE(p.parasha_number, p_match.parasha_number, 999) ASC, h.id ASC
         `);
         return (rows || []).map(r => Haftara.normalize(r));
     }
@@ -225,7 +251,8 @@ class Haftara {
                    COALESCE(p.title, p_match.title) AS parasha_title, 
                    COALESCE(p.subtitle, p_match.subtitle) AS parasha_subtitle, 
                    COALESCE(p.parasha_number, p_match.parasha_number) AS parasha_number,
-                   COALESCE(p.image_url, p_match.image_url) AS parasha_image_url
+                   COALESCE(p.image_url, p_match.image_url) AS parasha_image_url,
+                   COALESCE(h.cycle_name, p.cycle_name, p_match.cycle_name, 'Ciclo 2025 - 2026') AS cycle_name
             FROM haftarot h
             LEFT JOIN parashot p ON h.parasha_id = p.id
             LEFT JOIN parashot p_match ON (
@@ -236,7 +263,10 @@ class Haftara {
                 )
             )
             WHERE h.is_published = TRUE 
-            ORDER BY COALESCE(p.parasha_number, p_match.parasha_number, 0) DESC, h.id DESC 
+            ORDER BY 
+                (COALESCE(h.cycle_name, p.cycle_name, p_match.cycle_name, '') LIKE '%2026 - 2027%' OR COALESCE(p.parasha_number, p_match.parasha_number, 0) = 1) DESC,
+                h.updated_at DESC, 
+                h.id DESC 
             LIMIT ?
         `, [limit]);
         return (rows || []).map(r => Haftara.normalize(r));
@@ -250,7 +280,8 @@ class Haftara {
                    COALESCE(p.title, p_match.title) AS parasha_title, 
                    COALESCE(p.subtitle, p_match.subtitle) AS parasha_subtitle, 
                    COALESCE(p.parasha_number, p_match.parasha_number) AS parasha_number,
-                   COALESCE(p.image_url, p_match.image_url) AS parasha_image_url
+                   COALESCE(p.image_url, p_match.image_url) AS parasha_image_url,
+                   COALESCE(h.cycle_name, p.cycle_name, p_match.cycle_name, 'Ciclo 2025 - 2026') AS cycle_name
             FROM haftarot h
             LEFT JOIN parashot p ON h.parasha_id = p.id
             LEFT JOIN parashot p_match ON (
@@ -261,7 +292,7 @@ class Haftara {
                 )
             )
             WHERE h.is_published = TRUE 
-            ORDER BY COALESCE(p.parasha_number, p_match.parasha_number, 0) DESC, h.id DESC
+            ORDER BY COALESCE(p.parasha_number, p_match.parasha_number, 999) ASC, h.id ASC
         `);
         return (rows || []).map(r => Haftara.normalize(r));
     }
@@ -275,7 +306,8 @@ class Haftara {
                    COALESCE(p.subtitle, p_match.subtitle) AS parasha_subtitle, 
                    COALESCE(p.parasha_number, p_match.parasha_number) AS parasha_number,
                    COALESCE(p.image_url, p_match.image_url) AS parasha_image_url,
-                   p.description AS parasha_description
+                   p.description AS parasha_description,
+                   COALESCE(h.cycle_name, p.cycle_name, p_match.cycle_name, 'Ciclo 2025 - 2026') AS cycle_name
             FROM haftarot h
             LEFT JOIN parashot p ON h.parasha_id = p.id
             LEFT JOIN parashot p_match ON (
@@ -299,7 +331,8 @@ class Haftara {
                    p.subtitle AS parasha_subtitle, 
                    p.parasha_number,
                    p.image_url AS parasha_image_url,
-                   p.description AS parasha_description
+                   p.description AS parasha_description,
+                   COALESCE(h.cycle_name, p.cycle_name, 'Ciclo 2025 - 2026') AS cycle_name
             FROM haftarot h
             LEFT JOIN parashot p ON h.parasha_id = p.id
             WHERE h.parasha_id = ? AND h.is_published = TRUE
@@ -322,7 +355,8 @@ class Haftara {
                    COALESCE(p.subtitle, p_match.subtitle) AS parasha_subtitle, 
                    COALESCE(p.parasha_number, p_match.parasha_number) AS parasha_number,
                    COALESCE(p.image_url, p_match.image_url) AS parasha_image_url,
-                   COALESCE(p.description, p_match.description) AS parasha_description
+                   COALESCE(p.description, p_match.description) AS parasha_description,
+                   COALESCE(h.cycle_name, p.cycle_name, p_match.cycle_name, 'Ciclo 2025 - 2026') AS cycle_name
             FROM haftarot h
             LEFT JOIN parashot p ON h.parasha_id = p.id
             LEFT JOIN parashot p_match ON (

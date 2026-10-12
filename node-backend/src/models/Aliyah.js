@@ -44,7 +44,8 @@ class Aliyah {
                 p.title as parasha_title,
                 p.subtitle as parasha_subtitle,
                 p.parasha_number as parasha_number,
-                p.image_url as parasha_image_url
+                p.image_url as parasha_image_url,
+                COALESCE(p.cycle_name, 'Ciclo 2025 - 2026') as cycle_name
             FROM aliyot a
             LEFT JOIN parashot p ON a.parasha_id = p.id
             ORDER BY a.created_at DESC, a.aliyah_number ASC
@@ -60,11 +61,16 @@ class Aliyah {
      * Obtener todas las Aliyot de una Parashá (ordenadas 1 a 7)
      */
     static async getByParashaId(parashaId, onlyPublished = false) {
-        let sql = 'SELECT * FROM aliyot WHERE parasha_id = ?';
+        let sql = `
+            SELECT a.*, COALESCE(p.cycle_name, 'Ciclo 2025 - 2026') as cycle_name 
+            FROM aliyot a
+            LEFT JOIN parashot p ON a.parasha_id = p.id
+            WHERE a.parasha_id = ?
+        `;
         if (onlyPublished) {
-            sql += ' AND is_published = TRUE';
+            sql += ' AND a.is_published = TRUE';
         }
-        sql += ' ORDER BY aliyah_number ASC';
+        sql += ' ORDER BY a.aliyah_number ASC';
         const [rows] = await db.query(sql, [parashaId]);
         return rows.map(r => ({
             ...r,
@@ -94,11 +100,15 @@ class Aliyah {
                 p.title as parasha_title,
                 p.subtitle as parasha_subtitle,
                 p.parasha_number as parasha_number,
-                p.image_url as parasha_image_url
+                p.image_url as parasha_image_url,
+                COALESCE(p.cycle_name, 'Ciclo 2025 - 2026') as cycle_name
             FROM aliyot a
             LEFT JOIN parashot p ON a.parasha_id = p.id
             WHERE a.is_published = TRUE
-            ORDER BY a.updated_at DESC, a.aliyah_number ASC
+            ORDER BY 
+                (p.cycle_name LIKE '%2026 - 2027%' OR p.parasha_number = 1) DESC,
+                a.updated_at DESC, 
+                a.aliyah_number ASC
             LIMIT ?
         `;
         const [rows] = await db.query(sql, [limit]);
@@ -133,7 +143,8 @@ class Aliyah {
                 p.title as parasha_title,
                 p.subtitle as parasha_subtitle,
                 p.parasha_number as parasha_number,
-                p.image_url as parasha_image_url
+                p.image_url as parasha_image_url,
+                COALESCE(p.cycle_name, 'Ciclo 2025 - 2026') as cycle_name
             FROM aliyot a
             LEFT JOIN parashot p ON a.parasha_id = p.id
             WHERE a.id = ?

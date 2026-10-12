@@ -64,10 +64,13 @@
             <!-- PARASHOT TAB -->
             <div class="tab-pane fade show active" id="pills-services" role="tabpanel">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="mb-0">Gestión de Parashot</h4>
+                    <div>
+                        <h4 class="mb-1"><i class="bi bi-journal-text me-2" style="color: var(--primary-color);"></i>Gestión de las 54 Parashot de la Torá</h4>
+                        <p class="text-white-50 small mb-0">Las 54 porciones canónicas anuales · Carga de videos, audios y enseñanzas para el ciclo en curso</p>
+                    </div>
                     <div class="d-flex gap-2">
                         <a href="/admin/ciclos-tora" class="btn btn-outline-warning"><i class="bi bi-clock-history me-1"></i> Ciclos & Histórico (Sucot)</a>
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createParashaModal"><i class="bi bi-plus-circle"></i> Nueva Parasha</button>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createParashaModal"><i class="bi bi-upload me-1"></i> Cargar Enseñanza</button>
                     </div>
                 </div>
 
@@ -94,23 +97,57 @@
 
                 <div class="table-responsive">
                     <table class="table table-dark table-hover align-middle">
-                        <thead><tr><th>Nº</th><th>Título</th><th>Ciclo</th><th>Vistas</th><th>Descripción</th><th>PDF</th><th>Acciones</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">Nº</th>
+                                <th>Porción de la Torá</th>
+                                <th>Ciclo</th>
+                                <th>Estado en este Ciclo</th>
+                                <th>Vistas</th>
+                                <th>PDF</th>
+                                <th class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             <% parashot.forEach(p => { %>
                             <tr>
-                                <td><%= p.parasha_number || '-' %></td>
-                                <td><%= p.title %></td>
                                 <td>
-                                    <span class="badge bg-secondary border border-warning text-warning" style="font-size: 0.76rem;">
-                                        <i class="bi bi-clock-history me-1"></i><%= p.cycle_name || ((typeof currentCycle !== 'undefined' && currentCycle) ? currentCycle.name : 'Ciclo Activo') %>
+                                    <span class="badge bg-dark border border-secondary text-warning fw-bold fs-6"><%= p.parasha_number || '-' %></span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-white"><%= p.title %></div>
+                                    <% if (p.subtitle) { %>
+                                        <div class="small text-warning" style="font-size: 0.8rem;"><%= p.subtitle %></div>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% 
+                                        const pCycle = (p.parasha_number == 1 || (p.cycle_name && p.cycle_name.includes('2026 - 2027'))) ? 'Ciclo 2026 - 2027' : (p.cycle_name || 'Ciclo 2025 - 2026');
+                                        const isNewCycle = pCycle.includes('2026');
+                                    %>
+                                    <span class="badge <%= isNewCycle ? 'bg-warning text-dark fw-bold border border-warning' : 'bg-dark border border-secondary text-white-50' %>" style="font-size: 0.76rem;">
+                                        <i class="bi <%= isNewCycle ? 'bi-star-fill text-dark' : 'bi-clock-history' %> me-1"></i><%= pCycle %>
                                     </span>
                                 </td>
-                                <td><span class="badge bg-dark border border-secondary text-info"><i class="bi bi-eye-fill me-1"></i><%= p.views || 0 %></span></td>
-                                <td><span class="text-truncate d-inline-block" style="max-width:200px;"><%= p.description %></span></td>
-                                <td><% if (p.pdf_file) { %><a href="<%= p.pdf_file %>" target="_blank" class="badge bg-success"><i class="bi bi-file-pdf"></i> PDF</a><% } else { %>-<% } %></td>
                                 <td>
-                                    <a href="/admin/parashot/edit/<%= p.id %>" class="btn btn-sm btn-primary me-1">Editar</a>
-                                    <a href="/admin/parashot/delete/<%= p.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta Parashá?')">Eliminar</a>
+                                    <% if (p.youtube_link && p.youtube_link.trim() !== '') { %>
+                                        <span class="badge bg-danger text-white"><i class="bi bi-youtube me-1"></i> Video Subido</span>
+                                    <% } else { %>
+                                        <span class="badge bg-dark border border-secondary text-white-50"><i class="bi bi-hourglass-split me-1"></i> Pendiente para este ciclo</span>
+                                    <% } %>
+                                </td>
+                                <td><span class="badge bg-dark border border-secondary text-info"><i class="bi bi-eye-fill me-1"></i><%= p.views || 0 %></span></td>
+                                <td>
+                                    <% if (p.pdf_file) { %>
+                                        <a href="<%= p.pdf_file %>" target="_blank" class="badge bg-success text-decoration-none"><i class="bi bi-file-pdf"></i> PDF</a>
+                                    <% } else { %>
+                                        <span class="text-white-50">-</span>
+                                    <% } %>
+                                </td>
+                                <td class="text-end">
+                                    <a href="/admin/parashot/edit/<%= p.id %>" class="btn btn-sm btn-primary me-1">
+                                        <i class="bi bi-pencil-square me-1"></i> Cargar / Editar
+                                    </a>
                                 </td>
                             </tr>
                             <% }) %>
@@ -261,7 +298,7 @@
                 </div>
                 <div class="table-responsive">
                     <table class="table table-dark table-hover">
-                        <thead><tr><th>Imagen</th><th>Título</th><th>Vistas</th><th>Expositor</th><th>Referencia / Subtítulo</th><th>Video</th><th>Audio</th><th>Acciones</th></tr></thead>
+                        <thead><tr><th>Imagen</th><th>Título</th><th>Ciclo</th><th>Vistas</th><th>Expositor</th><th>Referencia / Subtítulo</th><th>Video</th><th>Audio</th><th>Acciones</th></tr></thead>
                         <tbody>
                             <% if (typeof haftarot !== 'undefined' && haftarot && haftarot.length > 0) { %>
                                 <% haftarot.forEach(item => { %>
@@ -281,6 +318,15 @@
                                         <% } %>
                                     </td>
                                     <td><strong><%= item.title %></strong></td>
+                                    <td>
+                                        <% 
+                                            const hCycle = (item.parasha_number == 1 || (item.cycle_name && item.cycle_name.includes('2026 - 2027'))) ? 'Ciclo 2026 - 2027' : (item.cycle_name || 'Ciclo 2025 - 2026');
+                                            const isHNew = hCycle.includes('2026');
+                                        %>
+                                        <span class="badge <%= isHNew ? 'bg-warning text-dark fw-bold border border-warning' : 'bg-dark border border-secondary text-white-50' %>" style="font-size: 0.72rem;">
+                                            <i class="bi <%= isHNew ? 'bi-star-fill text-dark' : 'bi-clock-history' %> me-1"></i><%= hCycle %>
+                                        </span>
+                                    </td>
                                     <td><span class="badge bg-dark border border-secondary text-info"><i class="bi bi-eye-fill me-1"></i><%= item.views || 0 %></span></td>
                                     <td>
                                         <% if (item.authors_list && item.authors_list.length > 1) { %>

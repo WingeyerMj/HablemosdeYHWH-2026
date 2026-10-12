@@ -135,11 +135,20 @@
                                                                 const pTitle = item.parasha_title || '';
                                                                 const pNum = item.parasha_number ? `#${item.parasha_number} ` : '';
                                                             %>
-                                                            <% if (pTitle && pId) { %>
-                                                                <a href="/parashot/<%= pId %>" class="badge rounded-pill text-decoration-none shadow-sm" style="background: rgba(212,168,83,0.18); color: #7a581e; border: 1px solid #d4a853; font-size: 0.74rem; font-weight: 700;">
-                                                                    <i class="bi bi-book me-1 text-warning"></i>Torá: <%= pNum %><%= pTitle %> &rarr;
-                                                                </a>
-                                                            <% } %>
+                                                            <div class="d-flex align-items-center gap-1">
+                                                                <% 
+                                                                    const hafCycle = (item.parasha_number == 1 || (item.cycle_name && item.cycle_name.includes('2026 - 2027'))) ? 'Ciclo 2026 - 2027' : (item.cycle_name || 'Ciclo 2025 - 2026');
+                                                                    const isNewCycle = hafCycle.includes('2026');
+                                                                %>
+                                                                <span class="badge rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center" style="<%= isNewCycle ? 'background: rgba(212, 168, 83, 0.15); color: #8c6a2d; border: 1px solid rgba(212, 168, 83, 0.35);' : 'background: #f1f3f5; color: #495057; border: 1px solid #dee2e6;' %> font-size: 0.72rem; font-weight: 600;">
+                                                                    <i class="bi <%= isNewCycle ? 'bi-star-fill text-warning' : 'bi-clock-history text-secondary' %> me-1"></i><%= hafCycle %>
+                                                                </span>
+                                                                <% if (pTitle && pId) { %>
+                                                                    <a href="/parashot/<%= pId %>" class="badge rounded-pill text-decoration-none shadow-sm" style="background: rgba(212,168,83,0.18); color: #7a581e; border: 1px solid #d4a853; font-size: 0.74rem; font-weight: 700;">
+                                                                        <i class="bi bi-book me-1 text-warning"></i>Torá: <%= pNum %><%= pTitle %> &rarr;
+                                                                    </a>
+                                                                <% } %>
+                                                            </div>
                                                         </div>
                                                         <h4 class="card-title fw-bold mb-2" style="font-size: 1.22rem; color: #222; line-height: 1.35;">
                                                             <a href="/haftara/<%= item.id %>" class="text-decoration-none text-dark hover-gold">

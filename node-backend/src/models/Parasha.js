@@ -2,7 +2,15 @@ const db = require('../config/db');
 
 class Parasha {
     static async getLatest(limit = 6) {
-        const [rows] = await db.query('SELECT * FROM parashot ORDER BY parasha_number DESC, id DESC LIMIT ?', [limit]);
+        await this.ensureColumns();
+        const [rows] = await db.query(`
+            SELECT * FROM parashot 
+            ORDER BY 
+                (cycle_name LIKE '%2026 - 2027%' OR parasha_number = 1) DESC,
+                updated_at DESC, 
+                id DESC 
+            LIMIT ?
+        `, [limit]);
         return rows;
     }
 
@@ -32,15 +40,10 @@ class Parasha {
                 await db.query("ALTER TABLE parashot ADD COLUMN cycle_name VARCHAR(150) NULL");
             }
 
-            // Asignar el ciclo activo a las parashot que no tengan ciclo asignado
-            const TorahCycle = require('./TorahCycle');
-            const currentCycle = await TorahCycle.getCurrentCycle();
-            if (currentCycle) {
-                await db.query(
-                    "UPDATE parashot SET cycle_id = ?, cycle_name = ? WHERE cycle_id IS NULL OR cycle_name IS NULL OR cycle_name = ''",
-                    [currentCycle.id, currentCycle.name]
-                );
-            }
+            // Solo la Parashá Bereshit (#1) es del nuevo ciclo 2026 - 2027
+            // Todas las demás porciones son del ciclo 2025 - 2026 (hasta que el Moréh las suba en el nuevo ciclo)
+            await db.query("UPDATE parashot SET cycle_name = 'Ciclo 2026 - 2027' WHERE parasha_number = 1");
+            await db.query("UPDATE parashot SET cycle_name = 'Ciclo 2025 - 2026' WHERE parasha_number IS NOT NULL AND parasha_number != 1 AND (cycle_name LIKE '%2026%' OR cycle_name IS NULL OR cycle_name = '')");
         } catch(err) {
             console.warn('Aviso en ensureColumns Parasha:', err.message);
         }

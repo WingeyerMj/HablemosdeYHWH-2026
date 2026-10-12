@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content bg-dark text-white border-secondary">
             <div class="modal-header border-secondary">
-                <h5 class="modal-title">Añadir Nueva Parasha</h5>
+                <h5 class="modal-title"><i class="bi bi-upload me-2 text-warning"></i>Cargar Enseñanza de la Porción (Torá)</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form action="/admin/parashot/create" method="POST" enctype="multipart/form-data" id="createParashaForm">
@@ -23,7 +23,7 @@
                                                     Ciclo de Lectura de la Torá
                                                 </label>
                                                 <div class="text-white-50 small" style="font-size: 0.76rem;">
-                                                    Identifica de qué ciclo anual estás cargando esta Parashá
+                                                    Ciclo anual en el que se imparte y sube esta enseñanza
                                                 </div>
                                             </div>
                                         </div>
@@ -62,35 +62,100 @@
                             </div>
                         </div>
 
+                        <!-- SELECTOR DE LAS 54 PORCIONES CANÓNICAS -->
+                        <div class="col-12">
+                            <label class="form-label small text-warning fw-bold d-flex align-items-center gap-1">
+                                <i class="bi bi-book-half"></i> Elegir de las 54 Porciones Canónicas de la Torá:
+                            </label>
+                            <select id="select_canonical_portion" class="form-select bg-dark text-white border-warning" onchange="var opt=this.options[this.selectedIndex]; if(this.value){document.getElementById('create_p_num').value=this.value; document.getElementById('create_p_title').value=opt.getAttribute('data-title')||''; document.getElementById('create_p_sub').value=opt.getAttribute('data-sub')||'';}">
+                                <option value="">-- Elige la Porción que vas a impartir/cargar (1 a 54) --</option>
+                                <option value="1" data-title="Bereshit" data-sub="Génesis 1:1 al 6:8">1. Bereshit (Génesis 1:1 al 6:8)</option>
+                                <option value="2" data-title="Noaj" data-sub="Génesis 6:9 al 11:32">2. Noaj (Génesis 6:9 al 11:32)</option>
+                                <option value="3" data-title="Lej Lejá" data-sub="Génesis 12:1 al 17:27">3. Lej Lejá (Génesis 12:1 al 17:27)</option>
+                                <option value="4" data-title="Vayerá" data-sub="Génesis 18:1 al 22:24">4. Vayerá (Génesis 18:1 al 22:24)</option>
+                                <option value="5" data-title="Jayé Sarah" data-sub="Génesis 23:1 al 25:18">5. Jayé Sarah (Génesis 23:1 al 25:18)</option>
+                                <option value="6" data-title="Toledot" data-sub="Génesis 25:19 al 28:9">6. Toledot (Génesis 25:19 al 28:9)</option>
+                                <option value="7" data-title="Vayetzé" data-sub="Génesis 28:10 al 32:3">7. Vayetzé (Génesis 28:10 al 32:3)</option>
+                                <option value="8" data-title="Vayishlaj" data-sub="Génesis 32:4 al 36:43">8. Vayishlaj (Génesis 32:4 al 36:43)</option>
+                                <option value="9" data-title="Vayeshev" data-sub="Génesis 37:1 al 40:23">9. Vayeshev (Génesis 37:1 al 40:23)</option>
+                                <option value="10" data-title="Miketz" data-sub="Génesis 41:1 al 44:17">10. Miketz (Génesis 41:1 al 44:17)</option>
+                                <option value="11" data-title="Vayigash" data-sub="Génesis 44:18 al 47:27">11. Vayigash (Génesis 44:18 al 47:27)</option>
+                                <option value="12" data-title="Vayejí" data-sub="Génesis 47:28 al 50:26">12. Vayejí (Génesis 47:28 al 50:26)</option>
+                                <option value="13" data-title="Shemot" data-sub="Éxodo 1:1 al 6:1">13. Shemot (Éxodo 1:1 al 6:1)</option>
+                                <option value="14" data-title="Vaerá" data-sub="Éxodo 6:2 al 9:35">14. Vaerá (Éxodo 6:2 al 9:35)</option>
+                                <option value="15" data-title="Bo" data-sub="Éxodo 10:1 al 13:16">15. Bo (Éxodo 10:1 al 13:16)</option>
+                                <option value="16" data-title="Beshalaj" data-sub="Éxodo 13:17 al 17:16">16. Beshalaj (Éxodo 13:17 al 17:16)</option>
+                                <option value="17" data-title="Yitró" data-sub="Éxodo 18:1 al 20:23">17. Yitró (Éxodo 18:1 al 20:23)</option>
+                                <option value="18" data-title="Mishpatim" data-sub="Éxodo 21:1 al 24:18">18. Mishpatim (Éxodo 21:1 al 24:18)</option>
+                                <option value="19" data-title="Terumah" data-sub="Éxodo 25:1 al 27:19">19. Terumah (Éxodo 25:1 al 27:19)</option>
+                                <option value="20" data-title="Tetzaveh" data-sub="Éxodo 27:20 al 30:10">20. Tetzaveh (Éxodo 27:20 al 30:10)</option>
+                                <option value="21" data-title="Ki Tisá" data-sub="Éxodo 30:11 al 34:35">21. Ki Tisá (Éxodo 30:11 al 34:35)</option>
+                                <option value="22" data-title="Vayakhel" data-sub="Éxodo 35:1 al 38:20">22. Vayakhel (Éxodo 35:1 al 38:20)</option>
+                                <option value="23" data-title="Pekudei" data-sub="Éxodo 38:21 al 40:38">23. Pekudei (Éxodo 38:21 al 40:38)</option>
+                                <option value="24" data-title="Vayikrá" data-sub="Levítico 1:1 al 5:26">24. Vayikrá (Levítico 1:1 al 5:26)</option>
+                                <option value="25" data-title="Tzav" data-sub="Levítico 6:1 al 8:36">25. Tzav (Levítico 6:1 al 8:36)</option>
+                                <option value="26" data-title="Sheminí" data-sub="Levítico 9:1 al 11:47">26. Sheminí (Levítico 9:1 al 11:47)</option>
+                                <option value="27" data-title="Tazria" data-sub="Levítico 12:1 al 13:59">27. Tazria (Levítico 12:1 al 13:59)</option>
+                                <option value="28" data-title="Metzorá" data-sub="Levítico 14:1 al 15:33">28. Metzorá (Levítico 14:1 al 15:33)</option>
+                                <option value="29" data-title="Ajarei Mot" data-sub="Levítico 16:1 al 18:30">29. Ajarei Mot (Levítico 16:1 al 18:30)</option>
+                                <option value="30" data-title="Kedoshim" data-sub="Levítico 19:1 al 20:27">30. Kedoshim (Levítico 19:1 al 20:27)</option>
+                                <option value="31" data-title="Emor" data-sub="Levítico 21:1 al 24:23">31. Emor (Levítico 21:1 al 24:23)</option>
+                                <option value="32" data-title="Behar" data-sub="Levítico 25:1 al 26:2">32. Behar (Levítico 25:1 al 26:2)</option>
+                                <option value="33" data-title="Bejukotai" data-sub="Levítico 26:3 al 27:34">33. Bejukotai (Levítico 26:3 al 27:34)</option>
+                                <option value="34" data-title="Bemidbar" data-sub="Números 1:1 al 4:20">34. Bemidbar (Números 1:1 al 4:20)</option>
+                                <option value="35" data-title="Nasó" data-sub="Números 4:21 al 7:89">35. Nasó (Números 4:21 al 7:89)</option>
+                                <option value="36" data-title="Behaalotjá" data-sub="Números 8:1 al 12:16">36. Behaalotjá (Números 8:1 al 12:16)</option>
+                                <option value="37" data-title="Shelaj Lejá" data-sub="Números 13:1 al 15:41">37. Shelaj Lejá (Números 13:1 al 15:41)</option>
+                                <option value="38" data-title="Kóraj" data-sub="Números 16:1 al 18:32">38. Kóraj (Números 16:1 al 18:32)</option>
+                                <option value="39" data-title="Jukat" data-sub="Números 19:1 al 22:1">39. Jukat (Números 19:1 al 22:1)</option>
+                                <option value="40" data-title="Balak" data-sub="Números 22:2 al 25:9">40. Balak (Números 22:2 al 25:9)</option>
+                                <option value="41" data-title="Pinjás" data-sub="Números 25:10 al 30:1">41. Pinjás (Números 25:10 al 30:1)</option>
+                                <option value="42" data-title="Matot" data-sub="Números 30:2 al 32:42">42. Matot (Números 30:2 al 32:42)</option>
+                                <option value="43" data-title="Masei" data-sub="Números 33:1 al 36:13">43. Masei (Números 33:1 al 36:13)</option>
+                                <option value="44" data-title="Devarim" data-sub="Deuteronomio 1:1 al 3:22">44. Devarim (Deuteronomio 1:1 al 3:22)</option>
+                                <option value="45" data-title="Vaetjanán" data-sub="Deuteronomio 3:23 al 7:11">45. Vaetjanán (Deuteronomio 3:23 al 7:11)</option>
+                                <option value="46" data-title="Ékev" data-sub="Deuteronomio 7:12 al 11:25">46. Ékev (Deuteronomio 7:12 al 11:25)</option>
+                                <option value="47" data-title="Reéh" data-sub="Deuteronomio 11:26 al 16:17">47. Reéh (Deuteronomio 11:26 al 16:17)</option>
+                                <option value="48" data-title="Shoftim" data-sub="Deuteronomio 16:18 al 21:9">48. Shoftim (Deuteronomio 16:18 al 21:9)</option>
+                                <option value="49" data-title="Ki Tetzé" data-sub="Deuteronomio 21:10 al 25:19">49. Ki Tetzé (Deuteronomio 21:10 al 25:19)</option>
+                                <option value="50" data-title="Ki Tavó" data-sub="Deuteronomio 26:1 al 29:8">50. Ki Tavó (Deuteronomio 26:1 al 29:8)</option>
+                                <option value="51" data-title="Nitzavim" data-sub="Deuteronomio 29:9 al 30:20">51. Nitzavim (Deuteronomio 29:9 al 30:20)</option>
+                                <option value="52" data-title="Vayélej" data-sub="Deuteronomio 31:1 al 31:30">52. Vayélej (Deuteronomio 31:1 al 31:30)</option>
+                                <option value="53" data-title="Haazinu" data-sub="Deuteronomio 32:1 al 32:52">53. Haazinu (Deuteronomio 32:1 al 32:52)</option>
+                                <option value="54" data-title="Vezot Haberajáh" data-sub="Deuteronomio 33:1 al 34:12">54. Vezot Haberajáh (Deuteronomio 33:1 al 34:12)</option>
+                            </select>
+                            <small class="text-white-50" style="font-size: 0.74rem;">Al seleccionar una de las 54 porciones, se completan automáticamente el número, título y versículos bíblicos.</small>
+                        </div>
+
                         <div class="col-md-2">
                             <label class="form-label small text-white-50">Nº</label>
-                            <input type="number" name="parasha_number" class="form-control" placeholder="#" min="1">
+                            <input type="number" id="create_p_num" name="parasha_number" class="form-control" placeholder="#" min="1" max="54">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label small text-white-50">Título</label>
-                            <input type="text" name="title" class="form-control" required placeholder="Ej: Bereshit">
+                            <label class="form-label small text-white-50">Título de la Porción</label>
+                            <input type="text" id="create_p_title" name="title" class="form-control" required placeholder="Ej: Bereshit">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small text-white-50">Subtítulo / Versículo</label>
-                            <input type="text" name="subtitle" class="form-control" placeholder="Ej: Génesis 1:1">
+                            <label class="form-label small text-white-50">Subtítulo / Versículo(s)</label>
+                            <input type="text" id="create_p_sub" name="subtitle" class="form-control" placeholder="Ej: Génesis 1:1 al 6:8">
                         </div>
                         <div class="col-md-12">
-                            <label class="form-label small text-white-50">Resumen Breve</label>
-                            <input type="text" name="description" class="form-control" placeholder="Introducción corta...">
+                            <label class="form-label small text-white-50">Resumen Breve de la Enseñanza</label>
+                            <input type="text" name="description" class="form-control" placeholder="Introducción corta o resumen de la clase...">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small text-white-50">Link de YouTube</label>
+                            <label class="form-label small text-white-50">Link de YouTube (Video de la Enseñanza)</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-youtube"></i></span>
+                                <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-youtube text-danger"></i></span>
                                 <input type="text" name="youtube_link" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small text-white-50">Subir PDF (descargable)</label>
+                            <label class="form-label small text-white-50">Subir PDF (Notas de Estudio / Descargable)</label>
                             <input type="file" name="pdf_upload" class="form-control" accept=".pdf">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label small text-white-50">Subir Imagen</label>
+                            <label class="form-label small text-white-50">Subir Imagen de Portada</label>
                             <input type="file" id="create_image_file" name="image_file" class="form-control" accept="image/*">
                         </div>
                         <div class="col-md-4">
@@ -103,7 +168,7 @@
                             </div>
                         </div>
                         <div class="col-12">
-                            <label class="form-label small text-white-50">Contenido Completo (Enseñanza)</label>
+                            <label class="form-label small text-white-50">Contenido Completo (Texto de la Enseñanza)</label>
                             <div id="create-editor-container" style="height:300px;background:white;color:black;border-radius:5px;"></div>
                             <input type="hidden" name="content" id="createContentInput">
                         </div>
@@ -111,7 +176,7 @@
                 </div>
                 <div class="modal-footer border-secondary">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success px-4">Crear Parasha</button>
+                    <button type="submit" class="btn btn-success px-4"><i class="bi bi-check-lg me-1"></i> Guardar Enseñanza del Ciclo</button>
                 </div>
             </form>
         </div>

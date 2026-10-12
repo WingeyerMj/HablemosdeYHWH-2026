@@ -136,11 +136,7 @@ class TorahCycle {
         await this.ensureTables();
         await db.query('UPDATE torah_cycles SET is_current = 0');
         await db.query('UPDATE torah_cycles SET is_current = 1 WHERE id = ?', [id]);
-        const current = await this.getCycleById(id);
-        if (current) {
-            await db.query('UPDATE parashot SET cycle_id = ?, cycle_name = ?', [current.id, current.name]);
-        }
-        return current;
+        return await this.getCycleById(id);
     }
 
     /**
@@ -155,11 +151,7 @@ class TorahCycle {
             'INSERT INTO torah_cycles (name, year_label, start_date, is_current, notes) VALUES (?, ?, CURDATE(), ?, ?)',
             [name.trim(), yearLabel.trim(), isCurrent ? 1 : 0, notes.trim()]
         );
-        const newCycle = await this.getCycleById(res.insertId);
-        if (isCurrent && newCycle) {
-            await db.query('UPDATE parashot SET cycle_id = ?, cycle_name = ?', [newCycle.id, newCycle.name]);
-        }
-        return newCycle;
+        return await this.getCycleById(res.insertId);
     }
 
     /**

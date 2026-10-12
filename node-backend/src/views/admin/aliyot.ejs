@@ -97,8 +97,16 @@ select option:checked, select option:hover {
                                                 </span>
                                             </td>
                                             <td>
-                                                <% if (a.parasha_title) { %>
-                                                    <div class="fw-bold text-white"><%= a.parasha_title %></div>
+                                                <% if (a.parasha_title) { 
+                                                    const aCycle = (a.parasha_number == 1 || (a.cycle_name && a.cycle_name.includes('2026 - 2027'))) ? 'Ciclo 2026 - 2027' : (a.cycle_name || 'Ciclo 2025 - 2026');
+                                                    const isANew = aCycle.includes('2026');
+                                                %>
+                                                    <div class="d-flex align-items-center gap-1">
+                                                        <span class="fw-bold text-white"><%= a.parasha_title %></span>
+                                                        <span class="badge <%= isANew ? 'bg-warning text-dark fw-bold' : 'bg-dark border border-secondary text-white-50' %>" style="font-size: 0.68rem;">
+                                                            <%= aCycle %>
+                                                        </span>
+                                                    </div>
                                                     <small class="text-white-50"><%= a.parasha_subtitle || '' %></small>
                                                 <% } else { %>
                                                     <button type="button" class="btn btn-sm btn-outline-warning rounded-pill py-0 px-2 fw-semibold btn-quick-link" 

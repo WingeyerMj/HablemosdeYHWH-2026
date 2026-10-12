@@ -55,7 +55,14 @@
                                     <% if (parasha.subtitle) { %>
                                         <div class="meta-top mb-4">
                                             <ul class="list-unstyled">
-                                                <li class="d-flex align-items-center gap-2">
+                                                <li class="d-flex align-items-center gap-2 flex-wrap">
+                                                    <% 
+                                                        const pCycle = (parasha.parasha_number == 1 || (parasha.cycle_name && parasha.cycle_name.includes('2026 - 2027'))) ? 'Ciclo 2026 - 2027' : (parasha.cycle_name || 'Ciclo 2025 - 2026');
+                                                        const isNewCycle = pCycle.includes('2026');
+                                                    %>
+                                                    <span class="badge rounded-pill px-3 py-2 fs-6 shadow-sm d-inline-flex align-items-center" style="<%= isNewCycle ? 'background: rgba(212, 168, 83, 0.15); color: #8c6a2d; border: 1px solid rgba(212, 168, 83, 0.35);' : 'background: #f1f3f5; color: #495057; border: 1px solid #dee2e6;' %>">
+                                                        <i class="bi <%= isNewCycle ? 'bi-star-fill text-warning' : 'bi-clock-history text-secondary' %> me-1"></i><%= pCycle %>
+                                                    </span>
                                                     <% if (parasha.subtitle) { %>
                                                         <span class="badge bg-primary px-3 py-2 fs-6"><i class="bi bi-book me-1"></i> <%= parasha.subtitle %></span>
                                                     <% } %>
