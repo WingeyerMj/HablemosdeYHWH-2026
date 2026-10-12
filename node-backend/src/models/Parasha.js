@@ -77,7 +77,7 @@ class Parasha {
         await this.ensureColumns();
         const { parasha_number, title, description, icon, link, subtitle, content, image_url, pdf_file, youtube_link, cycle_id, cycle_name } = data;
         return await db.query(
-            'UPDATE parashot SET parasha_number = ?, title = ?, subtitle = ?, description = ?, content = ?, image_url = ?, pdf_file = ?, icon = ?, link = ?, youtube_link = ?, cycle_id = ?, cycle_name = ? WHERE id = ?',
+            'UPDATE parashot SET parasha_number = ?, title = ?, subtitle = ?, description = ?, content = ?, image_url = ?, pdf_file = ?, icon = ?, link = ?, youtube_link = ?, cycle_id = ?, cycle_name = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
             [parasha_number || null, title, subtitle || '', description || '', content || '', image_url || '', pdf_file || '', icon || 'bi-journal-text', link || '', youtube_link || '', cycle_id || null, cycle_name || null, id]
         );
     }

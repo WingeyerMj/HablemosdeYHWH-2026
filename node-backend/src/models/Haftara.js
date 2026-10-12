@@ -402,10 +402,22 @@ class Haftara {
         const authorsJson = JSON.stringify(authorsList);
         const parsedParashaId = parasha_id ? parseInt(parasha_id) : null;
 
+        let cycleId = data.cycle_id || null;
+        let cycleName = data.cycle_name || null;
+        if (!cycleName && parsedParashaId) {
+            try {
+                const [pRow] = await db.query('SELECT cycle_id, cycle_name FROM parashot WHERE id = ?', [parsedParashaId]);
+                if (pRow && pRow[0]) {
+                    cycleId = cycleId || pRow[0].cycle_id;
+                    cycleName = pRow[0].cycle_name;
+                }
+            } catch(e) {}
+        }
+
         try {
             return await db.query(
-                `INSERT INTO haftarot (parasha_id, title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, author, author_role, author_img, authors, is_published) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO haftarot (parasha_id, title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, author, author_role, author_img, authors, is_published, cycle_id, cycle_name) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     parsedParashaId,
                     title,
@@ -420,13 +432,15 @@ class Haftara {
                     primaryRole,
                     primaryImg,
                     authorsJson,
-                    is_published !== undefined ? is_published : true
+                    is_published !== undefined ? is_published : true,
+                    cycleId,
+                    cycleName
                 ]
             );
         } catch (err) {
             return await db.query(
-                `INSERT INTO haftarot (title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, author, author_role, author_img, is_published) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO haftarot (title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, author, author_role, author_img, is_published, cycle_id, cycle_name) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     title,
                     subtitle || '',
@@ -439,7 +453,9 @@ class Haftara {
                     primaryAuthor,
                     primaryRole,
                     primaryImg,
-                    is_published !== undefined ? is_published : true
+                    is_published !== undefined ? is_published : true,
+                    cycleId,
+                    cycleName
                 ]
             );
         }
@@ -489,7 +505,8 @@ class Haftara {
                     author_role = ?, 
                     author_img = ?, 
                     authors = ?, 
-                    is_published = ? 
+                    is_published = ?,
+                    updated_at = CURRENT_TIMESTAMP 
                  WHERE id = ?`,
                 [
                     parsedParashaId,
