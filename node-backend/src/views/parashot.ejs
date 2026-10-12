@@ -46,14 +46,31 @@
                                     <span class="fw-bold small text-muted"><i class="bi bi-clock-history me-1" style="color: var(--primary-color);"></i> Ciclo de Lectura:</span>
                                     <div class="dropdown">
                                         <button class="btn btn-sm btn-outline-dark dropdown-toggle px-3 py-1 fw-semibold" type="button" data-bs-toggle="dropdown">
-                                            <%= (typeof selectedCycle !== 'undefined' && selectedCycle) ? selectedCycle.name : 'Ciclo Actual (Activo)' %>
+                                            <% if (typeof selectedCycle !== 'undefined' && selectedCycle) { %>
+                                                📁 <%= selectedCycle.name %>
+                                            <% } else if (typeof currentCycle !== 'undefined' && currentCycle) { %>
+                                                ⭐ <%= currentCycle.name %> (Activo)
+                                            <% } else { %>
+                                                Ciclo Actual (Activo)
+                                            <% } %>
                                         </button>
                                         <ul class="dropdown-menu shadow">
-                                            <li><a class="dropdown-item <%= (typeof selectedCycle === 'undefined' || !selectedCycle) ? 'active' : '' %>" href="/parashot">Ciclo Actual (Activo)</a></li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <% cycles.forEach(c => { %>
-                                                <li><a class="dropdown-item <%= (typeof selectedCycle !== 'undefined' && selectedCycle && selectedCycle.id === c.id) ? 'active' : '' %>" href="/parashot?cycle=<%= c.id %>"><%= c.name %> (<%= c.year_label || 'Histórico' %>)</a></li>
-                                            <% }) %>
+                                            <li>
+                                                <a class="dropdown-item <%= (typeof selectedCycle === 'undefined' || !selectedCycle) ? 'active' : '' %>" href="/parashot">
+                                                    ⭐ <%= (typeof currentCycle !== 'undefined' && currentCycle) ? currentCycle.name : 'Ciclo Actual' %> (Activo)
+                                                </a>
+                                            </li>
+                                            <% if (typeof cycles !== 'undefined' && cycles && cycles.length > 0) { %>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li class="dropdown-header small text-muted text-uppercase" style="font-size: 0.72rem;">Ciclos Anteriores Archivados</li>
+                                                <% cycles.filter(c => !currentCycle || c.id !== currentCycle.id).forEach(c => { %>
+                                                    <li>
+                                                        <a class="dropdown-item <%= (typeof selectedCycle !== 'undefined' && selectedCycle && selectedCycle.id === c.id) ? 'active' : '' %>" href="/parashot?cycle=<%= c.id %>">
+                                                            📁 <%= c.name %> <%= c.year_label ? '(' + c.year_label + ')' : '' %>
+                                                        </a>
+                                                    </li>
+                                                <% }) %>
+                                            <% } %>
                                         </ul>
                                     </div>
                                 </div>
@@ -86,9 +103,14 @@
                                                             <%= service.parasha_number ? service.parasha_number + '. ' : '' %><%= service.title %>
                                                         </a>
                                                     </h4>
-                                                    <span class="badge rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center" style="background: #fdf6e7; color: #8c6a2d; font-size: 0.75rem; font-weight: 600; border: 1px solid #ebdccb; z-index: 2; position: relative;">
-                                                        <i class="bi bi-eye-fill me-1 text-info"></i><%= service.views || 0 %>
-                                                    </span>
+                                                    <div class="d-flex align-items-center gap-1" style="z-index: 2; position: relative;">
+                                                        <span class="badge rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center" style="background: rgba(212, 168, 83, 0.12); color: #8c6a2d; font-size: 0.72rem; font-weight: 600; border: 1px solid rgba(212, 168, 83, 0.3);">
+                                                            <i class="bi bi-clock-history me-1 text-warning"></i><%= service.cycle_name || (selectedCycle ? selectedCycle.name : (typeof currentCycle !== 'undefined' && currentCycle ? currentCycle.name : 'Ciclo Activo')) %>
+                                                        </span>
+                                                        <span class="badge rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center" style="background: #fdf6e7; color: #8c6a2d; font-size: 0.75rem; font-weight: 600; border: 1px solid #ebdccb;">
+                                                            <i class="bi bi-eye-fill me-1 text-info"></i><%= service.views || 0 %>
+                                                        </span>
+                                                    </div>
                                                 </div>
                                                 <% if (service.subtitle) { %>
                                                     <div class="subtitle mb-2" style="color: var(--primary-color); font-size: 0.9rem; font-weight: 600; line-height: 1.2;">

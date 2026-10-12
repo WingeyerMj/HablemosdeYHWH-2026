@@ -50,7 +50,22 @@ class Parasha {
         await this.ensureColumns();
         const { parasha_number, title, description, icon, link, subtitle, content, image_url, pdf_file, youtube_link, cycle_id, cycle_name } = data;
         return await db.query(
-            'INSERT INTO parashot (parasha_number, title, subtitle, description, content, image_url, pdf_file, icon, link, youtube_link, cycle_id, cycle_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            `INSERT INTO parashot (parasha_number, title, subtitle, description, content, image_url, pdf_file, icon, link, youtube_link, cycle_id, cycle_name) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             ON DUPLICATE KEY UPDATE
+                title = VALUES(title),
+                subtitle = VALUES(subtitle),
+                description = VALUES(description),
+                content = VALUES(content),
+                image_url = IF(VALUES(image_url) != '', VALUES(image_url), image_url),
+                pdf_file = IF(VALUES(pdf_file) != '', VALUES(pdf_file), pdf_file),
+                icon = VALUES(icon),
+                link = VALUES(link),
+                youtube_link = VALUES(youtube_link),
+                cycle_id = VALUES(cycle_id),
+                cycle_name = VALUES(cycle_name),
+                views = 0,
+                updated_at = CURRENT_TIMESTAMP`,
             [parasha_number || null, title, subtitle || '', description || '', content || '', image_url || '', pdf_file || '', icon || 'bi-journal-text', link || '', youtube_link || '', cycle_id || null, cycle_name || null]
         );
     }

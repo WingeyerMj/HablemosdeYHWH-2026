@@ -220,6 +220,7 @@ const homeController = {
             const TorahCycle = require('../models/TorahCycle');
             const cycleId = req.query.cycle ? parseInt(req.query.cycle) : null;
             const cycles = await TorahCycle.getAllCycles();
+            const currentCycle = await TorahCycle.getCurrentCycle();
             
             let allParashot = [];
             let selectedCycle = null;
@@ -232,7 +233,7 @@ const homeController = {
             }
 
             if (!selectedCycle) {
-                allParashot = await Parasha.getAll();
+                allParashot = await Parasha.getAllAsc();
             }
 
             res.render('parashot', { 
@@ -240,6 +241,7 @@ const homeController = {
                 page: 'parashot', 
                 parashot: allParashot,
                 cycles,
+                currentCycle,
                 selectedCycle,
                 layout: false 
             });
@@ -329,6 +331,7 @@ const homeController = {
             const TorahCycle = require('../models/TorahCycle');
             const cycleId = req.query.cycle ? parseInt(req.query.cycle) : null;
             const cycles = await TorahCycle.getAllCycles();
+            const currentCycle = await TorahCycle.getCurrentCycle();
 
             let selectedCycle = null;
             let parashot = [];
@@ -348,7 +351,7 @@ const homeController = {
             }
 
             if (!selectedCycle) {
-                parashot = await Parasha.getAll();
+                parashot = await Parasha.getAllAsc();
                 const selectedParashaId = req.query.parasha || (parashot.length > 0 ? parashot[0].id : null);
                 if (selectedParashaId) {
                     selectedParasha = await Parasha.getById(selectedParashaId);
@@ -363,6 +366,7 @@ const homeController = {
                 selectedParasha,
                 aliyot,
                 cycles,
+                currentCycle,
                 selectedCycle,
                 layout: false
             });
