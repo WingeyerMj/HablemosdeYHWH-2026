@@ -51,6 +51,46 @@
         <section class="section" style="background-color: #faf9f6; min-height: 80vh;">
             <div class="container">
 
+                <% if (typeof selectedCycle !== 'undefined' && selectedCycle) { %>
+                    <div class="alert alert-warning border-warning d-flex flex-wrap align-items-center justify-content-between p-3 rounded-4 mb-4 shadow-sm" style="background: linear-gradient(135deg, rgba(212,184,149,0.2), rgba(212,184,149,0.05)); border-color: #d4b895 !important;">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi bi-archive-fill fs-3 text-warning"></i>
+                            <div>
+                                <strong class="text-dark">Estás visualizando las Aliyot del Ciclo Histórico: <%= selectedCycle.name %></strong>
+                                <div class="small text-muted">Audios y lecturas archivados tras la fiesta de Sucot.</div>
+                            </div>
+                        </div>
+                        <a href="/aliyot" class="btn btn-sm btn-dark mt-2 mt-md-0 fw-bold">
+                            <i class="bi bi-arrow-left me-1"></i> Volver al Ciclo Actual
+                        </a>
+                    </div>
+                <% } %>
+
+                <% if (typeof cycles !== 'undefined' && cycles && cycles.length > 0) { %>
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 p-3 rounded-4" style="background: #ffffff; border: 1px solid #ebdccb;">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fw-bold small text-muted"><i class="bi bi-clock-history me-1" style="color: #d4a853;"></i> Ciclo de Lectura:</span>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-dark dropdown-toggle px-3 py-1 fw-semibold" type="button" data-bs-toggle="dropdown">
+                                    <%= (typeof selectedCycle !== 'undefined' && selectedCycle) ? selectedCycle.name : 'Ciclo Actual (Activo)' %>
+                                </button>
+                                <ul class="dropdown-menu shadow">
+                                    <li><a class="dropdown-item <%= (typeof selectedCycle === 'undefined' || !selectedCycle) ? 'active' : '' %>" href="/aliyot">Ciclo Actual (Activo)</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <% cycles.forEach(c => { %>
+                                        <li><a class="dropdown-item <%= (typeof selectedCycle !== 'undefined' && selectedCycle && selectedCycle.id === c.id) ? 'active' : '' %>" href="/aliyot?cycle=<%= c.id %>"><%= c.name %> (<%= c.year_label || 'Histórico' %>)</a></li>
+                                    <% }) %>
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            <a href="/archivo-historico" class="btn btn-sm btn-link text-decoration-none" style="color: #8c6a2d; font-weight: 600; font-size: 0.85rem;">
+                                <i class="bi bi-collection me-1"></i> Archivo Histórico Completo &rarr;
+                            </a>
+                        </div>
+                    </div>
+                <% } %>
+
                 <!-- Banner Explicativo del Ciclo Semanal -->
                 <div class="alert p-3 p-md-4 mb-4 rounded-4 shadow-sm border-0 d-flex align-items-start gap-3" style="background: linear-gradient(135deg, #fdfbf7 0%, #f7f1e6 100%); border-left: 5px solid #d4a853 !important;">
                     <div class="rounded-circle p-2 d-flex align-items-center justify-content-center flex-shrink-0" style="background: rgba(212, 168, 83, 0.2); width: 45px; height: 45px; color: #8c6a2d;">
@@ -72,6 +112,9 @@
                                 <i class="bi bi-journal-bookmark-fill me-1" style="color: #d4a853;"></i> Selecciona la porción semanal:
                             </label>
                             <form action="/aliyot" method="GET" id="parashaSelectForm">
+                                <% if (typeof selectedCycle !== 'undefined' && selectedCycle) { %>
+                                    <input type="hidden" name="cycle" value="<%= selectedCycle.id %>">
+                                <% } %>
                                 <select name="parasha" class="form-select form-select-lg" onchange="document.getElementById('parashaSelectForm').submit()" style="border-radius: 12px; border-color: #d4a853;">
                                     <% if (typeof parashot !== 'undefined' && parashot.length > 0) { %>
                                         <% parashot.forEach(p => { %>
@@ -86,7 +129,7 @@
 
                         <% if (selectedParasha) { %>
                             <div class="col-lg-6 d-flex align-items-center justify-content-lg-end gap-2">
-                                <a href="/parashot/<%= selectedParasha.id %>" class="btn btn-outline-dark rounded-pill px-3 py-2 fw-semibold">
+                                <a href="/parashot/<%= selectedParasha.id %><%= (typeof selectedCycle !== 'undefined' && selectedCycle) ? '?cycle=' + selectedCycle.id : '' %>" class="btn btn-outline-dark rounded-pill px-3 py-2 fw-semibold">
                                     <i class="bi bi-book me-1"></i> Ir al Estudio Completo de Shabat
                                 </a>
                             </div>

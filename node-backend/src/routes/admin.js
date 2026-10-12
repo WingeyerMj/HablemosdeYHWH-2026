@@ -55,6 +55,7 @@ router.use(async (req, res, next) => {
         else if (path.includes('/entity/footer_links')) res.locals.activePage = 'footer';
         else if (path.includes('/settings')) res.locals.activePage = 'settings';
         else if (path.includes('/users')) res.locals.activePage = 'users';
+        else if (path.includes('/ciclos-tora')) res.locals.activePage = 'ciclos-tora';
 
         try {
             const Interaction = require('../models/Interaction');
@@ -226,6 +227,11 @@ router.get('/entity/:table/delete/:id', isAuthenticated, isStrictAdmin, adminCon
 router.post('/subscribers/create', isAuthenticated, isStrictAdmin, adminController.createSubscriber);
 router.post('/subscribers/broadcast', isAuthenticated, isStrictAdmin, adminController.broadcastNewsletter);
 router.get('/subscribers/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteSubscriber);
+
+// Ciclos de Torá & Pasaje Histórico (Sucot) (Solo Admin)
+router.get('/ciclos-tora', isAuthenticated, isStrictAdmin, adminController.ciclosToraPage);
+router.post('/ciclos-tora/archive-reset', isAuthenticated, isStrictAdmin, adminController.archiveResetCycle);
+router.post('/ciclos-tora/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteTorahCycle);
 
 module.exports = router;
 

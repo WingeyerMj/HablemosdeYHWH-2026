@@ -2604,6 +2604,76 @@ const adminController = {
             }
             res.redirect('/admin/comentarios?error=' + encodeURIComponent(error.message));
         }
+    },
+
+    // ==================== CICLOS DE TORÁ & PASAJE HISTÓRICO (SUCOT) ====================
+    ciclosToraPage: async (req, res) => {
+        try {
+            const TorahCycle = require('../models/TorahCycle');
+            const cycles = await TorahCycle.getAllCycles();
+
+            // Estadísticas del ciclo activo actual
+            const [pTotal] = await db.query('SELECT COUNT(*) as c FROM parashot');
+            const [pVid] = await db.query("SELECT COUNT(*) as c FROM parashot WHERE youtube_link IS NOT NULL AND youtube_link != ''");
+            const [aTotal] = await db.query('SELECT COUNT(*) as c FROM aliyot');
+            const [aAud] = await db.query("SELECT COUNT(*) as c FROM aliyot WHERE audio_url IS NOT NULL AND audio_url != ''");
+            const [hTotal] = await db.query('SELECT COUNT(*) as c FROM haftarot');
+            const [hVid] = await db.query("SELECT COUNT(*) as c FROM haftarot WHERE (youtube_link IS NOT NULL AND youtube_link != '') OR (audio_url IS NOT NULL AND audio_url != '')");
+
+            const currentStats = {
+                parashotCount: pTotal[0]?.c || 0,
+                parashotWithVideos: pVid[0]?.c || 0,
+                aliyotCount: aTotal[0]?.c || 0,
+                aliyotWithAudios: aAud[0]?.c || 0,
+                haftarotCount: hTotal[0]?.c || 0,
+                haftarotWithVideos: hVid[0]?.c || 0
+            };
+
+            res.render('admin/ciclos_tora', {
+                layout: 'admin/layout',
+                activePage: 'ciclos-tora',
+                cycles,
+                currentStats,
+                successMsg: req.query.msg || null,
+                errorMsg: req.query.error || null
+            });
+        } catch (error) {
+            console.error('Error ciclosToraPage:', error);
+            res.redirect('/admin/dashboard');
+        }
+    },
+
+    archiveResetCycle: async (req, res) => {
+        try {
+            const TorahCycle = require('../models/TorahCycle');
+            const { cycleName, yearLabel, notes, startDate, newCycleName } = req.body;
+
+            const archiveResult = await TorahCycle.archiveCurrentCycleAndReset({
+                cycleName,
+                yearLabel,
+                notes,
+                startDate,
+                newCycleName
+            });
+
+            const msg = `Se archivaron con éxito ${archiveResult.parashotCount} Parashot, ${archiveResult.aliyotCount} Aliyot y ${archiveResult.haftarotCount} Haftarot en '${archiveResult.cycleName}'. La base de datos activa se ha reseteado para el nuevo ciclo de lecturas.`;
+            res.redirect('/admin/ciclos-tora?msg=' + encodeURIComponent(msg));
+        } catch (error) {
+            console.error('Error archiveResetCycle:', error);
+            res.redirect('/admin/ciclos-tora?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    deleteTorahCycle: async (req, res) => {
+        try {
+            const TorahCycle = require('../models/TorahCycle');
+            const id = parseInt(req.params.id);
+            await TorahCycle.deleteCycle(id);
+            res.redirect('/admin/ciclos-tora?msg=' + encodeURIComponent('Ciclo histórico eliminado correctamente.'));
+        } catch (error) {
+            console.error('Error deleteTorahCycle:', error);
+            res.redirect('/admin/ciclos-tora?error=' + encodeURIComponent(error.message));
+        }
     }
 };
 

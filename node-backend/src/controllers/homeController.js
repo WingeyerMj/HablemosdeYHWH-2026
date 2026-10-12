@@ -179,13 +179,68 @@ const homeController = {
         res.render('calendar', { title: 'Calendario - Hablemos de YHWH', page: 'calendar', layout: false });
     },
 
+    archivoHistorico: async (req, res, next) => {
+        try {
+            const TorahCycle = require('../models/TorahCycle');
+            const cycles = await TorahCycle.getAllCycles();
+            const selectedCycleId = req.query.cycle ? parseInt(req.query.cycle) : (cycles.length > 0 ? cycles[0].id : null);
+            
+            let selectedCycle = null;
+            let historicalParashot = [];
+            let historicalAliyot = [];
+            let historicalHaftarot = [];
+
+            if (selectedCycleId) {
+                selectedCycle = await TorahCycle.getCycleById(selectedCycleId);
+                if (selectedCycle) {
+                    historicalParashot = await TorahCycle.getHistoricalParashot(selectedCycleId);
+                    historicalAliyot = await TorahCycle.getHistoricalAliyot(selectedCycleId);
+                    historicalHaftarot = await TorahCycle.getHistoricalHaftarot(selectedCycleId);
+                }
+            }
+
+            res.render('archivo_historico', {
+                title: 'Archivo Histórico de la Torá - Ciclos Anteriores - Hablemos de YHWH',
+                page: 'archivo-historico',
+                cycles,
+                selectedCycle,
+                historicalParashot,
+                historicalAliyot,
+                historicalHaftarot,
+                searchQuery: req.query.q || '',
+                layout: false
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
     parashot: async (req, res, next) => {
         try {
-            const allParashot = await Parasha.getAll();
+            const TorahCycle = require('../models/TorahCycle');
+            const cycleId = req.query.cycle ? parseInt(req.query.cycle) : null;
+            const cycles = await TorahCycle.getAllCycles();
+            
+            let allParashot = [];
+            let selectedCycle = null;
+
+            if (cycleId) {
+                selectedCycle = await TorahCycle.getCycleById(cycleId);
+                if (selectedCycle) {
+                    allParashot = await TorahCycle.getHistoricalParashot(cycleId);
+                }
+            }
+
+            if (!selectedCycle) {
+                allParashot = await Parasha.getAll();
+            }
+
             res.render('parashot', { 
-                title: 'Parashot - Hablemos de YHWH', 
+                title: selectedCycle ? `Parashot - ${selectedCycle.name} - Hablemos de YHWH` : 'Parashot - Hablemos de YHWH', 
                 page: 'parashot', 
                 parashot: allParashot,
+                cycles,
+                selectedCycle,
                 layout: false 
             });
         } catch (error) {
@@ -211,22 +266,48 @@ const homeController = {
         try {
             const Aliyah = require('../models/Aliyah');
             const Haftara = require('../models/Haftara');
-            const parasha = await Parasha.getById(req.params.id);
-            if (!parasha) return next();
-            await Parasha.incrementViews(parasha.id);
-            parasha.views = (parasha.views || 0) + 1;
-            const aliyot = await Aliyah.getByParashaId(parasha.id);
+            const TorahCycle = require('../models/TorahCycle');
+            const cycleId = req.query.cycle ? parseInt(req.query.cycle) : null;
             
-            // Buscar Haftará vinculada directamente o por título/porción
+            let parasha = null;
+            let aliyot = [];
             let haftara = null;
-            try {
-                haftara = await Haftara.getByParashaId(parasha.id);
-                if (!haftara) {
-                    haftara = await Haftara.getByParashaTitle(parasha.title);
+            let selectedCycle = null;
+
+            if (cycleId) {
+                selectedCycle = await TorahCycle.getCycleById(cycleId);
+                parasha = await TorahCycle.getHistoricalParashaById(req.params.id);
+                if (parasha) {
+                    aliyot = await TorahCycle.getHistoricalAliyot(cycleId, parasha.id);
+                    const histHaftarot = await TorahCycle.getHistoricalHaftarot(cycleId);
+                    haftara = histHaftarot.find(h => h.historical_parasha_id == parasha.id || (h.parasha_reference && h.parasha_reference.includes(parasha.title))) || null;
                 }
-            } catch(e) {
-                console.warn('Aviso cargando haftará vinculada:', e.message);
+            } else {
+                parasha = await Parasha.getById(req.params.id);
+                if (!parasha) {
+                    // Fallback a parasha histórica si el ID corresponde a una archivada
+                    parasha = await TorahCycle.getHistoricalParashaById(req.params.id);
+                    if (parasha) {
+                        selectedCycle = await TorahCycle.getCycleById(parasha.cycle_id);
+                        aliyot = await TorahCycle.getHistoricalAliyot(parasha.cycle_id, parasha.id);
+                    }
+                } else {
+                    await Parasha.incrementViews(parasha.id);
+                    parasha.views = (parasha.views || 0) + 1;
+                    aliyot = await Aliyah.getByParashaId(parasha.id);
+                    
+                    try {
+                        haftara = await Haftara.getByParashaId(parasha.id);
+                        if (!haftara) {
+                            haftara = await Haftara.getByParashaTitle(parasha.title);
+                        }
+                    } catch(e) {
+                        console.warn('Aviso cargando haftará vinculada:', e.message);
+                    }
+                }
             }
+
+            if (!parasha) return next();
 
             res.render('parasha_detail', { 
                 title: parasha.title + ' - Hablemos de YHWH', 
@@ -234,6 +315,7 @@ const homeController = {
                 parasha, 
                 aliyot,
                 haftara,
+                selectedCycle,
                 layout: false 
             });
         } catch (error) {
@@ -244,22 +326,44 @@ const homeController = {
     aliyotPage: async (req, res, next) => {
         try {
             const Aliyah = require('../models/Aliyah');
-            const parashot = await Parasha.getAll();
-            const selectedParashaId = req.query.parasha || (parashot.length > 0 ? parashot[0].id : null);
+            const TorahCycle = require('../models/TorahCycle');
+            const cycleId = req.query.cycle ? parseInt(req.query.cycle) : null;
+            const cycles = await TorahCycle.getAllCycles();
+
+            let selectedCycle = null;
+            let parashot = [];
             let selectedParasha = null;
             let aliyot = [];
 
-            if (selectedParashaId) {
-                selectedParasha = await Parasha.getById(selectedParashaId);
-                aliyot = await Aliyah.getByParashaId(selectedParashaId);
+            if (cycleId) {
+                selectedCycle = await TorahCycle.getCycleById(cycleId);
+                if (selectedCycle) {
+                    parashot = await TorahCycle.getHistoricalParashot(cycleId);
+                    const selectedParashaId = req.query.parasha || (parashot.length > 0 ? parashot[0].id : null);
+                    if (selectedParashaId) {
+                        selectedParasha = parashot.find(p => p.id == selectedParashaId) || parashot[0];
+                        aliyot = await TorahCycle.getHistoricalAliyot(cycleId, selectedParasha ? selectedParasha.id : null);
+                    }
+                }
+            }
+
+            if (!selectedCycle) {
+                parashot = await Parasha.getAll();
+                const selectedParashaId = req.query.parasha || (parashot.length > 0 ? parashot[0].id : null);
+                if (selectedParashaId) {
+                    selectedParasha = await Parasha.getById(selectedParashaId);
+                    aliyot = await Aliyah.getByParashaId(selectedParashaId);
+                }
             }
 
             res.render('aliyot', {
-                title: 'Aliyot - Lecturas Diarias de la Torá - Hablemos de YHWH',
+                title: selectedCycle ? `Aliyot - ${selectedCycle.name} - Hablemos de YHWH` : 'Aliyot - Lecturas Diarias de la Torá - Hablemos de YHWH',
                 page: 'aliyot',
                 parashot,
                 selectedParasha,
                 aliyot,
+                cycles,
+                selectedCycle,
                 layout: false
             });
         } catch (error) {
@@ -409,11 +513,29 @@ const homeController = {
 
     haftaraPage: async (req, res, next) => {
         try {
-            const haftarot = await Haftara.getPublished();
+            const TorahCycle = require('../models/TorahCycle');
+            const cycleId = req.query.cycle ? parseInt(req.query.cycle) : null;
+            const cycles = await TorahCycle.getAllCycles();
+            let selectedCycle = null;
+            let haftarot = [];
+
+            if (cycleId) {
+                selectedCycle = await TorahCycle.getCycleById(cycleId);
+                if (selectedCycle) {
+                    haftarot = await TorahCycle.getHistoricalHaftarot(cycleId);
+                }
+            }
+
+            if (!selectedCycle) {
+                haftarot = await Haftara.getPublished();
+            }
+
             res.render('haftara', {
-                title: 'Haftará - Lecturas Proféticas de la Torá - Hablemos de YHWH',
+                title: selectedCycle ? `Haftará - ${selectedCycle.name} - Hablemos de YHWH` : 'Haftará - Lecturas Proféticas de la Torá - Hablemos de YHWH',
                 page: 'haftara',
                 haftarot,
+                cycles,
+                selectedCycle,
                 layout: false
             });
         } catch (error) {
@@ -424,29 +546,54 @@ const homeController = {
     haftaraDetail: async (req, res, next) => {
         try {
             const Parasha = require('../models/Parasha');
-            const haftara = await Haftara.getById(req.params.id);
-            if (!haftara) return next();
-            await Haftara.incrementViews(haftara.id);
-            haftara.views = (haftara.views || 0) + 1;
-
-            // Buscar Parashá vinculada
+            const TorahCycle = require('../models/TorahCycle');
+            const cycleId = req.query.cycle ? parseInt(req.query.cycle) : null;
+            let haftara = null;
             let parasha = null;
-            try {
-                if (haftara.parasha_id) {
-                    parasha = await Parasha.getById(haftara.parasha_id);
+            let selectedCycle = null;
+
+            if (cycleId) {
+                selectedCycle = await TorahCycle.getCycleById(cycleId);
+                haftara = await TorahCycle.getHistoricalHaftaraById(req.params.id);
+                if (haftara && haftara.historical_parasha_id) {
+                    parasha = await TorahCycle.getHistoricalParashaById(haftara.historical_parasha_id);
                 }
-                if (!parasha) {
-                    parasha = await Parasha.getByTitleOrMatch(haftara.title, haftara.subtitle, haftara.parasha_reference);
+            } else {
+                haftara = await Haftara.getById(req.params.id);
+                if (!haftara) {
+                    haftara = await TorahCycle.getHistoricalHaftaraById(req.params.id);
+                    if (haftara) {
+                        selectedCycle = await TorahCycle.getCycleById(haftara.cycle_id);
+                        if (haftara.historical_parasha_id) {
+                            parasha = await TorahCycle.getHistoricalParashaById(haftara.historical_parasha_id);
+                        }
+                    }
+                } else {
+                    await Haftara.incrementViews(haftara.id);
+                    haftara.views = (haftara.views || 0) + 1;
+
+                    // Buscar Parashá vinculada
+                    try {
+                        if (haftara.parasha_id) {
+                            parasha = await Parasha.getById(haftara.parasha_id);
+                        }
+                        if (!parasha) {
+                            parasha = await Parasha.getByTitleOrMatch(haftara.title, haftara.subtitle, haftara.parasha_reference);
+                        }
+                    } catch(e) {
+                        console.warn('Aviso cargando parashá vinculada:', e.message);
+                    }
                 }
-            } catch(e) {
-                console.warn('Aviso cargando parashá vinculada:', e.message);
             }
+
+            if (!haftara) return next();
 
             res.render('haftara_detail', {
                 title: haftara.title + ' - Haftará - Hablemos de YHWH',
                 page: 'haftara',
                 haftara,
                 parasha,
+                selectedCycle,
                 layout: false
             });
         } catch (error) {

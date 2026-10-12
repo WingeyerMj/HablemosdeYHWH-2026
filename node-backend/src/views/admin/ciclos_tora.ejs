@@ -1,0 +1,246 @@
+<%- include('partials/_sidebar', { activePage: 'ciclos-tora' }) %>
+
+<main class="col-md-10 main-content p-4">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary">
+        <div>
+            <h1 class="h2 text-white"><i class="bi bi-clock-history me-2" style="color: var(--primary-color, #d4b895);"></i>Gestión de Ciclos de Torá & Pasaje Histórico</h1>
+            <p class="text-white-50 mb-0">Cierra el ciclo anual al término de la fiesta de Sucot, archiva videos y audios de forma histórica y reinicia la carga para el nuevo ciclo.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-warning fw-bold d-flex align-items-center gap-2 shadow" data-bs-toggle="modal" data-bs-target="#archiveCycleModal">
+                <i class="bi bi-arrow-repeat fs-5"></i> Iniciar Pasaje Histórico & Reseteo
+            </button>
+            <a href="/archivo-historico" target="_blank" class="btn btn-outline-info d-flex align-items-center gap-1">
+                <i class="bi bi-box-arrow-up-right"></i> Ver Archivo Público
+            </a>
+        </div>
+    </div>
+
+    <% if (typeof successMsg !== 'undefined' && successMsg) { %>
+        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
+            <i class="bi bi-check-circle-fill fs-4 me-3"></i>
+            <div>
+                <strong>¡Pasaje Histórico realizado con éxito!</strong><br>
+                <%= successMsg %>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <% if (typeof errorMsg !== 'undefined' && errorMsg) { %>
+        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+            <div>
+                <strong>Ocurrió un error:</strong><br>
+                <%= errorMsg %>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <!-- Tarjetas Informativas del Estado Actual -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card bg-dark border-secondary p-3 h-100">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="p-3 rounded-circle" style="background: rgba(212, 184, 149, 0.15); color: var(--primary-color, #d4b895);">
+                        <i class="bi bi-journal-check fs-2"></i>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small">Parashot Activas</div>
+                        <h3 class="text-white mb-0"><%= currentStats.parashotCount || 54 %></h3>
+                        <small class="text-info"><%= currentStats.parashotWithVideos || 0 %> con videos cargados</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-dark border-secondary p-3 h-100">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="p-3 rounded-circle" style="background: rgba(13, 202, 240, 0.15); color: #0dcaf0;">
+                        <i class="bi bi-mic fs-2"></i>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small">Aliyot en Ciclo Activo</div>
+                        <h3 class="text-white mb-0"><%= currentStats.aliyotCount || 0 %></h3>
+                        <small class="text-info"><%= currentStats.aliyotWithAudios || 0 %> lecturas con audio</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-dark border-secondary p-3 h-100">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="p-3 rounded-circle" style="background: rgba(25, 135, 84, 0.15); color: #198754;">
+                        <i class="bi bi-scroll fs-2"></i>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small">Haftarot en Ciclo Activo</div>
+                        <h3 class="text-white mb-0"><%= currentStats.haftarotCount || 0 %></h3>
+                        <small class="text-success"><%= currentStats.haftarotWithVideos || 0 %> con videos/audios</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Explicación del Proceso Anual -->
+    <div class="card bg-dark border-warning border-opacity-50 mb-4 shadow">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-start gap-3">
+                <i class="bi bi-info-circle-fill fs-2 text-warning flex-shrink-0 mt-1"></i>
+                <div>
+                    <h5 class="text-warning fw-bold mb-2">¿Cómo funciona el Pasaje Histórico al término de Sucot?</h5>
+                    <p class="text-white-50 mb-2">
+                        Al finalizar la fiesta de <strong>Sucot (Simjat Torá)</strong>, el ciclo anual de lectura concluye y comienza inmediatamente una nueva lectura comenzando en <strong>Parashá Bereshit</strong>.
+                    </p>
+                    <ul class="text-white-50 small mb-0 ps-3">
+                        <li class="mb-1"><strong>Archivo Histórico Completo:</strong> Todo el material de <em>Parashot</em>, <em>Aliyot</em> (audios diarios y texto) y <em>Haftará</em> se copia íntegro en las tablas históricas y en la base de datos secundaria <code>hablemos_yhwh_historico</code>.</li>
+                        <li class="mb-1"><strong>Consulta para la Comunidad:</strong> Los visitantes podrán seleccionar ciclos anteriores desde la web en un selector interactivo o en la sección de <strong>Archivo Histórico</strong>.</li>
+                        <li class="mb-1"><strong>Reseteo del Ciclo Activo:</strong> Se mantienen intactos los 54 nombres y textos de las Parashot, pero se limpian los links de videos de YouTube, audios de lecturas y contadores de vistas para que el moréh comience a subirlos semana a semana.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Listado de Ciclos Archivados -->
+    <div class="card bg-dark border-secondary shadow">
+        <div class="card-header bg-dark border-secondary d-flex justify-content-between align-items-center py-3">
+            <h5 class="mb-0 text-white"><i class="bi bi-folder-symlink me-2 text-warning"></i>Historial de Ciclos Archivados</h5>
+            <span class="badge bg-secondary"><%= cycles.length %> ciclos registrados</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0 align-middle">
+                    <thead style="border-bottom: 2px solid rgba(255,255,255,0.1);">
+                        <tr>
+                            <th>Nombre del Ciclo</th>
+                            <th>Período / Año</th>
+                            <th>Fecha de Archivo</th>
+                            <th>Contenido Resguardado</th>
+                            <th>Estado</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (cycles && cycles.length > 0) { %>
+                            <% cycles.forEach(c => { %>
+                            <tr>
+                                <td>
+                                    <div class="fw-bold text-white"><%= c.name %></div>
+                                    <% if (c.notes) { %>
+                                        <small class="text-white-50"><%= c.notes %></small>
+                                    <% } %>
+                                </td>
+                                <td><span class="badge bg-secondary"><%= c.year_label || '-' %></span></td>
+                                <td>
+                                    <%= c.archived_at ? new Date(c.archived_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-' %>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <span class="badge bg-dark border border-secondary text-info"><i class="bi bi-journal-text me-1"></i><%= c.parashot_count || 0 %> Parashot</span>
+                                        <span class="badge bg-dark border border-secondary text-warning"><i class="bi bi-mic me-1"></i><%= c.aliyot_count || 0 %> Aliyot</span>
+                                        <span class="badge bg-dark border border-secondary text-success"><i class="bi bi-scroll me-1"></i><%= c.haftarot_count || 0 %> Haftarot</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <% if (c.is_current) { %>
+                                        <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Activo</span>
+                                    <% } else { %>
+                                        <span class="badge bg-secondary"><i class="bi bi-archive me-1"></i>Histórico</span>
+                                    <% } %>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="/parashot?cycle=<%= c.id %>" target="_blank" class="btn btn-outline-info" title="Ver en la Web">
+                                            <i class="bi bi-eye"></i> Ver Web
+                                        </a>
+                                        <form action="/admin/ciclos-tora/delete/<%= c.id %>" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de eliminar este registro histórico? Esta acción no se puede deshacer.');">
+                                            <button type="submit" class="btn btn-outline-danger" title="Eliminar ciclo archivado">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-white-50">
+                                    <i class="bi bi-archive fs-2 d-block mb-2 text-secondary"></i>
+                                    Aún no hay ciclos archivados. Puedes iniciar el primer pasaje histórico cuando concluya el ciclo de lecturas.
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Modal de Pasaje Histórico & Reseteo -->
+<div class="modal fade" id="archiveCycleModal" tabindex="-1" aria-labelledby="archiveCycleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-white border-warning">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-warning" id="archiveCycleModalLabel">
+                    <i class="bi bi-arrow-repeat me-2"></i>Pasaje Histórico y Reseteo del Ciclo de Torá
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/admin/ciclos-tora/archive-reset" method="POST" id="archiveForm">
+                <div class="modal-body">
+                    <div class="alert alert-warning border-warning">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Atención:</strong> Esta acción guardará todo el contenido actual (Parashot, Aliyot, Haftarot con audios y videos) en el archivo histórico y reiniciará la base activa para el nuevo ciclo de lecturas que comienza tras Sucot.
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-7">
+                            <label class="form-label text-white-50">Nombre del Ciclo a Archivar</label>
+                            <input type="text" name="cycleName" class="form-control bg-dark text-white border-secondary" required 
+                                   value="Ciclo <%= new Date().getFullYear() - 1 %> - <%= new Date().getFullYear() %>"
+                                   placeholder="Ej: Ciclo 5785 (2024-2025)">
+                            <small class="text-white-50">Identificador con el que los visitantes verán este ciclo en el histórico.</small>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label text-white-50">Etiqueta de Años / Hebreo</label>
+                            <input type="text" name="yearLabel" class="form-control bg-dark text-white border-secondary" 
+                                   value="<%= new Date().getFullYear() - 1 %>-<%= new Date().getFullYear() %>"
+                                   placeholder="Ej: 2024-2025 o 5785">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label text-white-50">Nombre del Nuevo Ciclo que Comienza</label>
+                            <input type="text" name="newCycleName" class="form-control bg-dark text-white border-secondary" required 
+                                   value="Ciclo <%= new Date().getFullYear() %> - <%= new Date().getFullYear() + 1 %>"
+                                   placeholder="Ej: Ciclo 5786 (2025-2026)">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label text-white-50">Notas u Observaciones del Ciclo Concluido</label>
+                            <textarea name="notes" rows="2" class="form-control bg-dark text-white border-secondary" placeholder="Ej: Ciclo de lecturas finalizado con gran bendición en Sucot / Simjat Torá."></textarea>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-check p-3 rounded border border-secondary" style="background: rgba(255, 193, 7, 0.05);">
+                                <input class="form-check-input ms-0 me-2" type="checkbox" id="confirmResetCheck" required>
+                                <label class="form-check-label text-white" for="confirmResetCheck">
+                                    Confirmo que deseo archivar el ciclo actual y resetear videos, audios y vistas en la base de datos para comenzar a cargar el nuevo ciclo desde Parashá Bereshit.
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning fw-bold px-4">
+                        <i class="bi bi-check2-circle me-1"></i> Confirmar y Ejecutar Pasaje
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

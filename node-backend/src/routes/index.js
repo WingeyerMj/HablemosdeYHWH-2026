@@ -19,6 +19,7 @@ router.get('/ensenanzas', homeController.ensenanzasPage);
 router.get('/ensenanzas/:id', homeController.ensenanzaDetail);
 router.get('/haftara', homeController.haftaraPage);
 router.get('/haftara/:id', homeController.haftaraDetail);
+router.get('/archivo-historico', homeController.archivoHistorico);
 router.get('/semillas-de-torah', homeController.semillasTorah);
 router.get('/semillas-de-torah/articulo/:id', homeController.semillasArticuloDetail);
 router.get('/semillas-de-torah/:id', homeController.semillasDetail);
