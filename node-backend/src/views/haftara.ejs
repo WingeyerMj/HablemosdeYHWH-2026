@@ -50,13 +50,20 @@
                                     <span class="fw-bold small text-muted"><i class="bi bi-clock-history me-1" style="color: #d4a853;"></i> Ciclo de Lectura:</span>
                                     <div class="dropdown">
                                         <button class="btn btn-sm btn-outline-dark dropdown-toggle px-3 py-1 fw-semibold" type="button" data-bs-toggle="dropdown">
-                                            <%= (typeof selectedCycle !== 'undefined' && selectedCycle) ? selectedCycle.name : 'Ciclo Actual (Activo)' %>
+                                            <% if (typeof selectedCycle !== 'undefined' && selectedCycle) { %>
+                                                📁 <%= selectedCycle.name %>
+                                            <% } else if (typeof currentCycle !== 'undefined' && currentCycle) { %>
+                                                ⭐ <%= currentCycle.name %> (Activo)
+                                            <% } else { %>
+                                                Ciclo Actual (Activo)
+                                            <% } %>
                                         </button>
                                         <ul class="dropdown-menu shadow">
-                                            <li><a class="dropdown-item <%= (typeof selectedCycle === 'undefined' || !selectedCycle) ? 'active' : '' %>" href="/haftara">Ciclo Actual (Activo)</a></li>
+                                            <li><a class="dropdown-item <%= (typeof selectedCycle === 'undefined' || !selectedCycle) ? 'active' : '' %>" href="/haftara">⭐ <%= (typeof currentCycle !== 'undefined' && currentCycle) ? currentCycle.name : 'Ciclo Actual' %> (Activo)</a></li>
                                             <li><hr class="dropdown-divider"></li>
-                                            <% cycles.forEach(c => { %>
-                                                <li><a class="dropdown-item <%= (typeof selectedCycle !== 'undefined' && selectedCycle && selectedCycle.id === c.id) ? 'active' : '' %>" href="/haftara?cycle=<%= c.id %>"><%= c.name %> (<%= c.year_label || 'Histórico' %>)</a></li>
+                                            <li class="dropdown-header small text-muted text-uppercase" style="font-size: 0.72rem;">Ciclos Anteriores Archivados</li>
+                                            <% cycles.filter(c => typeof currentCycle === 'undefined' || !currentCycle || c.id !== currentCycle.id).forEach(c => { %>
+                                                <li><a class="dropdown-item <%= (typeof selectedCycle !== 'undefined' && selectedCycle && selectedCycle.id === c.id) ? 'active' : '' %>" href="/haftara?cycle=<%= c.id %>">📁 <%= c.name %> (<%= c.year_label || 'Histórico' %>)</a></li>
                                             <% }) %>
                                         </ul>
                                     </div>

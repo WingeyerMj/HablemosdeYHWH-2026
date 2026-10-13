@@ -10,6 +10,17 @@ const Pricing = require('../models/Pricing');
 const DynamicSection = require('../models/DynamicSection');
 const EntityModel = require('../models/EntityModel');
 const SiteSettings = require('../models/SiteSettings');
+
+// Normaliza el nombre de un ciclo a sus años (ej: "Ciclo 2026 - 2027" -> "2026-2027")
+const cycleKey = (name) => {
+    if (!name || typeof name !== 'string') return '';
+    const years = name.match(/\d{4}/g);
+    return years ? years.join('-') : name.trim().toLowerCase();
+};
+const sameCycle = (a, b) => {
+    const ka = cycleKey(a);
+    return ka !== '' && ka === cycleKey(b);
+};
 const SemillasShort = require('../models/SemillasShort');
 const db = require('../config/db');
 
@@ -225,15 +236,24 @@ const homeController = {
             let allParashot = [];
             let selectedCycle = null;
 
-            if (cycleId) {
+            if (cycleId && (!currentCycle || cycleId !== currentCycle.id)) {
                 selectedCycle = await TorahCycle.getCycleById(cycleId);
                 if (selectedCycle) {
                     allParashot = await TorahCycle.getHistoricalParashot(cycleId);
+                    // Si el ciclo anterior aún no fue archivado, mostrar las parashot activas marcadas con ese ciclo
+                    if (!allParashot || allParashot.length === 0) {
+                        const active = await Parasha.getAllAsc();
+                        allParashot = active.filter(p => sameCycle(p.cycle_name, selectedCycle.name));
+                    }
                 }
             }
 
             if (!selectedCycle) {
-                allParashot = await Parasha.getAllAsc();
+                // Ciclo actual: solo lo cargado en el ciclo activo, nada de ciclos anteriores
+                const active = await Parasha.getAllAsc();
+                allParashot = currentCycle
+                    ? active.filter(p => sameCycle(p.cycle_name, currentCycle.name))
+                    : active;
             }
 
             res.render('parashot', { 
@@ -520,18 +540,28 @@ const homeController = {
             const TorahCycle = require('../models/TorahCycle');
             const cycleId = req.query.cycle ? parseInt(req.query.cycle) : null;
             const cycles = await TorahCycle.getAllCycles();
+            const currentCycle = await TorahCycle.getCurrentCycle();
             let selectedCycle = null;
             let haftarot = [];
 
-            if (cycleId) {
+            if (cycleId && (!currentCycle || cycleId !== currentCycle.id)) {
                 selectedCycle = await TorahCycle.getCycleById(cycleId);
                 if (selectedCycle) {
                     haftarot = await TorahCycle.getHistoricalHaftarot(cycleId);
+                    // Si el ciclo anterior aún no fue archivado, mostrar las haftarot activas marcadas con ese ciclo
+                    if (!haftarot || haftarot.length === 0) {
+                        const active = await Haftara.getPublished();
+                        haftarot = active.filter(h => sameCycle(h.cycle_name, selectedCycle.name));
+                    }
                 }
             }
 
             if (!selectedCycle) {
-                haftarot = await Haftara.getPublished();
+                // Ciclo actual: solo lo cargado en el ciclo activo, nada de ciclos anteriores
+                const active = await Haftara.getPublished();
+                haftarot = currentCycle
+                    ? active.filter(h => sameCycle(h.cycle_name, currentCycle.name))
+                    : active;
             }
 
             res.render('haftara', {
@@ -539,6 +569,7 @@ const homeController = {
                 page: 'haftara',
                 haftarot,
                 cycles,
+                currentCycle,
                 selectedCycle,
                 layout: false
             });
