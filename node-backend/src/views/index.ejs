@@ -79,10 +79,11 @@
                                         <% 
                                             let videoLink = s.youtube_short_url || s.youtube_url || s.video_url || '#';
                                             let isDirectVideo = !!s.video_url && !s.youtube_short_url && !s.youtube_url;
+                                            let sViews = s.views_count || s.views || 0;
                                         %>
                                         <div class="short-card flex-shrink-0 position-relative rounded-4 overflow-hidden shadow-sm" 
                                              style="width: 170px; height: 260px; background: #261a11; border: 1px solid rgba(212,168,83,0.35); scroll-snap-align: start; cursor: pointer; transition: transform 0.3s ease, border-color 0.3s ease;"
-                                             onclick="openNoticiaShortModal('<%= s.title.replace(/'/g, "\\'") %>', '<%= videoLink %>', '<%= isDirectVideo %>')"
+                                             onclick="openNoticiaShortModal(<%= s.id %>, '<%= s.title.replace(/'/g, "\\'") %>', '<%= videoLink %>', '<%= isDirectVideo %>', <%= sViews %>)"
                                              onmouseover="this.style.transform='translateY(-6px)'; this.style.borderColor='#d4a853';"
                                              onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(212,168,83,0.35)';">
                                             <img src="<%= s.thumbnail_url || '/assets/img/blog/blog-1.jpg' %>" alt="<%= s.title %>" class="w-100 h-100 object-fit-cover" style="filter: brightness(0.82);" onerror="this.onerror=null; this.src='/assets/img/blog/blog-1.jpg';">
@@ -90,6 +91,12 @@
                                             <div class="position-absolute top-0 start-0 m-2">
                                                 <span class="badge px-2 py-1 rounded-pill" style="background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); font-size: 0.65rem; color: #f5cf7c; border: 1px solid rgba(212,168,83,0.3);">
                                                     <%= s.category || 'Actualidad' %>
+                                                </span>
+                                            </div>
+
+                                            <div class="position-absolute top-0 end-0 m-2">
+                                                <span class="badge px-2 py-1 rounded-pill shadow-sm d-inline-flex align-items-center" style="background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); font-size: 0.65rem; color: #f5cf7c; border: 1px solid rgba(212,168,83,0.3);">
+                                                    <i class="bi bi-eye-fill me-1"></i><span data-noticia-short-views="<%= s.id %>"><%= sViews %></span>
                                                 </span>
                                             </div>
 
@@ -191,9 +198,14 @@
                 <div class="modal fade" id="homeShortVideoModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
                         <div class="modal-content bg-black text-white border border-secondary rounded-4 overflow-hidden">
-                            <div class="modal-header border-0 p-3 pb-0">
-                                <h6 class="modal-title text-truncate fw-bold pe-2" id="homeShortModalTitle"></h6>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <div class="modal-header border-0 p-3 pb-0 d-flex justify-content-between align-items-center">
+                                <h6 class="modal-title text-truncate fw-bold pe-2 mb-0" id="homeShortModalTitle"></h6>
+                                <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                    <span class="badge rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center" style="background: rgba(212,168,83,0.18); color: #f5cf7c; border: 1px solid rgba(212,168,83,0.4); font-size: 0.75rem;">
+                                        <i class="bi bi-eye-fill me-1"></i><span id="homeShortModalViews">0</span>
+                                    </span>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
                             </div>
                             <div class="modal-body p-2 text-center">
                                 <div id="homeShortPlayerContainer" class="rounded-3 overflow-hidden bg-dark" style="aspect-ratio: 9/16; width: 100%;">
@@ -204,8 +216,50 @@
                 </div>
 
                 <script>
-                    function openNoticiaShortModal(title, url, isDirect) {
+                    const viewedNoticiasShortsHomeSession = new Set();
+
+                    function registerNoticiaShortView(shortId) {
+                        if (!shortId || viewedNoticiasShortsHomeSession.has(shortId)) return;
+                        viewedNoticiasShortsHomeSession.add(shortId);
+
+                        // Incrementar optimistamente en el DOM
+                        document.querySelectorAll(`[data-noticia-short-views="${shortId}"]`).forEach(el => {
+                            const cur = parseInt(el.textContent) || 0;
+                            el.textContent = cur + 1;
+                        });
+                        const modalViewsEl = document.getElementById('homeShortModalViews');
+                        if (modalViewsEl) {
+                            const curM = parseInt(modalViewsEl.textContent) || 0;
+                            modalViewsEl.textContent = curM + 1;
+                        }
+
+                        fetch(`/api/noticias-shorts/${shortId}/view`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data && data.ok && data.views_count !== undefined) {
+                                document.querySelectorAll(`[data-noticia-short-views="${shortId}"]`).forEach(el => {
+                                    el.textContent = data.views_count;
+                                });
+                                if (modalViewsEl) modalViewsEl.textContent = data.views_count;
+                            }
+                        })
+                        .catch(err => console.warn('Error registrando vista de short:', err));
+                    }
+
+                    function openNoticiaShortModal(id, title, url, isDirect, views) {
                         document.getElementById('homeShortModalTitle').textContent = title || 'Video Short';
+                        const modalViewsEl = document.getElementById('homeShortModalViews');
+                        if (modalViewsEl) {
+                            modalViewsEl.textContent = views !== undefined ? views : 0;
+                        }
+
+                        if (id) {
+                            registerNoticiaShortView(id);
+                        }
+
                         const container = document.getElementById('homeShortPlayerContainer');
                         container.innerHTML = '';
 

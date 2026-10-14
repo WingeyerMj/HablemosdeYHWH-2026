@@ -67,13 +67,17 @@
                 <input type="text" name="thumbnail_url" class="form-control" value="<%= item.thumbnail_url || '' %>" placeholder="https://...">
             </div>
 
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <label class="form-label small text-white-50">Descripción Breve</label>
                 <textarea name="description" class="form-control" rows="2"><%= item.description || '' %></textarea>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="form-label small text-white-50">Fuente / Crédito</label>
                 <input type="text" name="source_name" class="form-control" value="<%= item.source_name || 'Hablemos de YHWH' %>">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small text-info fw-bold"><i class="bi bi-eye-fill me-1"></i>Visualizaciones / Vistas</label>
+                <input type="number" name="views_count" class="form-control" value="<%= item.views_count || item.views || 0 %>" min="0">
             </div>
 
             <div class="col-md-6">

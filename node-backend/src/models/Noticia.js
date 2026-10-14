@@ -142,6 +142,7 @@ class Noticia {
                 { name: 'is_highlight', type: 'BOOLEAN DEFAULT FALSE' },
                 { name: 'is_published', type: 'BOOLEAN DEFAULT TRUE' },
                 { name: 'views_count', type: 'INT DEFAULT 0' },
+                { name: 'views', type: 'INT DEFAULT 0' },
                 { name: 'published_at', type: 'DATETIME DEFAULT CURRENT_TIMESTAMP' }
             ];
 
@@ -348,14 +349,14 @@ class Noticia {
     // ==================== SHORTS DE NOTICIAS ====================
     static async getAllShorts() {
         await Noticia.ensureTable();
-        const [rows] = await db.query('SELECT * FROM noticias_shorts ORDER BY id DESC');
+        const [rows] = await db.query('SELECT *, COALESCE(views_count, views, 0) as views_count FROM noticias_shorts ORDER BY id DESC');
         return rows || [];
     }
 
     static async getPublishedShorts(limit = 8) {
         await Noticia.ensureTable();
         const [rows] = await db.query(
-            'SELECT * FROM noticias_shorts WHERE is_published = TRUE ORDER BY is_highlight DESC, published_at DESC, id DESC LIMIT ?',
+            'SELECT *, COALESCE(views_count, views, 0) as views_count FROM noticias_shorts WHERE is_published = TRUE ORDER BY is_highlight DESC, published_at DESC, id DESC LIMIT ?',
             [limit]
         );
         return rows || [];
@@ -363,19 +364,20 @@ class Noticia {
 
     static async getShortById(id) {
         await Noticia.ensureTable();
-        const [rows] = await db.query('SELECT * FROM noticias_shorts WHERE id = ?', [id]);
+        const [rows] = await db.query('SELECT *, COALESCE(views_count, views, 0) as views_count FROM noticias_shorts WHERE id = ?', [id]);
         return rows && rows[0] ? rows[0] : null;
     }
 
     static async createShort(data) {
         await Noticia.ensureTable();
-        const { title, category, video_url, youtube_short_url, youtube_url, thumbnail_url, description, source_name, is_highlight, is_published, published_at } = data;
+        const { title, category, video_url, youtube_short_url, youtube_url, thumbnail_url, description, source_name, is_highlight, is_published, published_at, views_count } = data;
         const pubDate = published_at ? new Date(published_at) : new Date();
+        const viewsNum = parseInt(views_count) || 0;
 
         const sql = `
             INSERT INTO noticias_shorts
-            (title, category, video_url, youtube_short_url, youtube_url, thumbnail_url, description, source_name, is_highlight, is_published, published_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (title, category, video_url, youtube_short_url, youtube_url, thumbnail_url, description, source_name, is_highlight, is_published, views_count, views, published_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
         const [result] = await db.query(sql, [
@@ -389,6 +391,8 @@ class Noticia {
             source_name || 'Hablemos de YHWH',
             Boolean(is_highlight),
             Boolean(is_published !== undefined ? is_published : true),
+            viewsNum,
+            viewsNum,
             pubDate
         ]);
 
@@ -397,8 +401,33 @@ class Noticia {
 
     static async updateShort(id, data) {
         await Noticia.ensureTable();
-        const { title, category, video_url, youtube_short_url, youtube_url, thumbnail_url, description, source_name, is_highlight, is_published, published_at } = data;
+        const { title, category, video_url, youtube_short_url, youtube_url, thumbnail_url, description, source_name, is_highlight, is_published, published_at, views_count } = data;
         const pubDate = published_at ? new Date(published_at) : new Date();
+        const viewsNum = views_count !== undefined && views_count !== '' ? parseInt(views_count) : null;
+
+        if (viewsNum !== null && !isNaN(viewsNum)) {
+            const sql = `
+                UPDATE noticias_shorts
+                SET title = ?, category = ?, video_url = ?, youtube_short_url = ?, youtube_url = ?, thumbnail_url = ?, description = ?, source_name = ?, is_highlight = ?, is_published = ?, views_count = ?, views = ?, published_at = ?
+                WHERE id = ?
+            `;
+            return await db.query(sql, [
+                title || 'Sin título',
+                category || 'Actualidad',
+                video_url || null,
+                youtube_short_url || null,
+                youtube_url || null,
+                thumbnail_url || null,
+                description || null,
+                source_name || 'Hablemos de YHWH',
+                Boolean(is_highlight),
+                Boolean(is_published !== undefined ? is_published : true),
+                viewsNum,
+                viewsNum,
+                pubDate,
+                id
+            ]);
+        }
 
         const sql = `
             UPDATE noticias_shorts
@@ -424,7 +453,19 @@ class Noticia {
 
     static async incrementShortViews(id) {
         await Noticia.ensureTable();
-        return await db.query('UPDATE noticias_shorts SET views_count = COALESCE(views_count, 0) + 1 WHERE id = ?', [id]);
+        try {
+            await db.query('UPDATE noticias_shorts SET views_count = COALESCE(views_count, 0) + 1 WHERE id = ?', [id]);
+        } catch (e) {
+            try {
+                await db.query('UPDATE noticias_shorts SET views = COALESCE(views, 0) + 1 WHERE id = ?', [id]);
+            } catch (err2) {}
+        }
+        try {
+            const [rows] = await db.query('SELECT COALESCE(views_count, views, 0) as views_count FROM noticias_shorts WHERE id = ?', [id]);
+            return rows && rows[0] ? rows[0].views_count : 1;
+        } catch (e) {
+            return 1;
+        }
     }
 
     static async deleteShort(id) {

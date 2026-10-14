@@ -260,6 +260,21 @@ router.post('/newsletter', async (req, res) => {
     }
 });
 
+// POST /api/noticias-shorts/:id/view - Registrar visualización de short de noticias
+router.post('/noticias-shorts/:id/view', async (req, res) => {
+    try {
+        const shortId = parseInt(req.params.id);
+        if (!shortId || isNaN(shortId)) {
+            return res.status(400).json({ ok: false, error: 'ID inválido' });
+        }
+        const Noticia = require('../models/Noticia');
+        const newCount = await Noticia.incrementShortViews(shortId);
+        return res.json({ ok: true, views_count: newCount });
+    } catch (e) {
+        return res.status(500).json({ ok: false, error: e.message });
+    }
+});
+
 // POST /api/semillas-shorts/:id/view - Registrar visualización de short
 router.post('/semillas-shorts/:id/view', async (req, res) => {
     try {

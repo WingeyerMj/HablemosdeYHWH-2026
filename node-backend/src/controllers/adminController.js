@@ -1518,7 +1518,7 @@ const adminController = {
     // ==================== SHORTS DE NOTICIAS ====================
     createNoticiaShort: async (req, res) => {
         try {
-            let { title, category, video_url, youtube_short_url, youtube_url, thumbnail_url, description, source_name, is_highlight, is_published } = req.body;
+            let { title, category, video_url, youtube_short_url, youtube_url, thumbnail_url, description, source_name, is_highlight, is_published, views_count } = req.body;
             
             if (req.files && req.files.length > 0) {
                 for (const f of req.files) {
@@ -1544,7 +1544,8 @@ const adminController = {
                 description: description || null,
                 source_name: source_name || 'Hablemos de YHWH',
                 is_highlight: isHighlightBool,
-                is_published: isPublishedBool
+                is_published: isPublishedBool,
+                views_count: parseInt(views_count) || 0
             });
 
             res.redirect('/admin/dashboard#pills-noticias-shorts');
@@ -1569,7 +1570,7 @@ const adminController = {
 
     updateNoticiaShort: async (req, res) => {
         try {
-            let { id, title, category, video_url, youtube_short_url, youtube_url, thumbnail_url, description, source_name, is_highlight, is_published } = req.body;
+            let { id, title, category, video_url, youtube_short_url, youtube_url, thumbnail_url, description, source_name, is_highlight, is_published, views_count } = req.body;
             
             if (req.files && req.files.length > 0) {
                 for (const f of req.files) {
@@ -1595,7 +1596,8 @@ const adminController = {
                 description: description || null,
                 source_name: source_name || 'Hablemos de YHWH',
                 is_highlight: isHighlightBool,
-                is_published: isPublishedBool
+                is_published: isPublishedBool,
+                views_count: views_count !== undefined && views_count !== '' ? parseInt(views_count) : undefined
             });
 
             res.redirect('/admin/dashboard#pills-noticias-shorts');
