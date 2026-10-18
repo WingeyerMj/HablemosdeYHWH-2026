@@ -24,6 +24,15 @@ select option:checked, select option:hover {
             <p class="text-white-50 mb-0">Parashá: <strong><%= aliyah.parasha_title %></strong> <%= aliyah.parasha_subtitle ? `(${aliyah.parasha_subtitle})` : '' %></p>
         </div>
         <div class="d-flex gap-2">
+            <button type="button" class="btn btn-success text-white btn-sm d-flex align-items-center gap-1 btn-open-share"
+                    data-type="Lectura Diaria (Aliyá)"
+                    data-title="<%= aliyah.title %>"
+                    data-subtitle="<%= aliyah.parasha_title ? ('Parashá: ' + aliyah.parasha_title) : 'Lectura Semanal' %>"
+                    data-ref="<%= aliyah.verses_reference || '' %>"
+                    data-url="<%= aliyah.parasha_id ? ('/aliyot?parasha=' + aliyah.parasha_id) : '/aliyot' %>"
+                    title="Compartir en Redes">
+                <i class="bi bi-share-fill"></i> Compartir
+            </button>
             <a href="/admin/aliyot" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
                 <i class="bi bi-arrow-left"></i> Volver al Listado
             </a>

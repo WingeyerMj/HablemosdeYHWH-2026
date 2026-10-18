@@ -1,0 +1,285 @@
+<!-- ============================================================ -->
+<!-- MODAL UNIVERSAL PARA COMPARTIR EN REDES SOCIALES (BACKEND) -->
+<!-- ============================================================ -->
+<div class="modal fade" id="shareSocialModal" tabindex="-1" aria-labelledby="shareSocialModalLabel" aria-hidden="true" style="z-index: 1065;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary shadow-lg" style="border-radius: 16px; overflow: hidden; border: 1px solid rgba(212, 184, 149, 0.25);">
+            
+            <!-- Encabezado con degradado sutil -->
+            <div class="modal-header border-secondary py-3 px-4" style="background: linear-gradient(135deg, rgba(25, 135, 84, 0.2), rgba(0, 0, 0, 0.6));">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white shadow-sm" style="width: 36px; height: 36px; background-color: #198754;">
+                        <i class="bi bi-share-fill fs-6"></i>
+                    </span>
+                    <div>
+                        <h5 class="modal-title mb-0 fw-bold text-white fs-6" id="shareSocialModalLabel">Compartir en Redes Sociales</h5>
+                        <small class="text-white-50" style="font-size: 0.75rem;">Difundir contenido oficial de Hablemos de YHWH</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <!-- Cuerpo del modal -->
+            <div class="modal-body p-4">
+                
+                <!-- Tarjeta de vista previa del contenido -->
+                <div class="p-3 mb-3 rounded-3 bg-black bg-opacity-60 border border-secondary" style="border-left: 4px solid #198754 !important;">
+                    <div class="d-flex align-items-center justify-content-between gap-2 mb-1">
+                        <span class="badge" id="modalShareCategoryBadge" style="background: var(--primary-color, #d4b895); color: #000; font-weight: 700; font-size: 0.72rem; letter-spacing: 0.5px; text-transform: uppercase;">
+                            Contenido
+                        </span>
+                        <small class="text-white-50" id="modalShareMeta" style="font-size: 0.75rem;"></small>
+                    </div>
+                    <h6 class="text-white fw-bold mb-1 fs-6" id="modalShareTitle" style="word-break: break-word; line-height: 1.35;">
+                        Título
+                    </h6>
+                    <div class="text-white-50 small mb-1" id="modalShareSubtitle" style="font-size: 0.82rem;"></div>
+                    <div class="text-warning small fw-semibold" id="modalShareRef" style="font-size: 0.8rem;"></div>
+                    <div class="small text-white-50 fst-italic mt-1" id="modalShareSummary" style="font-size: 0.78rem; display: none;"></div>
+
+                    <!-- Enlace público / visualizador -->
+                    <div class="mt-2 pt-2 border-top border-secondary border-opacity-50 d-flex align-items-center justify-content-between gap-2" style="font-size: 0.75rem;">
+                        <span class="text-info text-truncate font-monospace" id="modalShareUrlText" style="direction: ltr;"></span>
+                        <a href="#" id="modalShareUrlOpen" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-info py-0 px-2 flex-shrink-0" style="font-size: 0.72rem;" title="Abrir enlace en pestaña nueva">
+                            <i class="bi bi-box-arrow-up-right me-1"></i>Abrir
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Botones de Redes Sociales -->
+                <div class="d-grid gap-2">
+                    <!-- WhatsApp -->
+                    <a href="#" id="btnShareWhatsApp" target="_blank" rel="noopener noreferrer" 
+                       class="btn btn-success d-flex align-items-center justify-content-center gap-2 py-2 fw-bold shadow-sm" 
+                       style="background-color: #25D366; border: none; font-size: 0.92rem; border-radius: 8px;">
+                        <i class="bi bi-whatsapp fs-5"></i> Compartir en WhatsApp
+                    </a>
+
+                    <!-- Telegram -->
+                    <a href="#" id="btnShareTelegram" target="_blank" rel="noopener noreferrer" 
+                       class="btn btn-info d-flex align-items-center justify-content-center gap-2 py-2 fw-bold text-white shadow-sm" 
+                       style="background-color: #0088cc; border: none; font-size: 0.92rem; border-radius: 8px;">
+                        <i class="bi bi-telegram fs-5"></i> Compartir en Telegram
+                    </a>
+
+                    <!-- Facebook -->
+                    <a href="#" id="btnShareFacebook" target="_blank" rel="noopener noreferrer" 
+                       class="btn btn-primary d-flex align-items-center justify-content-center gap-2 py-2 fw-bold shadow-sm" 
+                       style="background-color: #1877F2; border: none; font-size: 0.92rem; border-radius: 8px;">
+                        <i class="bi bi-facebook fs-5"></i> Compartir en Facebook
+                    </a>
+
+                    <!-- X (Twitter) -->
+                    <a href="#" id="btnShareTwitter" target="_blank" rel="noopener noreferrer" 
+                       class="btn btn-dark d-flex align-items-center justify-content-center gap-2 py-2 fw-bold border border-secondary shadow-sm" 
+                       style="background-color: #000; font-size: 0.92rem; border-radius: 8px;">
+                        <i class="bi bi-twitter-x fs-5"></i> Compartir en X (Twitter)
+                    </a>
+
+                    <!-- Instagram (Copiar enlace y abrir Instagram) -->
+                    <button type="button" id="btnShareInstagram" 
+                       class="btn d-flex align-items-center justify-content-center gap-2 py-2 fw-bold text-white shadow-sm" 
+                       style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); border: none; font-size: 0.92rem; border-radius: 8px;">
+                        <i class="bi bi-instagram fs-5"></i> Compartir en Instagram
+                    </button>
+
+                    <!-- Web Share API (Nativo para Móviles y Tablets) -->
+                    <button type="button" id="btnNativeShare" 
+                       class="btn btn-warning text-dark fw-bold d-flex align-items-center justify-content-center gap-2 py-2 shadow-sm" 
+                       style="display: none; font-size: 0.92rem; border-radius: 8px;">
+                        <i class="bi bi-share-fill fs-5"></i> Más opciones de compartir (Móvil)
+                    </button>
+
+                    <hr class="border-secondary my-2">
+
+                    <!-- Copiar Enlace Directo -->
+                    <button type="button" class="btn btn-outline-light d-flex align-items-center justify-content-center gap-2 py-2" id="btnCopyDirectLink" style="border-radius: 8px; font-size: 0.88rem;">
+                        <i class="bi bi-link-45deg fs-5"></i> Copiar Enlace Directo
+                    </button>
+
+                    <!-- Copiar Mensaje Completo -->
+                    <button type="button" class="btn btn-outline-warning d-flex align-items-center justify-content-center gap-2 py-2" id="btnCopyFormattedMsg" style="border-radius: 8px; font-size: 0.88rem;">
+                        <i class="bi bi-clipboard-check fs-5"></i> Copiar Mensaje Completo (con Cita y Enlace)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    let currentShareUrl = '';
+    let currentFullMsg = '';
+    let currentShareTitle = '';
+    let currentShareSummary = '';
+
+    function resolveShareUrl(rawUrl) {
+        if (!rawUrl || rawUrl.trim() === '') {
+            rawUrl = window.location.pathname;
+        }
+        rawUrl = rawUrl.trim();
+        if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
+            return rawUrl;
+        }
+        // Si estamos en localhost, para redes sociales generamos enlace absoluto hacia el dominio de producción
+        const origin = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'https://www.hablemosdeyhwh.com'
+            : window.location.origin;
+        return origin + (rawUrl.startsWith('/') ? '' : '/') + rawUrl;
+    }
+
+    function openShareModalForElement(btn) {
+        const type = btn.getAttribute('data-type') || 'Contenido';
+        const title = btn.getAttribute('data-title') || 'Hablemos de YHWH';
+        const subtitle = btn.getAttribute('data-subtitle') || '';
+        const ref = btn.getAttribute('data-ref') || '';
+        const summary = btn.getAttribute('data-summary') || '';
+        const rawUrl = btn.getAttribute('data-url') || '';
+
+        currentShareTitle = title;
+        currentShareSummary = summary || subtitle;
+        currentShareUrl = resolveShareUrl(rawUrl);
+
+        // Actualizar preview en modal
+        const badgeEl = document.getElementById('modalShareCategoryBadge');
+        if (badgeEl) badgeEl.innerText = type;
+
+        const titleEl = document.getElementById('modalShareTitle');
+        if (titleEl) titleEl.innerText = title;
+
+        const subEl = document.getElementById('modalShareSubtitle');
+        if (subEl) {
+            subEl.innerText = subtitle;
+            subEl.style.display = subtitle ? 'block' : 'none';
+        }
+
+        const refEl = document.getElementById('modalShareRef');
+        if (refEl) {
+            refEl.innerHTML = ref ? '<i class="bi bi-book me-1"></i>' + ref : '';
+            refEl.style.display = ref ? 'block' : 'none';
+        }
+
+        const sumEl = document.getElementById('modalShareSummary');
+        if (sumEl) {
+            sumEl.innerText = summary;
+            sumEl.style.display = summary ? 'block' : 'none';
+        }
+
+        const urlTextEl = document.getElementById('modalShareUrlText');
+        if (urlTextEl) urlTextEl.innerText = currentShareUrl;
+
+        const urlOpenEl = document.getElementById('modalShareUrlOpen');
+        if (urlOpenEl) urlOpenEl.href = currentShareUrl;
+
+        // Construir Mensajes Formateados
+        let waMsg = `*${type ? '[' + type + '] ' : ''}${title}*`;
+        if (subtitle) waMsg += `\n_${subtitle}_`;
+        if (ref) waMsg += `\n📖 *Cita:* ${ref}`;
+        if (summary) waMsg += `\n\n${summary}`;
+        waMsg += `\n\n🔗 *Lee y mira el contenido completo aquí:*\n${currentShareUrl}`;
+        waMsg += `\n\n_Hablemos de YHWH · www.hablemosdeyhwh.com_`;
+
+        currentFullMsg = waMsg;
+
+        const tgText = `${type ? '[' + type + '] ' : ''}${title}` + (subtitle ? `\n${subtitle}` : '') + (ref ? `\n📖 ${ref}` : '');
+        let xText = `${type ? '[' + type + '] ' : ''}${title}` + (ref ? ` (${ref})` : '');
+        if (xText.length > 210) xText = xText.substring(0, 207) + '...';
+
+        // Asignar URLs de Redes Sociales
+        const btnWA = document.getElementById('btnShareWhatsApp');
+        if (btnWA) btnWA.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(waMsg)}`;
+
+        const btnTG = document.getElementById('btnShareTelegram');
+        if (btnTG) btnTG.href = `https://t.me/share/url?url=${encodeURIComponent(currentShareUrl)}&text=${encodeURIComponent(tgText)}`;
+
+        const btnFB = document.getElementById('btnShareFacebook');
+        if (btnFB) btnFB.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentShareUrl)}`;
+
+        const btnX = document.getElementById('btnShareTwitter');
+        if (btnX) btnX.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(xText)}&url=${encodeURIComponent(currentShareUrl)}`;
+
+        // Web Share API para móviles
+        const btnNative = document.getElementById('btnNativeShare');
+        if (btnNative) {
+            if (navigator.share) {
+                btnNative.style.display = 'flex';
+                btnNative.onclick = function() {
+                    navigator.share({
+                        title: currentShareTitle,
+                        text: (type ? `[${type}] ` : '') + currentShareTitle + (ref ? ` - ${ref}` : ''),
+                        url: currentShareUrl
+                    }).catch(err => console.log('Share cancelado o no disponible:', err));
+                };
+            } else {
+                btnNative.style.display = 'none';
+            }
+        }
+
+        // Mostrar el modal
+        const modalEl = document.getElementById('shareSocialModal');
+        if (modalEl && window.bootstrap && window.bootstrap.Modal) {
+            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+            modalInstance.show();
+        }
+    }
+
+    // Delegación de eventos en el documento (funciona incluso con elementos creados o filtrados dinámicamente)
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-open-share');
+        if (!btn) return;
+        e.preventDefault();
+        openShareModalForElement(btn);
+    });
+
+    // Copiar Enlace Directo
+    document.addEventListener('DOMContentLoaded', function() {
+        const btnCopyLink = document.getElementById('btnCopyDirectLink');
+        if (btnCopyLink) {
+            btnCopyLink.addEventListener('click', function() {
+                if (!currentShareUrl) return;
+                navigator.clipboard.writeText(currentShareUrl).then(() => {
+                    const prev = this.innerHTML;
+                    this.innerHTML = '<i class="bi bi-check-lg text-success fs-5"></i> ¡Enlace Copiado al Portapapeles!';
+                    setTimeout(() => { this.innerHTML = prev; }, 2200);
+                }).catch(() => {
+                    prompt('Copia este enlace:', currentShareUrl);
+                });
+            });
+        }
+
+        // Copiar Mensaje Completo
+        const btnCopyMsg = document.getElementById('btnCopyFormattedMsg');
+        if (btnCopyMsg) {
+            btnCopyMsg.addEventListener('click', function() {
+                if (!currentFullMsg) return;
+                navigator.clipboard.writeText(currentFullMsg).then(() => {
+                    const prev = this.innerHTML;
+                    this.innerHTML = '<i class="bi bi-check-lg text-warning fs-5"></i> ¡Mensaje Completo Copiado!';
+                    setTimeout(() => { this.innerHTML = prev; }, 2200);
+                }).catch(() => {
+                    prompt('Copia este mensaje:', currentFullMsg);
+                });
+            });
+        }
+
+        // Compartir en Instagram
+        const btnInsta = document.getElementById('btnShareInstagram');
+        if (btnInsta) {
+            btnInsta.addEventListener('click', function() {
+                if (!currentShareUrl) return;
+                navigator.clipboard.writeText(currentShareUrl).then(() => {
+                    const prev = this.innerHTML;
+                    this.innerHTML = '<i class="bi bi-check-lg fs-5"></i> ¡Enlace copiado! Abriendo Instagram...';
+                    setTimeout(() => {
+                        this.innerHTML = prev;
+                        window.open('https://www.instagram.com/', '_blank');
+                    }, 800);
+                }).catch(() => {
+                    window.open('https://www.instagram.com/', '_blank');
+                });
+            });
+        }
+    });
+})();
+</script>

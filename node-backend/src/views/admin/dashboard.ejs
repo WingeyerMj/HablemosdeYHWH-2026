@@ -145,6 +145,15 @@
                                     <% } %>
                                 </td>
                                 <td class="text-end">
+                                    <button type="button" class="btn btn-sm btn-success text-white me-1 btn-open-share"
+                                            data-type="Parashá"
+                                            data-title="<%= p.parasha_number ? ('Parashá Nº ' + p.parasha_number + ': ' + p.title) : p.title %>"
+                                            data-subtitle="<%= p.subtitle || '' %>"
+                                            data-ref="<%= p.subtitle || '' %>"
+                                            data-url="/parashot/<%= p.id %>"
+                                            title="Compartir Parashá en Redes">
+                                        <i class="bi bi-share-fill"></i>
+                                    </button>
                                     <a href="/admin/parashot/edit/<%= p.id %>" class="btn btn-sm btn-primary me-1">
                                         <i class="bi bi-pencil-square me-1"></i> Cargar / Editar
                                     </a>
@@ -200,6 +209,14 @@
                                 <% } %>
                             </td>
                             <td>
+                                <button type="button" class="btn btn-sm btn-success text-white me-1 btn-open-share"
+                                        data-type="Evento"
+                                        data-title="<%= item.title %>"
+                                        data-subtitle="<%= item.category || 'Evento' %>"
+                                        data-url="/eventos/<%= item.id %>"
+                                        title="Compartir Evento en Redes">
+                                    <i class="bi bi-share-fill"></i>
+                                </button>
                                 <a href="/admin/portfolio/edit/<%= item.id %>" class="btn btn-sm btn-primary me-1"><i class="bi bi-pencil me-1"></i>Editar</a>
                                 <a href="/admin/portfolio/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este Evento?')">Eliminar</a>
                             </td>
@@ -277,6 +294,14 @@
                                         <% } %>
                                     </td>
                                     <td>
+                                        <button type="button" class="btn btn-sm btn-success text-white me-1 btn-open-share"
+                                                data-type="Enseñanza"
+                                                data-title="<%= item.title %>"
+                                                data-subtitle="<%= item.authors_display || item.author || item.subtitle || '' %>"
+                                                data-url="/ensenanzas/<%= item.id %>"
+                                                title="Compartir Enseñanza en Redes">
+                                            <i class="bi bi-share-fill"></i>
+                                        </button>
                                         <a href="/admin/ensenanzas/edit/<%= item.id %>" class="btn btn-sm btn-primary me-1"><i class="bi bi-pencil me-1"></i>Editar</a>
                                         <a href="/admin/ensenanzas/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta Enseñanza?')">Eliminar</a>
                                     </td>
@@ -385,6 +410,15 @@
                                         <% } %>
                                     </td>
                                     <td>
+                                        <button type="button" class="btn btn-sm btn-success text-white me-1 btn-open-share"
+                                                data-type="Haftará"
+                                                data-title="<%= item.title %>"
+                                                data-subtitle="<%= item.subtitle || (item.parasha_title ? ('Parashá: ' + item.parasha_title) : '') %>"
+                                                data-ref="<%= item.parasha_reference || item.subtitle || '' %>"
+                                                data-url="/haftara/<%= item.id %>"
+                                                title="Compartir Haftará en Redes">
+                                            <i class="bi bi-share-fill"></i>
+                                        </button>
                                         <a href="/admin/haftara/edit/<%= item.id %>" class="btn btn-sm btn-primary me-1"><i class="bi bi-pencil me-1"></i>Editar</a>
                                         <a href="/admin/haftara/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta Haftará?')">Eliminar</a>
                                     </td>
@@ -464,6 +498,14 @@
                                         <% } %>
                                     </td>
                                     <td>
+                                        <button type="button" class="btn btn-sm btn-success text-white me-1 btn-open-share"
+                                                data-type="Séder"
+                                                data-title="<%= item.title %>"
+                                                data-subtitle="<%= item.festival ? ('Fiesta: ' + item.festival) : '' %>"
+                                                data-url="/seder/<%= item.id %>"
+                                                title="Compartir Séder en Redes">
+                                            <i class="bi bi-share-fill"></i>
+                                        </button>
                                         <a href="/admin/seder/edit/<%= item.id %>" class="btn btn-sm btn-primary me-1"><i class="bi bi-pencil me-1"></i>Editar</a>
                                         <a href="/admin/seder/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este Seder?')">Eliminar</a>
                                     </td>
@@ -612,6 +654,16 @@
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
+                                                <button type="button" class="btn btn-success text-white btn-open-share"
+                                                        data-type="Semillas de Torah (Artículo Infantil)"
+                                                        data-title="<%= art.title %>"
+                                                        data-subtitle="<%= art.parasha_name ? ('Parashá: ' + art.parasha_name) : (art.category || 'Ministerio Infantil') %>"
+                                                        data-ref="<%= art.biblical_reference || '' %>"
+                                                        data-summary="<%= art.key_verse || '' %>"
+                                                        data-url="/semillas-de-torah/articulo/<%= art.id %>"
+                                                        title="Compartir en Redes">
+                                                    <i class="bi bi-share-fill"></i>
+                                                </button>
                                                 <a href="/semillas-de-torah/articulo/<%= art.id %>" target="_blank" class="btn btn-outline-info" title="Ver en la Web"><i class="bi bi-eye"></i></a>
                                                 <a href="/admin/semillas-articulos/edit/<%= art.id %>" class="btn btn-primary" title="Editar artículo"><i class="bi bi-pencil"></i></a>
                                                 <a href="/admin/semillas-articulos/delete/<%= art.id %>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar este artículo infantil?')" title="Eliminar"><i class="bi bi-trash"></i></a>
@@ -702,6 +754,14 @@
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
+                                                <button type="button" class="btn btn-success text-white btn-open-share"
+                                                        data-type="Semillas de Torah (Lección Infantil)"
+                                                        data-title="<%= item.title %>"
+                                                        data-subtitle="<%= item.subtitle || item.category || 'Enseñanza Infantil' %>"
+                                                        data-url="/semillas-de-torah/<%= item.id %>"
+                                                        title="Compartir en Redes">
+                                                    <i class="bi bi-share-fill"></i>
+                                                </button>
                                                 <a href="/admin/semillas/edit/<%= item.id %>" class="btn btn-primary" title="Editar contenido"><i class="bi bi-pencil"></i> Editar</a>
                                                 <a href="/admin/semillas/delete/<%= item.id %>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar este contenido infantil?')" title="Eliminar"><i class="bi bi-trash"></i></a>
                                             </div>
@@ -817,6 +877,15 @@
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
+                                                <button type="button" class="btn btn-success text-white btn-open-share"
+                                                        data-type="Short Infantil (Semillas)"
+                                                        data-title="<%= short.title %>"
+                                                        data-subtitle="<%= short.child_name ? ('Con: ' + short.child_name) : (short.parasha_name || 'Aliyá con Niños') %>"
+                                                        data-ref="<%= short.verses_reference || '' %>"
+                                                        data-url="<%= short.youtube_short_url || (short.video_url ? short.video_url : '/semillas-de-torah#shorts') %>"
+                                                        title="Compartir Short Infantil en Redes">
+                                                    <i class="bi bi-share-fill"></i>
+                                                </button>
                                                 <a href="/admin/semillas-shorts/edit/<%= short.id %>" class="btn btn-primary" title="Editar"><i class="bi bi-pencil"></i></a>
                                                 <a href="/admin/semillas-shorts/delete/<%= short.id %>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar este short infantil?')" title="Eliminar"><i class="bi bi-trash"></i></a>
                                             </div>
@@ -890,6 +959,15 @@
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center gap-1">
+                                        <button type="button" class="btn btn-sm btn-success text-white btn-open-share"
+                                                data-type="Noticia"
+                                                data-title="<%= item.title %>"
+                                                data-subtitle="<%= item.category || 'Actualidad & Profecía' %>"
+                                                data-summary="<%= item.subtitle || (item.summary ? item.summary.substring(0, 120) : '') %>"
+                                                data-url="/noticias/<%= item.id %>"
+                                                title="Compartir Noticia en Redes">
+                                            <i class="bi bi-share-fill"></i>
+                                        </button>
                                         <a href="/noticias/<%= item.id %>" target="_blank" class="btn btn-sm btn-outline-info" title="Ver en la Web"><i class="bi bi-box-arrow-up-right"></i></a>
                                         <a href="/admin/noticias/edit/<%= item.id %>" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
                                         <a href="/admin/noticias/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta noticia?')"><i class="bi bi-trash"></i></a>
@@ -958,6 +1036,15 @@
                                 <td><span class="badge bg-dark border border-secondary"><i class="bi bi-eye me-1"></i><%= short.views_count !== undefined ? short.views_count : (short.views || 0) %></span></td>
                                 <td>
                                     <div class="d-flex align-items-center gap-1">
+                                        <button type="button" class="btn btn-sm btn-success text-white btn-open-share"
+                                                data-type="Short de Noticias"
+                                                data-title="<%= short.title %>"
+                                                data-subtitle="<%= short.category || 'Actualidad' %>"
+                                                data-summary="<%= short.description || '' %>"
+                                                data-url="<%= short.youtube_short_url || short.youtube_url || (short.video_url ? short.video_url : '/noticias#shorts') %>"
+                                                title="Compartir Short de Noticias en Redes">
+                                            <i class="bi bi-share-fill"></i>
+                                        </button>
                                         <a href="/admin/noticias-shorts/edit/<%= short.id %>" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
                                         <a href="/admin/noticias-shorts/delete/<%= short.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este short de noticias?')"><i class="bi bi-trash"></i></a>
                                     </div>
@@ -1003,53 +1090,20 @@
                                 <td><small class="text-white-50"><%= post.published_at ? new Date(post.published_at).toLocaleDateString('es-ES') : '-' %></small></td>
                                 <td><span class="badge bg-dark border border-secondary"><i class="bi bi-eye"></i> <%= post.views || 0 %></span></td>
                                 <td>
-                                    <div class="btn-group btn-group-sm me-1">
-                                        <button type="button" class="btn btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" title="Compartir en Redes">
+                                    <div class="d-flex align-items-center gap-1">
+                                        <button type="button" class="btn btn-sm btn-success text-white btn-open-share"
+                                                data-type="Blog"
+                                                data-title="<%= post.title %>"
+                                                data-subtitle="<%= post.subtitle || post.category || 'Reflexión de Fe' %>"
+                                                data-summary="<%= post.summary || '' %>"
+                                                data-url="/blog/<%= post.id %>"
+                                                title="Compartir Artículo en Redes">
                                             <i class="bi bi-share-fill"></i>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-dark shadow">
-                                            <li><h6 class="dropdown-header text-warning"><i class="bi bi-share me-1"></i>Difundir Artículo</h6></li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-2" href="https://api.whatsapp.com/send?text=<%= encodeURIComponent(post.title + '\n\n' + (post.summary || '') + '\n\nLee más en: https://hablemosdeyhwh.com/blog/' + post.id) %>" target="_blank">
-                                                    <i class="bi bi-whatsapp text-success"></i> WhatsApp
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-2" href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('https://hablemosdeyhwh.com/blog/' + post.id) %>" target="_blank">
-                                                    <i class="bi bi-facebook text-primary"></i> Facebook
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-2" href="javascript:void(0)" onclick="navigator.clipboard.writeText('https://hablemosdeyhwh.com/blog/<%= post.id %>'); alert('¡Enlace copiado! Abriendo Instagram...'); window.open('https://www.instagram.com/', '_blank');">
-                                                    <i class="bi bi-instagram" style="color: #E1306C;"></i> Instagram
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-2" href="https://t.me/share/url?url=<%= encodeURIComponent('https://hablemosdeyhwh.com/blog/' + post.id) %>&text=<%= encodeURIComponent(post.title) %>" target="_blank">
-                                                    <i class="bi bi-telegram text-info"></i> Telegram
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-2" href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent(post.title) %>&url=<%= encodeURIComponent('https://hablemosdeyhwh.com/blog/' + post.id) %>" target="_blank">
-                                                    <i class="bi bi-twitter-x text-white"></i> X (Twitter)
-                                                </a>
-                                            </li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-2" href="javascript:void(0)" onclick="navigator.clipboard.writeText('https://hablemosdeyhwh.com/blog/<%= post.id %>'); alert('¡Enlace copiado al portapapeles!');">
-                                                    <i class="bi bi-link-45deg text-warning"></i> Copiar Enlace
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-2" href="/blog/<%= post.id %>" target="_blank">
-                                                    <i class="bi bi-box-arrow-up-right text-light"></i> Ver en la Web
-                                                </a>
-                                            </li>
-                                        </ul>
+                                        <a href="/blog/<%= post.id %>" target="_blank" class="btn btn-sm btn-outline-info" title="Ver en la Web"><i class="bi bi-box-arrow-up-right"></i></a>
+                                        <a href="/admin/blog/edit/<%= post.id %>" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
+                                        <a href="/admin/blog/delete/<%= post.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este artículo del blog?')"><i class="bi bi-trash"></i></a>
                                     </div>
-
-                                    <a href="/admin/blog/edit/<%= post.id %>" class="btn btn-sm btn-primary me-1"><i class="bi bi-pencil me-1"></i>Editar</a>
-                                    <a href="/admin/blog/delete/<%= post.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este artículo del blog?')">Eliminar</a>
                                 </td>
                             </tr>
                             <% }) %>
@@ -1205,6 +1259,14 @@
                                         <td><span class="text-truncate d-inline-block" style="max-width:200px;"><%= r.description || r.descripcion || '-' %></span></td>
                                         <td><% if (r.pdf_file) { %><a href="<%= r.pdf_file %>" target="_blank" class="badge bg-success"><i class="bi bi-file-pdf"></i> PDF</a><% } else { %>-<% } %></td>
                                         <td>
+                                            <button type="button" class="btn btn-sm btn-success text-white me-1 btn-open-share"
+                                                data-type="<%= ds.title %>"
+                                                data-title="<%= r.title || r.titulo || '-' %>"
+                                                data-subtitle="<%= ds.title %>"
+                                                data-url="/s/<%= ds.slug %>?view_id=<%= r.id %>"
+                                                title="Compartir en Redes">
+                                                <i class="bi bi-share-fill"></i>
+                                            </button>
                                             <button type="button" class="btn btn-sm btn-primary me-1 edit-dynamic-btn"
                                                 data-table="<%= ds.data_table %>"
                                                 data-title="<%= ds.title %>"

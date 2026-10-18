@@ -8,6 +8,16 @@
             <p class="text-white-50 mb-0">Ministerio Semillas de Torah • Editando: <strong class="text-success"><%= item.title %></strong></p>
         </div>
         <div class="d-flex gap-2">
+            <button type="button" class="btn btn-success text-white btn-open-share"
+                    data-type="Semillas de Torah (Artículo)"
+                    data-title="<%= item.title %>"
+                    data-subtitle="<%= item.parasha_name ? ('Parashá: ' + item.parasha_name) : (item.category || 'Ministerio Infantil') %>"
+                    data-ref="<%= item.biblical_reference || '' %>"
+                    data-summary="<%= item.key_verse || '' %>"
+                    data-url="/semillas-de-torah/articulo/<%= item.id %>"
+                    title="Compartir en Redes">
+                <i class="bi bi-share-fill me-1"></i> Compartir
+            </button>
             <a href="/semillas-de-torah/articulo/<%= item.id %>" target="_blank" class="btn btn-outline-info"><i class="bi bi-eye"></i> Ver en la Web</a>
             <a href="/admin/dashboard#admin-semillas-articulos" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
         </div>

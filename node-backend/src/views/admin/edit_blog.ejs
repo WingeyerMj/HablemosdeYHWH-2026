@@ -7,7 +7,18 @@
             <h1><i class="bi bi-pencil-square me-2" style="color: var(--primary-color);"></i>Editar Artículo de Blog</h1>
             <p class="text-white-50 mb-0">Editando: <strong><%= post.title %></strong></p>
         </div>
-        <a href="/admin/dashboard#pills-blog" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver al Dashboard</a>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-success text-white btn-open-share"
+                    data-type="Blog"
+                    data-title="<%= post.title %>"
+                    data-subtitle="<%= post.subtitle || post.category || '' %>"
+                    data-summary="<%= post.summary || '' %>"
+                    data-url="/blog/<%= post.id %>"
+                    title="Compartir Artículo en Redes">
+                <i class="bi bi-share-fill me-1"></i> Compartir
+            </button>
+            <a href="/admin/dashboard#pills-blog" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver al Dashboard</a>
+        </div>
     </div>
 
     <form action="/admin/blog/update" method="POST" enctype="multipart/form-data" id="editBlogPageForm">

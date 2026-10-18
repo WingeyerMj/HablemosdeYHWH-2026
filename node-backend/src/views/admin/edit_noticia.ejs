@@ -7,7 +7,17 @@
             <h1><i class="bi bi-globe-americas me-2" style="color: var(--primary-color);"></i>Editar Noticia / Acontecimiento</h1>
             <p class="text-white-50 mb-0">Editando: <strong><%= item.title %></strong></p>
         </div>
-        <a href="/admin/dashboard#pills-noticias" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver al Dashboard</a>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-success text-white btn-open-share"
+                    data-type="Noticia"
+                    data-title="<%= item.title %>"
+                    data-subtitle="<%= item.category || '' %>"
+                    data-url="/noticias/<%= item.id %>"
+                    title="Compartir Noticia en Redes">
+                <i class="bi bi-share-fill me-1"></i> Compartir
+            </button>
+            <a href="/admin/dashboard#pills-noticias" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver al Dashboard</a>
+        </div>
     </div>
 
     <form action="/admin/noticias/update" method="POST" enctype="multipart/form-data" id="editNoticiaPageForm">

@@ -7,7 +7,17 @@
             <h1><i class="bi bi-balloon-heart-fill me-2" style="color: #c084fc;"></i>Editar Contenido de Semillas de Torah</h1>
             <p class="text-white-50 mb-0">Editando: <strong><%= item.title %></strong></p>
         </div>
-        <a href="/admin/dashboard#pills-semillas" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-success text-white btn-open-share"
+                    data-type="Semillas de Torah (Lección)"
+                    data-title="<%= item.title %>"
+                    data-subtitle="<%= item.subtitle || item.category || 'Enseñanza Infantil' %>"
+                    data-url="/semillas-de-torah/<%= item.id %>"
+                    title="Compartir en Redes">
+                <i class="bi bi-share-fill me-1"></i> Compartir
+            </button>
+            <a href="/admin/dashboard#pills-semillas" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
+        </div>
     </div>
 
     <form action="/admin/semillas/update" method="POST" enctype="multipart/form-data" id="editSemillasPageForm">

@@ -157,11 +157,12 @@ select option:checked, select option:hover {
                                                 </button>
 
                                                 <!-- Botón Compartir en Redes -->
-                                                <button type="button" class="btn btn-sm btn-outline-success me-1 btn-open-share"
+                                                <button type="button" class="btn btn-sm btn-success text-white me-1 btn-open-share"
+                                                        data-type="Lectura Diaria (Aliyá)"
                                                         data-title="<%= a.title %>"
-                                                        data-parasha="<%= a.parasha_title || 'Lectura Semanal' %>"
+                                                        data-subtitle="<%= a.parasha_title ? ('Parashá: ' + a.parasha_title) : 'Lectura Semanal' %>"
                                                         data-ref="<%= a.verses_reference || '' %>"
-                                                        data-parashaid="<%= a.parasha_id || '' %>"
+                                                        data-url="<%= a.parasha_id ? ('/aliyot?parasha=' + a.parasha_id) : '/aliyot' %>"
                                                         title="Compartir en Redes">
                                                     <i class="bi bi-share-fill"></i>
                                                 </button>
@@ -235,6 +236,14 @@ select option:checked, select option:hover {
                                     </div>
 
                                     <div class="mt-auto pt-2 border-top border-secondary d-flex gap-2">
+                                        <button type="button" class="btn btn-sm btn-success text-white btn-open-share"
+                                                data-type="Parashá"
+                                                data-title="<%= p.title %>"
+                                                data-subtitle="<%= p.subtitle || '' %>"
+                                                data-url="/parashot/<%= p.id %>"
+                                                title="Compartir Parashá en Redes">
+                                            <i class="bi bi-share-fill"></i>
+                                        </button>
                                         <a href="/admin/aliyot/edit/<%= p.id %>" class="btn btn-sm w-100 fw-bold d-flex align-items-center justify-content-center gap-1" style="background: var(--primary-color, #d4b895); color: #1a1a1a;">
                                             <i class="bi bi-pencil-square"></i> Cargar 7 Aliyot
                                         </a>
@@ -452,59 +461,6 @@ select option:checked, select option:hover {
                         </button>
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ============================================== -->
-<!-- MODAL: COMPARTIR EN REDES SOCIALES -->
-<!-- ============================================== -->
-<div class="modal fade" id="shareSocialModal" tabindex="-1" aria-labelledby="shareSocialModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-dark text-white border-secondary" style="border-radius: 14px;">
-            <div class="modal-header border-secondary bg-black bg-opacity-25">
-                <h5 class="modal-title" id="shareSocialModalLabel"><i class="bi bi-share text-success me-2"></i>Compartir Lectura Diaria</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-4">
-                <div class="p-3 mb-3 rounded bg-black bg-opacity-50 border border-secondary">
-                    <h6 class="text-warning mb-1" id="modalShareTitle">Título de la Aliyá</h6>
-                    <small class="text-white-50 d-block" id="modalShareParasha">Parashá</small>
-                    <small class="text-white-50" id="modalShareRef">Versículos</small>
-                </div>
-
-                <div class="d-grid gap-2">
-                    <a href="#" id="btnShareWhatsApp" target="_blank" rel="noopener noreferrer" 
-                       class="btn btn-success d-flex align-items-center justify-content-center gap-2 py-2 fw-bold" style="background-color: #25D366; border: none;">
-                        <i class="bi bi-whatsapp fs-5"></i> Compartir en WhatsApp
-                    </a>
-
-                    <a href="#" id="btnShareTelegram" target="_blank" rel="noopener noreferrer" 
-                       class="btn btn-info d-flex align-items-center justify-content-center gap-2 py-2 fw-bold text-white" style="background-color: #0088cc; border: none;">
-                        <i class="bi bi-telegram fs-5"></i> Compartir en Telegram
-                    </a>
-
-                    <a href="#" id="btnShareFacebook" target="_blank" rel="noopener noreferrer" 
-                       class="btn btn-primary d-flex align-items-center justify-content-center gap-2 py-2 fw-bold" style="background-color: #1877F2; border: none;">
-                        <i class="bi bi-facebook fs-5"></i> Compartir en Facebook
-                    </a>
-
-                    <a href="#" id="btnShareTwitter" target="_blank" rel="noopener noreferrer" 
-                       class="btn btn-dark d-flex align-items-center justify-content-center gap-2 py-2 fw-bold border border-secondary">
-                        <i class="bi bi-twitter-x fs-5"></i> Compartir en X (Twitter)
-                    </a>
-
-                    <hr class="border-secondary my-2">
-
-                    <button type="button" class="btn btn-outline-light d-flex align-items-center justify-content-center gap-2 py-2" id="btnCopyDirectLink">
-                        <i class="bi bi-link-45deg fs-5"></i> Copiar Enlace Directo
-                    </button>
-
-                    <button type="button" class="btn btn-outline-warning d-flex align-items-center justify-content-center gap-2 py-2" id="btnCopyFormattedMsg">
-                        <i class="bi bi-clipboard-check fs-5"></i> Copiar Mensaje Completo
-                    </button>
-                </div>
             </div>
         </div>
     </div>
@@ -822,55 +778,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 4. Modal de Compartir en Redes
-    let currentShareUrl = '';
-    let currentFullMsg = '';
 
-    document.querySelectorAll('.btn-open-share').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const title = this.getAttribute('data-title');
-            const parasha = this.getAttribute('data-parasha');
-            const ref = this.getAttribute('data-ref');
-            const parashaId = this.getAttribute('data-parashaid');
-
-            document.getElementById('modalShareTitle').innerText = title;
-            document.getElementById('modalShareParasha').innerText = 'Parashá: ' + parasha;
-            document.getElementById('modalShareRef').innerText = ref ? '📖 ' + ref : '';
-
-            currentShareUrl = parashaId ? `https://www.hablemosdeyhwh.com/aliyot?parasha=${parashaId}` : `https://www.hablemosdeyhwh.com/aliyot`;
-            currentFullMsg = `*Lectura de Toráh: ${parasha} - ${title}*` + (ref ? `\n📖 Versículos: ${ref}` : '') + `\n\nEscucha el audio y lee la porción aquí:\n${currentShareUrl}`;
-
-            const waText = encodeURIComponent(currentFullMsg);
-            const tgText = encodeURIComponent(`Lectura de Toráh: ${parasha} - ${title}\n` + (ref ? `📖 Versículos: ${ref}` : ''));
-            const xText = encodeURIComponent(`Lectura de Toráh: ${parasha} - ${title} ${ref}`);
-
-            document.getElementById('btnShareWhatsApp').href = `https://api.whatsapp.com/send?text=${waText}`;
-            document.getElementById('btnShareTelegram').href = `https://t.me/share/url?url=${encodeURIComponent(currentShareUrl)}&text=${tgText}`;
-            document.getElementById('btnShareFacebook').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentShareUrl)}`;
-            document.getElementById('btnShareTwitter').href = `https://twitter.com/intent/tweet?text=${xText}&url=${encodeURIComponent(currentShareUrl)}`;
-
-            const shareModal = new bootstrap.Modal(document.getElementById('shareSocialModal'));
-            shareModal.show();
-        });
-    });
-
-    // Copiar enlace directo en el modal
-    document.getElementById('btnCopyDirectLink').addEventListener('click', function() {
-        navigator.clipboard.writeText(currentShareUrl).then(() => {
-            const prev = this.innerHTML;
-            this.innerHTML = '<i class="bi bi-check-lg text-success fs-5"></i> ¡Enlace Copiado!';
-            setTimeout(() => { this.innerHTML = prev; }, 2000);
-        });
-    });
-
-    // Copiar mensaje completo en el modal
-    document.getElementById('btnCopyFormattedMsg').addEventListener('click', function() {
-        navigator.clipboard.writeText(currentFullMsg).then(() => {
-            const prev = this.innerHTML;
-            this.innerHTML = '<i class="bi bi-check-lg text-success fs-5"></i> ¡Mensaje Copiado!';
-            setTimeout(() => { this.innerHTML = prev; }, 2000);
-        });
-    });
 
     // 5. Agregar más filas de archivos de audio dinámicamente
     const btnAddAudioRow = document.getElementById('btnAddAudioInputRow');

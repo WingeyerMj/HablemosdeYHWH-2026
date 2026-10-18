@@ -100,6 +100,14 @@
                                                 </td>
                                                 <% }) %>
                                                     <td class="text-end text-nowrap">
+                                                        <button type="button" class="btn btn-sm btn-success text-white me-1 btn-open-share"
+                                                            data-type="<%= title %>"
+                                                            data-title="<%= row.title || row.titulo || row.name || row.nombre || ('Registro #' + row.id) %>"
+                                                            data-subtitle="<%= title %>"
+                                                            data-url="/s/<%= (typeof sectionSlug !== 'undefined' && sectionSlug) ? sectionSlug : tableName %>?view_id=<%= row.id %>"
+                                                            title="Compartir en Redes">
+                                                            <i class="bi bi-share-fill"></i>
+                                                        </button>
                                                         <a href="/admin/entity/<%= tableName %>/edit/<%= row.id %>"
                                                             class="btn btn-sm btn-outline-primary">
                                                             <i class="bi bi-pencil"></i>

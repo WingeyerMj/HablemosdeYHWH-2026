@@ -191,6 +191,16 @@
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group btn-group-sm">
+                                        <button type="button" class="btn btn-success text-white btn-open-share"
+                                                data-type="Semillas de Torah (Artículo)"
+                                                data-title="<%= art.title %>"
+                                                data-subtitle="<%= art.parasha_name ? ('Parashá: ' + art.parasha_name) : (art.category || 'Ministerio Infantil') %>"
+                                                data-ref="<%= art.biblical_reference || '' %>"
+                                                data-summary="<%= art.key_verse || '' %>"
+                                                data-url="/semillas-de-torah/articulo/<%= art.id %>"
+                                                title="Compartir en Redes">
+                                            <i class="bi bi-share-fill"></i>
+                                        </button>
                                         <a href="/semillas-de-torah/articulo/<%= art.id %>" target="_blank" class="btn btn-outline-info" title="Ver en la Web"><i class="bi bi-eye"></i></a>
                                         <a href="/admin/semillas-articulos/edit/<%= art.id %>" class="btn btn-primary" title="Editar artículo"><i class="bi bi-pencil"></i></a>
                                         <a href="/admin/semillas-articulos/delete/<%= art.id %>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar este artículo infantil?')" title="Eliminar"><i class="bi bi-trash"></i></a>

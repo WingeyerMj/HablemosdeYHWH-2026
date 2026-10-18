@@ -7,9 +7,19 @@
             <h1><i class="bi bi-calendar-event me-2" style="color: var(--primary-color);"></i>Editar Evento</h1>
             <p class="text-white-50 mb-0">Editando: <strong><%= evento.title %></strong></p>
         </div>
-        <a href="/admin/dashboard#pills-portfolio" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Volver al Dashboard
-        </a>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-success text-white btn-open-share"
+                    data-type="Evento"
+                    data-title="<%= evento.title %>"
+                    data-subtitle="<%= evento.category || 'Evento' %>"
+                    data-url="/eventos/<%= evento.id %>"
+                    title="Compartir Evento en Redes">
+                <i class="bi bi-share-fill me-1"></i> Compartir
+            </button>
+            <a href="/admin/dashboard#pills-portfolio" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver al Dashboard
+            </a>
+        </div>
     </div>
 
     <div class="card bg-dark text-white border-secondary shadow-sm">

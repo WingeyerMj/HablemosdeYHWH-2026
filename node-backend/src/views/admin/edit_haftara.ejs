@@ -7,7 +7,18 @@
             <h1><i class="bi bi-scroll me-2" style="color: var(--primary-color);"></i>Editar Haftará</h1>
             <p class="text-white-50 mb-0">Editando: <strong><%= haftara.title %></strong></p>
         </div>
-        <a href="/admin/dashboard#pills-haftara" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-success text-white btn-open-share"
+                    data-type="Haftará"
+                    data-title="<%= haftara.title %>"
+                    data-subtitle="<%= haftara.subtitle || (haftara.parasha_title ? ('Parashá: ' + haftara.parasha_title) : '') %>"
+                    data-ref="<%= haftara.parasha_reference || haftara.subtitle || '' %>"
+                    data-url="/haftara/<%= haftara.id %>"
+                    title="Compartir Haftará en Redes">
+                <i class="bi bi-share-fill me-1"></i> Compartir
+            </button>
+            <a href="/admin/dashboard#pills-haftara" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
+        </div>
     </div>
 
     <form action="/admin/haftara/update" method="POST" enctype="multipart/form-data" id="editHaftaraPageForm">

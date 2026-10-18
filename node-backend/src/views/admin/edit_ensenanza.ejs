@@ -7,7 +7,17 @@
             <h1><i class="bi bi-pencil-square me-2" style="color: var(--primary-color);"></i>Editar Enseñanza</h1>
             <p class="text-white-50 mb-0">Editando: <strong><%= ensenanza.title %></strong></p>
         </div>
-        <a href="/admin/dashboard#pills-ensenanzas" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-success text-white btn-open-share"
+                    data-type="Enseñanza"
+                    data-title="<%= ensenanza.title %>"
+                    data-subtitle="<%= ensenanza.authors_display || ensenanza.author || ensenanza.subtitle || '' %>"
+                    data-url="/ensenanzas/<%= ensenanza.id %>"
+                    title="Compartir Enseñanza en Redes">
+                <i class="bi bi-share-fill me-1"></i> Compartir
+            </button>
+            <a href="/admin/dashboard#pills-ensenanzas" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
+        </div>
     </div>
 
     <form action="/admin/ensenanzas/update" method="POST" enctype="multipart/form-data" id="editEnsenanzaPageForm">
