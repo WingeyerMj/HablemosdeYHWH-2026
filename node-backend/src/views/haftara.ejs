@@ -144,8 +144,8 @@
                                                             %>
                                                             <div class="d-flex align-items-center gap-1">
                                                                 <% 
-                                                                    const hafCycle = (item.parasha_number == 1 || (item.cycle_name && item.cycle_name.includes('2026 - 2027'))) ? 'Ciclo 2026 - 2027' : (item.cycle_name || 'Ciclo 2025 - 2026');
-                                                                    const isNewCycle = hafCycle.includes('2026');
+                                                                    const hafCycle = item.cycle_name || 'Ciclo 2025 - 2026';
+                                                                    const isNewCycle = hafCycle.includes('2026 - 2027') || !hafCycle.includes('2025 - 2026');
                                                                 %>
                                                                 <span class="badge rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center" style="<%= isNewCycle ? 'background: rgba(212, 168, 83, 0.15); color: #8c6a2d; border: 1px solid rgba(212, 168, 83, 0.35);' : 'background: #f1f3f5; color: #495057; border: 1px solid #dee2e6;' %> font-size: 0.72rem; font-weight: 600;">
                                                                     <i class="bi <%= isNewCycle ? 'bi-star-fill text-warning' : 'bi-clock-history text-secondary' %> me-1"></i><%= hafCycle %>

@@ -72,18 +72,17 @@ class Haftara {
                 await db.query("ALTER TABLE haftarot ADD COLUMN cycle_id INT NULL");
             }
 
-            // Sincronizar ciclo desde parashot
+            // Sincronizar ciclo desde parashot vinculada cuando la parashá tenga ciclo asignado
             await db.query(`
                 UPDATE haftarot h
                 JOIN parashot p ON h.parasha_id = p.id
                 SET h.cycle_name = p.cycle_name,
                     h.cycle_id = p.cycle_id
+                WHERE p.cycle_name IS NOT NULL AND p.cycle_name != ''
             `);
 
-            // Haftará de Bereshit (#1) es del nuevo ciclo 2026 - 2027
-            await db.query("UPDATE haftarot SET cycle_name = 'Ciclo 2026 - 2027' WHERE parasha_id IN (SELECT id FROM parashot WHERE parasha_number = 1) OR title LIKE '%Bereshit%'");
-            // Todas las demás Haftarot son del ciclo 2025 - 2026
-            await db.query("UPDATE haftarot SET cycle_name = 'Ciclo 2025 - 2026' WHERE title NOT LIKE '%Bereshit%' AND (cycle_name LIKE '%2026%' OR cycle_name IS NULL OR cycle_name = '')");
+            // Asignar ciclo por defecto únicamente a las que no tengan ciclo asignado (NULL o vacío)
+            await db.query("UPDATE haftarot SET cycle_name = 'Ciclo 2025 - 2026' WHERE cycle_name IS NULL OR cycle_name = ''");
         } catch(e) {}
     }
 

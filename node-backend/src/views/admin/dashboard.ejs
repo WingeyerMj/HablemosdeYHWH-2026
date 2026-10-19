@@ -122,8 +122,8 @@
                                 </td>
                                 <td>
                                     <% 
-                                        const pCycle = (p.parasha_number == 1 || (p.cycle_name && p.cycle_name.includes('2026 - 2027'))) ? 'Ciclo 2026 - 2027' : (p.cycle_name || 'Ciclo 2025 - 2026');
-                                        const isNewCycle = pCycle.includes('2026');
+                                        const pCycle = p.cycle_name || 'Ciclo 2025 - 2026';
+                                        const isNewCycle = pCycle.includes('2026 - 2027') || !pCycle.includes('2025 - 2026');
                                     %>
                                     <span class="badge <%= isNewCycle ? 'bg-warning text-dark fw-bold border border-warning' : 'bg-dark border border-secondary text-white-50' %>" style="font-size: 0.76rem;">
                                         <i class="bi <%= isNewCycle ? 'bi-star-fill text-dark' : 'bi-clock-history' %> me-1"></i><%= pCycle %>
@@ -345,8 +345,8 @@
                                     <td><strong><%= item.title %></strong></td>
                                     <td>
                                         <% 
-                                            const hCycle = (item.parasha_number == 1 || (item.cycle_name && item.cycle_name.includes('2026 - 2027'))) ? 'Ciclo 2026 - 2027' : (item.cycle_name || 'Ciclo 2025 - 2026');
-                                            const isHNew = hCycle.includes('2026');
+                                            const hCycle = item.cycle_name || 'Ciclo 2025 - 2026';
+                                            const isHNew = hCycle.includes('2026 - 2027') || !hCycle.includes('2025 - 2026');
                                         %>
                                         <span class="badge <%= isHNew ? 'bg-warning text-dark fw-bold border border-warning' : 'bg-dark border border-secondary text-white-50' %>" style="font-size: 0.72rem;">
                                             <i class="bi <%= isHNew ? 'bi-star-fill text-dark' : 'bi-clock-history' %> me-1"></i><%= hCycle %>

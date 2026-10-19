@@ -290,10 +290,25 @@ const adminController = {
                 if (cycleObj) {
                     cycle_name = cycleObj.name;
                 }
+            } else if (!cycle_id && cycle_name) {
+                try {
+                    const [matched] = await db.query('SELECT id, name FROM torah_cycles WHERE name = ? LIMIT 1', [cycle_name]);
+                    if (matched && matched.length > 0) {
+                        cycle_id = matched[0].id;
+                    }
+                } catch(e) {}
             }
 
-            console.log('--- Updating Parasha ID:', id, 'with cycle:', cycle_name, 'image_url:', image_url);
+            console.log('--- Updating Parasha ID:', id, 'with cycle:', cycle_name, 'cycle_id:', cycle_id, 'image_url:', image_url);
             await Parasha.update(id, { parasha_number, title, description, subtitle, content, image_url, pdf_file, icon, link, youtube_link, cycle_id, cycle_name });
+
+            // Sincronizar ciclo con la Haftará vinculada a esta Parashá
+            try {
+                await db.query(
+                    'UPDATE haftarot SET cycle_id = ?, cycle_name = ? WHERE parasha_id = ?',
+                    [cycle_id || null, cycle_name || null, id]
+                );
+            } catch(e) {}
 
             // Notificación automática a suscriptores por actualización
             try {

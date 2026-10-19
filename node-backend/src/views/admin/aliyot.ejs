@@ -98,8 +98,8 @@ select option:checked, select option:hover {
                                             </td>
                                             <td>
                                                 <% if (a.parasha_title) { 
-                                                    const aCycle = (a.parasha_number == 1 || (a.cycle_name && a.cycle_name.includes('2026 - 2027'))) ? 'Ciclo 2026 - 2027' : (a.cycle_name || 'Ciclo 2025 - 2026');
-                                                    const isANew = aCycle.includes('2026');
+                                                    const aCycle = a.cycle_name || 'Ciclo 2025 - 2026';
+                                                    const isANew = aCycle.includes('2026 - 2027') || !aCycle.includes('2025 - 2026');
                                                 %>
                                                     <div class="d-flex align-items-center gap-1">
                                                         <span class="fw-bold text-white"><%= a.parasha_title %></span>

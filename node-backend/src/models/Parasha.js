@@ -40,10 +40,9 @@ class Parasha {
                 await db.query("ALTER TABLE parashot ADD COLUMN cycle_name VARCHAR(150) NULL");
             }
 
-            // Solo la Parashá Bereshit (#1) es del nuevo ciclo 2026 - 2027
-            // Todas las demás porciones son del ciclo 2025 - 2026 (hasta que el Moréh las suba en el nuevo ciclo)
-            await db.query("UPDATE parashot SET cycle_name = 'Ciclo 2026 - 2027' WHERE parasha_number = 1");
-            await db.query("UPDATE parashot SET cycle_name = 'Ciclo 2025 - 2026' WHERE parasha_number IS NOT NULL AND parasha_number != 1 AND (cycle_name LIKE '%2026%' OR cycle_name IS NULL OR cycle_name = '')");
+            // Solo establecer valor por defecto en parashot que no tengan ciclo asignado (NULL o vacío)
+            await db.query("UPDATE parashot SET cycle_name = 'Ciclo 2026 - 2027' WHERE (cycle_name IS NULL OR cycle_name = '') AND parasha_number = 1");
+            await db.query("UPDATE parashot SET cycle_name = 'Ciclo 2025 - 2026' WHERE (cycle_name IS NULL OR cycle_name = '') AND (parasha_number IS NULL OR parasha_number != 1)");
         } catch(err) {
             console.warn('Aviso en ensureColumns Parasha:', err.message);
         }

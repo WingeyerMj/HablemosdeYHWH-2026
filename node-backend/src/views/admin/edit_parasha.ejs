@@ -47,15 +47,42 @@
                                 <span class="input-group-text bg-dark border-secondary text-warning">
                                     <i class="bi bi-bookmark-star-fill"></i>
                                 </span>
+                                <% 
+                                    const pCycleId = parasha.cycle_id;
+                                    const pCycleName = (parasha.cycle_name || '').trim();
+                                    
+                                    // Comprobar si coincide con currentCycle
+                                    let isCurrentSelected = false;
+                                    if (typeof currentCycle !== 'undefined' && currentCycle) {
+                                        if (pCycleId && pCycleId == currentCycle.id) {
+                                            isCurrentSelected = true;
+                                        } else if (pCycleName && currentCycle.name && pCycleName.toLowerCase() === currentCycle.name.toLowerCase()) {
+                                            isCurrentSelected = true;
+                                        } else if (!pCycleId && (!pCycleName || pCycleName.includes('2026 - 2027'))) {
+                                            isCurrentSelected = true;
+                                        }
+                                    }
+                                %>
                                 <select name="cycle_id" id="edit_parasha_cycle_id" class="form-select bg-dark text-white border-secondary" onchange="var box=document.getElementById('edit_new_cycle_box'); var hid=document.getElementById('edit_cycle_name_hidden'); if(this.value==='__new__'){box.style.display='block';}else{box.style.display='none'; var opt=this.options[this.selectedIndex]; if(hid&&opt) hid.value=opt.getAttribute('data-name')||'';}">
                                     <% if (typeof currentCycle !== 'undefined' && currentCycle) { %>
-                                        <option value="<%= currentCycle.id %>" data-name="<%= currentCycle.name %>" <%= (!parasha.cycle_id || parasha.cycle_id == currentCycle.id) ? 'selected' : '' %>>
+                                        <option value="<%= currentCycle.id %>" data-name="<%= currentCycle.name %>" <%= isCurrentSelected ? 'selected' : '' %>>
                                             ⭐ <%= currentCycle.name %> (Ciclo Activo Actual)
                                         </option>
                                     <% } %>
                                     <% if (typeof allCycles !== 'undefined' && allCycles && allCycles.length > 0) { %>
-                                        <% allCycles.filter(c => !currentCycle || c.id !== currentCycle.id).forEach(c => { %>
-                                            <option value="<%= c.id %>" data-name="<%= c.name %>" <%= (parasha.cycle_id == c.id || parasha.cycle_name == c.name) ? 'selected' : '' %>>
+                                        <% allCycles.filter(c => !currentCycle || c.id !== currentCycle.id).forEach(c => { 
+                                            let isSelected = false;
+                                            if (!isCurrentSelected) {
+                                                if (pCycleId && pCycleId == c.id) {
+                                                    isSelected = true;
+                                                } else if (pCycleName && c.name && pCycleName.toLowerCase() === c.name.toLowerCase()) {
+                                                    isSelected = true;
+                                                } else if (pCycleName && c.year_label && pCycleName.includes(c.year_label)) {
+                                                    isSelected = true;
+                                                }
+                                            }
+                                        %>
+                                            <option value="<%= c.id %>" data-name="<%= c.name %>" <%= isSelected ? 'selected' : '' %>>
                                                 📁 <%= c.name %> <%= c.year_label ? '(' + c.year_label + ')' : '' %>
                                             </option>
                                         <% }) %>
