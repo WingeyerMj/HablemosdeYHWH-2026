@@ -296,19 +296,17 @@
                                                                 <% } %>
                                                             </div>
 
-                                                            <div class="d-flex align-items-center gap-2">
-                                                                <!-- Compartir en WhatsApp -->
-                                                                <% 
-                                                                    const shareUrl = "https://hablemosdeyahweh.com/semillas-de-torah/articulo/" + art.id;
-                                                                    const shareText = encodeURIComponent(art.title + "\n\n" + (art.key_verse || '') + "\n\n" + shareUrl);
-                                                                %>
-                                                                <a href="https://api.whatsapp.com/send?text=<%= shareText %>" target="_blank" class="btn btn-sm btn-outline-success rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Compartir por WhatsApp">
-                                                                    <i class="bi bi-whatsapp"></i>
-                                                                </a>
-                                                                <!-- Compartir en Facebook -->
-                                                                <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(shareUrl) %>" target="_blank" class="btn btn-sm btn-outline-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Compartir en Facebook">
-                                                                    <i class="bi bi-facebook"></i>
-                                                                </a>
+                                                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                                <%- include('partials/_share_buttons', {
+                                                                    shareUrl: '/semillas-de-torah/articulo/' + art.id,
+                                                                    shareTitle: art.title,
+                                                                    shareText: (art.parasha_name ? 'Parashá ' + art.parasha_name + ' — ' : '') + (art.key_verse || art.summary || ''),
+                                                                    shareImage: art.main_image || '',
+                                                                    shareType: 'Semillas de Torá',
+                                                                    variant: 'bar',
+                                                                    showLabel: false,
+                                                                    size: 'sm'
+                                                                }) %>
                                                                 <span class="badge rounded-pill bg-light text-muted border px-2 py-1 small">
                                                                     <i class="bi bi-eye me-1 text-primary"></i><%= art.views_count || 0 %>
                                                                 </span>
@@ -490,7 +488,17 @@
                                                                 <i class="bi bi-star-fill me-1 text-warning"></i> <%= short.category || 'Tema Diverso' %>
                                                             </span>
                                                         </div>
-                                                        <div class="d-flex align-items-center gap-1">
+                                                        <div class="d-flex align-items-center gap-1" style="z-index: 3;">
+                                                            <button type="button" class="btn btn-sm rounded-circle p-0 d-inline-flex align-items-center justify-content-center js-share-open" 
+                                                                    style="width: 26px; height: 26px; background: rgba(0,0,0,0.72); color: #f5cf7c; border: 1px solid rgba(212,168,83,0.4);"
+                                                                    data-share-url="/semillas-de-torah?short=<%= short.id %>"
+                                                                    data-share-title="<%= short.title.replace(/"/g, '&quot;') %>"
+                                                                    data-share-text="<%= (short.category || 'Semillas de Torá') %> · Cápsula infantil"
+                                                                    data-share-image="<%= short.thumbnail_url || '' %>"
+                                                                    data-share-type="Short Semillas"
+                                                                    title="Compartir en redes sociales">
+                                                                <i class="bi bi-share-fill" style="font-size: 0.72rem;"></i>
+                                                            </button>
                                                             <span class="badge rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center" style="background: rgba(0,0,0,0.72); color: #38bdf8; border: 1px solid rgba(56,189,248,0.4); font-size: 0.72rem; font-weight: 700; backdrop-filter: blur(4px);">
                                                                 <i class="bi bi-eye-fill me-1"></i><span data-short-views="<%= short.id %>"><%= short.views_count || 0 %></span>
                                                             </span>
@@ -631,7 +639,17 @@
                                                                 </span>
                                                             <% } %>
                                                         </div>
-                                                        <div class="d-flex align-items-center gap-1">
+                                                        <div class="d-flex align-items-center gap-1" style="z-index: 3;">
+                                                            <button type="button" class="btn btn-sm rounded-circle p-0 d-inline-flex align-items-center justify-content-center js-share-open" 
+                                                                    style="width: 26px; height: 26px; background: rgba(0,0,0,0.72); color: #f5cf7c; border: 1px solid rgba(212,168,83,0.4);"
+                                                                    data-share-url="/semillas-de-torah?short=<%= short.id %>"
+                                                                    data-share-title="<%= short.title.replace(/"/g, '&quot;') %>"
+                                                                    data-share-text="<%= short.parasha_name ? 'Parashá ' + short.parasha_name + ' — ' : '' %><%= (short.aliyah_number ? short.aliyah_number + 'ª Aliyá con niños' : 'Aliyá Infantil') %>"
+                                                                    data-share-image="<%= short.thumbnail_url || '' %>"
+                                                                    data-share-type="Aliyá Infantil"
+                                                                    title="Compartir en redes sociales">
+                                                                <i class="bi bi-share-fill" style="font-size: 0.72rem;"></i>
+                                                            </button>
                                                             <span class="badge rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center" style="background: rgba(0,0,0,0.72); color: #38bdf8; border: 1px solid rgba(56,189,248,0.4); font-size: 0.72rem; font-weight: 700; backdrop-filter: blur(4px);">
                                                                 <i class="bi bi-eye-fill me-1"></i><span data-short-views="<%= short.id %>"><%= short.views_count || 0 %></span>
                                                             </span>
@@ -971,6 +989,20 @@
                         <h5 class="fw-bold mb-1" id="shortModalTitle" style="font-size: 1.05rem; line-height: 1.3;"></h5>
                         <p class="text-white-50 small mb-0" id="shortModalVerses" style="font-size: 0.8rem;"></p>
                         <p class="text-white-50 small mt-1 mb-0" id="shortModalDescription" style="font-size: 0.78rem; max-height: 60px; overflow-y: auto;"></p>
+                        
+                        <!-- Botones de Compartir en el Reproductor de Shorts -->
+                        <div class="mt-2 pt-2 border-top border-white border-opacity-10 d-flex align-items-center justify-content-between flex-wrap gap-2" id="shortSemillasModalFooter">
+                            <button type="button" class="btn btn-sm rounded-pill px-3 py-1 fw-bold d-inline-flex align-items-center gap-1 js-share-open" id="shortSemillasModalShareBtn"
+                                    style="background: linear-gradient(135deg, #d4a853, #b8860b); color: #1a1208; border: none; font-size: 0.78rem;">
+                                <i class="bi bi-share-fill"></i> Compartir Short
+                            </button>
+                            <div class="d-flex align-items-center gap-1">
+                                <button type="button" class="hy-share-round hy-bg-whatsapp sm" data-share-net="whatsapp" title="WhatsApp"><i class="bi bi-whatsapp"></i></button>
+                                <button type="button" class="hy-share-round hy-bg-facebook sm" data-share-net="facebook" title="Facebook"><i class="bi bi-facebook"></i></button>
+                                <button type="button" class="hy-share-round hy-bg-instagram sm" data-share-net="instagram" title="Instagram"><i class="bi bi-instagram"></i></button>
+                                <button type="button" class="hy-share-round hy-bg-tiktok sm" data-share-net="tiktok" title="TikTok"><i class="bi bi-tiktok"></i></button>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -1083,6 +1115,24 @@
             document.getElementById('shortModalChild').textContent = short.child_name ? ('👧 ' + short.child_name) : '';
             document.getElementById('shortModalVerses').textContent = short.verses_reference ? ('📜 ' + short.verses_reference) : '';
             document.getElementById('shortModalDescription').textContent = short.description || '';
+
+            // Configurar datos de compartir para el short activo
+            const semShareBtn = document.getElementById('shortSemillasModalShareBtn');
+            const semModalFooter = document.getElementById('shortSemillasModalFooter');
+            const semShareUrl = '/semillas-de-torah?short=' + (short.id || '');
+            const semShareTitle = short.title || 'Short Semillas de Torah';
+            const semShareText = (short.short_type === 'general' ? (short.category || 'Tema Diverso') : (short.parasha_name ? 'Parashá ' + short.parasha_name : 'Aliyá Infantil')) + ' — ' + (short.verses_reference || short.description || '');
+            const semShareImg = short.thumbnail_url || '';
+            const semShareType = short.short_type === 'general' ? 'Short Semillas' : 'Aliyá Infantil';
+
+            [semShareBtn, semModalFooter].forEach(el => {
+                if (!el) return;
+                el.setAttribute('data-share-url', semShareUrl);
+                el.setAttribute('data-share-title', semShareTitle);
+                el.setAttribute('data-share-text', semShareText);
+                el.setAttribute('data-share-image', semShareImg);
+                el.setAttribute('data-share-type', semShareType);
+            });
 
             // Decide video source
             if (short.video_url && short.video_url.trim() !== '') {

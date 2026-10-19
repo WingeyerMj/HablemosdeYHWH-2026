@@ -109,6 +109,14 @@
                                                     <span class="badge rounded-pill shadow-sm d-inline-flex align-items-center" style="background: #fdf6e7; color: #8c6a2d; font-size: 0.7rem; font-weight: 600; border: 1px solid #ebdccb; padding: 4px 7px;">
                                                         <i class="bi bi-eye-fill me-1 text-info"></i><%= service.views || 0 %>
                                                     </span>
+                                                    <%- include('partials/_share_buttons', {
+                                                        shareUrl: '/parashot/' + service.id,
+                                                        shareTitle: (service.parasha_number ? service.parasha_number + '. ' : '') + service.title,
+                                                        shareText: (service.subtitle ? service.subtitle + ' — ' : '') + (service.description || ''),
+                                                        shareImage: service.image_url || '',
+                                                        shareType: 'Parashá',
+                                                        variant: 'chip'
+                                                    }) %>
                                                 </div>
 
                                                 <!-- Título de la Parashá -->

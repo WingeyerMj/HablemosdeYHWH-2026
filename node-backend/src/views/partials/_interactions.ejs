@@ -33,35 +33,14 @@
             </a>
         </div>
 
-        <!-- Botones de Compartir -->
-        <div class="d-flex align-items-center gap-2 flex-wrap">
-            <span class="text-muted small fw-bold me-1"><i class="bi bi-share me-1"></i>Compartir:</span>
-            
-            <a href="https://api.whatsapp.com/send?text=<%= encodeURIComponent(currentShareTitle + '\n\n' + 'https://hablemosdeyhwh.com') %>" 
-               target="_blank" rel="noopener noreferrer"
-               class="btn btn-sm text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm share-btn" 
-               style="background-color: #25D366; width: 36px; height: 36px;" title="WhatsApp">
-                <i class="bi bi-whatsapp"></i>
-            </a>
-
-            <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('https://hablemosdeyhwh.com') %>" 
-               target="_blank" rel="noopener noreferrer"
-               class="btn btn-sm text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm share-btn" 
-               style="background-color: #1877F2; width: 36px; height: 36px;" title="Facebook">
-                <i class="bi bi-facebook"></i>
-            </a>
-
-            <a href="https://t.me/share/url?url=<%= encodeURIComponent('https://hablemosdeyhwh.com') %>&text=<%= encodeURIComponent(currentShareTitle) %>" 
-               target="_blank" rel="noopener noreferrer"
-               class="btn btn-sm text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm share-btn" 
-               style="background-color: #229ED9; width: 36px; height: 36px;" title="Telegram">
-                <i class="bi bi-telegram"></i>
-            </a>
-
-            <button type="button" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-1 fw-semibold d-inline-flex align-items-center gap-1"
-                    onclick="navigator.clipboard.writeText(window.location.href); showToastNotification('¡Enlace copiado al portapapeles!');" title="Copiar enlace">
-                <i class="bi bi-link-45deg"></i> Copiar
-            </button>
+        <!-- Botones de Compartir en Redes Sociales (WhatsApp, Facebook, Instagram, TikTok, Telegram, X) -->
+        <div class="d-flex align-items-center">
+            <%- include('_share_buttons', {
+                shareTitle: currentShareTitle,
+                shareType: currentEntityType ? (currentEntityType.charAt(0).toUpperCase() + currentEntityType.slice(1)) : 'Contenido',
+                variant: 'bar',
+                showLabel: true
+            }) %>
         </div>
     </div>
 

@@ -83,6 +83,13 @@
                         <i class="bi bi-instagram fs-5"></i> Compartir en Instagram
                     </button>
 
+                    <!-- TikTok (Copiar enlace y abrir TikTok) -->
+                    <button type="button" id="btnShareTikTok" 
+                       class="btn d-flex align-items-center justify-content-center gap-2 py-2 fw-bold text-white shadow-sm" 
+                       style="background: #010101; border: 1px solid rgba(255,255,255,0.2); box-shadow: -2px -2px 0 #25F4EE inset, 2px 2px 0 #FE2C55 inset; font-size: 0.92rem; border-radius: 8px;">
+                        <i class="bi bi-tiktok fs-5"></i> Compartir en TikTok
+                    </button>
+
                     <!-- Web Share API (Nativo para Móviles y Tablets) -->
                     <button type="button" id="btnNativeShare" 
                        class="btn btn-warning text-dark fw-bold d-flex align-items-center justify-content-center gap-2 py-2 shadow-sm" 
@@ -268,15 +275,35 @@
         if (btnInsta) {
             btnInsta.addEventListener('click', function() {
                 if (!currentShareUrl) return;
-                navigator.clipboard.writeText(currentShareUrl).then(() => {
+                const copyText = currentFullMsg || currentShareUrl;
+                navigator.clipboard.writeText(copyText).then(() => {
                     const prev = this.innerHTML;
-                    this.innerHTML = '<i class="bi bi-check-lg fs-5"></i> ¡Enlace copiado! Abriendo Instagram...';
+                    this.innerHTML = '<i class="bi bi-check-lg fs-5"></i> ¡Mensaje copiado! Abriendo Instagram...';
                     setTimeout(() => {
                         this.innerHTML = prev;
                         window.open('https://www.instagram.com/', '_blank');
                     }, 800);
                 }).catch(() => {
                     window.open('https://www.instagram.com/', '_blank');
+                });
+            });
+        }
+
+        // Compartir en TikTok
+        const btnTikTok = document.getElementById('btnShareTikTok');
+        if (btnTikTok) {
+            btnTikTok.addEventListener('click', function() {
+                if (!currentShareUrl) return;
+                const copyText = currentFullMsg || currentShareUrl;
+                navigator.clipboard.writeText(copyText).then(() => {
+                    const prev = this.innerHTML;
+                    this.innerHTML = '<i class="bi bi-check-lg fs-5"></i> ¡Mensaje copiado! Abriendo TikTok...';
+                    setTimeout(() => {
+                        this.innerHTML = prev;
+                        window.open('https://www.tiktok.com/upload', '_blank');
+                    }, 800);
+                }).catch(() => {
+                    window.open('https://www.tiktok.com/upload', '_blank');
                 });
             });
         }

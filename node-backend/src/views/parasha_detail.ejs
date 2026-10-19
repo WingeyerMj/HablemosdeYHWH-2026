@@ -69,6 +69,16 @@
                                                     <span class="badge bg-dark px-3 py-2 fs-6 shadow-sm"><i class="bi bi-eye text-info me-1"></i> <%= (parasha.views || 0) + 1 %> <%= ((parasha.views || 0) + 1) == 1 ? 'vista' : 'vistas' %></span>
                                                 </li>
                                             </ul>
+                                            <div class="mt-3">
+                                                <%- include('partials/_share_buttons', {
+                                                    shareTitle: 'Parashá ' + parasha.title + (parasha.subtitle ? ' (' + parasha.subtitle + ')' : ''),
+                                                    shareText: parasha.description || '',
+                                                    shareImage: parasha.image_url || '',
+                                                    shareType: 'Parashá',
+                                                    variant: 'bar',
+                                                    showLabel: true
+                                                }) %>
+                                            </div>
                                         </div>
                                     <% } %>
 
@@ -192,11 +202,15 @@
                                                                         title="Descargar en PDF o Imprimir esta Aliyá">
                                                                     <i class="bi bi-file-earmark-pdf"></i> Imprimir / PDF
                                                                 </button>
-                                                                <a href="https://api.whatsapp.com/send?text=<%= waText %>" target="_blank" rel="noopener noreferrer" 
-                                                                   class="btn btn-sm btn-outline-success rounded-pill d-inline-flex align-items-center gap-1 px-3 py-1 fw-bold"
-                                                                   title="Compartir en WhatsApp">
-                                                                    <i class="bi bi-whatsapp"></i> Compartir
-                                                                </a>
+                                                                <button type="button" class="btn btn-sm btn-outline-success rounded-pill d-inline-flex align-items-center gap-1 px-3 py-1 fw-bold js-share-open"
+                                                                        data-share-url="<%= shareUrl %>"
+                                                                        data-share-title="Parashá <%= parasha.title %> - <%= aliyah.title || `${d.name} (${d.day})` %>"
+                                                                        data-share-text="<%= aliyah.verses_reference ? 'Lectura: ' + aliyah.verses_reference : '' %>"
+                                                                        data-share-image="<%= parasha.image_url || '' %>"
+                                                                        data-share-type="Aliyá"
+                                                                        title="Compartir en Redes Sociales (WhatsApp, Facebook, Instagram, TikTok, etc.)">
+                                                                    <i class="bi bi-share-fill"></i> Compartir
+                                                                </button>
                                                                 <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 btn-copy-link" 
                                                                         data-copy-url="<%= shareUrl %>" title="Copiar enlace">
                                                                     <i class="bi bi-link-45deg"></i> Copiar

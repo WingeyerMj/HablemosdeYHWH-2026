@@ -102,6 +102,13 @@ app.use(async (req, res, next) => {
     res.locals.footerLinks = {};
     res.locals.siteSettings = {};
 
+    // URL pública absoluta (para compartir en redes y etiquetas Open Graph)
+    const reqHost = req.get('host') || '';
+    const isLocalHost = /^(localhost|127\.0\.0\.1)(:\d+)?$/i.test(reqHost);
+    const siteOrigin = (process.env.SITE_URL || (isLocalHost ? 'https://www.hablemosdeyhwh.com' : `${req.protocol}://${reqHost}`)).replace(/\/+$/, '');
+    res.locals.siteOrigin = siteOrigin;
+    res.locals.currentFullUrl = siteOrigin + req.originalUrl;
+
     try {
         // Cargar datos globales de forma asíncrona
         const navSections = await DynamicSection.getNavbarSections().catch(() => []);

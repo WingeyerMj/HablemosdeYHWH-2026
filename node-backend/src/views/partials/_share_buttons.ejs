@@ -1,0 +1,48 @@
+<%
+    /*
+     * Barra / botón reutilizable para compartir en redes sociales.
+     * Parámetros (todos opcionales):
+     *   shareUrl    → ruta o URL del contenido (por defecto la página actual)
+     *   shareTitle  → título
+     *   shareText   → resumen / cita
+     *   shareImage  → imagen de portada (para Instagram/TikTok en móvil)
+     *   shareType   → etiqueta: "Parashá", "Haftará", "Noticia", "Short"...
+     *   variant     → 'bar' (iconos de todas las redes) | 'chip' (botón "Compartir") | 'icon' (botón redondo)
+     *   theme       → 'light' | 'dark'
+     *   showLabel   → mostrar texto "Compartir:" en variante bar (default true)
+     *   size        → 'sm' para iconos pequeños
+     */
+    const _sb = {
+        url: (typeof shareUrl !== 'undefined' && shareUrl) ? shareUrl : '',
+        title: (typeof shareTitle !== 'undefined' && shareTitle) ? String(shareTitle) : '',
+        text: (typeof shareText !== 'undefined' && shareText) ? String(shareText).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 400) : '',
+        image: (typeof shareImage !== 'undefined' && shareImage) ? shareImage : '',
+        type: (typeof shareType !== 'undefined' && shareType) ? shareType : '',
+        variant: (typeof variant !== 'undefined' && variant) ? variant : 'bar',
+        theme: (typeof theme !== 'undefined' && theme) ? theme : 'light',
+        showLabel: (typeof showLabel !== 'undefined') ? !!showLabel : true,
+        size: (typeof size !== 'undefined' && size === 'sm') ? 'sm' : ''
+    };
+    const _esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const _sbAttrs = `data-share-url="${_esc(_sb.url)}" data-share-title="${_esc(_sb.title)}" data-share-text="${_esc(_sb.text)}" data-share-image="${_esc(_sb.image)}" data-share-type="${_esc(_sb.type)}"`;
+%>
+<% if (_sb.variant === 'chip') { %>
+    <button type="button" class="hy-share-chip js-share-open <%= _sb.theme === 'dark' ? 'hy-dark' : '' %>" <%- _sbAttrs %> title="Compartir en redes sociales" aria-label="Compartir">
+        <i class="bi bi-share-fill"></i><span>Compartir</span>
+    </button>
+<% } else if (_sb.variant === 'icon') { %>
+    <button type="button" class="hy-share-chip icon-only js-share-open <%= _sb.theme === 'dark' ? 'hy-dark' : '' %>" <%- _sbAttrs %> title="Compartir en redes sociales" aria-label="Compartir">
+        <i class="bi bi-share-fill"></i>
+    </button>
+<% } else { %>
+    <div class="hy-share-bar no-print <%= _sb.theme === 'dark' ? 'hy-dark' : '' %>" <%- _sbAttrs %>>
+        <% if (_sb.showLabel) { %><span class="hy-share-bar-label"><i class="bi bi-share me-1"></i>Compartir:</span><% } %>
+        <button type="button" class="hy-share-round hy-bg-whatsapp <%= _sb.size %>" data-share-net="whatsapp" title="Compartir en WhatsApp" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></button>
+        <button type="button" class="hy-share-round hy-bg-facebook <%= _sb.size %>" data-share-net="facebook" title="Compartir en Facebook" aria-label="Facebook"><i class="bi bi-facebook"></i></button>
+        <button type="button" class="hy-share-round hy-bg-instagram <%= _sb.size %>" data-share-net="instagram" title="Compartir en Instagram" aria-label="Instagram"><i class="bi bi-instagram"></i></button>
+        <button type="button" class="hy-share-round hy-bg-tiktok <%= _sb.size %>" data-share-net="tiktok" title="Compartir en TikTok" aria-label="TikTok"><i class="bi bi-tiktok"></i></button>
+        <button type="button" class="hy-share-round hy-bg-telegram <%= _sb.size %>" data-share-net="telegram" title="Compartir en Telegram" aria-label="Telegram"><i class="bi bi-telegram"></i></button>
+        <button type="button" class="hy-share-round hy-bg-x <%= _sb.size %>" data-share-net="x" title="Compartir en X" aria-label="X"><i class="bi bi-twitter-x"></i></button>
+        <button type="button" class="hy-share-round hy-bg-more <%= _sb.size %> js-share-open" title="Más opciones / copiar enlace" aria-label="Más opciones"><i class="bi bi-three-dots"></i></button>
+    </div>
+<% } %>

@@ -116,6 +116,17 @@
                                         </div>
                                     </div>
 
+                                    <div class="mb-4 p-3 rounded-4 bg-white border shadow-xs">
+                                        <%- include('partials/_share_buttons', {
+                                            shareTitle: 'Haftará ' + haftara.title + (haftara.subtitle ? ' (' + haftara.subtitle + ')' : ''),
+                                            shareText: haftara.description || '',
+                                            shareImage: haftara.image_url || '',
+                                            shareType: 'Haftará',
+                                            variant: 'bar',
+                                            showLabel: true
+                                        }) %>
+                                    </div>
+
                                     <!-- Video de YouTube si existe -->
                                     <% if (haftara.youtube_link && haftara.youtube_link.trim() !== '') { 
                                         let videoId = '';

@@ -13,8 +13,49 @@
     <title>
         <%= title %>
     </title>
-    <meta name="description" content="">
+    <%
+        // ===== Metadatos para compartir en redes sociales (Open Graph) =====
+        const _og = (function() {
+            const pick = (...vals) => vals.find(v => typeof v === 'string' && v.trim() !== '') || '';
+            const strip = (s) => String(s || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+            const L = locals || {};
+            const pg = L.page || '';
+            const ent = L.item || L.post || L.ensenanza || L.evento ||
+                        (pg === 'haftara' ? L.haftara : null) ||
+                        (pg === 'parashot' ? L.parasha : null) || null;
+            const origin = L.siteOrigin || 'https://www.hablemosdeyhwh.com';
+            const abs = (u) => !u ? '' : (/^https?:\/\//i.test(u) ? u : origin + (u.startsWith('/') ? '' : '/') + u);
+            const t = ent ? pick(ent.title) : '';
+            let d = ent ? strip(pick(ent.summary, ent.key_verse, ent.description, ent.subtitle, ent.biblical_reference, ent.content)) : '';
+            if (d.length > 200) d = d.substring(0, 197) + '...';
+            const img = ent ? pick(ent.image_url, ent.main_image, ent.thumbnail_url, ent.cover_image, ent.image) : '';
+            return {
+                title: t || (typeof title !== 'undefined' ? strip(title) : 'Hablemos de YHWH'),
+                description: d || 'Estudios de la Torá, Parashot, Haftarot, noticias y enseñanzas bíblicas - Hablemos de YHWH',
+                image: abs(img) || (origin + '/assets/img/pagina/og-share.jpg'),
+                url: L.currentFullUrl || origin,
+                type: ent ? 'article' : 'website'
+            };
+        })();
+    %>
+    <meta name="description" content="<%= _og.description %>">
     <meta name="keywords" content="">
+    <link rel="canonical" href="<%= _og.url %>">
+
+    <!-- Open Graph (Facebook, WhatsApp, Instagram, Telegram) -->
+    <meta property="og:site_name" content="Hablemos de YHWH">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:type" content="<%= _og.type %>">
+    <meta property="og:title" content="<%= _og.title %>">
+    <meta property="og:description" content="<%= _og.description %>">
+    <meta property="og:url" content="<%= _og.url %>">
+    <meta property="og:image" content="<%= _og.image %>">
+    <meta property="og:image:alt" content="<%= _og.title %>">
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= _og.title %>">
+    <meta name="twitter:description" content="<%= _og.description %>">
+    <meta name="twitter:image" content="<%= _og.image %>">
 
     <!-- Favicons -->
     <link href="/assets/img/pagina/logo1.svg" rel="icon" type="image/svg+xml">

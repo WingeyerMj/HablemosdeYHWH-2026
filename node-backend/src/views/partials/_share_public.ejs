@@ -1,0 +1,427 @@
+<!-- ================================================================== -->
+<!-- SISTEMA GLOBAL PARA COMPARTIR EN REDES SOCIALES (SITIO PÚBLICO)     -->
+<!-- Uso:                                                               -->
+<!--  • Botón que abre el panel:  class="js-share-open" + data-share-*   -->
+<!--  • Botón directo a una red:  data-share-net="whatsapp|facebook|     -->
+<!--    instagram|tiktok|telegram|x|copy|native" dentro de un contenedor  -->
+<!--    con data-share-url / data-share-title / data-share-text /        -->
+<!--    data-share-image / data-share-type                               -->
+<!--  • Desde JS:  HYShare.open({ url, title, text, image, type })       -->
+<!-- ================================================================== -->
+<% const _shareOrigin = (typeof siteOrigin !== 'undefined' && siteOrigin) ? siteOrigin : 'https://www.hablemosdeyhwh.com'; %>
+
+<div class="modal fade" id="hyShareModal" tabindex="-1" aria-labelledby="hyShareModalTitle" aria-hidden="true" style="z-index: 1090;">
+    <div class="modal-dialog modal-dialog-centered hy-share-dialog">
+        <div class="modal-content hy-share-content">
+            <div class="hy-share-header">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="hy-share-header-icon"><i class="bi bi-share-fill"></i></span>
+                    <div>
+                        <h5 class="mb-0 fw-bold" id="hyShareModalTitle">Compartir</h5>
+                        <small class="hy-share-header-sub">Difunde la Palabra con tu familia y amigos</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="hy-share-body">
+                <!-- Vista previa -->
+                <div class="hy-share-preview">
+                    <div class="hy-share-thumb" id="hySharePreviewThumb">
+                        <i class="bi bi-book-half"></i>
+                    </div>
+                    <div class="flex-grow-1 overflow-hidden">
+                        <span class="hy-share-type" id="hySharePreviewType">Contenido</span>
+                        <div class="hy-share-title" id="hySharePreviewTitle">Hablemos de YHWH</div>
+                        <div class="hy-share-url" id="hySharePreviewUrl"></div>
+                    </div>
+                </div>
+
+                <!-- Redes -->
+                <div class="hy-share-grid">
+                    <button type="button" class="hy-share-tile" data-share-net="whatsapp" id="hyShareBtnWhatsapp">
+                        <span class="hy-share-ico" style="background:#25D366;"><i class="bi bi-whatsapp"></i></span>
+                        <span>WhatsApp</span>
+                    </button>
+                    <button type="button" class="hy-share-tile" data-share-net="facebook" id="hyShareBtnFacebook">
+                        <span class="hy-share-ico" style="background:#1877F2;"><i class="bi bi-facebook"></i></span>
+                        <span>Facebook</span>
+                    </button>
+                    <button type="button" class="hy-share-tile" data-share-net="instagram" id="hyShareBtnInstagram">
+                        <span class="hy-share-ico" style="background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);"><i class="bi bi-instagram"></i></span>
+                        <span>Instagram</span>
+                    </button>
+                    <button type="button" class="hy-share-tile" data-share-net="tiktok" id="hyShareBtnTiktok">
+                        <span class="hy-share-ico hy-ico-tiktok"><i class="bi bi-tiktok"></i></span>
+                        <span>TikTok</span>
+                    </button>
+                    <button type="button" class="hy-share-tile" data-share-net="telegram" id="hyShareBtnTelegram">
+                        <span class="hy-share-ico" style="background:#229ED9;"><i class="bi bi-telegram"></i></span>
+                        <span>Telegram</span>
+                    </button>
+                    <button type="button" class="hy-share-tile" data-share-net="x" id="hyShareBtnX">
+                        <span class="hy-share-ico" style="background:#000; border:1px solid #333;"><i class="bi bi-twitter-x"></i></span>
+                        <span>X</span>
+                    </button>
+                    <button type="button" class="hy-share-tile" data-share-net="copy" id="hyShareBtnCopy">
+                        <span class="hy-share-ico" style="background:linear-gradient(135deg,#d4a853,#b8860b);"><i class="bi bi-link-45deg"></i></span>
+                        <span>Copiar enlace</span>
+                    </button>
+                    <button type="button" class="hy-share-tile" data-share-net="native" id="hyShareBtnNative">
+                        <span class="hy-share-ico" style="background:#4b5563;"><i class="bi bi-three-dots"></i></span>
+                        <span>Más…</span>
+                    </button>
+                </div>
+
+                <div class="hy-share-hint">
+                    <i class="bi bi-info-circle me-1"></i>
+                    <span>Instagram y TikTok no permiten compartir enlaces desde la web: en el celular se abre el menú para enviarlo a la app; en la computadora copiamos el mensaje para que lo pegues en tu historia, publicación o biografía.</span>
+                </div>
+
+                <button type="button" class="hy-share-copymsg" data-share-net="copymsg" id="hyShareBtnCopyMsg">
+                    <i class="bi bi-clipboard-check me-1"></i> Copiar mensaje completo (título + resumen + enlace)
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hy-share-dialog { max-width: 460px; }
+    .hy-share-content {
+        background: linear-gradient(160deg, #1d1610 0%, #120d09 100%);
+        color: #f5ede1; border: 1px solid rgba(212,168,83,0.35);
+        border-radius: 22px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.55);
+    }
+    .hy-share-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 18px 22px; border-bottom: 1px solid rgba(212,168,83,0.18);
+        background: radial-gradient(circle at 0% 0%, rgba(212,168,83,0.22), transparent 60%);
+    }
+    .hy-share-header h5 { color: #fff; font-size: 1.05rem; }
+    .hy-share-header-sub { color: rgba(245,237,225,0.6); font-size: 0.76rem; }
+    .hy-share-header-icon {
+        width: 38px; height: 38px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center;
+        background: linear-gradient(135deg, #d4a853, #b8860b); color: #1a1208; box-shadow: 0 6px 16px rgba(212,168,83,0.35);
+    }
+    .hy-share-body { padding: 20px 22px 22px; }
+    .hy-share-preview {
+        display: flex; gap: 12px; align-items: center; padding: 12px; margin-bottom: 18px;
+        background: rgba(255,255,255,0.04); border: 1px solid rgba(212,168,83,0.18); border-radius: 14px;
+    }
+    .hy-share-thumb {
+        width: 64px; height: 64px; flex-shrink: 0; border-radius: 10px; overflow: hidden;
+        background: linear-gradient(135deg, #2b2016, #3a2b1d); display: flex; align-items: center; justify-content: center;
+        color: #d4a853; font-size: 1.6rem;
+    }
+    .hy-share-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .hy-share-type {
+        display: inline-block; font-size: 0.66rem; font-weight: 700; letter-spacing: .6px; text-transform: uppercase;
+        color: #1a1208; background: #d4a853; padding: 2px 8px; border-radius: 20px; margin-bottom: 4px;
+    }
+    .hy-share-title {
+        color: #fff; font-weight: 700; font-size: 0.92rem; line-height: 1.3;
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .hy-share-url { color: #7dd3fc; font-size: 0.72rem; font-family: monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+    .hy-share-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .hy-share-tile {
+        display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 4px;
+        background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px;
+        color: rgba(245,237,225,0.85); font-size: 0.72rem; font-weight: 600; cursor: pointer;
+        transition: transform .2s ease, background .2s ease, border-color .2s ease;
+    }
+    .hy-share-tile:hover { transform: translateY(-3px); background: rgba(212,168,83,0.1); border-color: rgba(212,168,83,0.4); color: #fff; }
+    .hy-share-tile:active { transform: scale(0.96); }
+    .hy-share-ico {
+        width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 1.3rem; box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+    }
+    .hy-ico-tiktok { background: #010101; box-shadow: -2px -2px 0 #25F4EE inset, 2px 2px 0 #FE2C55 inset, 0 6px 14px rgba(0,0,0,0.35); }
+    .hy-share-hint {
+        margin-top: 16px; padding: 10px 12px; border-radius: 12px; font-size: 0.72rem; line-height: 1.45;
+        color: rgba(245,237,225,0.65); background: rgba(212,168,83,0.07); border: 1px dashed rgba(212,168,83,0.25);
+    }
+    .hy-share-copymsg {
+        width: 100%; margin-top: 12px; padding: 10px; border-radius: 12px; font-size: 0.82rem; font-weight: 600;
+        background: transparent; color: #d4a853; border: 1px solid rgba(212,168,83,0.45); transition: all .2s ease;
+    }
+    .hy-share-copymsg:hover { background: rgba(212,168,83,0.12); color: #f5cf7c; }
+    @media (max-width: 380px) { .hy-share-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    /* ===== Barra de compartir en línea (partial _share_buttons) ===== */
+    .hy-share-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .hy-share-bar-label { font-size: 0.82rem; font-weight: 700; color: #6b5a48; margin-right: 2px; }
+    .hy-share-bar.hy-dark .hy-share-bar-label { color: rgba(255,255,255,0.7); }
+    .hy-share-round {
+        width: 36px; height: 36px; border-radius: 50%; border: none; display: inline-flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 1rem; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        transition: transform .2s ease, box-shadow .2s ease; text-decoration: none;
+    }
+    .hy-share-round:hover { transform: translateY(-2px) scale(1.08); box-shadow: 0 6px 14px rgba(0,0,0,0.25); color: #fff; }
+    .hy-share-round.sm { width: 30px; height: 30px; font-size: 0.85rem; }
+    .hy-bg-whatsapp { background: #25D366; }
+    .hy-bg-facebook { background: #1877F2; }
+    .hy-bg-instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+    .hy-bg-tiktok { background: #010101; box-shadow: -1.5px -1.5px 0 #25F4EE inset, 1.5px 1.5px 0 #FE2C55 inset, 0 3px 8px rgba(0,0,0,0.15); }
+    .hy-bg-telegram { background: #229ED9; }
+    .hy-bg-x { background: #000; }
+    .hy-bg-more { background: linear-gradient(135deg, #d4a853, #b8860b); }
+
+    /* Botón compacto para tarjetas */
+    .hy-share-chip {
+        position: relative; z-index: 3; display: inline-flex; align-items: center; gap: 5px;
+        border: 1px solid rgba(212,168,83,0.45); background: rgba(255,255,255,0.92); color: #8c6a2d;
+        font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 30px; cursor: pointer;
+        transition: all .2s ease; line-height: 1.2;
+    }
+    .hy-share-chip:hover { background: linear-gradient(135deg, #d4a853, #b8860b); color: #fff; border-color: #b8860b; transform: translateY(-1px); }
+    .hy-share-chip.hy-dark { background: rgba(0,0,0,0.65); color: #f5cf7c; backdrop-filter: blur(4px); }
+    .hy-share-chip.icon-only { width: 32px; height: 32px; padding: 0; justify-content: center; border-radius: 50%; font-size: 0.9rem; }
+
+    /* Toast */
+    .hy-share-toast {
+        position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(20px); z-index: 100000;
+        background: linear-gradient(135deg, #1d1610, #2b2016); color: #f5ede1; border: 1px solid rgba(212,168,83,0.5);
+        padding: 12px 18px; border-radius: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.4); font-size: 0.88rem;
+        display: flex; align-items: center; gap: 10px; max-width: 92vw; opacity: 0; transition: all .3s ease;
+    }
+    .hy-share-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .hy-share-toast i { color: #d4a853; font-size: 1.15rem; }
+</style>
+
+<script>
+(function () {
+    'use strict';
+    const SITE_ORIGIN = <%- JSON.stringify(_shareOrigin) %>;
+    const BRAND = 'Hablemos de YHWH';
+    let current = null;          // datos del contenido activo en el modal
+    const fileCache = {};        // imágenes precargadas para compartir con archivo (Instagram/TikTok en móvil)
+
+    function absUrl(u) {
+        if (!u || !String(u).trim()) u = window.location.pathname + window.location.search;
+        u = String(u).trim();
+        if (/^https?:\/\//i.test(u)) {
+            // Si estamos en localhost, reemplazar por el dominio público
+            return u.replace(/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/i, SITE_ORIGIN);
+        }
+        return SITE_ORIGIN + (u.startsWith('/') ? '' : '/') + u;
+    }
+
+    function readData(el) {
+        const src = el.closest('[data-share-url],[data-share-title]') || el;
+        const d = src.dataset || {};
+        return {
+            url: absUrl(d.shareUrl),
+            title: (d.shareTitle || document.title || BRAND).trim(),
+            text: (d.shareText || '').trim(),
+            image: (d.shareImage || '').trim(),
+            type: (d.shareType || '').trim()
+        };
+    }
+
+    function buildMessage(c, opts) {
+        opts = opts || {};
+        const b = opts.bold ? '*' : '';
+        let msg = (c.type ? '📖 ' + c.type + ' · ' : '') + b + c.title + b;
+        if (c.text) {
+            let t = c.text.length > 280 ? c.text.substring(0, 277) + '…' : c.text;
+            msg += '\n\n' + t;
+        }
+        msg += '\n\n🔗 ' + c.url;
+        msg += '\n\n' + BRAND + ' · www.hablemosdeyhwh.com';
+        return msg;
+    }
+
+    function toast(message, icon) {
+        const old = document.querySelector('.hy-share-toast');
+        if (old) old.remove();
+        const t = document.createElement('div');
+        t.className = 'hy-share-toast';
+        t.innerHTML = '<i class="bi ' + (icon || 'bi-check-circle-fill') + '"></i><span></span>';
+        t.querySelector('span').textContent = message;
+        document.body.appendChild(t);
+        requestAnimationFrame(() => t.classList.add('show'));
+        setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 350); }, 4200);
+    }
+
+    async function copy(text) {
+        try {
+            await navigator.clipboard.writeText(text);
+            return true;
+        } catch (e) {
+            const ta = document.createElement('textarea');
+            ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.select();
+            let ok = false;
+            try { ok = document.execCommand('copy'); } catch (_) {}
+            ta.remove();
+            return ok;
+        }
+    }
+
+    function openWin(url) {
+        window.open(url, '_blank', 'noopener,noreferrer,width=680,height=640');
+    }
+
+    const isMobile = () => /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+
+    // Precarga la imagen como File (solo mismo dominio) para poder enviarla a Instagram/TikTok
+    function prefetchImage(img) {
+        if (!img || fileCache[img] !== undefined || !navigator.canShare) return;
+        let src = img;
+        try {
+            const u = new URL(img, window.location.origin);
+            if (u.origin !== window.location.origin) { fileCache[img] = null; return; }
+            src = u.href;
+        } catch (e) { fileCache[img] = null; return; }
+        fileCache[img] = 'loading';
+        fetch(src).then(r => r.ok ? r.blob() : null).then(blob => {
+            if (!blob || !/^image\//.test(blob.type)) { fileCache[img] = null; return; }
+            const ext = (blob.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg');
+            const file = new File([blob], 'hablemosdeyhwh.' + ext, { type: blob.type });
+            fileCache[img] = navigator.canShare({ files: [file] }) ? file : null;
+        }).catch(() => { fileCache[img] = null; });
+    }
+
+    async function nativeShare(c, withFile) {
+        if (!navigator.share) return false;
+        const data = { title: c.title, text: buildMessage(c).replace('\n\n🔗 ' + c.url, ''), url: c.url };
+        const file = withFile && c.image ? fileCache[c.image] : null;
+        if (file && file instanceof File) {
+            data.files = [file];
+            // Con archivos, algunas apps ignoran "url": incluirla en el texto
+            data.text = buildMessage(c);
+            delete data.url;
+        }
+        try {
+            await navigator.share(data);
+            return true;
+        } catch (err) {
+            if (err && err.name === 'AbortError') return true; // el usuario canceló
+            return false;
+        }
+    }
+
+    async function shareTo(net, c) {
+        const msg = buildMessage(c, { bold: true });
+        const enc = encodeURIComponent;
+        switch (net) {
+            case 'whatsapp':
+                return openWin('https://api.whatsapp.com/send?text=' + enc(msg));
+            case 'facebook':
+                return openWin('https://www.facebook.com/sharer/sharer.php?u=' + enc(c.url) + '&quote=' + enc(c.title));
+            case 'telegram':
+                return openWin('https://t.me/share/url?url=' + enc(c.url) + '&text=' + enc((c.type ? '📖 ' + c.type + ' · ' : '') + c.title));
+            case 'x': {
+                let t = (c.type ? c.type + ' · ' : '') + c.title;
+                if (t.length > 200) t = t.substring(0, 197) + '…';
+                return openWin('https://twitter.com/intent/tweet?text=' + enc(t) + '&url=' + enc(c.url));
+            }
+            case 'instagram':
+            case 'tiktok': {
+                const appName = net === 'instagram' ? 'Instagram' : 'TikTok';
+                if (isMobile() && navigator.share) {
+                    await copy(buildMessage(c));
+                    const ok = await nativeShare(c, true);
+                    if (ok) { toast('Elige ' + appName + ' en el menú. El texto ya está copiado para pegarlo.', 'bi-' + net); return; }
+                }
+                await copy(buildMessage(c));
+                toast('¡Mensaje copiado! Pégalo en tu publicación, historia o biografía de ' + appName + '.', 'bi-' + net);
+                setTimeout(() => window.open(net === 'instagram' ? 'https://www.instagram.com/' : 'https://www.tiktok.com/upload', '_blank', 'noopener'), 900);
+                return;
+            }
+            case 'copy':
+                if (await copy(c.url)) toast('¡Enlace copiado al portapapeles!', 'bi-link-45deg');
+                else window.prompt('Copia este enlace:', c.url);
+                return;
+            case 'copymsg':
+                if (await copy(buildMessage(c))) toast('¡Mensaje completo copiado!', 'bi-clipboard-check');
+                else window.prompt('Copia este mensaje:', buildMessage(c));
+                return;
+            case 'native':
+                if (!(await nativeShare(c, true))) {
+                    await copy(buildMessage(c));
+                    toast('Tu navegador no tiene menú de compartir. Copiamos el mensaje para que lo pegues donde quieras.', 'bi-clipboard-check');
+                }
+                return;
+        }
+    }
+
+    function fillModal(c) {
+        current = c;
+        const $ = (id) => document.getElementById(id);
+        $('hySharePreviewType').textContent = c.type || 'Contenido';
+        $('hySharePreviewType').style.display = 'inline-block';
+        $('hySharePreviewTitle').textContent = c.title;
+        $('hySharePreviewUrl').textContent = c.url.replace(/^https?:\/\//, '');
+        const thumb = $('hySharePreviewThumb');
+        thumb.innerHTML = '';
+        if (c.image) {
+            const im = document.createElement('img');
+            im.src = c.image; im.alt = '';
+            im.onerror = () => { thumb.innerHTML = '<i class="bi bi-book-half"></i>'; };
+            thumb.appendChild(im);
+        } else {
+            thumb.innerHTML = '<i class="bi bi-book-half"></i>';
+        }
+        prefetchImage(c.image);
+    }
+
+    function openModal(c) {
+        fillModal(c);
+        const el = document.getElementById('hyShareModal');
+        if (window.bootstrap && bootstrap.Modal) {
+            bootstrap.Modal.getOrCreateInstance(el).show();
+        } else {
+            // Sin Bootstrap: usar menú nativo o copiar
+            shareTo('native', c);
+        }
+    }
+
+    // API pública
+    window.HYShare = {
+        open: function (data) {
+            data = data || {};
+            openModal({
+                url: absUrl(data.url), title: data.title || document.title, text: data.text || '',
+                image: data.image || '', type: data.type || ''
+            });
+        },
+        to: function (net, data) { shareTo(net, Object.assign({}, data, { url: absUrl(data && data.url) })); }
+    };
+
+    // Delegación de eventos (funciona con contenido dinámico, tarjetas clicables y stretched-links)
+    document.addEventListener('click', function (e) {
+        const opener = e.target.closest('.js-share-open');
+        if (opener) {
+            e.preventDefault(); e.stopPropagation();
+            openModal(readData(opener));
+            return;
+        }
+        const netBtn = e.target.closest('[data-share-net]');
+        if (netBtn) {
+            e.preventDefault(); e.stopPropagation();
+            const inModal = !!netBtn.closest('#hyShareModal');
+            const c = inModal && current ? current : readData(netBtn);
+            shareTo(netBtn.getAttribute('data-share-net'), c);
+        }
+    }, true);
+
+    // Precargar imagen al acercarse a los botones de Instagram/TikTok/Más
+    ['pointerenter', 'touchstart', 'focusin'].forEach(function (evt) {
+        document.addEventListener(evt, function (e) {
+            const t = e.target && e.target.closest ? e.target.closest('[data-share-net="instagram"],[data-share-net="tiktok"],[data-share-net="native"],.js-share-open') : null;
+            if (t && !t.closest('#hyShareModal')) prefetchImage(readData(t).image);
+        }, { passive: true, capture: true });
+    });
+
+    // Ocultar "Más…" si el navegador no soporta el menú nativo
+    document.addEventListener('DOMContentLoaded', function () {
+        if (!navigator.share) {
+            const n = document.getElementById('hyShareBtnNative');
+            if (n) n.querySelector('span:last-child').textContent = 'Copiar texto';
+        }
+    });
+})();
+</script>
