@@ -101,7 +101,12 @@ router.post('/aliyot/create', isAuthenticated, isAdmin, upload.fields([
     { name: 'audio_files', maxCount: 20 }
 ]), adminController.createAliyahSingle);
 router.get('/aliyot/edit-item/:id', isAuthenticated, isAdmin, adminController.editAliyahSinglePage);
+router.get('/aliyot/edit_item/:id', isAuthenticated, isAdmin, adminController.editAliyahSinglePage);
 router.post('/aliyot/update-item', isAuthenticated, isAdmin, upload.fields([
+    { name: 'audio_file', maxCount: 10 },
+    { name: 'audio_files', maxCount: 20 }
+]), adminController.updateAliyahSingle);
+router.post('/aliyot/update_item', isAuthenticated, isAdmin, upload.fields([
     { name: 'audio_file', maxCount: 10 },
     { name: 'audio_files', maxCount: 20 }
 ]), adminController.updateAliyahSingle);
@@ -176,6 +181,7 @@ router.get('/blog/delete/:id', isAuthenticated, adminController.deleteBlogPost);
 // Equipo (Solo Admin)
 router.post('/team/create', isAuthenticated, isAdmin, upload.single('image_file'), adminController.createTeamMember);
 router.post('/team/update', isAuthenticated, isAdmin, upload.single('image_file'), adminController.updateTeamMember);
+router.get('/team/toggle-status/:id', isAuthenticated, isAdmin, adminController.toggleTeamMemberStatus);
 router.get('/team/delete/:id', isAuthenticated, isAdmin, adminController.deleteTeamMember);
 
 // Testimonios (Solo Admin)

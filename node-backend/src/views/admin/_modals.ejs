@@ -1514,6 +1514,13 @@ function previewArticuloImage(input, previewId) {
                         <div class="col-12"><label class="form-label small text-white-50">Descripción</label><textarea name="description" class="form-control" rows="3"></textarea></div>
                         <div class="col-md-6"><label class="form-label small text-white-50">Subir Foto</label><input type="file" name="image_file" class="form-control" accept="image/*"></div>
                         <div class="col-md-6"><label class="form-label small text-white-50">O URL de Foto</label><input type="text" name="img" class="form-control" placeholder="https://..."></div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Estado en Frontend</label>
+                            <select name="is_active" class="form-select bg-dark text-white border-secondary">
+                                <option value="1" selected>Activo (Visible en el Sitio)</option>
+                                <option value="0">Suspendido (Oculto en el Sitio)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer border-secondary"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-success px-4">Añadir</button></div>
@@ -1536,6 +1543,13 @@ function previewArticuloImage(input, previewId) {
                         <div class="col-12"><label class="form-label small text-white-50">Descripción</label><textarea name="description" id="edit_team_description" class="form-control" rows="3"></textarea></div>
                         <div class="col-md-6"><label class="form-label small text-white-50">Subir Foto</label><input type="file" id="edit_team_image_file" name="image_file" class="form-control" accept="image/*"></div>
                         <div class="col-md-6"><label class="form-label small text-white-50">URL Foto</label><input type="text" id="edit_team_image_url" name="img" class="form-control"></div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-white-50">Estado en Frontend</label>
+                            <select name="is_active" id="edit_team_is_active" class="form-select bg-dark text-white border-secondary">
+                                <option value="1">Activo (Visible en el Sitio)</option>
+                                <option value="0">Suspendido (Oculto en el Sitio)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer border-secondary"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary px-4">Actualizar</button></div>
@@ -2194,6 +2208,7 @@ const sederTitleEl = document.getElementById('edit_port_seder_title');
                 const roleEl = document.getElementById('edit_team_role'); if (roleEl) roleEl.value = d.role;
                 const descEl = document.getElementById('edit_team_description'); if (descEl) descEl.value = d.description;
                 const imgEl = document.getElementById('edit_team_image_url'); if (imgEl) imgEl.value = d.img;
+                const activeEl = document.getElementById('edit_team_is_active'); if (activeEl) activeEl.value = (d.isActive === '0') ? '0' : '1';
                 editTeamModal.show();
             };
         });

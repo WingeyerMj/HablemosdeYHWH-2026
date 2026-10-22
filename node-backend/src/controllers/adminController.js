@@ -1636,11 +1636,12 @@ const adminController = {
     // ==================== EQUIPO ====================
     createTeamMember: async (req, res) => {
         try {
-            let { name, role, description, img } = req.body;
+            const Team = require('../models/Team');
+            let { name, role, description, img, is_active } = req.body;
             if (req.file) {
                 img = '/uploads/team/' + req.file.filename;
             }
-            await db.query('INSERT INTO team (name, role, description, img) VALUES (?, ?, ?, ?)', [name, role, description || '', img || '']);
+            await Team.create({ name, role, description, img, is_active });
             res.redirect('/admin/dashboard#pills-team');
         } catch (error) {
             console.error('Error createTeamMember:', error);
@@ -1650,11 +1651,12 @@ const adminController = {
 
     updateTeamMember: async (req, res) => {
         try {
-            let { id, name, role, description, img } = req.body;
+            const Team = require('../models/Team');
+            let { id, name, role, description, img, is_active } = req.body;
             if (req.file) {
                 img = '/uploads/team/' + req.file.filename;
             }
-            await db.query('UPDATE team SET name = ?, role = ?, description = ?, img = ? WHERE id = ?', [name, role, description, img, id]);
+            await Team.update(id, { name, role, description, img, is_active });
             res.redirect('/admin/dashboard#pills-team');
         } catch (error) {
             console.error('Error updateTeamMember:', error);
@@ -1662,9 +1664,21 @@ const adminController = {
         }
     },
 
+    toggleTeamMemberStatus: async (req, res) => {
+        try {
+            const Team = require('../models/Team');
+            await Team.toggleStatus(req.params.id);
+            res.redirect('/admin/dashboard#pills-team');
+        } catch (error) {
+            console.error('Error toggleTeamMemberStatus:', error);
+            res.redirect('/admin/dashboard#pills-team');
+        }
+    },
+
     deleteTeamMember: async (req, res) => {
         try {
-            await db.query('DELETE FROM team WHERE id = ?', [req.params.id]);
+            const Team = require('../models/Team');
+            await Team.delete(req.params.id);
             res.redirect('/admin/dashboard#pills-team');
         } catch (error) {
             console.error('Error deleteTeamMember:', error);
@@ -2197,9 +2211,14 @@ const adminController = {
         try {
             const Parasha = require('../models/Parasha');
             const Aliyah = require('../models/Aliyah');
+            const TorahCycle = require('../models/TorahCycle');
+            const Team = require('../models/Team');
             const parashot = await Parasha.getAllAsc();
             const parashotOverview = await Aliyah.getParashotOverview();
             const allAliyot = await Aliyah.getAllWithParasha();
+            const allCycles = await TorahCycle.getAllCycles();
+            const currentCycle = await TorahCycle.getCurrentCycle();
+            const team = await Team.getAll();
 
             res.render('admin/aliyot', {
                 layout: 'admin/layout',
@@ -2208,6 +2227,9 @@ const adminController = {
                 parashot,
                 parashotOverview,
                 allAliyot,
+                allCycles,
+                currentCycle,
+                team,
                 created: req.query.created || null,
                 updated: req.query.updated || null,
                 deleted: req.query.deleted || null
@@ -2221,27 +2243,56 @@ const adminController = {
     createAliyahSingle: async (req, res) => {
         try {
             const Aliyah = require('../models/Aliyah');
+            const TorahCycle = require('../models/TorahCycle');
             const { parasha_id, aliyah_number, title, verses_reference, content, content_hebrew, content_phonetic, reading_date, is_published } = req.body;
+
+            const currentCycle = await TorahCycle.getCurrentCycle();
+            const defaultCycle = (currentCycle && currentCycle.name) ? currentCycle.name : 'Ciclo Activo';
 
             let audiosList = [];
             if (req.files) {
                 const newFiles = (req.files['audio_files'] || []).concat(req.files['audio_file'] || []);
                 const rawTitles = req.body.audio_titles || [];
                 const titles = Array.isArray(rawTitles) ? rawTitles : (rawTitles ? [rawTitles] : []);
+                const rawCycles = req.body.audio_cycles || [];
+                const cycles = Array.isArray(rawCycles) ? rawCycles : (rawCycles ? [rawCycles] : []);
+                const rawReaders = req.body.audio_readers || [];
+                const readers = Array.isArray(rawReaders) ? rawReaders : (rawReaders ? [rawReaders] : []);
+
                 newFiles.forEach((file, idx) => {
                     const rawTitle = titles[idx];
-                    const cleanTitle = (rawTitle && rawTitle.trim() !== '') ? rawTitle.trim() : `Audio ${audiosList.length + 1}`;
+                    const cleanTitle = (rawTitle && rawTitle.trim() !== '') 
+                        ? rawTitle.trim() 
+                        : (file.originalname ? file.originalname.replace(/\.[^/.]+$/, '') : `Audio ${audiosList.length + 1}`);
+                    const cleanCycle = (cycles[idx] && cycles[idx].trim() !== '' && cycles[idx] !== '__custom__')
+                        ? cycles[idx].trim()
+                        : defaultCycle;
+                    const cleanReader = (readers[idx] && readers[idx].trim() !== '' && readers[idx] !== '__custom__')
+                        ? readers[idx].trim()
+                        : 'Menajem Ben Leví';
+
                     audiosList.push({
                         title: cleanTitle,
-                        url: '/uploads/audios/' + file.filename
+                        url: '/uploads/audios/' + file.filename,
+                        cycle_name: cleanCycle,
+                        reader: cleanReader
                     });
                 });
             }
 
             if (req.body.custom_audio_url && req.body.custom_audio_url.trim() !== '') {
+                const extCycle = (req.body.custom_audio_cycle && req.body.custom_audio_cycle.trim() !== '' && req.body.custom_audio_cycle !== '__custom__')
+                    ? req.body.custom_audio_cycle.trim()
+                    : defaultCycle;
+                const extReader = (req.body.custom_audio_reader && req.body.custom_audio_reader.trim() !== '' && req.body.custom_audio_reader !== '__custom__')
+                    ? req.body.custom_audio_reader.trim()
+                    : 'Menajem Ben Leví';
+
                 audiosList.push({
                     title: req.body.custom_audio_title || `Audio ${audiosList.length + 1}`,
-                    url: req.body.custom_audio_url.trim()
+                    url: req.body.custom_audio_url.trim(),
+                    cycle_name: extCycle,
+                    reader: extReader
                 });
             }
 
@@ -2272,17 +2323,26 @@ const adminController = {
         try {
             const Parasha = require('../models/Parasha');
             const Aliyah = require('../models/Aliyah');
+            const TorahCycle = require('../models/TorahCycle');
+            const Team = require('../models/Team');
+
             const { id } = req.params;
             const aliyah = await Aliyah.getById(id);
             if (!aliyah) return res.redirect('/admin/aliyot');
             const parashot = await Parasha.getAllAsc();
+            const allCycles = await TorahCycle.getAllCycles();
+            const currentCycle = await TorahCycle.getCurrentCycle();
+            const team = await Team.getAll();
 
             res.render('admin/edit_aliyah_single', {
                 layout: 'admin/layout',
                 title: `Editar Aliyá - ${aliyah.title}`,
                 activePage: 'aliyot',
                 aliyah,
-                parashot
+                parashot,
+                allCycles,
+                currentCycle,
+                team
             });
         } catch (error) {
             console.error('Error editAliyahSinglePage:', error);
@@ -2293,17 +2353,51 @@ const adminController = {
     updateAliyahSingle: async (req, res) => {
         try {
             const Aliyah = require('../models/Aliyah');
+            const TorahCycle = require('../models/TorahCycle');
             const { id, parasha_id, aliyah_number, title, verses_reference, content, content_hebrew, content_phonetic, existing_audios_json, remove_audio_idx, reading_date, is_published } = req.body;
 
+            const currentCycle = await TorahCycle.getCurrentCycle();
+            const defaultCycle = (currentCycle && currentCycle.name) ? currentCycle.name : 'Ciclo Activo';
+
             let audiosList = [];
-            if (existing_audios_json) {
+
+            // 1. Reconstruir audios existentes con sus ciclos y lectores editados
+            const existingUrls = Array.isArray(req.body.existing_audio_urls)
+                ? req.body.existing_audio_urls
+                : (req.body.existing_audio_urls ? [req.body.existing_audio_urls] : []);
+            const existingTitles = Array.isArray(req.body.existing_audio_titles)
+                ? req.body.existing_audio_titles
+                : (req.body.existing_audio_titles ? [req.body.existing_audio_titles] : []);
+            const existingCycles = Array.isArray(req.body.existing_audio_cycles)
+                ? req.body.existing_audio_cycles
+                : (req.body.existing_audio_cycles ? [req.body.existing_audio_cycles] : []);
+            const existingReaders = Array.isArray(req.body.existing_audio_readers)
+                ? req.body.existing_audio_readers
+                : (req.body.existing_audio_readers ? [req.body.existing_audio_readers] : []);
+
+            if (existingUrls.length > 0) {
+                existingUrls.forEach((url, i) => {
+                    if (url && url.trim() !== '') {
+                        audiosList.push({
+                            title: (existingTitles[i] && existingTitles[i].trim()) || `Audio ${i + 1}`,
+                            url: url.trim(),
+                            cycle_name: (existingCycles[i] && existingCycles[i].trim() !== '' && existingCycles[i] !== '__custom__')
+                                ? existingCycles[i].trim()
+                                : defaultCycle,
+                            reader: (existingReaders[i] && existingReaders[i].trim() !== '' && existingReaders[i] !== '__custom__')
+                                ? existingReaders[i].trim()
+                                : 'Menajem Ben Leví'
+                        });
+                    }
+                });
+            } else if (existing_audios_json) {
                 try {
                     const parsed = JSON.parse(existing_audios_json);
                     if (Array.isArray(parsed)) audiosList = parsed;
                 } catch(e) {}
             }
 
-            // Remove specific audio if requested
+            // Eliminar audio específico si se solicitó
             if (remove_audio_idx !== undefined && remove_audio_idx !== '') {
                 const idxToRemove = Number(remove_audio_idx);
                 if (!isNaN(idxToRemove) && idxToRemove >= 0 && idxToRemove < audiosList.length) {
@@ -2311,26 +2405,51 @@ const adminController = {
                 }
             }
 
-            // Append newly uploaded files
+            // 2. Agregar archivos subidos recientemente
             if (req.files) {
                 const newFiles = (req.files['audio_files'] || []).concat(req.files['audio_file'] || []);
                 const rawTitles = req.body.audio_titles || [];
                 const titles = Array.isArray(rawTitles) ? rawTitles : (rawTitles ? [rawTitles] : []);
+                const rawCycles = req.body.audio_cycles || [];
+                const cycles = Array.isArray(rawCycles) ? rawCycles : (rawCycles ? [rawCycles] : []);
+                const rawReaders = req.body.audio_readers || [];
+                const readers = Array.isArray(rawReaders) ? rawReaders : (rawReaders ? [rawReaders] : []);
+
                 newFiles.forEach((file, idx) => {
                     const rawTitle = titles[idx];
-                    const cleanTitle = (rawTitle && rawTitle.trim() !== '') ? rawTitle.trim() : `Audio ${audiosList.length + 1}`;
+                    const cleanTitle = (rawTitle && rawTitle.trim() !== '') 
+                        ? rawTitle.trim() 
+                        : (file.originalname ? file.originalname.replace(/\.[^/.]+$/, '') : `Audio ${audiosList.length + 1}`);
+                    const cleanCycle = (cycles[idx] && cycles[idx].trim() !== '' && cycles[idx] !== '__custom__')
+                        ? cycles[idx].trim()
+                        : defaultCycle;
+                    const cleanReader = (readers[idx] && readers[idx].trim() !== '' && readers[idx] !== '__custom__')
+                        ? readers[idx].trim()
+                        : 'Menajem Ben Leví';
+
                     audiosList.push({
                         title: cleanTitle,
-                        url: '/uploads/audios/' + file.filename
+                        url: '/uploads/audios/' + file.filename,
+                        cycle_name: cleanCycle,
+                        reader: cleanReader
                     });
                 });
             }
 
-            // Append custom audio URL
+            // 3. Agregar audio externo si se especificó
             if (req.body.custom_audio_url && req.body.custom_audio_url.trim() !== '') {
+                const extCycle = (req.body.custom_audio_cycle && req.body.custom_audio_cycle.trim() !== '' && req.body.custom_audio_cycle !== '__custom__')
+                    ? req.body.custom_audio_cycle.trim()
+                    : defaultCycle;
+                const extReader = (req.body.custom_audio_reader && req.body.custom_audio_reader.trim() !== '' && req.body.custom_audio_reader !== '__custom__')
+                    ? req.body.custom_audio_reader.trim()
+                    : 'Menajem Ben Leví';
+
                 audiosList.push({
                     title: req.body.custom_audio_title || `Audio ${audiosList.length + 1}`,
-                    url: req.body.custom_audio_url.trim()
+                    url: req.body.custom_audio_url.trim(),
+                    cycle_name: extCycle,
+                    reader: extReader
                 });
             }
 
@@ -2385,6 +2504,9 @@ const adminController = {
         try {
             const Parasha = require('../models/Parasha');
             const Aliyah = require('../models/Aliyah');
+            const TorahCycle = require('../models/TorahCycle');
+            const Team = require('../models/Team');
+
             const parashaId = req.params.parashaId;
             const parasha = await Parasha.getById(parashaId);
             if (!parasha) {
@@ -2392,6 +2514,9 @@ const adminController = {
             }
 
             const aliyotRows = await Aliyah.getByParashaId(parashaId);
+            const allCycles = await TorahCycle.getAllCycles();
+            const currentCycle = await TorahCycle.getCurrentCycle();
+            const team = await Team.getAll();
             
             const dayNames = [
                 '1ª Aliyá (Domingo - Día 1)',
@@ -2429,6 +2554,9 @@ const adminController = {
                 parasha,
                 aliyotMap,
                 dayNames,
+                allCycles,
+                currentCycle,
+                team,
                 savedDay: req.query.saved || '1'
             });
         } catch (error) {
@@ -2440,10 +2568,44 @@ const adminController = {
     saveAliyah: async (req, res) => {
         try {
             const Aliyah = require('../models/Aliyah');
+            const TorahCycle = require('../models/TorahCycle');
             const { parasha_id, aliyah_number, title, verses_reference, content, content_hebrew, content_phonetic, existing_audios_json, reading_date, is_published } = req.body;
 
+            const currentCycle = await TorahCycle.getCurrentCycle();
+            const defaultCycle = (currentCycle && currentCycle.name) ? currentCycle.name : 'Ciclo Activo';
+
             let audiosList = [];
-            if (existing_audios_json) {
+
+            // 1. Existing audios
+            const existingUrls = Array.isArray(req.body.existing_audio_urls)
+                ? req.body.existing_audio_urls
+                : (req.body.existing_audio_urls ? [req.body.existing_audio_urls] : []);
+            const existingTitles = Array.isArray(req.body.existing_audio_titles)
+                ? req.body.existing_audio_titles
+                : (req.body.existing_audio_titles ? [req.body.existing_audio_titles] : []);
+            const existingCycles = Array.isArray(req.body.existing_audio_cycles)
+                ? req.body.existing_audio_cycles
+                : (req.body.existing_audio_cycles ? [req.body.existing_audio_cycles] : []);
+            const existingReaders = Array.isArray(req.body.existing_audio_readers)
+                ? req.body.existing_audio_readers
+                : (req.body.existing_audio_readers ? [req.body.existing_audio_readers] : []);
+
+            if (existingUrls.length > 0) {
+                existingUrls.forEach((url, i) => {
+                    if (url && url.trim() !== '') {
+                        audiosList.push({
+                            title: (existingTitles[i] && existingTitles[i].trim()) || `Audio ${i + 1}`,
+                            url: url.trim(),
+                            cycle_name: (existingCycles[i] && existingCycles[i].trim() !== '' && existingCycles[i] !== '__custom__')
+                                ? existingCycles[i].trim()
+                                : defaultCycle,
+                            reader: (existingReaders[i] && existingReaders[i].trim() !== '' && existingReaders[i] !== '__custom__')
+                                ? existingReaders[i].trim()
+                                : 'Menajem Ben Leví'
+                        });
+                    }
+                });
+            } else if (existing_audios_json) {
                 try {
                     const parsed = JSON.parse(existing_audios_json);
                     if (Array.isArray(parsed)) audiosList = parsed;
@@ -2456,24 +2618,51 @@ const adminController = {
                 audiosList = [];
             }
 
+            // 2. Newly uploaded files
             if (req.files) {
                 const newFiles = (req.files['audio_files'] || []).concat(req.files['audio_file'] || []);
                 const rawTitles = req.body.audio_titles || [];
                 const titles = Array.isArray(rawTitles) ? rawTitles : (rawTitles ? [rawTitles] : []);
+                const rawCycles = req.body.audio_cycles || [];
+                const cycles = Array.isArray(rawCycles) ? rawCycles : (rawCycles ? [rawCycles] : []);
+                const rawReaders = req.body.audio_readers || [];
+                const readers = Array.isArray(rawReaders) ? rawReaders : (rawReaders ? [rawReaders] : []);
+
                 newFiles.forEach((file, idx) => {
                     const rawTitle = titles[idx];
-                    const cleanTitle = (rawTitle && rawTitle.trim() !== '') ? rawTitle.trim() : (file.originalname ? file.originalname.replace(/\.[^/.]+$/, '') : `Audio ${audiosList.length + 1}`);
+                    const cleanTitle = (rawTitle && rawTitle.trim() !== '') 
+                        ? rawTitle.trim() 
+                        : (file.originalname ? file.originalname.replace(/\.[^/.]+$/, '') : `Audio ${audiosList.length + 1}`);
+                    const cleanCycle = (cycles[idx] && cycles[idx].trim() !== '' && cycles[idx] !== '__custom__')
+                        ? cycles[idx].trim()
+                        : defaultCycle;
+                    const cleanReader = (readers[idx] && readers[idx].trim() !== '' && readers[idx] !== '__custom__')
+                        ? readers[idx].trim()
+                        : 'Menajem Ben Leví';
+
                     audiosList.push({
                         title: cleanTitle,
-                        url: '/uploads/audios/' + file.filename
+                        url: '/uploads/audios/' + file.filename,
+                        cycle_name: cleanCycle,
+                        reader: cleanReader
                     });
                 });
             }
 
+            // 3. Custom external audio
             if (req.body.custom_audio_url && req.body.custom_audio_url.trim() !== '') {
+                const extCycle = (req.body.custom_audio_cycle && req.body.custom_audio_cycle.trim() !== '' && req.body.custom_audio_cycle !== '__custom__')
+                    ? req.body.custom_audio_cycle.trim()
+                    : defaultCycle;
+                const extReader = (req.body.custom_audio_reader && req.body.custom_audio_reader.trim() !== '' && req.body.custom_audio_reader !== '__custom__')
+                    ? req.body.custom_audio_reader.trim()
+                    : 'Menajem Ben Leví';
+
                 audiosList.push({
                     title: req.body.custom_audio_title || `Audio ${audiosList.length + 1}`,
-                    url: req.body.custom_audio_url.trim()
+                    url: req.body.custom_audio_url.trim(),
+                    cycle_name: extCycle,
+                    reader: extReader
                 });
             }
 

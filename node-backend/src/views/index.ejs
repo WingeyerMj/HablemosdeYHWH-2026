@@ -1330,7 +1330,7 @@
                     </div>
                     <div class="container" data-aos="fade-up" data-aos-delay="100">
                         <div class="row gy-4 justify-content-center">
-                            <% team.forEach(member => { %>
+                            <% (team || []).filter(m => m.is_active !== 0 && m.is_active !== '0').forEach(member => { %>
                                 <div class="col-6 col-md-4 col-lg-3 col-xl-2 text-center d-flex justify-content-center">
                                     <div class="team-member-card" style="padding: 10px; width: 100%;">
                                         <div style="width: 100%; max-width: 180px; aspect-ratio: 1/1; margin: 0 auto 12px; border-radius: 50%; overflow: hidden; border: 3px solid #d4b895; box-shadow: 0 4px 15px rgba(212,184,149,0.3);">

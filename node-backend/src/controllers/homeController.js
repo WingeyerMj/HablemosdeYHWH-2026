@@ -61,7 +61,7 @@ const homeController = {
                 try { noticiasShorts = await Noticia.getPublishedShorts(8); } catch(e) { noticiasShorts = []; }
                 try { semillasShorts = await SemillasShort.getPublished(); } catch(e) { semillasShorts = []; }
                 eventCategories = await Portfolio.getCategories();
-                team = await Team.getAll();
+                team = await Team.getActive();
                 testimonials = await Testimonial.getAll();
                 pricingRaw = await Pricing.getAll();
                 siteSettings = await SiteSettings.getMap();
@@ -338,6 +338,7 @@ const homeController = {
                 aliyot,
                 haftara,
                 selectedCycle,
+                requestedAliyah: req.query.aliyah || null,
                 layout: false 
             });
         } catch (error) {
@@ -349,9 +350,11 @@ const homeController = {
         try {
             const Aliyah = require('../models/Aliyah');
             const TorahCycle = require('../models/TorahCycle');
+            const Team = require('../models/Team');
             const cycleId = req.query.cycle ? parseInt(req.query.cycle) : null;
             const cycles = await TorahCycle.getAllCycles();
             const currentCycle = await TorahCycle.getCurrentCycle();
+            const team = await Team.getAll();
 
             let selectedCycle = null;
             let parashot = [];
@@ -372,7 +375,24 @@ const homeController = {
 
             if (!selectedCycle) {
                 parashot = await Parasha.getAllAsc();
-                const selectedParashaId = req.query.parasha || (parashot.length > 0 ? parashot[0].id : null);
+                let selectedParashaId = req.query.parasha;
+                if (!selectedParashaId) {
+                    try {
+                        const [latestWithAudio] = await db.query(`
+                            SELECT parasha_id FROM aliyot 
+                            WHERE audio_url IS NOT NULL AND audio_url != '' AND audio_url != '[]' 
+                            ORDER BY id DESC LIMIT 1
+                        `);
+                        if (latestWithAudio && latestWithAudio.length > 0 && latestWithAudio[0].parasha_id) {
+                            selectedParashaId = latestWithAudio[0].parasha_id;
+                        }
+                    } catch (e) {
+                        console.warn('Aviso buscando parashá de aliyá reciente:', e.message);
+                    }
+                    if (!selectedParashaId && parashot.length > 0) {
+                        selectedParashaId = parashot[0].id;
+                    }
+                }
                 if (selectedParashaId) {
                     selectedParasha = await Parasha.getById(selectedParashaId);
                     aliyot = await Aliyah.getByParashaId(selectedParashaId);
@@ -388,6 +408,8 @@ const homeController = {
                 cycles,
                 currentCycle,
                 selectedCycle,
+                team,
+                requestedAliyah: req.query.aliyah || null,
                 layout: false
             });
         } catch (error) {

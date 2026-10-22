@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 class Aliyah {
     /**
-     * Parsear audio_url a un array estructurado de audios [{ title, url }]
+     * Parsear audio_url a un array estructurado de audios [{ title, url, cycle_name, reader, reader_role, reader_img }]
      */
     static parseAudios(audio_url) {
         if (!audio_url || typeof audio_url !== 'string' || audio_url.trim() === '') {
@@ -13,23 +13,55 @@ class Aliyah {
             try {
                 const parsed = JSON.parse(trimmed);
                 if (Array.isArray(parsed)) {
-                    return parsed.filter(item => item && item.url && item.url.trim() !== '');
+                    return parsed
+                        .filter(item => item && item.url && item.url.trim() !== '')
+                        .map(item => ({
+                            title: item.title || 'Audio de la Lectura',
+                            url: item.url.trim(),
+                            cycle_name: item.cycle_name || '',
+                            reader: item.reader || 'Menajem Ben Leví',
+                            reader_role: item.reader_role || 'Lector de Aliyot',
+                            reader_img: item.reader_img || ''
+                        }));
                 } else if (parsed.url) {
-                    return [parsed];
+                    return [{
+                        title: parsed.title || 'Audio de la Lectura',
+                        url: parsed.url.trim(),
+                        cycle_name: parsed.cycle_name || '',
+                        reader: parsed.reader || 'Menajem Ben Leví',
+                        reader_role: parsed.reader_role || 'Lector de Aliyot',
+                        reader_img: parsed.reader_img || ''
+                    }];
                 }
             } catch (e) {}
         }
-        return [{ title: 'Audio de la Lectura', url: trimmed }];
+        return [{ 
+            title: 'Audio de la Lectura', 
+            url: trimmed,
+            cycle_name: '',
+            reader: 'Menajem Ben Leví',
+            reader_role: 'Lector de Aliyot',
+            reader_img: ''
+        }];
     }
 
     /**
-     * Serializar lista de audios a JSON string
+     * Serializar lista de audios a JSON string preservando ciclo y lector
      */
     static serializeAudios(audios) {
         if (!audios || !Array.isArray(audios) || audios.length === 0) {
             return '';
         }
-        const clean = audios.filter(a => a && a.url && a.url.trim() !== '');
+        const clean = audios
+            .filter(a => a && a.url && a.url.trim() !== '')
+            .map(a => ({
+                title: a.title || 'Audio de la Lectura',
+                url: a.url.trim(),
+                cycle_name: a.cycle_name || '',
+                reader: a.reader || 'Menajem Ben Leví',
+                reader_role: a.reader_role || '',
+                reader_img: a.reader_img || ''
+            }));
         if (clean.length === 0) return '';
         return JSON.stringify(clean);
     }

@@ -125,13 +125,25 @@ select option:checked, select option:hover {
                                                 <% if (a.audios && a.audios.length > 0) { %>
                                                     <div class="d-flex flex-column gap-1">
                                                         <% a.audios.forEach((aud, idx) => { %>
-                                                            <div class="d-flex align-items-center gap-1">
-                                                                <audio controls style="height: 28px; max-width: 170px;">
-                                                                    <source src="<%= aud.url %>" type="audio/mpeg">
-                                                                </audio>
-                                                                <% if (a.audios.length > 1) { %>
-                                                                    <span class="badge bg-secondary" style="font-size: 0.65rem;" title="<%= aud.title %>">#<%= idx + 1 %></span>
-                                                                <% } %>
+                                                            <div class="p-1 px-2 rounded bg-black bg-opacity-40 border border-secondary border-opacity-50 mb-1">
+                                                                <div class="d-flex align-items-center gap-1">
+                                                                    <audio controls style="height: 26px; max-width: 170px;">
+                                                                        <source src="<%= aud.url %>" type="audio/mpeg">
+                                                                    </audio>
+                                                                    <% if (a.audios.length > 1) { %>
+                                                                        <span class="badge bg-secondary" style="font-size: 0.65rem;" title="<%= aud.title %>">#<%= idx + 1 %></span>
+                                                                    <% } %>
+                                                                </div>
+                                                                <div class="d-flex flex-wrap align-items-center gap-1 mt-1" style="font-size: 0.72rem;">
+                                                                    <span class="badge bg-dark text-info border border-info border-opacity-50">
+                                                                        <i class="bi bi-mic-fill me-1"></i><%= aud.reader || 'Menajem Ben Leví' %>
+                                                                    </span>
+                                                                    <% if (aud.cycle_name) { %>
+                                                                        <span class="badge bg-dark text-warning border border-warning border-opacity-50">
+                                                                            <i class="bi bi-clock-history me-1"></i><%= aud.cycle_name %>
+                                                                        </span>
+                                                                    <% } %>
+                                                                </div>
                                                             </div>
                                                         <% }) %>
                                                     </div>
@@ -316,7 +328,12 @@ select option:checked, select option:hover {
                             <input type="text" name="verses_reference" id="modalVersesRefInput" class="form-control bg-black bg-opacity-50 text-white border-secondary fw-bold" placeholder="Ej: DEUTERONOMIO 26:1-11">
                         </div>
 
-                        <!-- SECCIÓN DE AUDIOS DINÁMICA (Múltiples archivos y notas de voz) -->
+                        <!-- SECCIÓN DE AUDIOS DINÁMICA (Múltiples archivos con Ciclo y Lector) -->
+                        <%
+                            const cycleListModal = (typeof allCycles !== 'undefined' && allCycles && allCycles.length > 0) ? allCycles : [];
+                            const currCycleNameModal = (typeof currentCycle !== 'undefined' && currentCycle && currentCycle.name) ? currentCycle.name : 'Ciclo 2025 - 2026';
+                            const teamMembersModal = (typeof team !== 'undefined' && team && team.length > 0) ? team : [];
+                        %>
                         <div class="col-12">
                             <div class="p-3 rounded border border-secondary" style="background: rgba(255, 255, 255, 0.03);">
                                 <div class="d-flex align-items-center justify-content-between mb-2">
@@ -328,19 +345,47 @@ select option:checked, select option:hover {
                                         WhatsApp, MP3, OGG, M4A, WAV
                                     </span>
                                 </div>
-                                <p class="text-white-50 small mb-3">Puedes cargar uno o varios audios a la vez (lectura, comentarios, notas de voz de WhatsApp).</p>
+                                <p class="text-white-50 small mb-3">Identifica el Ciclo de la Torá y quién realizó la grabación de cada audio (Lector / Servidor).</p>
 
                                 <!-- Contenedor de filas de audios -->
-                                <div id="modalAudioRowsContainer" class="d-flex flex-column gap-2">
-                                    <div class="audio-input-row p-2 rounded bg-black bg-opacity-50 border border-secondary">
+                                <div id="modalAudioRowsContainer" class="d-flex flex-column gap-3">
+                                    <div class="audio-input-row p-3 rounded-3 bg-black bg-opacity-50 border border-secondary">
                                         <div class="row g-2 align-items-center">
-                                            <div class="col-md-6">
-                                                <label class="form-label small text-white-50 mb-1">Archivo 1</label>
+                                            <div class="col-md-3">
+                                                <label class="form-label small text-white-50 mb-1 fw-bold">Archivo de Audio</label>
                                                 <input type="file" name="audio_files" class="form-control form-control-sm bg-dark text-white border-secondary aliyah-file-input" accept="audio/*,.mp3,.ogg,.oga,.opus,.m4a,.wav,.aac" multiple>
                                             </div>
-                                            <div class="col-md-5">
-                                                <label class="form-label small text-white-50 mb-1">Título / Nombre (opcional)</label>
+                                            <div class="col-md-3">
+                                                <label class="form-label small text-white-50 mb-1 fw-bold">Título / Nombre</label>
                                                 <input type="text" name="audio_titles[]" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Ej: Audio 1 / Lectura del día">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label small text-warning mb-1 fw-bold d-flex align-items-center gap-1">
+                                                    <i class="bi bi-clock-history"></i> Ciclo de la Torá
+                                                </label>
+                                                <select name="audio_cycles[]" class="form-select form-select-sm bg-dark text-white border-secondary select-cycle-field" onchange="toggleModalCustomInput(this)">
+                                                    <% if (currCycleNameModal) { %>
+                                                        <option value="<%= currCycleNameModal %>" selected>⭐ <%= currCycleNameModal %> (Ciclo Activo)</option>
+                                                    <% } %>
+                                                    <% cycleListModal.filter(c => c.name !== currCycleNameModal).forEach(c => { %>
+                                                        <option value="<%= c.name %>">📁 <%= c.name %> <%= c.year_label ? '(' + c.year_label + ')' : '' %></option>
+                                                    <% }) %>
+                                                    <option value="__custom__">➕ Registrar otro ciclo...</option>
+                                                </select>
+                                                <input type="text" class="form-control form-control-sm bg-dark text-white border-warning mt-1 custom-field-input d-none" placeholder="Escribir nombre del ciclo...">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label small text-info mb-1 fw-bold d-flex align-items-center gap-1">
+                                                    <i class="bi bi-mic-fill"></i> ¿Quién lo hizo?
+                                                </label>
+                                                <select name="audio_readers[]" class="form-select form-select-sm bg-dark text-white border-secondary select-reader-field" onchange="toggleModalCustomInput(this)">
+                                                    <option value="Menajem Ben Leví">🎙️ Menajem Ben Leví</option>
+                                                    <% teamMembersModal.filter(m => !m.name.toLowerCase().includes('menajem')).forEach(m => { %>
+                                                        <option value="<%= m.name %>">👤 <%= m.name %> <%= m.role ? `(${m.role})` : '' %></option>
+                                                    <% }) %>
+                                                    <option value="__custom__">➕ Otra persona...</option>
+                                                </select>
+                                                <input type="text" class="form-control form-control-sm bg-dark text-white border-info mt-1 custom-field-input d-none" placeholder="Nombre completo...">
                                             </div>
                                             <div class="col-md-1 text-center pt-3">
                                                 <button type="button" class="btn btn-sm btn-outline-danger btn-remove-row d-none" title="Eliminar fila">
@@ -355,15 +400,41 @@ select option:checked, select option:hover {
                                     <button type="button" id="btnAddAudioInputRow" class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1">
                                         <i class="bi bi-plus-circle-fill"></i> + Agregar otro archivo de audio
                                     </button>
-                                    <small class="text-white-50">Puedes presionar el botón para añadir más audios por separado</small>
+                                    <small class="text-white-50">Puedes añadir múltiples audios y asignar a cada uno su ciclo y lector</small>
                                 </div>
 
                                 <!-- Audio externo opcional -->
                                 <div class="mt-3 pt-2 border-top border-secondary">
-                                    <label class="form-label small text-white-50 fw-bold mb-1">O enlace de audio externo (opcional)</label>
-                                    <div class="input-group input-group-sm">
-                                        <input type="text" name="custom_audio_title" class="form-control bg-black bg-opacity-50 text-white border-secondary" placeholder="Título (Ej: Reflexión)" style="max-width: 140px;">
-                                        <input type="text" name="custom_audio_url" class="form-control bg-black bg-opacity-50 text-white border-secondary" placeholder="https://.../audio.mp3">
+                                    <label class="form-label small text-white-50 fw-bold mb-2">O enlace de audio externo (opcional)</label>
+                                    <div class="row g-2 align-items-center">
+                                        <div class="col-md-2">
+                                            <input type="text" name="custom_audio_title" class="form-control form-control-sm bg-black bg-opacity-50 text-white border-secondary" placeholder="Título (Ej: Reflexión)">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="text" name="custom_audio_url" class="form-control form-control-sm bg-black bg-opacity-50 text-white border-secondary" placeholder="https://.../audio.mp3">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select name="custom_audio_cycle" class="form-select form-select-sm bg-dark text-white border-secondary select-cycle-field" onchange="toggleModalCustomInput(this)">
+                                                <% if (currCycleNameModal) { %>
+                                                    <option value="<%= currCycleNameModal %>" selected>⭐ <%= currCycleNameModal %> (Ciclo Activo)</option>
+                                                <% } %>
+                                                <% cycleListModal.filter(c => c.name !== currCycleNameModal).forEach(c => { %>
+                                                    <option value="<%= c.name %>">📁 <%= c.name %></option>
+                                                <% }) %>
+                                                <option value="__custom__">➕ Registrar otro ciclo...</option>
+                                            </select>
+                                            <input type="text" class="form-control form-control-sm bg-dark text-white border-warning mt-1 custom-field-input d-none" placeholder="Escribir nombre del ciclo...">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select name="custom_audio_reader" class="form-select form-select-sm bg-dark text-white border-secondary select-reader-field" onchange="toggleModalCustomInput(this)">
+                                                <option value="Menajem Ben Leví">🎙️ Menajem Ben Leví</option>
+                                                <% teamMembersModal.filter(m => !m.name.toLowerCase().includes('menajem')).forEach(m => { %>
+                                                    <option value="<%= m.name %>">👤 <%= m.name %> <%= m.role ? `(${m.role})` : '' %></option>
+                                                <% }) %>
+                                                <option value="__custom__">➕ Otra persona...</option>
+                                            </select>
+                                            <input type="text" class="form-control form-control-sm bg-dark text-white border-info mt-1 custom-field-input d-none" placeholder="Nombre completo...">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -530,8 +601,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    window.toggleModalCustomInput = function(selectElem) {
+        const parent = selectElem.parentElement;
+        const customInput = parent.querySelector('.custom-field-input');
+        if (!customInput) return;
+        if (selectElem.value === '__custom__') {
+            customInput.classList.remove('d-none');
+            customInput.focus();
+        } else {
+            customInput.classList.add('d-none');
+            customInput.value = '';
+        }
+    };
+
     document.getElementById('createAliyahModalForm').onsubmit = function() {
         document.getElementById('modalAliyahContent').value = modalQuill.root.innerHTML;
+
+        // Si algún select tiene '__custom__', reemplazar por el valor escrito en el input
+        document.querySelectorAll('#createAliyahModalForm select.select-cycle-field, #createAliyahModalForm select.select-reader-field').forEach(sel => {
+            if (sel.value === '__custom__') {
+                const parent = sel.parentElement;
+                const customInput = parent ? parent.querySelector('.custom-field-input') : null;
+                if (customInput && customInput.value.trim() !== '') {
+                    const opt = document.createElement('option');
+                    opt.value = customInput.value.trim();
+                    opt.selected = true;
+                    sel.appendChild(opt);
+                }
+            }
+        });
         return true;
     };
 
@@ -784,20 +882,54 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnAddAudioRow = document.getElementById('btnAddAudioInputRow');
     const audioContainer = document.getElementById('modalAudioRowsContainer');
 
+    const cycleOptionsModalHtml = `
+        <option value="<%= currCycleNameModal %>" selected>⭐ <%= currCycleNameModal %> (Ciclo Activo)</option>
+        <% cycleListModal.filter(c => c.name !== currCycleNameModal).forEach(c => { %>
+            <option value="<%= c.name %>">📁 <%= c.name %> <%= c.year_label ? '(' + c.year_label + ')' : '' %></option>
+        <% }) %>
+        <option value="__custom__">➕ Registrar otro ciclo...</option>
+    `;
+
+    const readerOptionsModalHtml = `
+        <option value="Menajem Ben Leví">🎙️ Menajem Ben Leví</option>
+        <% teamMembersModal.filter(m => !m.name.toLowerCase().includes('menajem')).forEach(m => { %>
+            <option value="<%= m.name %>">👤 <%= m.name %> <%= m.role ? `(${m.role})` : '' %></option>
+        <% }) %>
+        <option value="__custom__">➕ Otra persona...</option>
+    `;
+
     if (btnAddAudioRow && audioContainer) {
         btnAddAudioRow.addEventListener('click', function() {
             const rowsCount = audioContainer.querySelectorAll('.audio-input-row').length + 1;
             const newRow = document.createElement('div');
-            newRow.className = 'audio-input-row p-2 rounded bg-black bg-opacity-50 border border-secondary';
+            newRow.className = 'audio-input-row p-3 rounded-3 bg-black bg-opacity-50 border border-secondary';
             newRow.innerHTML = `
                 <div class="row g-2 align-items-center">
-                    <div class="col-md-6">
-                        <label class="form-label small text-white-50 mb-1">Archivo ${rowsCount}</label>
+                    <div class="col-md-3">
+                        <label class="form-label small text-white-50 mb-1 fw-bold">Archivo ${rowsCount}</label>
                         <input type="file" name="audio_files" class="form-control form-control-sm bg-dark text-white border-secondary aliyah-file-input" accept="audio/*,.mp3,.ogg,.oga,.opus,.m4a,.wav,.aac" multiple>
                     </div>
-                    <div class="col-md-5">
-                        <label class="form-label small text-white-50 mb-1">Título / Nombre (opcional)</label>
-                        <input type="text" name="audio_titles[]" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Ej: Audio ${rowsCount} / Comentario">
+                    <div class="col-md-3">
+                        <label class="form-label small text-white-50 mb-1 fw-bold">Título / Nombre</label>
+                        <input type="text" name="audio_titles[]" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Ej: Audio ${rowsCount} / Lectura">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small text-warning mb-1 fw-bold d-flex align-items-center gap-1">
+                            <i class="bi bi-clock-history"></i> Ciclo de la Torá
+                        </label>
+                        <select name="audio_cycles[]" class="form-select form-select-sm bg-dark text-white border-secondary select-cycle-field" onchange="toggleModalCustomInput(this)">
+                            ${cycleOptionsModalHtml}
+                        </select>
+                        <input type="text" class="form-control form-control-sm bg-dark text-white border-warning mt-1 custom-field-input d-none" placeholder="Escribir nombre del ciclo...">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small text-info mb-1 fw-bold d-flex align-items-center gap-1">
+                            <i class="bi bi-mic-fill"></i> ¿Quién lo hizo?
+                        </label>
+                        <select name="audio_readers[]" class="form-select form-select-sm bg-dark text-white border-secondary select-reader-field" onchange="toggleModalCustomInput(this)">
+                            ${readerOptionsModalHtml}
+                        </select>
+                        <input type="text" class="form-control form-control-sm bg-dark text-white border-info mt-1 custom-field-input d-none" placeholder="Nombre completo...">
                     </div>
                     <div class="col-md-1 text-center pt-3">
                         <button type="button" class="btn btn-sm btn-outline-danger btn-remove-row" title="Eliminar fila">
@@ -815,7 +947,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Asignar auto-completar título si está vacío
             const fileInput = newRow.querySelector('.aliyah-file-input');
-            const titleInput = newRow.querySelector('input[type="text"]');
+            const titleInput = newRow.querySelector('input[name="audio_titles[]"]');
             fileInput.addEventListener('change', function() {
                 if (this.files && this.files[0] && !titleInput.value) {
                     titleInput.value = this.files[0].name.replace(/\.[^/.]+$/, '');

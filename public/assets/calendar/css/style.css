@@ -1009,3 +1009,295 @@ body.dark .theme-toggle .sun {
   flex-shrink: 0;
   stroke: currentColor;
 }
+
+/* ----------------------------------------------------------
+   INDICADORES DE CICLO DE TORÁ Y PARASHOT EN SHABAT
+---------------------------------------------------------- */
+.subtitle-dates {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.subtitle-cycle-info {
+  margin-top: 5px;
+}
+
+.year-cycle-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease;
+}
+
+.year-cycle-pill.leap {
+  background: linear-gradient(135deg, rgba(212, 168, 83, 0.2), rgba(184, 134, 11, 0.1));
+  border: 1px solid rgba(212, 168, 83, 0.6);
+  color: #f7d280;
+}
+
+.year-cycle-pill.regular {
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.18), rgba(79, 70, 229, 0.1));
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  color: #d8b4fe;
+}
+
+[data-theme="light"] .year-cycle-pill.leap {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border-color: #d97706;
+  color: #92400e;
+}
+
+[data-theme="light"] .year-cycle-pill.regular {
+  background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+  border-color: #a855f7;
+  color: #6b21a8;
+}
+
+/* CELDA DE SHABAT */
+.calendar-cell.shabat-cell {
+  border-color: rgba(79, 195, 255, 0.28) !important;
+  background: radial-gradient(circle at top right, rgba(79, 195, 255, 0.05), var(--cell-bg)) !important;
+}
+
+[data-theme="light"] .calendar-cell.shabat-cell {
+  border-color: rgba(3, 105, 161, 0.25) !important;
+  background: radial-gradient(circle at top right, rgba(14, 165, 233, 0.06), #ffffff) !important;
+}
+
+/* BADGE DE PARASHÁ EN CADA SHABAT */
+.shabat-parasha-badge {
+  margin-top: auto;
+  margin-bottom: 2px;
+  background: linear-gradient(135deg, #132742 0%, #0d1b2e 100%);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #e0f2fe;
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-family: "Montserrat", sans-serif;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  z-index: 3;
+}
+
+.shabat-parasha-badge:hover {
+  transform: translateY(-2px);
+  border-color: #38bdf8;
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.35);
+  color: #ffffff;
+}
+
+.parasha-badge-top {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1.15;
+}
+
+.parasha-badge-ico {
+  font-size: 0.72rem;
+  flex-shrink: 0;
+}
+
+.parasha-badge-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.2px;
+}
+
+.parasha-badge-ref {
+  font-size: 0.61rem;
+  color: #93c5fd;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.9;
+  line-height: 1.1;
+}
+
+/* LECTURA DOBLE EN AÑOS REGULARES (12 MESES) */
+.shabat-parasha-badge.double {
+  background: linear-gradient(135deg, #2e1065 0%, #1e0942 100%);
+  border-color: rgba(192, 132, 252, 0.5);
+  color: #f5f3ff;
+}
+
+.shabat-parasha-badge.double:hover {
+  border-color: #c084fc;
+  box-shadow: 0 4px 12px rgba(192, 132, 252, 0.38);
+}
+
+.shabat-parasha-badge.double .parasha-badge-ref {
+  color: #d8b4fe;
+}
+
+.parasha-double-pill {
+  display: inline-block;
+  align-self: flex-start;
+  background: rgba(192, 132, 252, 0.25);
+  border: 1px solid rgba(192, 132, 252, 0.45);
+  color: #e9d5ff;
+  font-size: 0.54rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  margin-top: 1px;
+}
+
+/* LECTURA ESPECIAL DE FESTIVIDAD */
+.shabat-parasha-badge.festival {
+  background: linear-gradient(135deg, #451a03 0%, #291002 100%);
+  border-color: rgba(251, 191, 36, 0.55);
+  color: #fef3c7;
+}
+
+.shabat-parasha-badge.festival:hover {
+  border-color: #fbbf24;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.35);
+}
+
+.shabat-parasha-badge.festival .parasha-badge-ref {
+  color: #fde68a;
+}
+
+/* TEMA CLARO PARA BADGES DE PARASHÁ */
+[data-theme="light"] .shabat-parasha-badge {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  border-color: #7dd3fc;
+  color: #0369a1;
+}
+
+[data-theme="light"] .shabat-parasha-badge .parasha-badge-ref {
+  color: #0284c7;
+}
+
+[data-theme="light"] .shabat-parasha-badge.double {
+  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+  border-color: #c4b5fd;
+  color: #6b21a8;
+}
+
+[data-theme="light"] .shabat-parasha-badge.double .parasha-badge-ref {
+  color: #7c3aed;
+}
+
+[data-theme="light"] .shabat-parasha-badge.double .parasha-double-pill {
+  background: rgba(124, 58, 237, 0.15);
+  border-color: rgba(124, 58, 237, 0.35);
+  color: #5b21b6;
+}
+
+[data-theme="light"] .shabat-parasha-badge.festival {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-color: #fcd34d;
+  color: #92400e;
+}
+
+[data-theme="light"] .shabat-parasha-badge.festival .parasha-badge-ref {
+  color: #b45309;
+}
+
+/* LEYENDA DEL CICLO DE PARASHOT AL PIE DEL CALENDARIO */
+.calendar-torah-legend {
+  margin-top: 20px;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  font-family: "Montserrat", sans-serif;
+  color: var(--text-muted);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] .calendar-torah-legend {
+  background: #fdfbf7;
+  border-color: #ebdccb;
+  color: #555;
+}
+
+.legend-header {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.77rem;
+  line-height: 1.4;
+}
+
+.legend-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.chip-badge.regular {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+}
+
+.chip-badge.double {
+  background: rgba(192, 132, 252, 0.18);
+  border: 1px solid rgba(192, 132, 252, 0.45);
+  color: #c084fc;
+}
+
+.chip-badge.festival {
+  background: rgba(251, 191, 36, 0.18);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  color: #fbbf24;
+}
+
+[data-theme="light"] .chip-badge.regular {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+  color: #0369a1;
+}
+
+[data-theme="light"] .chip-badge.double {
+  background: #f3e8ff;
+  border-color: #c084fc;
+  color: #6b21a8;
+}
+
+[data-theme="light"] .chip-badge.festival {
+  background: #fef3c7;
+  border-color: #fcd34d;
+  color: #92400e;
+}

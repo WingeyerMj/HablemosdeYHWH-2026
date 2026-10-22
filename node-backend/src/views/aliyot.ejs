@@ -29,19 +29,46 @@
                     <p class="text-white-50 mb-0" style="font-size: 1.05rem; max-width: 680px;">Escucha los audios de cada día y estudia los versículos correspondientes a cada porción semanal.</p>
                 </div>
 
-                <!-- Columna Derecha: Tarjeta de Menajem Ben Leví (diseño destacado) -->
+                <!-- Columna Derecha: Tarjeta de Lector / Servidor de Aliyot (Dinámica) -->
+                <%
+                    const aliyotReaders = [];
+                    (aliyot || []).forEach(a => {
+                        (a.audios || []).forEach(aud => {
+                            const rName = (aud.reader || '').trim();
+                            if (rName && !aliyotReaders.includes(rName)) {
+                                aliyotReaders.push(rName);
+                            }
+                        });
+                    });
+                    if (aliyotReaders.length === 0) aliyotReaders.push('Menajem Ben Leví');
+
+                    const featuredReaderName = aliyotReaders[0];
+                    const teamList = (typeof team !== 'undefined' && team && team.length > 0) ? team : [];
+                    const featuredTeamMember = teamList.find(m => m.name && m.name.toLowerCase().includes(featuredReaderName.toLowerCase()));
+                    const featuredReaderPhoto = (featuredTeamMember && featuredTeamMember.img) 
+                        ? featuredTeamMember.img 
+                        : (featuredReaderName.toLowerCase().includes('menajem') ? '/assets/img/team/menajem.jpg' : '/assets/img/team/kaleb.jpg');
+                    const featuredReaderRole = (featuredTeamMember && featuredTeamMember.role) 
+                        ? featuredTeamMember.role 
+                        : 'Servidor / Voz de Aliyot';
+                %>
                 <div class="flex-shrink-0">
                     <div class="d-flex flex-column align-items-center text-center p-3 px-4 rounded-4 shadow-lg" style="background: #191512; border: 2px solid rgba(212, 168, 83, 0.45); min-width: 220px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
                         <div class="position-relative mb-2">
-                            <img src="/assets/img/team/menajem.jpg" alt="Menajem Ben Leví" class="rounded-circle" style="width: 88px; height: 88px; object-fit: cover; border: 3px solid #d4a853; box-shadow: 0 6px 15px rgba(0,0,0,0.6);">
+                            <img src="<%= featuredReaderPhoto %>" alt="<%= featuredReaderName %>" class="rounded-circle" style="width: 88px; height: 88px; object-fit: cover; border: 3px solid #d4a853; box-shadow: 0 6px 15px rgba(0,0,0,0.6);" onerror="this.src='/assets/img/team/menajem.jpg'">
                             <span class="position-absolute bottom-0 end-0 rounded-circle d-flex align-items-center justify-content-center shadow" style="width: 28px; height: 28px; background: #d4a853; color: #1a1a1a; font-size: 0.85rem; transform: translate(15%, 5%); border: 2px solid #191512;" title="Voz de Aliyot">
                                 <i class="bi bi-mic-fill"></i>
                             </span>
                         </div>
-                        <h4 class="text-white fw-bold mb-1" style="font-size: 1.15rem; letter-spacing: 0.5px;">Menajem Ben Leví</h4>
+                        <h4 class="text-white fw-bold mb-1" style="font-size: 1.15rem; letter-spacing: 0.5px;"><%= featuredReaderName %></h4>
                         <span class="badge rounded-pill px-3 py-1" style="background: rgba(0, 0, 0, 0.4); border: 1px solid #d4a853; color: #d4a853; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.5px;">
-                            Servidor / Voz de Aliyot
+                            <%= featuredReaderRole %>
                         </span>
+                        <% if (aliyotReaders.length > 1) { %>
+                            <small class="text-white-50 mt-1" style="font-size: 0.72rem;">
+                                + Grabaciones de: <%= aliyotReaders.slice(1).join(', ') %>
+                            </small>
+                        <% } %>
                     </div>
                 </div>
 
@@ -161,17 +188,50 @@
                                     { num: 7, name: '7ª Aliyá', day: 'Shabat (Día 7)' }
                                 ];
                                 const aliyotList = (typeof aliyot !== 'undefined' && aliyot) ? aliyot : [];
+
+                                // Determinar la última Aliyá cargada
+                                let activeAliyahNum = null;
+                                if (typeof requestedAliyah !== 'undefined' && requestedAliyah) {
+                                    activeAliyahNum = Number(requestedAliyah);
+                                }
+                                if (!activeAliyahNum) {
+                                    // 1. Buscar la última con audio cargado (del día 7 al 1)
+                                    for (let n = 7; n >= 1; n--) {
+                                        const a = aliyotList.find(x => Number(x.aliyah_number) === n);
+                                        if (a) {
+                                            const hasAudio = (a.audios && a.audios.length > 0) || (a.audio_url && a.audio_url.trim() !== '' && a.audio_url.trim() !== '[]');
+                                            if (hasAudio) {
+                                                activeAliyahNum = n;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                if (!activeAliyahNum) {
+                                    // 2. Si ninguna tiene audio, buscar la última con contenido
+                                    for (let n = 7; n >= 1; n--) {
+                                        const a = aliyotList.find(x => Number(x.aliyah_number) === n);
+                                        if (a && ((a.content && a.content.trim() !== '') || (a.verses_reference && a.verses_reference.trim() !== ''))) {
+                                            activeAliyahNum = n;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (!activeAliyahNum) {
+                                    activeAliyahNum = 1;
+                                }
                             %>
 
                             <!-- Pestañas de Navegación -->
                             <div class="aliyot-tabs-nav mb-4">
                                 <ul class="nav nav-pills gap-2 flex-wrap" id="aliyotPills" role="tablist">
-                                    <% daysNames.forEach((d, idx) => { 
+                                    <% daysNames.forEach((d) => { 
                                         const aliyahData = aliyotList.find(a => Number(a.aliyah_number) === d.num);
-                                        const hasAudio = aliyahData && aliyahData.audio_url && aliyahData.audio_url.trim() !== '';
+                                        const hasAudio = aliyahData && ((aliyahData.audios && aliyahData.audios.length > 0) || (aliyahData.audio_url && aliyahData.audio_url.trim() !== '' && aliyahData.audio_url.trim() !== '[]'));
+                                        const isActive = (d.num === activeAliyahNum);
                                     %>
                                         <li class="nav-item flex-grow-1 text-center" role="presentation">
-                                            <button class="nav-link w-100 <%= idx === 0 ? 'active' : '' %> py-2 px-3 position-relative" 
+                                            <button class="nav-link w-100 <%= isActive ? 'active' : '' %> py-2 px-3 position-relative" 
                                                     id="pills-aliyah-<%= d.num %>-tab" 
                                                     data-bs-toggle="pill" 
                                                     data-bs-target="#pills-aliyah-<%= d.num %>" 
@@ -191,12 +251,13 @@
 
                             <!-- Contenido de cada Aliyá -->
                             <div class="tab-content" id="aliyotPillsContent">
-                                <% daysNames.forEach((d, idx) => { 
+                                <% daysNames.forEach((d) => { 
                                     const aliyah = aliyotList.find(a => Number(a.aliyah_number) === d.num) || {};
-                                    const hasAudio = aliyah.audio_url && aliyah.audio_url.trim() !== '';
+                                    const hasAudio = (aliyah.audios && aliyah.audios.length > 0) || (aliyah.audio_url && aliyah.audio_url.trim() !== '' && aliyah.audio_url.trim() !== '[]');
                                     const hasContent = aliyah.content && aliyah.content.trim() !== '';
+                                    const isActive = (d.num === activeAliyahNum);
                                 %>
-                                    <div class="tab-pane fade <%= idx === 0 ? 'show active' : '' %>" id="pills-aliyah-<%= d.num %>" role="tabpanel">
+                                    <div class="tab-pane fade <%= isActive ? 'show active' : '' %>" id="pills-aliyah-<%= d.num %>" role="tabpanel">
                                         <div class="aliyah-card p-4 rounded-4 shadow-sm" style="background: #ffffff; border: 1px solid #e8e1d5;">
                                             <!-- Cabecera de la Aliyá -->
                                             <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 pb-3 mb-3 border-bottom">
@@ -219,7 +280,7 @@
                                                     <% 
                                                         const shareTitle = `Lectura de Toráh: ${selectedParasha.title} - ${d.name} (${d.day})`;
                                                         const shareRef = aliyah.verses_reference ? `\n📖 Versículos: ${aliyah.verses_reference}` : '';
-                                                        const shareUrl = `https://www.hablemosdeyhwh.com/aliyot?parasha=${selectedParasha.id}`;
+                                                        const shareUrl = `https://www.hablemosdeyhwh.com/aliyot?parasha=${selectedParasha.id}&aliyah=${d.num}`;
                                                         const waText = encodeURIComponent(`*${shareTitle}*${shareRef}\n\nEscucha y lee la porción completa aquí:\n${shareUrl}`);
                                                     %>
                                                     <button type="button" class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-1 px-3 py-1 fw-bold btn-print-single-aliyah"
@@ -259,9 +320,16 @@
                                                                 <div class="d-flex align-items-center gap-2">
                                                                     <span class="pulse-icon text-warning"><i class="bi bi-soundwave fs-4"></i></span>
                                                                     <div>
-                                                                        <span class="small text-white fw-bold d-block"><%= aud.title || `Audio ${audIdx + 1}` %></span>
-                                                                        <span class="text-white-50" style="font-size: 0.72rem;"><i class="bi bi-mic me-1 text-warning"></i>Lectura por: <strong>Menajem Ben Leví</strong></span>
-                                                                    </div>
+                                                                        <div class="d-flex flex-wrap align-items-center gap-2 mt-1">
+                                                                            <span class="text-white-50" style="font-size: 0.74rem;">
+                                                                                <i class="bi bi-mic-fill me-1 text-warning"></i>Lectura por: <strong class="text-white"><%= aud.reader || 'Menajem Ben Leví' %></strong>
+                                                                            </span>
+                                                                            <% if (aud.cycle_name) { %>
+                                                                                <span class="badge rounded-pill bg-black bg-opacity-75 border border-secondary text-warning" style="font-size: 0.68rem; letter-spacing: 0.3px;">
+                                                                                    <i class="bi bi-clock-history me-1"></i><%= aud.cycle_name %>
+                                                                                </span>
+                                                                            <% } %>
+                                                                        </div>
                                                                 </div>
                                                                 <a href="<%= aud.url %>" download target="_blank" class="text-white-50 text-decoration-none small hover-white" title="Descargar Audio">
                                                                     <i class="bi bi-download me-1"></i> Descargar
@@ -514,6 +582,23 @@
                 });
             });
         });
+
+        // Soporte para URL con parámetro ?aliyah=X o hash #pills-aliyah-X
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const aliyahParam = urlParams.get('aliyah');
+            const hash = window.location.hash;
+            let targetTabBtn = null;
+            if (aliyahParam) {
+                targetTabBtn = document.getElementById('pills-aliyah-' + aliyahParam + '-tab');
+            } else if (hash && hash.startsWith('#pills-aliyah-')) {
+                targetTabBtn = document.getElementById(hash.substring(1) + '-tab');
+            }
+            if (targetTabBtn && typeof bootstrap !== 'undefined' && bootstrap.Tab) {
+                const tabInstance = bootstrap.Tab.getOrCreateInstance(targetTabBtn);
+                tabInstance.show();
+            }
+        } catch(e) {}
     });
     </script>
 

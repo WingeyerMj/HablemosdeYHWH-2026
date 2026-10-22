@@ -94,7 +94,12 @@
                                     </div>
                                 </div>
 
-                                <!-- SECCIÓN DE AUDIOS -->
+                                <!-- SECCIÓN DE AUDIOS CON CICLO Y LECTOR -->
+                                <%
+                                    const cycleListEdit = (typeof allCycles !== 'undefined' && allCycles && allCycles.length > 0) ? allCycles : [];
+                                    const currCycleNameEdit = (typeof currentCycle !== 'undefined' && currentCycle && currentCycle.name) ? currentCycle.name : 'Ciclo 2025 - 2026';
+                                    const teamMembersEdit = (typeof team !== 'undefined' && team && team.length > 0) ? team : [];
+                                %>
                                 <div class="col-12">
                                     <div class="p-3 rounded border border-secondary" style="background: rgba(255, 255, 255, 0.03);">
                                         <label class="form-label fw-bold text-white d-flex align-items-center justify-content-between mb-2">
@@ -102,7 +107,7 @@
                                                 <i class="bi bi-soundwave" style="color: var(--primary-color, #d4b895); font-size: 1.2rem;"></i>
                                                 Audios de la Lectura
                                             </span>
-                                            <small class="text-white-50">Soporta múltiples archivos de audio por día</small>
+                                            <small class="text-white-50">Soporta múltiples archivos con identificación de Ciclo y Lector</small>
                                         </label>
 
                                         <% 
@@ -112,22 +117,66 @@
                                         %>
 
                                         <% if (dayAudios.length > 0) { %>
-                                            <div class="d-flex flex-column gap-2 mb-3">
+                                            <div class="d-flex flex-column gap-3 mb-3">
                                                 <% dayAudios.forEach((audio, aIdx) => { %>
-                                                    <div class="p-2 px-3 rounded bg-black bg-opacity-50 border border-secondary d-flex flex-wrap align-items-center justify-content-between gap-2">
-                                                        <div class="d-flex align-items-center gap-2">
-                                                            <span class="badge bg-secondary">#<%= aIdx + 1 %></span>
-                                                            <div>
-                                                                <div class="text-white small fw-bold">Audio <%= aIdx + 1 %></div>
-                                                                <audio controls class="mt-1" style="height: 30px; max-width: 260px;">
+                                                    <%
+                                                        const aCycle = audio.cycle_name || parasha.cycle_name || currCycleNameEdit;
+                                                        const aReader = audio.reader || 'Menajem Ben Leví';
+                                                    %>
+                                                    <div class="p-3 rounded-3 bg-black bg-opacity-60 border border-secondary border-opacity-75">
+                                                        <input type="hidden" name="existing_audio_urls[]" value="<%= audio.url %>">
+                                                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pb-2 mb-2 border-bottom border-secondary border-opacity-50">
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <span class="badge" style="background: var(--primary-color, #d4b895); color: #000; font-weight: 700;">#<%= aIdx + 1 %></span>
+                                                                <audio controls style="height: 30px; max-width: 260px;">
                                                                     <source src="<%= audio.url %>" type="audio/mpeg">
                                                                 </audio>
                                                             </div>
+                                                            <div class="d-flex gap-2">
+                                                                <a href="<%= audio.url %>" target="_blank" download class="btn btn-sm btn-outline-light" title="Descargar">
+                                                                    <i class="bi bi-download"></i>
+                                                                </a>
+                                                                <a href="/admin/aliyot/delete-audio/<%= aliyah.id %>/<%= parasha.id %>/<%= i %>" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar este audio?')" title="Eliminar">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </a>
+                                                            </div>
                                                         </div>
-                                                        <div class="d-flex gap-2">
-                                                            <a href="<%= audio.url %>" target="_blank" download class="btn btn-sm btn-outline-light">
-                                                                <i class="bi bi-download"></i>
-                                                            </a>
+
+                                                        <div class="row g-2 align-items-center">
+                                                            <div class="col-md-4">
+                                                                <label class="form-label small text-white-50 mb-1 fw-bold">Título / Nombre</label>
+                                                                <input type="text" name="existing_audio_titles[]" class="form-control form-control-sm bg-dark text-white border-secondary" value="<%= audio.title || ('Audio ' + (aIdx + 1)) %>">
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label class="form-label small text-warning mb-1 fw-bold d-flex align-items-center gap-1">
+                                                                    <i class="bi bi-clock-history"></i> Ciclo de la Torá
+                                                                </label>
+                                                                <select name="existing_audio_cycles[]" class="form-select form-select-sm bg-dark text-white border-secondary">
+                                                                    <% if (currCycleNameEdit) { %>
+                                                                        <option value="<%= currCycleNameEdit %>" <%= (aCycle === currCycleNameEdit) ? 'selected' : '' %>>⭐ <%= currCycleNameEdit %> (Activo)</option>
+                                                                    <% } %>
+                                                                    <% cycleListEdit.filter(c => c.name !== currCycleNameEdit).forEach(c => { %>
+                                                                        <option value="<%= c.name %>" <%= (aCycle === c.name) ? 'selected' : '' %>>📁 <%= c.name %></option>
+                                                                    <% }) %>
+                                                                    <% if (aCycle && aCycle !== currCycleNameEdit && !cycleListEdit.some(c => c.name === aCycle)) { %>
+                                                                        <option value="<%= aCycle %>" selected><%= aCycle %></option>
+                                                                    <% } %>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label class="form-label small text-info mb-1 fw-bold d-flex align-items-center gap-1">
+                                                                    <i class="bi bi-mic-fill"></i> ¿Quién lo hizo? (Lector)
+                                                                </label>
+                                                                <select name="existing_audio_readers[]" class="form-select form-select-sm bg-dark text-white border-secondary">
+                                                                    <option value="Menajem Ben Leví" <%= (aReader === 'Menajem Ben Leví') ? 'selected' : '' %>>🎙️ Menajem Ben Leví</option>
+                                                                    <% teamMembersEdit.filter(m => !m.name.toLowerCase().includes('menajem')).forEach(m => { %>
+                                                                        <option value="<%= m.name %>" <%= (aReader === m.name) ? 'selected' : '' %>>👤 <%= m.name %> <%= m.role ? `(${m.role})` : '' %></option>
+                                                                    <% }) %>
+                                                                    <% if (aReader && aReader !== 'Menajem Ben Leví' && !teamMembersEdit.some(m => m.name === aReader)) { %>
+                                                                        <option value="<%= aReader %>" selected>👤 <%= aReader %></option>
+                                                                    <% } %>
+                                                                </select>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 <% }) %>
@@ -136,17 +185,67 @@
 
                                         <input type="hidden" name="existing_audios_json" value='<%- JSON.stringify(dayAudios) %>'>
 
-                                        <div class="row g-3 pt-2 border-top border-secondary">
-                                            <div class="col-md-6">
-                                                <label class="form-label small text-white-50">Subir archivos de audio (.mp3, .m4a, .wav) - Múltiple</label>
-                                                <input type="file" name="audio_files" class="form-control bg-black bg-opacity-50 text-white border-secondary" accept="audio/*" multiple>
+                                        <!-- Subir Nuevos Audios -->
+                                        <div class="row g-2 pt-3 border-top border-secondary align-items-end">
+                                            <div class="col-md-4">
+                                                <label class="form-label small text-white-50 mb-1 fw-bold">Subir archivo de audio</label>
+                                                <input type="file" name="audio_files" class="form-control form-control-sm bg-black bg-opacity-50 text-white border-secondary" accept="audio/*,.mp3,.ogg,.oga,.opus,.m4a,.wav,.aac" multiple>
                                             </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label small text-white-50">O enlace directo de audio</label>
-                                                <div class="input-group">
-                                                    <input type="text" name="custom_audio_title" class="form-control bg-black bg-opacity-50 text-white border-secondary" placeholder="Título" style="max-width: 120px;">
-                                                    <input type="text" name="custom_audio_url" class="form-control bg-black bg-opacity-50 text-white border-secondary" placeholder="https://.../audio.mp3">
-                                                </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label small text-white-50 mb-1 fw-bold">Título / Nombre</label>
+                                                <input type="text" name="audio_titles[]" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Ej: Audio <%= (dayAudios.length || 0) + 1 %>">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label small text-warning mb-1 fw-bold"><i class="bi bi-clock-history"></i> Ciclo de la Torá</label>
+                                                <select name="audio_cycles[]" class="form-select form-select-sm bg-dark text-white border-secondary">
+                                                    <% if (currCycleNameEdit) { %>
+                                                        <option value="<%= currCycleNameEdit %>" selected>⭐ <%= currCycleNameEdit %> (Activo)</option>
+                                                    <% } %>
+                                                    <% cycleListEdit.filter(c => c.name !== currCycleNameEdit).forEach(c => { %>
+                                                        <option value="<%= c.name %>">📁 <%= c.name %></option>
+                                                    <% }) %>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label small text-info mb-1 fw-bold"><i class="bi bi-mic-fill"></i> ¿Quién lo hizo?</label>
+                                                <select name="audio_readers[]" class="form-select form-select-sm bg-dark text-white border-secondary">
+                                                    <option value="Menajem Ben Leví">🎙️ Menajem Ben Leví</option>
+                                                    <% teamMembersEdit.filter(m => !m.name.toLowerCase().includes('menajem')).forEach(m => { %>
+                                                        <option value="<%= m.name %>">👤 <%= m.name %></option>
+                                                    <% }) %>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- Audio externo opcional -->
+                                        <div class="row g-2 mt-2 pt-2 border-top border-secondary align-items-end">
+                                            <div class="col-md-2">
+                                                <label class="form-label small text-white-50 mb-1">Título enlace</label>
+                                                <input type="text" name="custom_audio_title" class="form-control form-control-sm bg-black bg-opacity-50 text-white border-secondary" placeholder="Ej: Reflexión">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label small text-white-50 mb-1">Enlace directo URL</label>
+                                                <input type="text" name="custom_audio_url" class="form-control form-control-sm bg-black bg-opacity-50 text-white border-secondary" placeholder="https://.../audio.mp3">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label small text-warning mb-1"><i class="bi bi-clock-history"></i> Ciclo</label>
+                                                <select name="custom_audio_cycle" class="form-select form-select-sm bg-dark text-white border-secondary">
+                                                    <% if (currCycleNameEdit) { %>
+                                                        <option value="<%= currCycleNameEdit %>" selected>⭐ <%= currCycleNameEdit %></option>
+                                                    <% } %>
+                                                    <% cycleListEdit.filter(c => c.name !== currCycleNameEdit).forEach(c => { %>
+                                                        <option value="<%= c.name %>">📁 <%= c.name %></option>
+                                                    <% }) %>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label small text-info mb-1"><i class="bi bi-mic-fill"></i> Lector</label>
+                                                <select name="custom_audio_reader" class="form-select form-select-sm bg-dark text-white border-secondary">
+                                                    <option value="Menajem Ben Leví">🎙️ Menajem Ben Leví</option>
+                                                    <% teamMembersEdit.filter(m => !m.name.toLowerCase().includes('menajem')).forEach(m => { %>
+                                                        <option value="<%= m.name %>">👤 <%= m.name %></option>
+                                                    <% }) %>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>

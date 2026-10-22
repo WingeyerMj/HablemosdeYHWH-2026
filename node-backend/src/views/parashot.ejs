@@ -109,6 +109,23 @@
                                                     <span class="badge rounded-pill shadow-sm d-inline-flex align-items-center" style="background: #fdf6e7; color: #8c6a2d; font-size: 0.7rem; font-weight: 600; border: 1px solid #ebdccb; padding: 4px 7px;">
                                                         <i class="bi bi-eye-fill me-1 text-info"></i><%= service.views || 0 %>
                                                     </span>
+                                                    <% 
+                                                        const pNum = Number(service.parasha_number);
+                                                        const pairMap = {
+                                                            22: 'Pekudei (#23)', 23: 'Vayakhel (#22)',
+                                                            27: 'Metzorá (#28)', 28: 'Tazria (#27)',
+                                                            29: 'Kedoshim (#30)', 30: 'Ajarei Mot (#29)',
+                                                            32: 'Bejukotai (#33)', 33: 'Behar (#32)',
+                                                            42: 'Masei (#43)', 43: 'Matot (#42)',
+                                                            51: 'Vayélej (#52)', 52: 'Nitzavim (#51)'
+                                                        };
+                                                        const companionName = pairMap[pNum];
+                                                        if (companionName) {
+                                                    %>
+                                                        <span class="badge rounded-pill shadow-sm d-inline-flex align-items-center" style="background: rgba(111, 66, 193, 0.12); color: #6f42c1; border: 1px solid rgba(111, 66, 193, 0.3); font-size: 0.7rem; font-weight: 600; padding: 4px 7px;" title="En años regulares de 12 meses se lee junto con <%= companionName %>; en años de 13 meses se lee individual">
+                                                            <i class="bi bi-link-45deg me-1"></i>Lectura Conjunta
+                                                        </span>
+                                                    <% } %>
                                                     <%- include('partials/_share_buttons', {
                                                         shareUrl: '/parashot/' + service.id,
                                                         shareTitle: (service.parasha_number ? service.parasha_number + '. ' : '') + service.title,

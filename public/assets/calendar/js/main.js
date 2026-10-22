@@ -2,6 +2,7 @@
 
 import { generateLunisolarYear, getLunisolarMonthView } from "./calendarEngine.js";
 import { getMoonPhaseInfo } from "./moonPhase.js";
+import { getParashaForDate } from "./parashotEngine.js";
 import { lunisolar2025 } from "./data/year2025.js";
 import { lunisolar2026 } from "./data/year2026.js";
 import { lunisolar2027 } from "./data/year2027.js";
@@ -262,10 +263,14 @@ function renderCalendar() {
   const firstDay = month.days[0];
   const lastDay = month.days[month.days.length - 1];
 
-  // Subtítulo
-  subtitleEl.textContent =
-    `Rosh Hashaná: ${formatLatam(yearData.roshHashana)} | ` +
-    `Mes: ${formatLatam(firstDay)} a ${formatLatam(lastDay)}`;
+  // Subtítulo con indicador de tipo de año (13 meses vs 12 meses)
+  const leapBadgeHtml = yearData.hasLeapMonth
+    ? `<span class="year-cycle-pill leap" title="Año con mes 13 (Adar II): las 54 Parashot se leen de forma individual cada Shabat"><i class="bi bi-stars"></i> Año de 13 Meses (Embolismal) • 54 Parashot Individuales</span>`
+    : `<span class="year-cycle-pill regular" title="Año regular de 12 meses: se unen las 6 porciones dobles tradicionales en Shabat"><i class="bi bi-book"></i> Año Regular (12 Meses) • Incluye Parashot Dobles</span>`;
+
+  subtitleEl.innerHTML =
+    `<div class="subtitle-dates">Rosh Hashaná: ${formatLatam(yearData.roshHashana)} | Mes: ${formatLatam(firstDay)} a ${formatLatam(lastDay)}</div>` +
+    `<div class="subtitle-cycle-info">${leapBadgeHtml}</div>`;
 
   // Limpiar grilla
   gridEl.innerHTML = "";
@@ -474,6 +479,51 @@ function renderCalendar() {
         } else {
           cell.appendChild(omerTag);
         }
+      }
+    }
+
+    // --- Inyección de Parashá en Shabat (Sábado) ---
+    const isShabat = (gregDate.getUTCDay() === 6);
+    if (isShabat) {
+      cell.classList.add("shabat-cell");
+      const parashaInfo = getParashaForDate(gregDate);
+      if (parashaInfo) {
+        const pBadge = document.createElement("a");
+        pBadge.className = "shabat-parasha-badge";
+        if (parashaInfo.isDouble) pBadge.classList.add("double");
+        if (parashaInfo.isFestival) pBadge.classList.add("festival");
+
+        const targetPNum = (parashaInfo.numbers && parashaInfo.numbers.length > 0) ? parashaInfo.numbers[0] : null;
+        pBadge.href = targetPNum ? `/parashot/${targetPNum}` : `/parashot`;
+        pBadge.title = `${parashaInfo.title}${parashaInfo.ref ? ' (' + parashaInfo.ref + ')' : ''}${parashaInfo.note ? ' • ' + parashaInfo.note : ''} — Clic para estudiar`;
+
+        const pTop = document.createElement("div");
+        pTop.className = "parasha-badge-top";
+        const pIco = document.createElement("span");
+        pIco.className = "parasha-badge-ico";
+        pIco.textContent = parashaInfo.isFestival ? "✡️" : "📖";
+        const pTitle = document.createElement("span");
+        pTitle.className = "parasha-badge-title";
+        pTitle.textContent = parashaInfo.title;
+        pTop.appendChild(pIco);
+        pTop.appendChild(pTitle);
+        pBadge.appendChild(pTop);
+
+        if (parashaInfo.ref) {
+          const pRef = document.createElement("div");
+          pRef.className = "parasha-badge-ref";
+          pRef.textContent = (parashaInfo.numberDisplay && parashaInfo.numbers && parashaInfo.numbers.length > 0 ? `#${parashaInfo.numberDisplay} • ` : "") + parashaInfo.ref;
+          pBadge.appendChild(pRef);
+        }
+
+        if (parashaInfo.isDouble) {
+          const pDoublePill = document.createElement("span");
+          pDoublePill.className = "parasha-double-pill";
+          pDoublePill.textContent = "Lectura Doble";
+          pBadge.appendChild(pDoublePill);
+        }
+
+        cell.appendChild(pBadge);
       }
     }
 

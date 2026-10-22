@@ -82,6 +82,41 @@
                                         </div>
                                     <% } %>
 
+                                    <% 
+                                        const pNum = Number(parasha.parasha_number);
+                                        const pairMap = {
+                                            22: { name: 'Pekudei', num: 23, ref: 'Éxodo 38:21 al 40:38' },
+                                            23: { name: 'Vayakhel', num: 22, ref: 'Éxodo 35:1 al 38:20' },
+                                            27: { name: 'Metzorá', num: 28, ref: 'Levítico 14:1 al 15:33' },
+                                            28: { name: 'Tazria', num: 27, ref: 'Levítico 12:1 al 13:59' },
+                                            29: { name: 'Kedoshim', num: 30, ref: 'Levítico 19:1 al 20:27' },
+                                            30: { name: 'Ajarei Mot', num: 29, ref: 'Levítico 16:1 al 18:30' },
+                                            32: { name: 'Bejukotai', num: 33, ref: 'Levítico 26:3 al 27:34' },
+                                            33: { name: 'Behar', num: 32, ref: 'Levítico 25:1 al 26:2' },
+                                            42: { name: 'Masei', num: 43, ref: 'Números 33:1 al 36:13' },
+                                            43: { name: 'Matot', num: 42, ref: 'Números 30:2 al 32:42' },
+                                            51: { name: 'Vayélej', num: 52, ref: 'Deuteronomio 31:1 al 31:30' },
+                                            52: { name: 'Nitzavim', num: 51, ref: 'Deuteronomio 29:9 al 30:20' }
+                                        };
+                                        const companion = pairMap[pNum];
+                                        if (companion) {
+                                    %>
+                                        <div class="alert p-3 rounded-4 mb-4 border-0 shadow-sm d-flex align-items-center justify-content-between flex-wrap gap-2" style="background: linear-gradient(135deg, rgba(147, 51, 234, 0.08), rgba(79, 70, 229, 0.04)); border-left: 4px solid #9333ea !important;">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <i class="bi bi-link-45deg fs-3 text-purple" style="color: #9333ea;"></i>
+                                                <div>
+                                                    <strong class="text-dark" style="font-size: 0.95rem;">Lectura Conjunta en Años Regulares (12 Meses):</strong>
+                                                    <div class="small text-muted">
+                                                        Esta porción se une tradicionalmente con la <strong>Parashá <%= companion.name %> (#<%= companion.num %>)</strong> en años regulares. En años embolismales de 13 meses, ambas se estudian por separado.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="/parashot/<%= companion.num %>" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
+                                                Ver Parashá <%= companion.name %> &rarr;
+                                            </a>
+                                        </div>
+                                    <% } %>
+
                                     <div class="content mt-4" style="font-size: 1.1rem; line-height: 1.8; color: #444;">
                                         <% if (parasha.youtube_link) { %>
                                             <div class="youtube-section mb-5 p-4 no-print" style="background: #f8f9fa; border-radius: 15px; border: 1px dashed #ddd; text-align: center;">
@@ -134,14 +169,45 @@
                                             const aliyotList = (typeof aliyot !== 'undefined' && aliyot) ? aliyot : [];
                                         %>
 
+                                        <%
+                                            // Determinar la última Aliyá cargada
+                                            let activeAliyahNum = null;
+                                            if (typeof requestedAliyah !== 'undefined' && requestedAliyah) {
+                                                activeAliyahNum = Number(requestedAliyah);
+                                            }
+                                            if (!activeAliyahNum) {
+                                                for (let n = 7; n >= 1; n--) {
+                                                    const a = aliyotList.find(x => Number(x.aliyah_number) === n);
+                                                    if (a) {
+                                                        const hasAudio = (a.audios && a.audios.length > 0) || (a.audio_url && a.audio_url.trim() !== '' && a.audio_url.trim() !== '[]');
+                                                        if (hasAudio) {
+                                                            activeAliyahNum = n;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            if (!activeAliyahNum) {
+                                                for (let n = 7; n >= 1; n--) {
+                                                    const a = aliyotList.find(x => Number(x.aliyah_number) === n);
+                                                    if (a && ((a.content && a.content.trim() !== '') || (a.verses_reference && a.verses_reference.trim() !== ''))) {
+                                                        activeAliyahNum = n;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            if (!activeAliyahNum) activeAliyahNum = 1;
+                                        %>
+
                                         <div class="aliyot-tabs-nav mb-4">
                                             <ul class="nav nav-pills gap-2 flex-wrap" id="aliyotPills" role="tablist">
-                                                <% daysNames.forEach((d, idx) => { 
+                                                <% daysNames.forEach((d) => { 
                                                     const aliyahData = aliyotList.find(a => Number(a.aliyah_number) === d.num);
-                                                    const hasAudio = aliyahData && aliyahData.audio_url && aliyahData.audio_url.trim() !== '';
+                                                    const hasAudio = aliyahData && ((aliyahData.audios && aliyahData.audios.length > 0) || (aliyahData.audio_url && aliyahData.audio_url.trim() !== '' && aliyahData.audio_url.trim() !== '[]'));
+                                                    const isActive = (d.num === activeAliyahNum);
                                                 %>
                                                     <li class="nav-item flex-grow-1 text-center" role="presentation">
-                                                        <button class="nav-link w-100 <%= idx === 0 ? 'active' : '' %> py-2 px-3 position-relative" 
+                                                        <button class="nav-link w-100 <%= isActive ? 'active' : '' %> py-2 px-3 position-relative" 
                                                                 id="pills-aliyah-<%= d.num %>-tab" 
                                                                 data-bs-toggle="pill" 
                                                                 data-bs-target="#pills-aliyah-<%= d.num %>" 
@@ -161,12 +227,13 @@
 
                                         <!-- Contenido de las 7 Aliyot -->
                                         <div class="tab-content" id="aliyotPillsContent">
-                                            <% daysNames.forEach((d, idx) => { 
+                                            <% daysNames.forEach((d) => { 
                                                 const aliyah = aliyotList.find(a => Number(a.aliyah_number) === d.num) || {};
-                                                const hasAudio = aliyah.audio_url && aliyah.audio_url.trim() !== '';
+                                                const hasAudio = (aliyah.audios && aliyah.audios.length > 0) || (aliyah.audio_url && aliyah.audio_url.trim() !== '' && aliyah.audio_url.trim() !== '[]');
                                                 const hasContent = aliyah.content && aliyah.content.trim() !== '';
+                                                const isActive = (d.num === activeAliyahNum);
                                             %>
-                                                <div class="tab-pane fade <%= idx === 0 ? 'show active' : '' %>" id="pills-aliyah-<%= d.num %>" role="tabpanel">
+                                                <div class="tab-pane fade <%= isActive ? 'show active' : '' %>" id="pills-aliyah-<%= d.num %>" role="tabpanel">
                                                     <div class="aliyah-card p-4 rounded-4 shadow-sm" style="background: #ffffff; border: 1px solid #e8e1d5;">
                                                         <!-- Cabecera de la Aliyá -->
                                                         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 pb-3 mb-3 border-bottom">
@@ -189,7 +256,7 @@
                                                                 <% 
                                                                     const shareTitle = `Lectura de Toráh: ${parasha.title} - ${d.name} (${d.day})`;
                                                                     const shareRef = aliyah.verses_reference ? `\n📖 Versículos: ${aliyah.verses_reference}` : '';
-                                                                    const shareUrl = `https://www.hablemosdeyhwh.com/parashot/${parasha.id}#seccion-aliyot`;
+                                                                    const shareUrl = `https://www.hablemosdeyhwh.com/parashot/${parasha.id}?aliyah=${d.num}#seccion-aliyot`;
                                                                     const waText = encodeURIComponent(`*${shareTitle}*${shareRef}\n\nEscucha y lee la porción completa aquí:\n${shareUrl}`);
                                                                 %>
                                                                 <button type="button" class="btn btn-sm btn-outline-danger rounded-pill d-inline-flex align-items-center gap-1 px-3 py-1 fw-bold btn-print-single-aliyah"
@@ -228,11 +295,19 @@
                                                             <div class="audio-players-wrapper mb-4 d-flex flex-column gap-2">
                                                                 <% audiosList.forEach((aud, audIdx) => { %>
                                                                     <div class="audio-player-box p-3 rounded-3 d-flex flex-column gap-2" 
-                                                                         style="background: linear-gradient(135deg, #1c1c1c 0%, #2a251f 100%); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
-                                                                        <div class="d-flex align-items-center justify-content-between">
-                                                                            <div class="d-flex align-items-center gap-2">
+                                                                         style="background: linear-gradient(135deg, #1c1c1c 0%, #2a251f 100%); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 1px solid rgba(212,175,55,0.2);">
+                                                                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                                                            <div class="d-flex align-items-center gap-2 flex-wrap">
                                                                                 <span class="pulse-icon text-warning"><i class="bi bi-soundwave fs-4"></i></span>
-                                                                                <span class="small text-white fw-bold">Audio <%= audIdx + 1 %></span>
+                                                                                <span class="small text-white fw-bold"><%= aud.title || ('Audio ' + (audIdx + 1)) %></span>
+                                                                                <span class="badge bg-black bg-opacity-75 text-warning border border-warning border-opacity-50 small" style="font-size: 0.75rem;">
+                                                                                    <i class="bi bi-mic me-1"></i><%= aud.reader || 'Menajem Ben Leví' %>
+                                                                                </span>
+                                                                                <% if (aud.cycle_name) { %>
+                                                                                    <span class="badge bg-secondary bg-opacity-50 text-white-50 border border-secondary small" style="font-size: 0.75rem;">
+                                                                                        <i class="bi bi-arrow-repeat me-1"></i><%= aud.cycle_name %>
+                                                                                    </span>
+                                                                                <% } %>
                                                                             </div>
                                                                             <a href="<%= aud.url %>" download target="_blank" class="text-white-50 text-decoration-none small hover-white" title="Descargar Audio">
                                                                                 <i class="bi bi-download me-1"></i> Descargar
