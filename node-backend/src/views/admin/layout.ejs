@@ -200,6 +200,57 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
+        /* Mantener todos los modales del backend dentro del viewport. Cuando
+           un formulario envuelve el body (como en Semillas de Torah), también
+           debe participar del layout flex para que Bootstrap pueda desplazarlo. */
+        .modal-dialog {
+            max-height: calc(100dvh - 2rem);
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-dialog > .modal-content {
+            max-height: calc(100dvh - 2rem);
+            overflow: hidden;
+        }
+
+        .modal-content > form {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            max-height: calc(100dvh - 2rem);
+            overflow: hidden;
+        }
+
+        .modal-content > .modal-body,
+        .modal-content > form > .modal-body {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: scroll !important;
+            overflow-x: hidden;
+            overscroll-behavior: contain;
+            scrollbar-gutter: stable;
+        }
+
+        .modal-content > .modal-header,
+        .modal-content > .modal-footer,
+        .modal-content > form > .modal-header,
+        .modal-content > form > .modal-footer {
+            flex: 0 0 auto;
+        }
+
+        @media (max-width: 576px), (max-height: 640px) {
+            .modal-dialog {
+                max-height: calc(100dvh - 1rem);
+                margin: 0.5rem;
+            }
+
+            .modal-dialog > .modal-content,
+            .modal-content > form {
+                max-height: calc(100dvh - 1rem);
+            }
+        }
+
         .card-stat {
             background: linear-gradient(135deg, rgba(212, 184, 149, 0.08), rgba(212, 184, 149, 0.02));
             border: 1px solid rgba(212, 184, 149, 0.1);
