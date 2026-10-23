@@ -179,17 +179,22 @@ export function buildCompleteParashotSchedule() {
       }
       // Shabat durante Sucot (Mes 7, días 14 a 21)
       else if (sh.monthIndex === 6 && sh.dayIndex >= 14 && sh.dayIndex <= 21) {
-        schedule.set(sh.dateKey, {
-          title: "Shabat Sucot",
-          subtitle: "Lectura Especial de Sucot",
-          numbers: [],
-          numberDisplay: "Festividad",
-          ref: "Éxodo 33:12 - 34:26",
-          isDouble: false,
-          isSpecial: true,
-          isFestival: true,
-          note: "Shabat Jol Hamoed Sucot"
-        });
+        // Se muestra la Parashá que toca esta semana: Vezot Haberajáh (#54).
+        // Shemini Atzeret suele caer entre semana (y el calendario solo muestra
+        // Parashá en Shabat), por eso se indica en este Shabat.
+        // Si Shemini Atzeret cae en Shabat, Vezot Haberajáh ya se muestra allí.
+        if (!sEnd.isSaturday) {
+          schedule.set(sh.dateKey, {
+            title: "Vezot Haberajáh",
+            numbers: [54],
+            numberDisplay: "54",
+            ref: "Deuteronomio 33:1 - 34:12",
+            isDouble: false,
+            isSpecial: true,
+            isFestival: false,
+            note: "Parashá de la semana de Sucot • Conclusión de la Torá"
+          });
+        }
       }
       // Si coincide exactamente con el día de Shemini Atzeret
       else if (sh.dateKey === sEnd.dateKey) {

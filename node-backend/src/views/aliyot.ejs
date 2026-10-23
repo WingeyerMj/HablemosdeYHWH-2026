@@ -316,8 +316,8 @@
                                                     <% audiosList.forEach((aud, audIdx) => { %>
                                                         <div class="audio-player-box p-3 rounded-3 d-flex flex-column gap-2" 
                                                              style="background: linear-gradient(135deg, #1c1c1c 0%, #2a251f 100%); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
-                                                            <div class="d-flex align-items-center justify-content-between">
-                                                                <div class="d-flex align-items-center gap-2">
+                                                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                                                <div class="d-flex align-items-center gap-2" style="min-width: 0;">
                                                                     <span class="pulse-icon text-warning"><i class="bi bi-soundwave fs-4"></i></span>
                                                                     <div>
                                                                         <div class="d-flex flex-wrap align-items-center gap-2 mt-1">
@@ -330,12 +330,13 @@
                                                                                 </span>
                                                                             <% } %>
                                                                         </div>
+                                                                    </div>
                                                                 </div>
-                                                                <a href="<%= aud.url %>" download target="_blank" class="text-white-50 text-decoration-none small hover-white" title="Descargar Audio">
+                                                                <a href="<%= aud.url %>" download target="_blank" class="text-white-50 text-decoration-none small hover-white text-nowrap" title="Descargar Audio">
                                                                     <i class="bi bi-download me-1"></i> Descargar
                                                                 </a>
                                                             </div>
-                                                            <audio controls class="w-100 mt-1" style="height: 38px; border-radius: 8px;">
+                                                            <audio controls preload="metadata" class="aliyah-audio d-block w-100 mt-1" style="min-width: 100%; height: 44px; border-radius: 8px;">
                                                                 <source src="<%= aud.url %>" type="audio/mpeg">
                                                                 Tu navegador no soporta el reproductor de audio HTML5.
                                                             </audio>

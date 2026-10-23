@@ -661,20 +661,40 @@ async function captureCalendar() {
   body.style.backgroundImage = 'none';
   if (section) section.style.backgroundImage = 'none';
 
+  // 1. Ocultar explicaciones/leyenda inferior para que la imagen se enfoque en el calendario y sea mucho más grande y legible
+  const legendEl = container.querySelector('.calendar-torah-legend');
+  const savedLegendDisplay = legendEl ? legendEl.style.display : null;
+  if (legendEl) legendEl.style.display = 'none';
+
+  // 2. Ocultar slider de meses interactivo en la imagen para optimizar el espacio vertical
+  const sliderEl = container.querySelector('.month-slider');
+  const savedSliderDisplay = sliderEl ? sliderEl.style.display : null;
+  if (sliderEl) sliderEl.style.display = 'none';
+
+  // 3. Ocultar botones interactivos (flechas, barra de descarga, toggle de tema)
   const hideEls = container.querySelectorAll('.nav-arrow, .download-bar, .theme-toggle');
-  hideEls.forEach(el => el.style.visibility = 'hidden');
+  const savedDisplays = [];
+  hideEls.forEach(el => {
+    savedDisplays.push({ el, display: el.style.display });
+    el.style.display = 'none';
+  });
 
   const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-global').trim() || '#060606';
 
   const canvas = await html2canvas(container, {
     backgroundColor: bgColor,
-    scale: 2,
+    scale: 3, // Alta definición para que todos los textos y números se lean perfectamente
     useCORS: true,
     allowTaint: false,
     logging: false
   });
 
-  hideEls.forEach(el => el.style.visibility = '');
+  // Restaurar visibilidad
+  if (legendEl) legendEl.style.display = savedLegendDisplay || '';
+  if (sliderEl) sliderEl.style.display = savedSliderDisplay || '';
+  savedDisplays.forEach(item => {
+    item.el.style.display = item.display;
+  });
 
   body.style.backgroundImage = savedBodyBg;
   if (section) section.style.backgroundImage = savedSectionBg;
