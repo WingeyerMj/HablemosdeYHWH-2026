@@ -2,6 +2,7 @@
     const currentEntityType = typeof entityType !== 'undefined' ? entityType : 'general';
     const currentEntityId = typeof entityId !== 'undefined' ? entityId : 0;
     const currentShareTitle = typeof shareTitle !== 'undefined' ? shareTitle : '';
+    const currentShareUrl = typeof shareUrl !== 'undefined' ? shareUrl : '';
 %>
 
 <div class="interactions-container mt-5 pt-4 border-top no-print" id="interactions-section-<%= currentEntityType %>-<%= currentEntityId %>">
@@ -36,6 +37,7 @@
         <!-- Botones de Compartir en Redes Sociales (WhatsApp, Facebook, Instagram, TikTok, Telegram, X) -->
         <div class="d-flex align-items-center">
             <%- include('_share_buttons', {
+                shareUrl: currentShareUrl,
                 shareTitle: currentShareTitle,
                 shareType: currentEntityType ? (currentEntityType.charAt(0).toUpperCase() + currentEntityType.slice(1)) : 'Contenido',
                 variant: 'bar',
