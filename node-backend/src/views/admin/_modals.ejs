@@ -1743,6 +1743,8 @@ function previewArticuloImage(input, previewId) {
             </form>
         </div>
     </div>
+</div>
+
 <!-- MODAL: AÑADIR SUSCRIPTOR MANUALMENTE -->
 <div class="modal fade" id="createSubscriberModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -2411,6 +2413,16 @@ const sederTitleEl = document.getElementById('edit_port_seder_title');
 
         if (updateUrl && window.location.hash !== hash) {
             history.replaceState(null, null, hash);
+        }
+
+        // On mobile / tablet, scroll smoothly to the main content area
+        if (window.innerWidth < 992) {
+            const mainContent = document.querySelector('.main-content');
+            if (mainContent) {
+                setTimeout(() => {
+                    mainContent.scrollIntoView({ behavior: 'smooth' });
+                }, 50);
+            }
         }
     }
 

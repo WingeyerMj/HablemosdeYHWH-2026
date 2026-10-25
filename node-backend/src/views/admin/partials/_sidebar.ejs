@@ -1,14 +1,15 @@
 <!-- Sidebar -->
-<nav class="col-md-2 d-md-block sidebar">
-    <div class="brand text-center mb-3">
-        <a href="/admin/dashboard" class="text-decoration-none text-white d-flex align-items-center justify-content-center gap-2">
+<nav class="col-lg-2 col-md-3 d-block sidebar" id="adminSidebar">
+    <div class="brand d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-white border-opacity-10">
+        <a href="/admin/dashboard" class="text-decoration-none text-white d-flex align-items-center gap-2">
             <img src="/assets/img/pagina/logo.svg" alt="Logo" class="img-fluid" style="max-height: 42px; border-radius: 50%;">
             <h5 class="mb-0 fw-bold" style="color: var(--primary-color);">Admin Panel</h5>
         </a>
+        <button type="button" class="btn-close btn-close-white d-lg-none" id="sidebarCloseBtn" aria-label="Cerrar Menú"></button>
     </div>
     
     <a href="/" target="_blank" class="mb-2"><i class="bi bi-globe"></i> Ver mi Web</a>
-    <a href="/admin/dashboard" class="<%= (typeof activePage !== 'undefined' && activePage === 'dashboard') ? 'active' : '' %>"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a href="/admin/dashboard#<%= (typeof role !== 'undefined' && role === 'admin') ? 'pills-services' : 'pills-noticias' %>" data-tab-target="#<%= (typeof role !== 'undefined' && role === 'admin') ? 'pills-services' : 'pills-noticias' %>" class="<%= (typeof activePage !== 'undefined' && activePage === 'dashboard') ? 'active' : '' %>"><i class="bi bi-speedometer2"></i> Dashboard</a>
     
     <div class="nav-label mt-3">Gestión de Contenido</div>
     <% if (role === 'admin') { %>

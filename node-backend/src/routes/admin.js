@@ -71,6 +71,7 @@ router.get('/login', adminController.loginPage);
 router.post('/login', adminController.login);
 router.get('/logout', adminController.logout);
 
+router.get('/', isAuthenticated, (req, res) => res.redirect('/admin/dashboard'));
 router.get('/dashboard', isAuthenticated, adminController.dashboard);
 
 // Moderación y Gestión de Comentarios
