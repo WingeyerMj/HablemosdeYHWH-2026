@@ -2411,6 +2411,18 @@ const sederTitleEl = document.getElementById('edit_port_seder_title');
             }
         });
 
+        // Ensure parent accordion group is expanded for the active link
+        document.querySelectorAll('.sidebar-accordion-group').forEach(group => {
+            if (group.querySelector('a.active')) {
+                const collapseEl = group.querySelector('.collapse');
+                if (collapseEl && !collapseEl.classList.contains('show')) {
+                    const btn = group.querySelector('.sidebar-accordion-btn');
+                    if (btn) btn.classList.remove('collapsed');
+                    collapseEl.classList.add('show');
+                }
+            }
+        });
+
         if (updateUrl && window.location.hash !== hash) {
             history.replaceState(null, null, hash);
         }

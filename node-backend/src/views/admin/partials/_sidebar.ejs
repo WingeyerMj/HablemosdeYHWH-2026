@@ -1,57 +1,105 @@
 <!-- Sidebar -->
-<nav class="col-lg-2 col-md-3 d-block sidebar" id="adminSidebar">
+<nav class="sidebar" id="adminSidebar">
+    <% 
+        const isEstructura = (typeof activePage !== 'undefined' && ['dynamic-sections', 'sections'].includes(activePage));
+        const isAdmin = (typeof activePage !== 'undefined' && ['ciclos-tora', 'footer', 'settings', 'users'].includes(activePage));
+        const isContenido = !isEstructura && !isAdmin;
+    %>
+
     <div class="brand d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-white border-opacity-10">
         <a href="/admin/dashboard" class="text-decoration-none text-white d-flex align-items-center gap-2">
-            <img src="/assets/img/pagina/logo.svg" alt="Logo" class="img-fluid" style="max-height: 42px; border-radius: 50%;">
-            <h5 class="mb-0 fw-bold" style="color: var(--primary-color);">Admin Panel</h5>
+            <img src="/assets/img/pagina/logo.svg" alt="Logo" class="img-fluid" style="max-height: 38px; border-radius: 50%;">
+            <h5 class="mb-0 fw-bold" style="color: var(--primary-color); font-size: 0.85rem; letter-spacing: 1px;">Admin Panel</h5>
         </a>
         <button type="button" class="btn-close btn-close-white d-lg-none" id="sidebarCloseBtn" aria-label="Cerrar Menú"></button>
     </div>
     
-    <a href="/" target="_blank" class="mb-2"><i class="bi bi-globe"></i> Ver mi Web</a>
-    <a href="/admin/dashboard#<%= (typeof role !== 'undefined' && role === 'admin') ? 'pills-services' : 'pills-noticias' %>" data-tab-target="#<%= (typeof role !== 'undefined' && role === 'admin') ? 'pills-services' : 'pills-noticias' %>" class="<%= (typeof activePage !== 'undefined' && activePage === 'dashboard') ? 'active' : '' %>"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <!-- Enlaces Principales Directos -->
+    <a href="/" target="_blank" class="mb-1"><i class="bi bi-globe"></i> Ver mi Web</a>
+    <a href="/admin/dashboard#<%= (typeof role !== 'undefined' && role === 'admin') ? 'pills-services' : 'pills-noticias' %>" data-tab-target="#<%= (typeof role !== 'undefined' && role === 'admin') ? 'pills-services' : 'pills-noticias' %>" class="<%= (typeof activePage !== 'undefined' && activePage === 'dashboard') ? 'active' : '' %> mb-3"><i class="bi bi-speedometer2"></i> Dashboard</a>
     
-    <div class="nav-label mt-3">Gestión de Contenido</div>
-    <% if (role === 'admin') { %>
-        <a href="/admin/dashboard#pills-services" data-tab-target="#pills-services"><i class="bi bi-journal-text"></i> Parashot</a>
-        <a href="/admin/aliyot" class="<%= (typeof activePage !== 'undefined' && activePage === 'aliyot') ? 'active' : '' %>"><i class="bi bi-mic"></i> Aliyot (Lecturas)</a>
-        <a href="/admin/dashboard#pills-ensenanzas" data-tab-target="#pills-ensenanzas"><i class="bi bi-book"></i> Enseñanzas</a>
-        <a href="/admin/dashboard#pills-haftara" data-tab-target="#pills-haftara"><i class="bi bi-scroll"></i> Haftará</a>
-    <% } %>
-    <a href="/admin/dashboard#pills-noticias" data-tab-target="#pills-noticias"><i class="bi bi-globe-americas text-warning"></i> Noticias Mundiales</a>
-    <a href="/admin/dashboard#pills-noticias-shorts" data-tab-target="#pills-noticias-shorts"><i class="bi bi-camera-reels text-info"></i> Shorts Noticias</a>
-    <a href="/admin/dashboard#pills-blog" data-tab-target="#pills-blog"><i class="bi bi-newspaper"></i> Blog</a>
-    <a href="/admin/dashboard#pills-semillas" data-tab-target="#pills-semillas"><i class="bi bi-balloon-heart text-purple"></i> Semillas de Torah</a>
-    <a href="/admin/semillas-articulos" class="<%= (typeof activePage !== 'undefined' && activePage === 'semillas-articulos') ? 'active' : '' %>"><i class="bi bi-journal-richtext text-success"></i> Artículos Semillas</a>
-    <a href="/admin/dashboard#pills-portfolio" data-tab-target="#pills-portfolio"><i class="bi bi-calendar-event"></i> Eventos</a>
-    <a href="/admin/comentarios" class="<%= (typeof activePage !== 'undefined' && activePage === 'comentarios') ? 'active' : '' %> d-flex align-items-center justify-content-between">
-        <span><i class="bi bi-chat-heart text-danger me-2"></i>Comentarios</span>
-        <% if (typeof pendingCommentsCount !== 'undefined' && pendingCommentsCount > 0) { %>
-            <span class="badge bg-danger rounded-pill px-2 py-1 shadow-sm" style="font-size: 0.72rem;"><%= pendingCommentsCount %></span>
-        <% } %>
-    </a>
-    <% if (role === 'admin') { %>
-        <a href="/admin/dashboard#pills-team" data-tab-target="#pills-team"><i class="bi bi-person-badge"></i> Equipo</a>
-        <a href="/admin/dashboard#pills-testimonials" data-tab-target="#pills-testimonials"><i class="bi bi-star"></i> Testimonios</a>
-        <a href="/admin/dashboard#pills-subscribers" data-tab-target="#pills-subscribers"><i class="bi bi-envelope-check"></i> Suscriptores Boletín</a>
-        
-        <div class="nav-label mt-3">Estructura & Home</div>
-        <a href="/admin/dynamic-sections" class="<%= (typeof activePage !== 'undefined' && activePage === 'dynamic-sections') ? 'active' : '' %>"><i class="bi bi-puzzle"></i> Mis Secciones</a>
-        <a href="/admin/sections" class="<%= (typeof activePage !== 'undefined' && activePage === 'sections') ? 'active' : '' %>"><i class="bi bi-layout-text-window-reverse"></i> Secciones Home</a>
-        
-        <div class="nav-label mt-3">Administración</div>
-        <a href="/admin/ciclos-tora" class="<%= (typeof activePage !== 'undefined' && activePage === 'ciclos-tora') ? 'active' : '' %>"><i class="bi bi-clock-history text-warning"></i> Ciclos & Histórico</a>
-        <a href="/admin/entity/footer_links" class="<%= (typeof activePage !== 'undefined' && activePage === 'footer') ? 'active' : '' %>"><i class="bi bi-link-45deg"></i> Enlaces Footer</a>
-        <a href="/admin/settings" class="<%= (typeof activePage !== 'undefined' && activePage === 'settings') ? 'active' : '' %>"><i class="bi bi-gear"></i> Configuración</a>
-        <a href="/admin/users" class="<%= (typeof activePage !== 'undefined' && activePage === 'users') ? 'active' : '' %>"><i class="bi bi-people"></i> Usuarios</a>
+    <!-- ACORDEÓN 1: GESTIÓN DE CONTENIDO -->
+    <div class="sidebar-accordion-group">
+        <button type="button" class="sidebar-accordion-btn <%= isContenido ? '' : 'collapsed' %>" data-bs-toggle="collapse" data-bs-target="#acc-contenido" aria-expanded="<%= isContenido ? 'true' : 'false' %>">
+            <span class="d-flex align-items-center gap-2">
+                <i class="bi bi-collection-play-fill text-warning"></i>
+                <span>Gestión de Contenido</span>
+            </span>
+            <i class="bi bi-chevron-down acc-arrow"></i>
+        </button>
+        <div class="collapse <%= isContenido ? 'show' : '' %>" id="acc-contenido">
+            <div class="sidebar-accordion-content">
+                <% if (typeof role !== 'undefined' && role === 'admin') { %>
+                    <a href="/admin/dashboard#pills-services" data-tab-target="#pills-services"><i class="bi bi-journal-text"></i> Parashot</a>
+                    <a href="/admin/aliyot" class="<%= (typeof activePage !== 'undefined' && activePage === 'aliyot') ? 'active' : '' %>"><i class="bi bi-mic"></i> Aliyot (Lecturas)</a>
+                    <a href="/admin/dashboard#pills-ensenanzas" data-tab-target="#pills-ensenanzas"><i class="bi bi-book"></i> Enseñanzas</a>
+                    <a href="/admin/dashboard#pills-haftara" data-tab-target="#pills-haftara"><i class="bi bi-scroll"></i> Haftará</a>
+                <% } %>
+                <a href="/admin/dashboard#pills-noticias" data-tab-target="#pills-noticias"><i class="bi bi-globe-americas text-warning"></i> Noticias Mundiales</a>
+                <a href="/admin/dashboard#pills-noticias-shorts" data-tab-target="#pills-noticias-shorts"><i class="bi bi-camera-reels text-info"></i> Shorts Noticias</a>
+                <a href="/admin/dashboard#pills-blog" data-tab-target="#pills-blog"><i class="bi bi-newspaper"></i> Blog</a>
+                <a href="/admin/dashboard#pills-semillas" data-tab-target="#pills-semillas"><i class="bi bi-balloon-heart text-purple"></i> Semillas de Torah</a>
+                <a href="/admin/semillas-articulos" class="<%= (typeof activePage !== 'undefined' && activePage === 'semillas-articulos') ? 'active' : '' %>"><i class="bi bi-journal-richtext text-success"></i> Artículos Semillas</a>
+                <a href="/admin/dashboard#pills-portfolio" data-tab-target="#pills-portfolio"><i class="bi bi-calendar-event"></i> Eventos</a>
+                <a href="/admin/comentarios" class="<%= (typeof activePage !== 'undefined' && activePage === 'comentarios') ? 'active' : '' %> d-flex align-items-center justify-content-between">
+                    <span><i class="bi bi-chat-heart text-danger me-2"></i>Comentarios</span>
+                    <% if (typeof pendingCommentsCount !== 'undefined' && pendingCommentsCount > 0) { %>
+                        <span class="badge bg-danger rounded-pill px-2 py-1 shadow-sm" style="font-size: 0.72rem;"><%= pendingCommentsCount %></span>
+                    <% } %>
+                </a>
+                <% if (typeof role !== 'undefined' && role === 'admin') { %>
+                    <a href="/admin/dashboard#pills-team" data-tab-target="#pills-team"><i class="bi bi-person-badge"></i> Equipo</a>
+                    <a href="/admin/dashboard#pills-testimonials" data-tab-target="#pills-testimonials"><i class="bi bi-star"></i> Testimonios</a>
+                    <a href="/admin/dashboard#pills-subscribers" data-tab-target="#pills-subscribers"><i class="bi bi-envelope-check"></i> Suscriptores Boletín</a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <% if (typeof role !== 'undefined' && role === 'admin') { %>
+        <!-- ACORDEÓN 2: ESTRUCTURA & HOME -->
+        <div class="sidebar-accordion-group">
+            <button type="button" class="sidebar-accordion-btn <%= isEstructura ? '' : 'collapsed' %>" data-bs-toggle="collapse" data-bs-target="#acc-estructura" aria-expanded="<%= isEstructura ? 'true' : 'false' %>">
+                <span class="d-flex align-items-center gap-2">
+                    <i class="bi bi-layout-wtf text-info"></i>
+                    <span>Estructura & Home</span>
+                </span>
+                <i class="bi bi-chevron-down acc-arrow"></i>
+            </button>
+            <div class="collapse <%= isEstructura ? 'show' : '' %>" id="acc-estructura">
+                <div class="sidebar-accordion-content">
+                    <a href="/admin/dynamic-sections" class="<%= (typeof activePage !== 'undefined' && activePage === 'dynamic-sections') ? 'active' : '' %>"><i class="bi bi-puzzle"></i> Mis Secciones</a>
+                    <a href="/admin/sections" class="<%= (typeof activePage !== 'undefined' && activePage === 'sections') ? 'active' : '' %>"><i class="bi bi-layout-text-window-reverse"></i> Secciones Home</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACORDEÓN 3: ADMINISTRACIÓN -->
+        <div class="sidebar-accordion-group">
+            <button type="button" class="sidebar-accordion-btn <%= isAdmin ? '' : 'collapsed' %>" data-bs-toggle="collapse" data-bs-target="#acc-admin" aria-expanded="<%= isAdmin ? 'true' : 'false' %>">
+                <span class="d-flex align-items-center gap-2">
+                    <i class="bi bi-shield-lock text-success"></i>
+                    <span>Administración</span>
+                </span>
+                <i class="bi bi-chevron-down acc-arrow"></i>
+            </button>
+            <div class="collapse <%= isAdmin ? 'show' : '' %>" id="acc-admin">
+                <div class="sidebar-accordion-content">
+                    <a href="/admin/ciclos-tora" class="<%= (typeof activePage !== 'undefined' && activePage === 'ciclos-tora') ? 'active' : '' %>"><i class="bi bi-clock-history text-warning"></i> Ciclos & Histórico</a>
+                    <a href="/admin/entity/footer_links" class="<%= (typeof activePage !== 'undefined' && activePage === 'footer') ? 'active' : '' %>"><i class="bi bi-link-45deg"></i> Enlaces Footer</a>
+                    <a href="/admin/settings" class="<%= (typeof activePage !== 'undefined' && activePage === 'settings') ? 'active' : '' %>"><i class="bi bi-gear"></i> Configuración</a>
+                    <a href="/admin/users" class="<%= (typeof activePage !== 'undefined' && activePage === 'users') ? 'active' : '' %>"><i class="bi bi-people"></i> Usuarios</a>
+                </div>
+            </div>
+        </div>
     <% } %>
     
     <div class="mt-auto pt-3">
         <hr style="border-color: rgba(255,255,255,0.1);">
         <a href="/admin/logout" class="text-danger"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a>
         <div class="mt-2 small text-white-50 p-2">
-            <i class="bi bi-person-circle"></i> <%= username %><br>
-            <span class="badge bg-secondary mt-1"><%= role %></span>
+            <i class="bi bi-person-circle"></i> <%= typeof username !== 'undefined' ? username : '' %><br>
+            <span class="badge bg-secondary mt-1"><%= typeof role !== 'undefined' ? role : '' %></span>
         </div>
     </div>
 </nav>
