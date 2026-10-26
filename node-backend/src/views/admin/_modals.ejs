@@ -2427,8 +2427,11 @@ const sederTitleEl = document.getElementById('edit_port_seder_title');
             history.replaceState(null, null, hash);
         }
 
-        // On mobile / tablet, scroll smoothly to the main content area
+        // On mobile / tablet, close sidebar drawer and scroll smoothly to the main content area
         if (window.innerWidth < 992) {
+            if (typeof window.closeAdminSidebar === 'function') {
+                window.closeAdminSidebar();
+            }
             const mainContent = document.querySelector('.main-content');
             if (mainContent) {
                 setTimeout(() => {

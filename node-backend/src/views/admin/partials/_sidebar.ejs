@@ -11,7 +11,16 @@
             <img src="/assets/img/pagina/logo.svg" alt="Logo" class="img-fluid" style="max-height: 38px; border-radius: 50%;">
             <h5 class="mb-0 fw-bold" style="color: var(--primary-color); font-size: 0.85rem; letter-spacing: 1px;">Admin Panel</h5>
         </a>
-        <button type="button" class="btn-close btn-close-white d-lg-none" id="sidebarCloseBtn" aria-label="Cerrar Menú"></button>
+        <button type="button" class="btn btn-outline-warning btn-sm d-lg-none d-flex align-items-center gap-1 py-1 px-2" id="sidebarCloseBtn" aria-label="Cerrar Menú">
+            <i class="bi bi-x-lg"></i> <span style="font-size: 0.75rem;">Cerrar</span>
+        </button>
+    </div>
+    
+    <!-- Botón volver al Dashboard para móviles -->
+    <div class="d-lg-none mb-2">
+        <button type="button" class="btn btn-sm btn-outline-light w-100 d-flex align-items-center justify-content-center gap-2 py-1 text-white-50" onclick="window.closeAdminSidebar && window.closeAdminSidebar()">
+            <i class="bi bi-arrow-left"></i> <span>Volver al Dashboard</span>
+        </button>
     </div>
     
     <!-- Enlaces Principales Directos -->

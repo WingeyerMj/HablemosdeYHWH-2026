@@ -402,22 +402,30 @@
         @media (max-width: 991.98px) {
             .admin-layout-wrapper {
                 flex-direction: column !important;
+                width: 100% !important;
+                overflow-x: hidden !important;
             }
             .sidebar {
                 position: fixed !important;
                 top: 0 !important;
                 left: 0 !important;
-                width: 285px !important;
-                min-width: 285px !important;
+                width: 290px !important;
+                min-width: 290px !important;
                 max-width: 85vw !important;
                 height: 100vh !important;
+                height: 100dvh !important;
                 z-index: 1050 !important;
-                transform: translateX(-100%) !important;
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                box-shadow: 6px 0 24px rgba(0, 0, 0, 0.85) !important;
+                transform: translateX(-105%) !important;
+                visibility: hidden !important;
+                pointer-events: none !important;
+                transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.28s ease !important;
+                box-shadow: none !important;
             }
             .sidebar.show {
                 transform: translateX(0) !important;
+                visibility: visible !important;
+                pointer-events: auto !important;
+                box-shadow: 6px 0 24px rgba(0, 0, 0, 0.85) !important;
             }
             .main-content {
                 width: 100% !important;
@@ -425,6 +433,7 @@
                 flex: 1 1 auto !important;
                 padding: 16px 12px !important;
                 min-height: calc(100vh - 56px) !important;
+                min-height: calc(100dvh - 56px) !important;
             }
         }
     </style>
@@ -437,7 +446,7 @@
             <img src="/assets/img/pagina/logo.svg" alt="Logo" class="img-fluid" style="max-height: 36px; border-radius: 50%;">
             <span class="fw-bold fs-6" style="color: var(--primary-color); letter-spacing: 0.5px;">ADMIN PANEL</span>
         </a>
-        <button type="button" class="btn btn-outline-warning btn-sm d-flex align-items-center gap-2 px-3 py-1 fw-bold shadow-sm" id="sidebarToggle" aria-label="Abrir Menú">
+        <button type="button" class="btn btn-warning btn-sm d-flex align-items-center gap-2 px-3 py-1 fw-bold text-dark shadow-sm" id="sidebarToggle" aria-label="Abrir Menú">
             <i class="bi bi-list fs-5"></i> <span>Menú</span>
         </button>
     </header>
@@ -470,6 +479,10 @@
             if (backdrop) backdrop.classList.remove('show');
             document.body.style.overflow = '';
         }
+
+        // Expose globally so tabs, modals or links can invoke it
+        window.closeAdminSidebar = closeSidebar;
+        window.openAdminSidebar = openSidebar;
 
         if (toggleBtn) toggleBtn.addEventListener('click', openSidebar);
         if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
