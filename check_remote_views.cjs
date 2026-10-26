@@ -4,7 +4,7 @@ const SSH_CONFIG = {
   host: '179.43.125.96',
   port: 5640,
   username: 'root',
-  password: 'W1ng3y3r&M4rc3l0',
+  password: 'H4bl3m0sd3!yhwh',
   tryKeyboard: true,
   readyTimeout: 30000
 };
@@ -23,6 +23,6 @@ conn.on('ready', () => {
     .on('data', d => process.stdout.write(d.toString()))
     .stderr.on('data', d => process.stderr.write(d.toString()));
   });
-}).on('keyboard-interactive', (n, i, l, p, finish) => finish(['W1ng3y3r&M4rc3l0']))
+}).on('keyboard-interactive', (n, i, l, p, finish) => finish(['H4bl3m0sd3!yhwh']))
 .on('error', err => console.error('SSH Error:', err))
 .connect(SSH_CONFIG);

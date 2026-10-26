@@ -99,7 +99,7 @@
                     <table class="table table-dark table-hover align-middle">
                         <thead>
                             <tr>
-                                <th style="width: 60px;">Nº</th>
+                                <th>Imagen</th><th style="width: 60px;">Nº</th>
                                 <th>Porción de la Torá</th>
                                 <th>Ciclo</th>
                                 <th>Estado en este Ciclo</th>
@@ -111,6 +111,7 @@
                         <tbody>
                             <% parashot.forEach(p => { %>
                             <tr>
+<td><% const cardCover = p.image_url || p.main_image || p.thumbnail_url || ''; %><% if (cardCover) { %><img src="<%= cardCover %>" alt="<%= p.title || '' %>" style="width:55px;height:40px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'; this.closest('td').classList.remove('mobile-card-cover');"><% } else { %><span class="text-white-50">Sin carátula</span><% } %></td>
                                 <td>
                                     <span class="badge bg-dark border border-secondary text-warning fw-bold fs-6"><%= p.parasha_number || '-' %></span>
                                 </td>
@@ -174,10 +175,11 @@
             </div>
             <div class="table-responsive">
                 <table class="table table-dark table-hover">
-<thead><tr><th>Título</th><th>Categoría</th><th>Fecha</th><th>Séder</th><th>Acciones</th></tr></thead>
+<thead><tr><th>Imagen</th><th>Título</th><th>Categoría</th><th>Fecha</th><th>Séder</th><th>Acciones</th></tr></thead>
                     <tbody>
                         <% portfolio.forEach(item => { %>
                         <tr>
+<td><% const cardCover = item.image_url || item.main_image || item.thumbnail_url || ''; %><% if (cardCover) { %><img src="<%= cardCover %>" alt="<%= item.title || '' %>" style="width:55px;height:40px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'; this.closest('td').classList.remove('mobile-card-cover');"><% } else { %><span class="text-white-50">Sin carátula</span><% } %></td>
                             <td>
                                 <strong><%= item.title %></strong>
                                 <% if (item.subtitle) { %>
@@ -237,7 +239,7 @@
                 </div>
                 <div class="table-responsive">
                     <table class="table table-dark table-hover">
-                        <thead><tr><th>Título</th><th>Fecha</th><th>Expositor</th><th>Subtítulo</th><th>Video</th><th>Acciones</th></tr></thead>
+                        <thead><tr><th>Imagen</th><th>Título</th><th>Fecha</th><th>Expositor</th><th>Subtítulo</th><th>Video</th><th>Acciones</th></tr></thead>
                         <tbody>
                             <% if (typeof ensenanzas !== 'undefined' && ensenanzas && ensenanzas.length > 0) { %>
                                 <% ensenanzas.forEach(item => { %>
@@ -251,6 +253,7 @@
                                     }
                                 %>
                                 <tr>
+<td><% const cardCover = item.image_url || item.main_image || item.thumbnail_url || ''; %><% if (cardCover) { %><img src="<%= cardCover %>" alt="<%= item.title || '' %>" style="width:55px;height:40px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'; this.closest('td').classList.remove('mobile-card-cover');"><% } else { %><span class="text-white-50">Sin carátula</span><% } %></td>
                                     <td><strong><%= item.title %></strong></td>
                                     <td><%= dateStr %></td>
                                     <td>
@@ -308,7 +311,7 @@
                                 </tr>
                                 <% }) %>
                             <% } else { %>
-                                <tr><td colspan="6" class="text-center text-white-50">No hay enseñanzas registradas</td></tr>
+                                <tr><td colspan="7" class="text-center text-white-50">No hay enseñanzas registradas</td></tr>
                             <% } %>
                         </tbody>
                     </table>
@@ -1284,11 +1287,12 @@
                     </div>
                     <div class="table-responsive">
                         <table class="table table-dark table-hover align-middle">
-                            <thead><tr><th>Nº</th><th>Título</th><th>Vistas</th><th>Descripción</th><th>PDF</th><th>Acciones</th></tr></thead>
+                            <thead><tr><th>Imagen</th><th>Nº</th><th>Título</th><th>Vistas</th><th>Descripción</th><th>PDF</th><th>Acciones</th></tr></thead>
                             <tbody>
                                 <% if (ds.records && ds.records.length > 0) { %>
                                     <% ds.records.forEach(r => { %>
                                     <tr>
+<td><% const cardCover = r.image_url || r.main_image || r.thumbnail_url || ''; %><% if (cardCover) { %><img src="<%= cardCover %>" alt="<%= r.title || '' %>" style="width:55px;height:40px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'; this.closest('td').classList.remove('mobile-card-cover');"><% } else { %><span class="text-white-50">Sin carátula</span><% } %></td>
                                         <td><%= r.parasha_number || '-' %></td>
                                         <td><strong><%= r.title || r.titulo || '-' %></strong></td>
                                         <td>
@@ -1317,7 +1321,7 @@
                                     </tr>
                                     <% }) %>
                                 <% } else { %>
-                                    <tr><td colspan="6" class="text-center text-white-50">No hay registros</td></tr>
+                                    <tr><td colspan="7" class="text-center text-white-50">No hay registros</td></tr>
                                 <% } %>
                             </tbody>
                         </table>

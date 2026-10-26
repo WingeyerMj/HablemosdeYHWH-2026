@@ -169,9 +169,12 @@ async function startServer() {
         console.warn('⚠️ El servidor continuará sin base de datos.');
     }
 
+    require('./src/utils/roshJodesPublisher').start(db);
+
     app.listen(app.get('port'), () => {
         console.log(`Server on port ${app.get('port')}`);
     });
 }
 
 startServer();
+
