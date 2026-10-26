@@ -396,6 +396,13 @@ const homeController = {
                 if (selectedParashaId) {
                     selectedParasha = await Parasha.getById(selectedParashaId);
                     aliyot = await Aliyah.getByParashaId(selectedParashaId);
+
+                    if (selectedParasha && aliyot && aliyot.length > 0) {
+                        const hasActiveCycleAudio = aliyot.some(a => a.audios && a.audios.some(aud => aud.cycle_name && (aud.cycle_name.includes('2026 - 2027') || !aud.cycle_name.includes('2025 - 2026'))));
+                        if (hasActiveCycleAudio && (!selectedParasha.cycle_name || selectedParasha.cycle_name.includes('2025 - 2026'))) {
+                            selectedParasha.cycle_name = (currentCycle && currentCycle.name) ? currentCycle.name : 'Ciclo 2026 - 2027';
+                        }
+                    }
                 }
             }
 

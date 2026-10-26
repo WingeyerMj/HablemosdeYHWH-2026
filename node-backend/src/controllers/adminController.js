@@ -5,6 +5,30 @@ const SiteSettings = require('../models/SiteSettings');
 const bcrypt = require('bcryptjs');
 const db = require('../config/db');
 
+async function syncParashaCycleWithAudios(parashaId, audiosList, defaultCycle) {
+    if (!parashaId) return;
+    try {
+        let cycleToSet = null;
+        if (audiosList && audiosList.length > 0) {
+            const foundNew = audiosList.find(aud => aud.cycle_name && (aud.cycle_name.includes('2026 - 2027') || !aud.cycle_name.includes('2025 - 2026')));
+            if (foundNew) {
+                cycleToSet = foundNew.cycle_name;
+            } else if (audiosList[audiosList.length - 1].cycle_name) {
+                cycleToSet = audiosList[audiosList.length - 1].cycle_name;
+            }
+        }
+        if (!cycleToSet) cycleToSet = defaultCycle;
+
+        if (cycleToSet) {
+            const [matchedCycle] = await db.query('SELECT id, name FROM torah_cycles WHERE name = ? LIMIT 1', [cycleToSet]);
+            const cycleId = (matchedCycle && matchedCycle.length > 0) ? matchedCycle[0].id : null;
+            await db.query('UPDATE parashot SET cycle_name = ?, cycle_id = COALESCE(?, cycle_id) WHERE id = ?', [cycleToSet, cycleId, parashaId]);
+        }
+    } catch (e) {
+        console.warn('Aviso sincronizando ciclo de parasha:', e.message);
+    }
+}
+
 const adminController = {
     loginPage: (req, res) => {
         if (req.session.userId) return res.redirect('/admin/dashboard');
@@ -2312,6 +2336,8 @@ const adminController = {
                 is_published: pub
             });
 
+            await syncParashaCycleWithAudios(parasha_id, audiosList, defaultCycle);
+
             res.redirect('/admin/aliyot?created=1');
         } catch (error) {
             console.error('Error createAliyahSingle:', error);
@@ -2468,6 +2494,8 @@ const adminController = {
                 reading_date: reading_date || null,
                 is_published: pub
             });
+
+            await syncParashaCycleWithAudios(parasha_id, audiosList, defaultCycle);
 
             res.redirect('/admin/aliyot?updated=1');
         } catch (error) {
@@ -2681,6 +2709,8 @@ const adminController = {
                 reading_date: reading_date || null,
                 is_published: pub
             });
+
+            await syncParashaCycleWithAudios(parasha_id, audiosList, defaultCycle);
 
             res.redirect(`/admin/aliyot/edit/${parasha_id}?saved=${aliyah_number}`);
         } catch (error) {

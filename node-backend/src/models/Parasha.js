@@ -15,11 +15,13 @@ class Parasha {
     }
 
     static async getAll() {
+        await this.ensureColumns();
         const [rows] = await db.query('SELECT * FROM parashot ORDER BY parasha_number DESC, id DESC');
         return rows;
     }
 
     static async getAllAsc() {
+        await this.ensureColumns();
         const [rows] = await db.query('SELECT * FROM parashot ORDER BY parasha_number ASC, id ASC');
         return rows;
     }
@@ -43,6 +45,24 @@ class Parasha {
             // Solo establecer valor por defecto en parashot que no tengan ciclo asignado (NULL o vacío)
             await db.query("UPDATE parashot SET cycle_name = 'Ciclo 2026 - 2027' WHERE (cycle_name IS NULL OR cycle_name = '') AND parasha_number = 1");
             await db.query("UPDATE parashot SET cycle_name = 'Ciclo 2025 - 2026' WHERE (cycle_name IS NULL OR cycle_name = '') AND (parasha_number IS NULL OR parasha_number != 1)");
+
+            // Sincronizar parashot que tengan audios cargados para un ciclo más reciente (ej: 2026 - 2027)
+            await db.query(`
+                UPDATE parashot p 
+                INNER JOIN aliyot a ON a.parasha_id = p.id 
+                SET p.cycle_name = 'Ciclo 2026 - 2027' 
+                WHERE a.audio_url LIKE '%2026 - 2027%'
+            `);
+
+            // Sincronizar cycle_id con torah_cycles
+            try {
+                await db.query(`
+                    UPDATE parashot p
+                    INNER JOIN torah_cycles c ON c.name = p.cycle_name
+                    SET p.cycle_id = c.id
+                    WHERE p.cycle_id IS NULL OR p.cycle_id = 0
+                `);
+            } catch(e) {}
         } catch(err) {
             console.warn('Aviso en ensureColumns Parasha:', err.message);
         }
