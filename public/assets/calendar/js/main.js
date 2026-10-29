@@ -1,3 +1,4 @@
+import { buildWindowsCalendarPackage } from "./windowsInstaller.js";
 // js/main.js
 
 import { generateLunisolarYear, getLunisolarMonthView } from "./calendarEngine.js";
@@ -1345,12 +1346,12 @@ function openInstallModal() {
       <div class="cal-detail-badge-row">
         <span class="cal-pill gold">🖥️ Acceso Directo para el Escritorio (100% Sin Internet)</span>
       </div>
-      <h4 class="cal-detail-heading">${deferredInstallPrompt ? "Opción 2: Guardar Programa Autónomo en el Escritorio" : "Opción 1: Guardar Acceso Directo en el Escritorio (1 Clic)"}</h4>
+      <h4 class="cal-detail-heading">${deferredInstallPrompt ? "Opción 2: Guardar Programa Autónomo en el Escritorio" : "Opción 1: Descargar Calendario Sin Internet"}</h4>
       <p class="cal-detail-text">
-        Guarda el archivo ejecutable del calendario (<code>Calendario Lunisolar YHWH.html</code>) directamente en tu <strong>Escritorio</strong>. Al hacerle doble clic se abre al instante con todos los años (2025–2040), fases lunares, festividades y Parashot <strong>sin necesidad de tener conexión a internet</strong>:
+        En Windows, descarga el paquete ZIP, extrae todos sus archivos y abre <strong>Instalar Calendario.cmd</strong>. Se crean accesos con el logo en el Escritorio y en el menú Inicio. En otros dispositivos se descarga el HTML autónomo. Ambos incluyen todos los años (2025–2040) y funcionan <strong>sin conexión a internet</strong>:
       </p>
       <button type="button" id="modal-download-portable-btn" class="cal-primary-install-btn">
-        🖥️ Guardar Acceso Directo en el Escritorio (Sin Internet)
+        🖥️ Descargar Calendario para Escritorio
       </button>
     </div>
 
@@ -1956,6 +1957,21 @@ ${cssText}
 </body>
 </html>`;
 
+    // Windows needs an actual shortcut with an ICO; an HTML file always uses its associated browser icon.
+    if (/Windows/i.test(navigator.userAgent)) {
+      const iconResponse = await fetch('/assets/calendar/icons/calendar.ico?v=desktop-logo1');
+      if (!iconResponse.ok) throw new Error('No se pudo descargar el icono del calendario.');
+      const packageBlob = buildWindowsCalendarPackage(standaloneHtml, await iconResponse.arrayBuffer());
+      const packageUrl = URL.createObjectURL(packageBlob);
+      const link = document.createElement('a');
+      link.href = packageUrl;
+      link.download = 'Calendario-YHWH-Windows.zip';
+      document.body.appendChild(link); link.click(); link.remove();
+      setTimeout(() => URL.revokeObjectURL(packageUrl), 30000);
+      const bodyEl = document.getElementById('cal-modal-body');
+      if (bodyEl) bodyEl.innerHTML = '<div class="cal-modal-header"><h3 class="cal-modal-main-title">Paquete de Windows descargado</h3></div><div class="cal-detail-section"><p class="cal-detail-text">Extrae todos los archivos de <strong>Calendario-YHWH-Windows.zip</strong> y abre <strong>Instalar Calendario.cmd</strong>. Se crearán accesos con el logo en el Escritorio y en el menú Inicio. Luego puedes abrir el calendario sin internet.</p></div>';
+      return;
+    }
     const blob = new Blob([standaloneHtml], { type: "text/html;charset=utf-8" });
 
     // Si el navegador en PC soporta showSaveFilePicker, abrir directamente en la carpeta Escritorio (Desktop)

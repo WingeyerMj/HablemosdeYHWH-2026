@@ -1,5 +1,5 @@
 // Service Worker — Carpeta Autónoma Calendar/
-const CACHE_NAME = 'yhwh-calendario-standalone-v7';
+const CACHE_NAME = 'yhwh-calendario-standalone-v8';
 
 const ASSETS = [
   './',
@@ -7,6 +7,8 @@ const ASSETS = [
   './manifest.json',
   './css/style.css',
   './js/main.js',
+  './js/windowsInstaller.js',
+  './icons/calendar.ico',
   './js/calendarEngine.js',
   './js/parashotEngine.js',
   './js/moonPhase.js',
@@ -69,4 +71,5 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
 
