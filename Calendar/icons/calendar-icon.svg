@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d1b2e" />
+      <stop offset="50%" stop-color="#121316" />
+      <stop offset="100%" stop-color="#1f170d" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fffdf2" />
+      <stop offset="35%" stop-color="#f5cf7c" />
+      <stop offset="75%" stop-color="#d4a853" />
+      <stop offset="100%" stop-color="#9e731f" />
+    </linearGradient>
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4fc3ff" />
+      <stop offset="100%" stop-color="#0077b6" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Fondo redondeado de la App -->
+  <rect x="0" y="0" width="512" height="512" rx="112" ry="112" fill="url(#bgGrad)" />
+  <rect x="14" y="14" width="484" height="484" rx="98" ry="98" fill="none" stroke="url(#goldGrad)" stroke-width="5" opacity="0.65" />
+
+  <!-- Marco del Calendario -->
+  <rect x="68" y="106" width="376" height="330" rx="34" ry="34" fill="#181c24" stroke="url(#goldGrad)" stroke-width="6" />
+
+  <!-- Cabecera del Calendario -->
+  <path d="M68 140 C68 121.2 83.2 106 102 106 L410 106 C428.8 106 444 121.2 444 140 L444 188 L68 188 Z" fill="#231c12" />
+  <line x1="68" y1="188" x2="444" y2="188" stroke="url(#goldGrad)" stroke-width="4" />
+
+  <!-- Anillos superiores del calendario -->
+  <rect x="142" y="76" width="22" height="54" rx="11" fill="url(#goldGrad)" />
+  <rect x="348" y="76" width="22" height="54" rx="11" fill="url(#goldGrad)" />
+
+  <!-- Sol y Luna crecientes en el centro del calendario -->
+  <g filter="url(#glow)" transform="translate(256, 305)">
+    <!-- Resplandor sutil -->
+    <circle cx="0" cy="0" r="88" fill="#d4a853" opacity="0.08" />
+
+    <!-- Cuadrícula estilizada de fondo -->
+    <g stroke="#2c3342" stroke-width="2.5" opacity="0.85">
+      <line x1="-145" y1="-65" x2="145" y2="-65" />
+      <line x1="-145" y1="-15" x2="145" y2="-15" />
+      <line x1="-145" y1="35" x2="145" y2="35" />
+      <line x1="-145" y1="85" x2="145" y2="85" />
+      <line x1="-85" y1="-95" x2="-85" y2="105" />
+      <line x1="-28" y1="-95" x2="-28" y2="105" />
+      <line x1="28" y1="-95" x2="28" y2="105" />
+      <line x1="85" y1="-95" x2="85" y2="105" />
+    </g>
+
+    <!-- Luna Creciente Dorada (Rosh Jódesh) -->
+    <path d="M 18 -68 A 74 74 0 1 0 78 32 A 58 58 0 1 1 18 -68 Z" fill="url(#goldGrad)" />
+
+    <!-- Estrella / Luz de Shabat Cian -->
+    <polygon points="36,-42 44,-22 65,-22 48,-9 54,11 36,-1 18,11 24,-9 7,-22 28,-22" fill="url(#cyanGrad)" />
+  </g>
+
+  <!-- Texto YHWH / Lunisolar en cabecera -->
+  <text x="256" y="159" text-anchor="middle" fill="url(#goldGrad)" font-family="Montserrat, Arial, sans-serif" font-weight="800" font-size="31" letter-spacing="4">LUNISOLAR</text>
+</svg>
+

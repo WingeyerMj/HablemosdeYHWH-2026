@@ -8,6 +8,10 @@ const initDB = require('./src/config/init-db');
 const DynamicSection = require('./src/models/DynamicSection');
 const FooterModel = require('./src/models/FooterModel');
 const SiteSettings = require('./src/models/SiteSettings');
+const { getIconBuffer, ensureCalendarPwaIconsOnDisk } = require('./src/utils/calendarPwaAssets');
+
+// Asegurar que los iconos PNG para la PWA del calendario existan en disco
+ensureCalendarPwaIconsOnDisk();
 
 // Prevenir que el proceso muera por errores no manejados (ej: MySQL no disponible)
 process.on('unhandledRejection', (reason, promise) => {
@@ -72,7 +76,33 @@ app.use('/uploads', (req, res, next) => {
 });
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/calendar', express.static(path.join(__dirname, '../Calendar')));
+app.use('/calendar', express.static(path.join(__dirname, '../Calendar'), { redirect: false }));
+
+// Rutas explícitas para PWA / Modo Offline del Calendario Lunisolar
+app.get('/sw-calendar.js', (req, res) => {
+    res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+    res.setHeader('Service-Worker-Allowed', '/');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.sendFile(path.join(__dirname, '../public/sw-calendar.js'));
+});
+
+app.get('/manifest-calendar.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/manifest+json; charset=utf-8');
+    res.sendFile(path.join(__dirname, '../public/manifest-calendar.json'));
+});
+
+app.get(['/assets/calendar/icons/:iconFile', '/calendar/icons/:iconFile'], (req, res, next) => {
+    const map = {
+        'icon-192.png': 192,
+        'icon-512.png': 512,
+        'apple-touch-icon.png': 180
+    };
+    const size = map[req.params.iconFile];
+    if (!size) return next();
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Cache-Control', 'public, max-age=604800');
+    return res.send(getIconBuffer(size));
+});
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.json({ limit: '50mb' }));
 

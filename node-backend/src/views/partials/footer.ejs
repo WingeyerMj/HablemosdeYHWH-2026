@@ -9,50 +9,55 @@
                     <form id="newsletterForm">
                         <!-- Honeypot invisible para atrapar bots de spam automáticos -->
                         <input type="text" name="b_company_url" style="position: absolute; left: -9999px; opacity: 0; height: 0; width: 0; pointer-events: none;" tabindex="-1" autocomplete="off">
-                        <div class="newsletter-form"><input type="email" name="email" placeholder="Ingresa tu email" required><input type="submit"
+                        <div class="newsletter-form"><input type="email" name="email" style="min-width: 0; min-height: 32px;" placeholder="Ingresa tu email" aria-label="Correo electrónico para gestionar tu suscripción" aria-describedby="newsletterHelp" autocomplete="email" required><input type="submit"
                                 value="Suscribirse"></div>
-                        <div id="newsletterMsg" style="display:none; margin-top: 10px; padding: 8px; border-radius: 8px; font-size: 0.9rem;"></div>
+                        <p id="newsletterHelp" style="font-size: 0.85rem; margin: 12px 0 8px;">¿Ya no quieres recibir novedades? Ingresa tu correo y suspende la suscripción.</p>
+                        <button type="submit" name="newsletterAction" value="unsubscribe" style="min-height: 44px; max-width: 100%; padding: 10px 22px; border: 1px solid #d4b895; border-radius: 24px; background: transparent; color: #d4b895; cursor: pointer;">Dejar de recibir el boletín</button>
+                        <div id="newsletterMsg" role="status" aria-live="polite" aria-atomic="true" style="display:none; margin-top: 10px; padding: 8px; border-radius: 8px; font-size: 0.9rem;"></div>
                     </form>
                     <script>
                     document.getElementById('newsletterForm').addEventListener('submit', async function(e) {
                         e.preventDefault();
+                        const form = this;
+                        if (form.dataset.busy === 'true') return;
+                        const unsubscribe = e.submitter?.value === 'unsubscribe';
                         const msg = document.getElementById('newsletterMsg');
-                        const btn = this.querySelector('input[type="submit"]');
-                        const input = this.querySelector('input[type="email"]');
-                        const hp = this.querySelector('input[name="b_company_url"]')?.value || '';
-                        btn.disabled = true;
-                        btn.value = 'Enviando...';
-                        msg.style.display = 'none';
+                        const input = form.querySelector('input[type="email"]');
+                        const controls = Array.from(form.querySelectorAll('input[type="submit"], button[type="submit"]'));
+                        const hp = form.querySelector('input[name="b_company_url"]')?.value || '';
+                        form.dataset.busy = 'true';
+                        controls.forEach(control => control.disabled = true);
+                        form.setAttribute('aria-busy', 'true');
+                        msg.style.display = 'block';
+                        msg.style.background = 'transparent';
+                        msg.style.color = 'inherit';
+                        msg.style.border = 'none';
+                        msg.textContent = unsubscribe ? 'Suspendiendo la suscripción...' : 'Enviando...';
                         try {
-                            const email = input.value.trim();
-                            const res = await fetch('/api/newsletter', {
+                            const res = await fetch(unsubscribe ? '/api/newsletter/unsubscribe' : '/api/newsletter', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ email, b_company_url: hp })
+                                body: JSON.stringify({ email: input.value.trim(), b_company_url: hp })
                             });
                             const result = await res.json();
-                            msg.style.display = 'block';
-                            if (result.ok) {
-                                msg.style.background = '#d4edda';
-                                msg.style.color = '#155724';
-                                msg.style.border = '1px solid #c3e6cb';
-                                msg.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> ' + (result.message || '¡Te has suscrito correctamente al boletín!');
-                                input.value = '';
-                            } else {
-                                msg.style.background = '#f8d7da';
-                                msg.style.color = '#721c24';
-                                msg.style.border = '1px solid #f5c6cb';
-                                msg.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-1"></i> ' + (result.error || 'Error al suscribirse.');
-                            }
+                            const success = res.ok && result.ok;
+                            msg.style.background = success ? '#d4edda' : '#f8d7da';
+                            msg.style.color = success ? '#155724' : '#721c24';
+                            msg.style.border = success ? '1px solid #c3e6cb' : '1px solid #f5c6cb';
+                            msg.textContent = success
+                                ? (result.message || (unsubscribe ? 'La suscripción quedó suspendida.' : '¡Te has suscrito correctamente al boletín!'))
+                                : (result.error || 'No se pudo completar la solicitud. Intenta nuevamente.');
+                            if (success) input.value = '';
                         } catch (err) {
-                            msg.style.display = 'block';
                             msg.style.background = '#f8d7da';
                             msg.style.color = '#721c24';
                             msg.style.border = '1px solid #f5c6cb';
-                            msg.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-1"></i> Error de conexión. Intenta nuevamente.';
+                            msg.textContent = 'Error de conexión. Intenta nuevamente.';
+                        } finally {
+                            controls.forEach(control => control.disabled = false);
+                            form.dataset.busy = 'false';
+                            form.removeAttribute('aria-busy');
                         }
-                        btn.disabled = false;
-                        btn.value = 'Suscribirse';
                     });
                     </script>
                 </div>

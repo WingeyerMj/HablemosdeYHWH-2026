@@ -90,6 +90,16 @@ class Subscriber {
         }
     }
 
+    static async unsubscribe(email) {
+        const cleanEmail = (email || '').trim().toLowerCase();
+        if (!cleanEmail) throw new Error('El correo electrónico es requerido.');
+        await Subscriber.ensureTable();
+        return await db.query(
+            'UPDATE newsletter_subscribers SET is_active = FALSE WHERE LOWER(email) = ?',
+            [cleanEmail]
+        );
+    }
+
     static async delete(id) {
         await Subscriber.ensureTable();
         return await db.query('DELETE FROM newsletter_subscribers WHERE id = ?', [id]);

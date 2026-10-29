@@ -1,16 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const nodemailer = require('nodemailer');
+let nodemailer = null;
+try {
+    nodemailer = require('nodemailer');
+} catch (err) {
+    console.warn('⚠️ nodemailer no está instalado; envío de correos deshabilitado en modo local.');
+}
 const db = require('../config/db');
+const Subscriber = require('../models/Subscriber');
 
 // Configurar transporte de Gmail
-const transporter = nodemailer.createTransport({
+const transporter = nodemailer ? nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: process.env.GMAIL_USER || 'hablemosdeyhwh2024@gmail.com',
         pass: process.env.GMAIL_APP_PASSWORD || ''
     }
-});
+}) : {
+    sendMail: async () => {
+        console.warn('⚠️ Envío de correo omitido (nodemailer no disponible).');
+        return { messageId: 'local-mock' };
+    }
+};
 
 // Rate limiting robusto en memoria con limpieza automática
 const rateLimitMap = new Map();
@@ -117,6 +128,29 @@ router.post('/contact', async (req, res) => {
     } catch (error) {
         console.error('Error enviando email de contacto:', error.message);
         res.status(500).json({ ok: false, error: 'Error al enviar el mensaje. Intenta más tarde.' });
+    }
+});
+
+// Deactivate rather than delete: repeated requests must never reactivate a subscription.
+router.post('/newsletter/unsubscribe', async (req, res) => {
+    const message = 'La suscripción de este correo quedó suspendida. Ya no recibirás el boletín ni los avisos de nuevas publicaciones. Puedes volver a suscribirte cuando quieras.';
+    try {
+        const { email, hp, hp_field, b_company_url } = req.body || {};
+        if (hp || hp_field || b_company_url) return res.json({ ok: true, message });
+        const ip = req.ip || req.connection?.remoteAddress || 'unknown';
+        if (rateLimit(`newsletter-unsubscribe:${ip}`, 60000, 10)) {
+            return res.status(429).json({ ok: false, error: 'Demasiados intentos. Espera un minuto y vuelve a intentar.' });
+        }
+        const cleanEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+        if (cleanEmail.length > 100 || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(cleanEmail)) {
+            return res.status(400).json({ ok: false, error: 'Ingresa el correo electrónico con el que te suscribiste.' });
+        }
+        await Subscriber.unsubscribe(cleanEmail);
+        // Same response for unknown addresses and already suspended subscriptions.
+        return res.json({ ok: true, message });
+    } catch (error) {
+        console.error('Error al suspender la suscripción:', error.message);
+        return res.status(500).json({ ok: false, error: 'No se pudo suspender la suscripción. Intenta nuevamente.' });
     }
 });
 
