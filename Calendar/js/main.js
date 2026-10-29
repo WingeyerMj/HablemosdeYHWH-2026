@@ -38,6 +38,12 @@ if (isStandalonePWA) {
   document.body.classList.add("pwa-standalone");
 }
 
+// El calendario ya cargó: quitar la pantalla de carga del sitio (clave sin internet)
+(() => {
+  const preloader = document.getElementById("preloader");
+  if (preloader) preloader.remove();
+})();
+
 // ------------------------------------------------------------
 // 1. Fecha actual local convertida a fecha pura (dinámica por zona horaria)
 // ------------------------------------------------------------
@@ -249,11 +255,12 @@ function getMoonPhaseLabel(illum, dayIndex) {
 
 function getHolidaysForYear(year) {
   const { month: abibMonth } = getLunisolarMonthView(year, 0, 0);
-  const { month: month7 } = getLunisolarMonthView(year, 0, 6);
+  const { month: month7 } = getLunisolarMonthView(year, 0, 6); // Mes 7 (índice 6)
 
   const rjAbibIdx = 0;
   const rj7Idx = 0;
 
+  // Festividades Mes 1 (Abib)
   const pesajDate = new Date(abibMonth.days[rjAbibIdx + 14]);
   const hamatzoDate = new Date(abibMonth.days[rjAbibIdx + 15]);
 
@@ -273,6 +280,7 @@ function getHolidaysForYear(year) {
     bikurimDate.getUTCDate() + 49
   )) : null;
 
+  // Festividades Mes 7
   const yomTeruahDate = new Date(month7.days[rj7Idx]);
   const yomKippurDate = new Date(month7.days[rj7Idx + 10]);
   const sukkotDate = new Date(month7.days[rj7Idx + 15]);
@@ -304,14 +312,17 @@ function renderCalendar() {
     currentMonthOffset
   );
 
+  // Título
   titleEl.textContent = `${month.name}`;
 
+  // Sincronizar selector de año si cambia por navegación de meses
   const yearChanged = yearData.year !== currentYear;
   if (yearSelectEl && parseInt(yearSelectEl.value, 10) !== yearData.year) {
     yearSelectEl.value = yearData.year;
   }
   currentYear = yearData.year;
 
+  // Sincronizar selector de mes
   if (monthSelectEl) {
     if (yearChanged || monthSelectEl.children.length !== yearData.months.length) {
       populateMonthSelect(yearData.year, monthIndex);
@@ -323,6 +334,7 @@ function renderCalendar() {
   const firstDay = month.days[0];
   const lastDay = month.days[month.days.length - 1];
 
+  // Subtítulo con indicador de tipo de año (13 meses vs 12 meses)
   const leapBadgeHtml = yearData.hasLeapMonth
     ? `<span class="year-cycle-pill leap" title="Año con mes 13 (Adar II): las 54 Parashot se leen de forma individual cada Shabat">✨ Año de 13 Meses (Embolismal) • 54 Parashot Individuales</span>`
     : `<span class="year-cycle-pill regular" title="Año regular de 12 meses: se unen las 6 porciones dobles tradicionales en Shabat">📖 Año Regular (12 Meses) • Incluye Parashot Dobles</span>`;
@@ -331,23 +343,35 @@ function renderCalendar() {
     `<div class="subtitle-dates">Rosh Hashaná: ${formatLatam(yearData.roshHashana)} | Mes: ${formatLatam(firstDay)} a ${formatLatam(lastDay)}</div>` +
     `<div class="subtitle-cycle-info">${leapBadgeHtml}</div>`;
 
+  // Limpiar grilla
   gridEl.innerHTML = "";
 
+  // Día de la semana del primer día
   const firstWeekday = firstDay.getUTCDay();
 
+  // Celdas vacías
   for (let i = 0; i < firstWeekday; i++) {
     const cell = document.createElement("div");
     cell.className = "calendar-cell empty";
     gridEl.appendChild(cell);
   }
 
+  // ------------------------------------------------------------
+  // 8. Fase lunar del mes
+  // ------------------------------------------------------------
   const monthMoonData = month.days.map(d => getMoonPhaseInfo(d));
 
+  // ------------------------------------------------------------
+  // 9. Identificar Festividades Globales del Año
+  // ------------------------------------------------------------
   const {
     pesajDate, hamatzoDate, bikurimDate, shavuotDate,
     yomTeruahDate, yomKippurDate, sukkotDate, sheminiAtzeretDate
   } = getHolidaysForYear(yearData.year);
 
+  // ------------------------------------------------------------
+  // 10. Render de días
+  // ------------------------------------------------------------
   month.days.forEach((gregDate, index) => {
     const cell = document.createElement("div");
     cell.className = "calendar-cell";
@@ -358,6 +382,7 @@ function renderCalendar() {
     let omerCountDay = null;
     let parashaInfo = null;
 
+    // Día actual (HOY)
     const isToday = (
       gregDate.getUTCFullYear() === today.getUTCFullYear() &&
       gregDate.getUTCMonth() === today.getUTCMonth() &&
@@ -374,6 +399,9 @@ function renderCalendar() {
 
     const moonInfo = monthMoonData[index];
 
+    // ------------------------------------------------------------
+    // 9.1 Detección de Rosh Hashaná y Rosh Jodesh
+    // ------------------------------------------------------------
     const isRoshJodesh = (index === 0);
     const isRoshHashana = (isRoshJodesh && month.index === 0);
 
@@ -394,14 +422,17 @@ function renderCalendar() {
       lunisolarDay = index;
     }
 
+    // Día lunisolar
     const lunisolarDayEl = document.createElement("div");
     lunisolarDayEl.className = "lunisolar-day";
     lunisolarDayEl.textContent = lunisolarDay;
 
+    // Día gregoriano
     const gregorianDayEl = document.createElement("div");
     gregorianDayEl.className = "gregorian-day";
     gregorianDayEl.textContent = gregDate.getUTCDate();
 
+    // Fase lunar
     const moonContainer = document.createElement("div");
     moonContainer.className = "moon-info";
 
@@ -426,10 +457,12 @@ function renderCalendar() {
       cell.appendChild(moonContainer);
     }
 
+    // 9.3 Inyectar Etiquetas de Festividades
     const msPerDay = 1000 * 60 * 60 * 24;
     const hamatzoDiff = Math.round((gregDate - hamatzoDate) / msPerDay);
     const sukkotDiff = Math.round((gregDate - sukkotDate) / msPerDay);
 
+    // Pesaj (Mes 1 / Abib)
     if (month.index === 0 && isSameDay(gregDate, pesajDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label pesaj-label";
@@ -439,6 +472,7 @@ function renderCalendar() {
       dayHolidays.push(HOLIDAYS_CANONICAL.pesaj);
     }
 
+    // Hamatzo (7 días en Mes 1 / Abib)
     if (month.index === 0 && hamatzoDiff >= 0 && hamatzoDiff < 7) {
       cell.classList.add("hamatzo");
       if (hamatzoDiff === 0) {
@@ -453,6 +487,7 @@ function renderCalendar() {
       });
     }
 
+    // Bikurim (puede coincidir con Hamatzo en Mes 1)
     if (month.index === 0 && isSameDay(gregDate, bikurimDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label bikurim-label";
@@ -462,6 +497,7 @@ function renderCalendar() {
       dayHolidays.push(HOLIDAYS_CANONICAL.bikurim);
     }
 
+    // Yom Teruah (Mes 7, Día 1 / Rosh Jodesh)
     if (month.index === 6 && isSameDay(gregDate, yomTeruahDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label yomteruah-label";
@@ -471,6 +507,7 @@ function renderCalendar() {
       dayHolidays.push(HOLIDAYS_CANONICAL.yomTeruah);
     }
 
+    // Yom Kippur (Mes 7)
     if (month.index === 6 && isSameDay(gregDate, yomKippurDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label yomkippur-label";
@@ -480,6 +517,7 @@ function renderCalendar() {
       dayHolidays.push(HOLIDAYS_CANONICAL.yomKippur);
     }
 
+    // Sukkot (7 días en Mes 7)
     if (month.index === 6 && sukkotDiff >= 0 && sukkotDiff < 7) {
       cell.classList.add("sukkot");
       if (sukkotDiff === 0) {
@@ -494,6 +532,7 @@ function renderCalendar() {
       });
     }
 
+    // Shemini Atzeret (Mes 7)
     if (month.index === 6 && isSameDay(gregDate, sheminiAtzeretDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label shemini-label";
@@ -503,6 +542,7 @@ function renderCalendar() {
       dayHolidays.push(HOLIDAYS_CANONICAL.sheminiAtzeret);
     }
 
+    // Shavuot (Detección por fecha en Mes 3)
     if (month.index === 2 && isSameDay(gregDate, shavuotDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label shavuot-label";
@@ -512,6 +552,7 @@ function renderCalendar() {
       dayHolidays.push(HOLIDAYS_CANONICAL.shavuot);
     }
 
+    // --- Cuenta de los días a Shavuot (Omer) ---
     if (bikurimDate && shavuotDate && !isRoshJodesh && !isRoshHashana) {
       const d1 = Date.UTC(gregDate.getUTCFullYear(), gregDate.getUTCMonth(), gregDate.getUTCDate());
       const dB = Date.UTC(bikurimDate.getUTCFullYear(), bikurimDate.getUTCMonth(), bikurimDate.getUTCDate());
@@ -533,6 +574,7 @@ function renderCalendar() {
       }
     }
 
+    // --- Inyección de Parashá en Shabat (Sábado) o Shemini Atzeret ---
     const isShabat = (gregDate.getUTCDay() === 6);
     parashaInfo = getParashaForDate(gregDate);
 
@@ -574,6 +616,7 @@ function renderCalendar() {
           pBadge.appendChild(pDoublePill);
         }
 
+        // Abrir el modal de lecturas offline al hacer clic en la insignia
         pBadge.addEventListener("click", (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
@@ -599,6 +642,7 @@ function renderCalendar() {
       }
     }
 
+    // Al tocar cualquier celda del calendario, abrir la Ficha Offline del Día
     const openCurrentCellModal = () => {
       openDayDetailModal({
         gregDate,
@@ -629,6 +673,7 @@ function renderCalendar() {
     gridEl.appendChild(cell);
   });
 
+  // 10.1 Scrolear al día actual si existe en este mes
   setTimeout(() => {
     const todayCell = document.querySelector('.calendar-cell.today');
     if (todayCell) {
@@ -831,7 +876,15 @@ function updateSliderLabel() {
   }
 }
 
+// ------------------------------------------------------------
+// 11. Render inicial
+// ------------------------------------------------------------
+
 renderCalendar();
+
+// ------------------------------------------------------------
+// 12. Alternar Tema Claro (Día) / Oscuro (Noche)
+// ------------------------------------------------------------
 
 function applyTheme(theme) {
   const isDark = (theme === "dark");
@@ -861,6 +914,10 @@ if (themeToggle) {
   });
 }
 
+// ------------------------------------------------------------
+// 15. Navegación por meses (flechas laterales)
+// ------------------------------------------------------------
+
 function cambiarMesConTransicion(delta) {
   const grid = document.getElementById('calendar-grid');
   if (!grid) return;
@@ -880,6 +937,10 @@ function cambiarMesConTransicion(delta) {
 
 if (sidePrev) sidePrev.addEventListener('click', () => cambiarMesConTransicion(-1));
 if (sideNext) sideNext.addEventListener('click', () => cambiarMesConTransicion(1));
+
+// ------------------------------------------------------------
+// 16. Descarga como PNG / PDF
+// ------------------------------------------------------------
 
 function loadScript(src) {
   return new Promise((resolve, reject) => {
@@ -1045,13 +1106,72 @@ window.addEventListener("beforeinstallprompt", (e) => {
   if (installBtn) {
     installBtn.classList.add("pwa-ready-pulse");
   }
+  showFloatingInstallButton();
 });
 
 window.addEventListener("appinstalled", () => {
   deferredInstallPrompt = null;
+  try { localStorage.setItem("yhwhCalendarInstalled", "1"); } catch (e) {}
   updateOfflineStatusBadge(true, "App Instalada");
-  closeOfflineModal();
+  hideFloatingInstallButton();
+  showInstallSuccessModal();
 });
+
+// Botón flotante "Instalar en este dispositivo" (siempre visible fuera de la App instalada)
+function showFloatingInstallButton() {
+  if (isStandalonePWA) return;
+  let fab = document.getElementById("pwa-fab-install");
+  if (!fab) {
+    fab = document.createElement("button");
+    fab.id = "pwa-fab-install";
+    fab.type = "button";
+    fab.className = "pwa-fab-install";
+    fab.title = "Instalar el calendario en este dispositivo y crear acceso directo en el escritorio";
+    fab.innerHTML = `
+      <img src="/assets/calendar/icons/icon-192.png?v=calicon1" alt="Calendario YHWH" class="pwa-fab-logo" />
+      <span class="pwa-fab-text">
+        <strong>Instalar en este dispositivo</strong>
+        <small>Acceso directo · Funciona sin internet</small>
+      </span>
+      <span class="pwa-fab-close" role="button" aria-label="Ocultar">×</span>
+    `;
+    fab.addEventListener("click", (ev) => {
+      if (ev.target.closest(".pwa-fab-close")) {
+        ev.stopPropagation();
+        hideFloatingInstallButton();
+        return;
+      }
+      handleInstallButtonClick();
+    });
+    document.body.appendChild(fab);
+  }
+  fab.classList.add("visible");
+}
+
+function hideFloatingInstallButton() {
+  const fab = document.getElementById("pwa-fab-install");
+  if (fab) fab.classList.remove("visible");
+}
+
+function showInstallSuccessModal() {
+  const overlay = ensureModalsContainer();
+  const bodyEl = document.getElementById("cal-modal-body");
+  if (!bodyEl || !overlay) return;
+  bodyEl.innerHTML = `
+    <div class="cal-modal-header">
+      <h3 class="cal-modal-main-title">✅ ¡Calendario instalado!</h3>
+      <p class="cal-modal-gregorian">Se creó el acceso directo <strong>«Calendario YHWH»</strong> en tu dispositivo.</p>
+    </div>
+    <div class="cal-detail-section install-status-box">
+      <p class="cal-detail-text">
+        🖥️ <strong>En la computadora:</strong> busca el icono en el <strong>Escritorio</strong> o en el <strong>Menú Inicio</strong>.<br>
+        📱 <strong>En el celular:</strong> el icono aparece en la pantalla de inicio.<br><br>
+        Ábrelo cuando quieras: <strong>funciona sin conexión a internet</strong>.
+      </p>
+    </div>
+  `;
+  overlay.classList.add("active");
+}
 
 function updateOfflineStatusBadge(isCached = swOfflineReady, customText = null) {
   const pill = document.getElementById("offline-status-pill");
@@ -1090,6 +1210,21 @@ async function registerCalendarServiceWorker() {
       if (navigator.serviceWorker.controller) {
         navigator.serviceWorker.controller.postMessage({ type: "GET_CACHE_STATUS" });
       }
+      // Guardar en memoria offline TODOS los recursos que usó esta página
+      navigator.serviceWorker.ready.then((readyReg) => {
+        const sendUrls = () => {
+          const urls = [window.location.pathname + window.location.search];
+          try {
+            performance.getEntriesByType("resource").forEach((entry) => {
+              if (entry.name && entry.name.startsWith(window.location.origin)) urls.push(entry.name);
+            });
+          } catch (e) {}
+          const target = navigator.serviceWorker.controller || readyReg.active;
+          if (target) target.postMessage({ type: "CACHE_URLS", urls });
+        };
+        if (document.readyState === "complete") setTimeout(sendUrls, 1500);
+        else window.addEventListener("load", () => setTimeout(sendUrls, 1500));
+      }).catch(() => {});
     }
     navigator.serviceWorker.addEventListener("message", (event) => {
       if (event.data && event.data.type === "CACHE_STATUS") {
@@ -1183,14 +1318,47 @@ function openInstallModal() {
   }
 
   bodyEl.innerHTML = `
-    <div class="cal-modal-header">
-      <div class="cal-modal-badges">
-        <span class="cal-pill gold">📲 Software 100% Sin Conexión</span>
-        <span class="cal-pill cyan">Años 2025 – 2040 Incluidos</span>
+    <div class="cal-modal-header cal-install-modal-header">
+      <img src="/assets/calendar/icons/icon-192.png?v=calicon1" alt="Logo Calendario YHWH" class="cal-modal-brand-logo" />
+      <div>
+        <div class="cal-modal-badges">
+          <span class="cal-pill gold">📲 Software 100% Sin Conexión</span>
+          <span class="cal-pill cyan">Años 2025 – 2040 Incluidos</span>
+        </div>
+        <h3 id="cal-modal-title" class="cal-modal-main-title">Instalar Calendario en tu Dispositivo</h3>
+        <p class="cal-modal-gregorian">Crea un acceso directo en tu Escritorio o pantalla de inicio para abrir el calendario sin conexión a internet.</p>
       </div>
-      <h3 id="cal-modal-title" class="cal-modal-main-title">Instalar Calendario Lunisolar en tu Dispositivo</h3>
-      <p class="cal-modal-gregorian">Usa el calendario en tu celular, tablet o computadora sin necesidad de tener internet.</p>
     </div>
+
+    ${deferredInstallPrompt ? `
+      <div class="cal-detail-section" style="text-align:center; border-left: 4px solid #d4a853;">
+        <h4 class="cal-detail-heading">Opción 1: Instalar Aplicación Directa (Recomendado)</h4>
+        <p class="cal-detail-text">Crea automáticamente el acceso directo <strong>Calendario YHWH</strong> en tu Escritorio y Menú Inicio:</p>
+        <button type="button" id="modal-direct-install-btn" class="cal-primary-install-btn">
+          📲 Instalar en el Dispositivo y Crear Acceso Directo (1 Clic)
+        </button>
+      </div>
+    ` : ""}
+
+    <div class="cal-detail-section portable-box">
+      <div class="cal-detail-badge-row">
+        <span class="cal-pill gold">🖥️ Acceso Directo para el Escritorio (100% Sin Internet)</span>
+      </div>
+      <h4 class="cal-detail-heading">${deferredInstallPrompt ? "Opción 2: Guardar Programa Autónomo en el Escritorio" : "Opción 1: Guardar Acceso Directo en el Escritorio (1 Clic)"}</h4>
+      <p class="cal-detail-text">
+        Guarda el archivo ejecutable del calendario (<code>Calendario Lunisolar YHWH.html</code>) directamente en tu <strong>Escritorio</strong>. Al hacerle doble clic se abre al instante con todos los años (2025–2040), fases lunares, festividades y Parashot <strong>sin necesidad de tener conexión a internet</strong>:
+      </p>
+      <button type="button" id="modal-download-portable-btn" class="cal-primary-install-btn">
+        🖥️ Guardar Acceso Directo en el Escritorio (Sin Internet)
+      </button>
+    </div>
+
+    ${!deferredInstallPrompt ? `
+      <div class="cal-detail-section">
+        <h4 class="cal-detail-heading">Opción 2: Instalar como App desde el Navegador</h4>
+        ${platformStepsHtml}
+      </div>
+    ` : ""}
 
     <div class="cal-detail-section install-status-box">
       <div class="cal-install-ready-row">
@@ -1198,36 +1366,10 @@ function openInstallModal() {
         <div>
           <strong>Memoria sin conexión activada en este navegador</strong>
           <p class="cal-detail-text" style="margin-top:4px;">
-            Todos los meses lunisolares (2025–2040), fases de la luna, cuenta del Omer, Moedim (Festividades) y las 54 Parashot con sus lecturas bíblicas ya están guardados en tu dispositivo.
+            Todos los meses lunisolares (2025–2040), fases de la luna, cuenta del Omer, Moedim (Festividades) y las 54 Parashot ya están guardados en tu dispositivo.
           </p>
         </div>
       </div>
-    </div>
-
-    ${deferredInstallPrompt ? `
-      <div class="cal-detail-section" style="text-align:center;">
-        <button type="button" id="modal-direct-install-btn" class="cal-primary-install-btn">
-          📲 Instalar Aplicación Ahora (1 Clic)
-        </button>
-      </div>
-    ` : `
-      <div class="cal-detail-section">
-        <h4 class="cal-detail-heading">Opción 1: Instalar como Aplicación desde el Navegador (PWA)</h4>
-        ${platformStepsHtml}
-      </div>
-    `}
-
-    <div class="cal-detail-section portable-box">
-      <div class="cal-detail-badge-row">
-        <span class="cal-pill amber">💾 Archivo Independiente Portable</span>
-      </div>
-      <h4 class="cal-detail-heading">Opción 2: Descargar Software Portable (Archivo Único)</h4>
-      <p class="cal-detail-text">
-        También puedes descargar el programa completo del calendario en un único archivo autónomo (<code>.html</code>). Puedes guardarlo en tu PC o celular, enviarlo por <strong>WhatsApp, Telegram o USB</strong> y abrirlo en cualquier dispositivo sin internet nunca:
-      </p>
-      <button type="button" id="modal-download-portable-btn" class="cal-portable-download-btn">
-        📥 Descargar Calendario Portable (Funciona 100% Sin Internet)
-      </button>
     </div>
   `;
 
@@ -1257,6 +1399,7 @@ async function downloadStandaloneCalendarApp() {
   }
 
   try {
+    // Recopilar el CSS del calendario desde las hojas de estilo cargadas o desde /assets/calendar/css/style.css
     let cssText = "";
     try {
       const res = await fetch("/assets/calendar/css/style.css");
@@ -1279,12 +1422,28 @@ async function downloadStandaloneCalendarApp() {
     const parashotJson = JSON.stringify(PARASHOT_CANONICAL);
     const pairsJson = JSON.stringify(PAIRS_COMBINABLE);
 
+    // Incrustar el icono/logo del calendario en base64 para que el archivo del Escritorio lo muestre sin internet
+    let iconDataUrl = "";
+    try {
+      const iconRes = await fetch("/assets/calendar/icons/icon-192.png?v=calicon1");
+      if (iconRes.ok) {
+        const iconBlob = await iconRes.blob();
+        iconDataUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result || "");
+          reader.onerror = () => resolve("");
+          reader.readAsDataURL(iconBlob);
+        });
+      }
+    } catch (e) {}
+
     const standaloneHtml = `<!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Calendario Lunisolar — Hablemos de YHWH (Software Offline)</title>
+  ${iconDataUrl ? `<link rel="icon" type="image/png" href="${iconDataUrl}" />` : ""}
   <style>
 ${cssText}
   </style>
@@ -1309,6 +1468,7 @@ ${cssText}
     <header class="calendar-header">
       <div class="calendar-header-content">
         <div class="calendar-title-wrapper">
+          ${iconDataUrl ? `<img src="${iconDataUrl}" alt="Logo Calendario Lunisolar" class="calendar-brand-logo" />` : ""}
           <h1 id="calendar-title"></h1>
           <div class="year-select-container">
             <select id="year-select" class="year-select" aria-label="Seleccionar Año"></select>
@@ -1685,14 +1845,44 @@ ${cssText}
 </html>`;
 
     const blob = new Blob([standaloneHtml], { type: "text/html;charset=utf-8" });
+
+    // Si el navegador en PC soporta showSaveFilePicker, abrir directamente en la carpeta Escritorio (Desktop)
+    if (typeof window.showSaveFilePicker === "function") {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: "Calendario Lunisolar YHWH.html",
+          startIn: "desktop",
+          types: [
+            {
+              description: "Aplicación de Calendario Sin Internet (.html)",
+              accept: { "text/html": [".html"] }
+            }
+          ]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        try { localStorage.setItem("yhwhCalendarInstalled", "1"); } catch (e) {}
+        hideFloatingInstallButton();
+        showInstallSuccessModal();
+        return;
+      } catch (pickerErr) {
+        if (pickerErr && pickerErr.name === "AbortError") {
+          return;
+        }
+      }
+    }
+
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "Calendario_Lunisolar_YHWH_Offline.html";
+    link.download = "Calendario Lunisolar YHWH.html";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     setTimeout(() => URL.revokeObjectURL(url), 1500);
+    try { localStorage.setItem("yhwhCalendarInstalled", "1"); } catch (e) {}
+    hideFloatingInstallButton();
   } catch (err) {
     console.error("Error empaquetando HTML autónomo:", err);
   } finally {
@@ -1733,14 +1923,14 @@ function createDownloadBar() {
       <span>Disponible Offline</span>
     </div>
     <div style="flex-grow: 1;"></div>
-    <button id="btn-install-pwa" class="download-btn install-pwa-btn" title="Instalar Calendario en tu dispositivo para usar sin internet">
+    <button id="btn-install-pwa" class="download-btn install-pwa-btn pwa-ready-pulse" title="Instalar Calendario en el dispositivo y crear acceso directo en el Escritorio para usar sin internet">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
         <line x1="12" y1="18" x2="12.01" y2="18"/>
         <path d="M12 7v6"/>
         <path d="M9.5 10.5 12 13l2.5-2.5"/>
       </svg>
-      <span>Instalar App (Sin Internet)</span>
+      <span>📲 Instalar en el Dispositivo</span>
     </button>
     <button id="btn-download-png" class="download-btn" title="Descargar como imagen PNG">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1788,3 +1978,11 @@ function createDownloadBar() {
 
 createDownloadBar();
 registerCalendarServiceWorker();
+
+// Mostrar el botón flotante de instalación aunque el navegador no ofrezca instalación
+// automática (iPhone/Safari, Firefox): en ese caso abre las instrucciones paso a paso.
+setTimeout(() => {
+  let installed = false;
+  try { installed = localStorage.getItem("yhwhCalendarInstalled") === "1"; } catch (e) {}
+  if (!isStandalonePWA && !installed) showFloatingInstallButton();
+}, 400);

@@ -151,6 +151,16 @@ function generateCalendarPngBuffer(size) {
 const iconCache = {};
 
 function getIconBuffer(size) {
+    const fileMap = {
+        192: 'icon-192.png',
+        512: 'icon-512.png',
+        180: 'apple-touch-icon.png'
+    };
+    const fileName = fileMap[size] || 'icon-192.png';
+    const diskPath = path.join(__dirname, '../../../public/assets/calendar/icons', fileName);
+    if (fs.existsSync(diskPath)) {
+        return fs.readFileSync(diskPath);
+    }
     if (!iconCache[size]) {
         iconCache[size] = generateCalendarPngBuffer(size);
     }

@@ -74,9 +74,17 @@ app.use('/uploads', (req, res, next) => {
     }
     next();
 });
+// /calendar/ (con barra) -> /calendar: una única versión del calendario (la que funciona offline e instalable)
+app.use((req, res, next) => {
+    if (req.method === 'GET' && req.path === '/calendar/') {
+        const qs = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '';
+        return res.redirect(302, '/calendar' + qs);
+    }
+    next();
+});
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/calendar', express.static(path.join(__dirname, '../Calendar'), { redirect: false }));
+app.use('/calendar', express.static(path.join(__dirname, '../Calendar'), { redirect: false, index: false }));
 
 // Rutas explícitas para PWA / Modo Offline del Calendario Lunisolar
 app.get('/sw-calendar.js', (req, res) => {

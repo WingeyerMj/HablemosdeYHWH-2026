@@ -3,7 +3,13 @@
 
 <%- include('partials/head') %>
 <style>
-
+  /* Ocultar el preloader global en la página del calendario para que nunca quede bloqueada sin internet */
+  #preloader {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
 </style>
 
     <body class="calendar-page dark-background">
@@ -73,6 +79,7 @@
                         <header class="calendar-header">
                             <div class="calendar-header-content">
                                 <div class="calendar-title-wrapper">
+                                    <img src="/assets/calendar/icons/icon-192.png?v=calicon1" alt="Logo Calendario Lunisolar" class="calendar-brand-logo" />
                                     <h1 id="calendar-title"></h1>
                                     <div class="year-select-container">
                                         <select id="year-select" class="year-select" aria-label="Seleccionar Año"></select>
@@ -135,7 +142,18 @@
 
             <%- include('partials/footer') %>
 
-                <script type="module" src="/assets/calendar/js/main.js"></script>
+                <script>
+                    // Seguridad offline: nunca dejar la pantalla de carga girando sin fin
+                    (function () {
+                        function hidePreloader() {
+                            var p = document.getElementById('preloader');
+                            if (p) p.remove();
+                        }
+                        document.addEventListener('DOMContentLoaded', function () { setTimeout(hidePreloader, 1200); });
+                        setTimeout(hidePreloader, 3000);
+                    })();
+                </script>
+                <script type="module" src="/assets/calendar/js/main.js?v=calicon1"></script>
 
 
     </body>

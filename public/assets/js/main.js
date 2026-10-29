@@ -7,15 +7,15 @@ import { initAOS, initSwiper, initGLightbox, initIsotope } from './modules/compo
   initNav();
 
   window.addEventListener('load', () => {
-    initAOS();
-    initSwiper();
-    initGLightbox();
-    initIsotope();
-
+    // Quitar el preloader primero, para que nunca quede "pensando" (ej. sin internet)
     const preloader = document.querySelector('#preloader');
     if (preloader) {
       preloader.remove();
     }
+
+    [initAOS, initSwiper, initGLightbox, initIsotope].forEach((init) => {
+      try { init(); } catch (e) { console.warn('Aviso al iniciar componente:', e); }
+    });
   });
 
   // Scroll top

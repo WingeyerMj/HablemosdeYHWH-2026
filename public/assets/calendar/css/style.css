@@ -1305,6 +1305,13 @@ body.dark .theme-toggle .sun {
 /* ----------------------------------------------------------
    MODO STANDALONE PWA & BARRA OFFLINE / INSTALACIÓN
 ---------------------------------------------------------- */
+#preloader {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 body.pwa-standalone #header,
 body.pwa-standalone .page-title,
 body.pwa-standalone #footer {
@@ -1783,3 +1790,607 @@ body.pwa-standalone .section {
     padding: 18px 16px;
   }
 }
+
+/* ----------------------------------------------------------
+   MODAL: ESTADO ACTIVO Y CLASES DE CONTENIDO
+---------------------------------------------------------- */
+.cal-modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.cal-modal-overlay.active .cal-modal-card {
+  transform: translateY(0) scale(1);
+}
+
+.cal-modal-badges,
+.cal-detail-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.cal-modal-main-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0 0 4px 0;
+  color: inherit;
+}
+
+.cal-modal-gregorian {
+  font-size: 0.86rem;
+  opacity: 0.82;
+  margin: 0;
+}
+
+.cal-detail-heading {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.02rem;
+  font-weight: 800;
+  margin: 2px 0 6px 0;
+  color: inherit;
+}
+
+.cal-detail-text {
+  font-size: 0.86rem;
+  line-height: 1.55;
+  margin: 6px 0 0 0;
+  opacity: 0.94;
+}
+
+.cal-festival-sub {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fbbf24;
+  margin-bottom: 4px;
+}
+
+.cal-hebrew-tag {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #f7d280;
+  direction: rtl;
+}
+
+.cal-pill.gold {
+  background: rgba(212, 168, 83, 0.18);
+  border: 1px solid rgba(212, 168, 83, 0.55);
+  color: #f7d280;
+}
+
+.cal-pill.cyan {
+  background: rgba(56, 189, 248, 0.16);
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  color: #7dd3fc;
+}
+
+.cal-pill.amber {
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  color: #fcd34d;
+}
+
+.cal-pill.today {
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid rgba(16, 185, 129, 0.55);
+  color: #6ee7b7;
+}
+
+.cal-pill-num {
+  font-size: 0.72rem;
+  font-weight: 700;
+  opacity: 0.8;
+}
+
+:root[data-theme="light"] .cal-pill.gold { background: #fef3c7; border-color: #d97706; color: #92400e; }
+:root[data-theme="light"] .cal-pill.cyan { background: #e0f2fe; border-color: #0284c7; color: #075985; }
+:root[data-theme="light"] .cal-pill.amber { background: #fff7ed; border-color: #ea580c; color: #9a3412; }
+:root[data-theme="light"] .cal-pill.today { background: #d1fae5; border-color: #059669; color: #065f46; }
+:root[data-theme="light"] .cal-hebrew-tag,
+:root[data-theme="light"] .cal-festival-sub { color: #b45309; }
+
+.cal-moon-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cal-moon-big-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.cal-moon-phase-title {
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.cal-moon-phase-sub {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.cal-modal-actions-row {
+  margin-top: 12px;
+}
+
+.cal-action-link {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #38bdf8;
+  text-decoration: none;
+}
+
+.cal-action-link:hover {
+  text-decoration: underline;
+}
+
+.cal-install-ready-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.cal-ready-check {
+  font-size: 1.3rem;
+}
+
+.cal-detail-section.install-status-box {
+  border-left: 4px solid #10b981;
+}
+
+.cal-detail-section.portable-box {
+  border-left: 4px solid #f59e0b;
+}
+
+.cal-install-steps {
+  margin: 8px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cal-step-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.cal-step-num {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4a853, #b8860b);
+  color: #0f1319;
+  font-weight: 800;
+  font-size: 0.78rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-inline-ico {
+  white-space: nowrap;
+}
+
+/* ----------------------------------------------------------
+   BOTÓN FLOTANTE "INSTALAR EN ESTE DISPOSITIVO"
+---------------------------------------------------------- */
+.pwa-fab-install {
+  position: fixed;
+  left: 18px;
+  bottom: 18px;
+  z-index: 9998;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(212, 168, 83, 0.75);
+  background: linear-gradient(135deg, #1f1a10 0%, #2b2210 100%);
+  color: #fdf3d7;
+  font-family: "Montserrat", "Inter", sans-serif;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 0 0 rgba(212, 168, 83, 0.5);
+  animation: pwaPulse 2.6s infinite;
+}
+
+.pwa-fab-install.visible {
+  display: inline-flex;
+}
+
+.pwa-fab-install:hover {
+  transform: translateY(-2px);
+  border-color: #f7d280;
+}
+
+.pwa-fab-ico {
+  font-size: 1.5rem;
+}
+
+.pwa-fab-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.pwa-fab-text strong {
+  font-size: 0.86rem;
+  color: #f7d280;
+}
+
+.pwa-fab-text small {
+  font-size: 0.7rem;
+  opacity: 0.85;
+}
+
+.pwa-fab-close {
+  margin-left: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  opacity: 0.7;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.pwa-fab-close:hover {
+  opacity: 1;
+  background: rgba(239, 68, 68, 0.35);
+}
+
+:root[data-theme="light"] .pwa-fab-install {
+  background: linear-gradient(135deg, #fffbeb, #fde68a);
+  color: #451a03;
+  border-color: #d97706;
+}
+
+:root[data-theme="light"] .pwa-fab-text strong {
+  color: #78350f;
+}
+
+@media (max-width: 576px) {
+  .pwa-fab-install {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    justify-content: center;
+  }
+}
+
+/* ----------------------------------------------------------
+   LOGO E ICONO OFICIAL DEL CALENDARIO (cal-icon)
+---------------------------------------------------------- */
+.calendar-brand-logo {
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 2px solid rgba(212, 168, 83, 0.75);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  flex-shrink: 0;
+}
+
+.pwa-fab-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 9px;
+  object-fit: cover;
+  border: 1.5px solid rgba(212, 168, 83, 0.85);
+  flex-shrink: 0;
+}
+
+.cal-install-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cal-modal-brand-logo {
+  width: 68px;
+  height: 68px;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 2px solid rgba(212, 168, 83, 0.85);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+  flex-shrink: 0;
+}
+
+/* ----------------------------------------------------------
+   IMPRESIÓN HORIZONTAL: 1 MES COMPLETO EN 1 SOLA HOJA
+---------------------------------------------------------- */
+.print-year-container {
+  display: none;
+}
+
+@page {
+  size: landscape;
+  margin: 5mm 7mm;
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html,
+  body,
+  .calendar-page,
+  .calendar-page .main,
+  .calendar-page .section {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+  }
+
+  /* Ocultar barras, botones, leyendas y elementos ajenos al mes */
+  #header,
+  .page-title,
+  #footer,
+  #scroll-top,
+  #preloader,
+  .download-bar,
+  .theme-toggle,
+  .nav-arrow,
+  .month-slider,
+  .calendar-torah-legend,
+  .pwa-fab-install,
+  .cal-modal-overlay {
+    display: none !important;
+  }
+
+  /* Si se está imprimiendo el año completo (1 mes por hoja), ocultar la vista individual */
+  body.printing-full-year > .calendar-container,
+  body.printing-full-year main > .section > .calendar-container {
+    display: none !important;
+  }
+
+  body.printing-full-year .print-year-container {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .calendar-container,
+  .print-month-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .print-month-page {
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+
+  .print-month-page:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
+  /* Cabecera compacta en una sola línea para aprovechar toda la altura de la hoja */
+  .calendar-header {
+    margin-bottom: 4px !important;
+    padding-bottom: 2px !important;
+    border-bottom: 1.5px solid #cbd5e1 !important;
+  }
+
+  .calendar-header-content {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .calendar-title-wrapper {
+    gap: 8px !important;
+  }
+
+  .calendar-brand-logo {
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+  }
+
+  .calendar-header h1 {
+    font-size: 1.2rem !important;
+    color: #111827 !important;
+    text-shadow: none !important;
+  }
+
+  .year-select,
+  .month-select {
+    font-size: 0.92rem !important;
+    padding: 2px 8px !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    border: 1px solid #94a3b8 !important;
+    color: #111827 !important;
+    background-color: #f8fafc !important;
+  }
+
+  .calendar-header h2,
+  .subtitle-dates {
+    font-size: 0.76rem !important;
+    color: #334155 !important;
+    margin: 0 !important;
+  }
+
+  .subtitle-cycle-info {
+    display: inline-block !important;
+    margin-top: 0 !important;
+    margin-left: 6px !important;
+  }
+
+  .year-cycle-pill {
+    font-size: 0.64rem !important;
+    padding: 1px 8px !important;
+    box-shadow: none !important;
+  }
+
+  /* Fila de días de la semana compacta */
+  .weekdays-row {
+    margin-bottom: 4px !important;
+    padding: 2px 4px !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    background: #1e293b !important;
+    border: 1px solid #1e293b !important;
+  }
+
+  .weekdays-row > div {
+    padding: 3px 0 !important;
+    font-size: 0.76rem !important;
+    color: #ffffff !important;
+  }
+
+  .weekdays-row > div:last-child {
+    color: #7dd3fc !important;
+  }
+
+  /* Grilla ajustada para que 5 o 6 filas entren SIEMPRE en 1 sola hoja horizontal */
+  .calendar-wrapper {
+    width: 100% !important;
+    display: block !important;
+  }
+
+  .calendar-grid {
+    gap: 4px !important;
+    width: 100% !important;
+    grid-auto-rows: 78px !important;
+  }
+
+  .calendar-grid.rows-6 {
+    grid-auto-rows: 66px !important;
+  }
+
+  .calendar-cell {
+    min-height: 0 !important;
+    height: 100% !important;
+    padding: 3px 5px !important;
+    border-radius: 5px !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    background: #f8fafc !important;
+    border: 1px solid #94a3b8 !important;
+    color: #0f172a !important;
+  }
+
+  .calendar-cell.empty {
+    background: transparent !important;
+    border: none !important;
+  }
+
+  .lunisolar-day {
+    font-size: 0.92rem !important;
+    line-height: 1.05 !important;
+    color: #0f172a !important;
+  }
+
+  .gregorian-day {
+    font-size: 0.68rem !important;
+    line-height: 1.05 !important;
+    color: #475569 !important;
+  }
+
+  .roshjodesh,
+  .roshhashana,
+  .pesaj,
+  .hamatzo,
+  .bikurim,
+  .shavuot,
+  .yomteruah,
+  .yomkippur,
+  .sukkot,
+  .shemini-atzeret,
+  .sheminiatzeret {
+    padding-top: 14px !important;
+    padding-bottom: 2px !important;
+  }
+
+  .rosh-label,
+  .roshhashana-label,
+  .holiday-label,
+  .today-badge {
+    top: 1px !important;
+    font-size: 0.5rem !important;
+    padding: 1px 4px !important;
+    line-height: 1.05 !important;
+    box-shadow: none !important;
+  }
+
+  .yomteruah-label {
+    top: auto !important;
+    bottom: 1px !important;
+  }
+
+  .omer-row {
+    margin-top: 1px !important;
+    padding: 0 3px !important;
+    font-size: 0.54rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .moon-info {
+    padding-top: 1px !important;
+    margin-top: auto !important;
+  }
+
+  .moon-icon {
+    font-size: 0.78rem !important;
+    filter: none !important;
+  }
+
+  .moon-info span,
+  .moon-info .moon-text {
+    font-size: 0.6rem !important;
+    color: #334155 !important;
+  }
+
+  .shabat-parasha-badge {
+    padding: 1px 4px !important;
+    margin-top: 1px !important;
+    margin-bottom: 0 !important;
+    gap: 0 !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+  }
+
+  .parasha-badge-ico {
+    font-size: 0.55rem !important;
+  }
+
+  .parasha-badge-title {
+    font-size: 0.56rem !important;
+  }
+
+  .parasha-badge-ref {
+    font-size: 0.46rem !important;
+  }
+
+  .parasha-double-pill {
+    display: none !important;
+  }
+}
+
+

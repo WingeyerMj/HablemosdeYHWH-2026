@@ -9,10 +9,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Calendario YHWH" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="icons/calendar-icon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="manifest.json?v=calicon1" />
+  <link rel="icon" href="icons/icon-192.png?v=calicon1" type="image/png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=calicon1" />
+  <link rel="stylesheet" href="css/style.css?v=calicon1" />
 </head>
 
 <body>
@@ -60,6 +60,7 @@
     <header class="calendar-header">
       <div class="calendar-header-content">
         <div class="calendar-title-wrapper">
+          <img src="icons/icon-192.png?v=calicon1" alt="Logo Calendario Lunisolar" class="calendar-brand-logo" />
           <h1 id="calendar-title"></h1>
           <div class="year-select-container">
             <select id="year-select" class="year-select" aria-label="Seleccionar Año"></select>
@@ -118,7 +119,7 @@
 
   </div>
 
-  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/main.js?v=calicon1"></script>
 
 </body>
 
