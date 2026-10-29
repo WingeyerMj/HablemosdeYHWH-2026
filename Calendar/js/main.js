@@ -348,6 +348,7 @@ function renderCalendar() {
 
   // Día de la semana del primer día
   const firstWeekday = firstDay.getUTCDay();
+  gridEl.classList.toggle("rows-6", (firstWeekday + month.days.length) > 35);
 
   // Celdas vacías
   for (let i = 0; i < firstWeekday; i++) {
@@ -1488,7 +1489,8 @@ ${cssText}
       </div>
       <div style="flex-grow:1;"></div>
       <button type="button" id="btn-go-today" class="download-btn" title="Ir al mes actual">📅 Hoy</button>
-      <button type="button" onclick="window.print()" class="download-btn" title="Imprimir o Guardar como PDF">🖨️ Imprimir / PDF</button>
+      <button type="button" onclick="window.print()" class="download-btn" title="Imprimir el mes actual ajustado en 1 sola hoja horizontal">🖨️ Imprimir Mes (1 Hoja)</button>
+      <button type="button" id="btn-print-year" class="download-btn" title="Imprimir todos los meses del año (1 mes por hoja horizontal)">🖨️ Imprimir Año (1 Mes x Hoja)</button>
     </div>
 
     <div class="weekdays-row">
@@ -1764,6 +1766,7 @@ ${cssText}
       const firstDay = month.days[0], lastDay = month.days[month.days.length - 1];
       subtitleEl.innerHTML = '<div class="subtitle-dates">Rosh Hashaná: ' + formatLatam(yearData.roshHashana) + ' | Mes: ' + formatLatam(firstDay) + ' a ' + formatLatam(lastDay) + '</div>';
       gridEl.innerHTML = "";
+      gridEl.classList.toggle("rows-6", (firstDay.getUTCDay() + month.days.length) > 35);
       for (let i = 0; i < firstDay.getUTCDay(); i++) {
         const empty = document.createElement("div"); empty.className = "calendar-cell empty"; gridEl.appendChild(empty);
       }
@@ -1835,6 +1838,115 @@ ${cssText}
       });
     }
     renderCalendar();
+
+    function buildMonthGridElement(yearData, month) {
+      const mGrid = document.createElement("div");
+      const firstDay = month.days[0];
+      mGrid.className = "calendar-grid" + ((firstDay.getUTCDay() + month.days.length) > 35 ? " rows-6" : "");
+      for (let i = 0; i < firstDay.getUTCDay(); i++) {
+        const empty = document.createElement("div"); empty.className = "calendar-cell empty"; mGrid.appendChild(empty);
+      }
+      const { pesajDate, hamatzoDate, bikurimDate, shavuotDate, yomTeruahDate, yomKippurDate, sukkotDate, sheminiAtzeretDate } = getHolidaysForYear(yearData.year);
+      month.days.forEach((gregDate, index) => {
+        const cell = document.createElement("div"); cell.className = "calendar-cell";
+        if (isSameDay(gregDate, today)) {
+          cell.classList.add("today");
+          const b = document.createElement("div"); b.className = "today-badge"; b.textContent = "HOY"; cell.appendChild(b);
+        }
+        const moonInfo = getMoonPhaseInfo(gregDate);
+        const isRoshJodesh = (index === 0);
+        const isRoshHashana = (isRoshJodesh && month.index === 0);
+        let lunisolarDay = isRoshJodesh ? "" : index;
+        if (isRoshHashana || isRoshJodesh) {
+          cell.classList.add(isRoshHashana ? "roshhashana" : "roshjodesh");
+          const l = document.createElement("div"); l.className = isRoshHashana ? "roshhashana-label" : "rosh-label";
+          l.textContent = isRoshHashana ? "Rosh Hashaná" : "Rosh Jodesh"; cell.appendChild(l);
+        }
+        const lEl = document.createElement("div"); lEl.className = "lunisolar-day"; lEl.textContent = lunisolarDay;
+        const gEl = document.createElement("div"); gEl.className = "gregorian-day"; gEl.textContent = gregDate.getUTCDate();
+        cell.appendChild(lEl); cell.appendChild(gEl);
+        if (!isRoshJodesh) {
+          const mC = document.createElement("div"); mC.className = "moon-info";
+          mC.innerHTML = '<span class="moon-text">' + moonInfo.illumination + '%</span><div class="moon-icon">' + getMoonIcon(moonInfo.illumination) + '</div>';
+          cell.appendChild(mC);
+        }
+        const msPerDay = 86400000;
+        const hamatzoDiff = Math.round((gregDate - hamatzoDate) / msPerDay);
+        const sukkotDiff = Math.round((gregDate - sukkotDate) / msPerDay);
+        if (month.index === 0 && isSameDay(gregDate, pesajDate)) { cell.classList.add("pesaj"); cell.insertAdjacentHTML("beforeend", '<div class="holiday-label pesaj-label">Pesaj</div>'); }
+        if (month.index === 0 && hamatzoDiff >= 0 && hamatzoDiff < 7) { cell.classList.add("hamatzo"); if (hamatzoDiff === 0) cell.insertAdjacentHTML("beforeend", '<div class="holiday-label hamatzo-label">Hamatzo</div>'); }
+        if (month.index === 0 && isSameDay(gregDate, bikurimDate)) { cell.classList.add("bikurim"); cell.insertAdjacentHTML("beforeend", '<div class="holiday-label bikurim-label">Bikurim</div>'); }
+        if (month.index === 6 && isSameDay(gregDate, yomTeruahDate)) { cell.classList.add("yomteruah"); cell.insertAdjacentHTML("beforeend", '<div class="holiday-label yomteruah-label">Yom Teruah</div>'); }
+        if (month.index === 6 && isSameDay(gregDate, yomKippurDate)) { cell.classList.add("yomkippur"); cell.insertAdjacentHTML("beforeend", '<div class="holiday-label yomkippur-label">Yom Kippur</div>'); }
+        if (month.index === 6 && sukkotDiff >= 0 && sukkotDiff < 7) { cell.classList.add("sukkot"); if (sukkotDiff === 0) cell.insertAdjacentHTML("beforeend", '<div class="holiday-label sukkot-label">Sukkot</div>'); }
+        if (month.index === 6 && isSameDay(gregDate, sheminiAtzeretDate)) { cell.classList.add("sheminiatzeret"); cell.insertAdjacentHTML("beforeend", '<div class="holiday-label shemini-label">Shemini Atzeret</div>'); }
+        if (month.index === 2 && isSameDay(gregDate, shavuotDate)) { cell.classList.add("shavuot"); cell.insertAdjacentHTML("beforeend", '<div class="holiday-label shavuot-label">Shavuot</div>'); }
+        if (bikurimDate && shavuotDate && !isRoshJodesh) {
+          const diffDays = Math.floor((Date.UTC(gregDate.getUTCFullYear(), gregDate.getUTCMonth(), gregDate.getUTCDate()) - Date.UTC(bikurimDate.getUTCFullYear(), bikurimDate.getUTCMonth(), bikurimDate.getUTCDate())) / msPerDay);
+          if (diffDays >= 0 && diffDays < 49) {
+            const oTag = document.createElement("div"); oTag.className = "omer-row"; oTag.textContent = "Omer " + (diffDays + 1);
+            cell.appendChild(oTag);
+          }
+        }
+        const pInfo = getParashaForDate(gregDate);
+        if (gregDate.getUTCDay() === 6) {
+          cell.classList.add("shabat-cell");
+          if (pInfo) {
+            const pB = document.createElement("div");
+            pB.className = "shabat-parasha-badge" + (pInfo.isDouble ? " double" : "") + (pInfo.isFestival ? " festival" : "");
+            pB.innerHTML = '<div class="parasha-badge-top"><span class="parasha-badge-ico">📖</span><span class="parasha-badge-title">' + pInfo.title + '</span></div>' + (pInfo.ref ? '<div class="parasha-badge-ref">' + pInfo.ref + '</div>' : '');
+            cell.appendChild(pB);
+          }
+        }
+        mGrid.appendChild(cell);
+      });
+      return mGrid;
+    }
+
+    function printFullYear() {
+      let existing = document.getElementById("print-year-container");
+      if (existing) existing.remove();
+      const container = document.createElement("div");
+      container.id = "print-year-container";
+      container.className = "print-year-container";
+      const yData = generateLunisolarYear(currentYear);
+      const logoEl = document.querySelector(".calendar-brand-logo");
+      const logoSrc = logoEl ? logoEl.getAttribute("src") : "";
+      for (let mIdx = 0; mIdx < yData.months.length; mIdx++) {
+        const { month } = getLunisolarMonthView(currentYear, mIdx, 0);
+        const fDay = month.days[0], lDay = month.days[month.days.length - 1];
+        const page = document.createElement("div");
+        page.className = "print-month-page";
+        page.innerHTML =
+          '<header class="calendar-header"><div class="calendar-header-content">' +
+            '<div class="calendar-title-wrapper">' +
+              (logoSrc ? '<img src="' + logoSrc + '" alt="Logo" class="calendar-brand-logo" />' : '') +
+              '<h1>' + month.name + ' (' + yData.year + ')</h1>' +
+            '</div>' +
+            '<h2><div class="subtitle-dates">Rosh Hashaná: ' + formatLatam(yData.roshHashana) + ' | Mes: ' + formatLatam(fDay) + ' a ' + formatLatam(lDay) + '</div></h2>' +
+          '</div></header>' +
+          '<div class="weekdays-row"><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>Shabat</div></div>';
+        const wrap = document.createElement("div");
+        wrap.className = "calendar-wrapper";
+        wrap.appendChild(buildMonthGridElement(yData, month));
+        page.appendChild(wrap);
+        container.appendChild(page);
+      }
+      document.body.appendChild(container);
+      document.body.classList.add("printing-full-year");
+      const cleanup = () => {
+        document.body.classList.remove("printing-full-year");
+        const el = document.getElementById("print-year-container");
+        if (el) el.remove();
+        window.removeEventListener("afterprint", cleanup);
+      };
+      window.addEventListener("afterprint", cleanup);
+      setTimeout(() => window.print(), 60);
+    }
+
+    const printYearBtn = document.getElementById("btn-print-year");
+    if (printYearBtn) printYearBtn.addEventListener("click", printFullYear);
+
     document.getElementById("theme-toggle").addEventListener("click", () => {
       const cur = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", cur);
@@ -1949,6 +2061,14 @@ function createDownloadBar() {
       </svg>
       <span>PDF</span>
     </button>
+    <button id="btn-print-month" class="download-btn" title="Imprimir el mes en 1 sola hoja horizontal">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 6 2 18 2 18 9"/>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+        <rect x="6" y="14" width="12" height="8"/>
+      </svg>
+      <span>Imprimir</span>
+    </button>
   `;
 
   const wrapper = container.querySelector('.calendar-wrapper');
@@ -1962,6 +2082,7 @@ function createDownloadBar() {
   const installBtn = document.getElementById('btn-install-pwa');
   const pngBtn = document.getElementById('btn-download-png');
   const pdfBtn = document.getElementById('btn-download-pdf');
+  const printBtn = document.getElementById('btn-print-month');
   const statusPill = document.getElementById('offline-status-pill');
 
   if (todayBtn) todayBtn.addEventListener('click', goToToday);
@@ -1972,6 +2093,7 @@ function createDownloadBar() {
   }
   if (pngBtn) pngBtn.addEventListener('click', downloadPNG);
   if (pdfBtn) pdfBtn.addEventListener('click', downloadPDF);
+  if (printBtn) printBtn.addEventListener('click', () => window.print());
 
   updateOfflineStatusBadge();
 }

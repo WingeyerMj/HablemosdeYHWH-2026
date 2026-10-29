@@ -1,5 +1,5 @@
 // Service Worker — Calendario Lunisolar Hablemos de YHWH (100% Offline PWA)
-const CACHE_NAME = 'yhwh-calendario-pwa-v6';
+const CACHE_NAME = 'yhwh-calendario-pwa-v7';
 
 const CORE_CALENDAR_ASSETS = [
   '/calendar',
