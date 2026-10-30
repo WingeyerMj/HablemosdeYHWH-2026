@@ -18,40 +18,69 @@
 
         <nav id="navmenu" class="navmenu">
             <ul>
-                <li><a href="/calendar" class="<%= typeof page !== 'undefined' && page === 'calendar' ? 'active' : '' %>"><i class="bi bi-calendar3"></i>
-                        Calendario</a></li>
-                <li><a href="/aliyot" class="<%= typeof page !== 'undefined' && page === 'aliyot' ? 'active' : '' %>"><i class="bi bi-mic"></i>
-                        Aliyot</a></li>
-                <li><a href="/#services" class="<%= typeof page !== 'undefined' && page === 'parashot' ? 'active' : '' %>"><i class="bi bi-journal-text"></i>
-                        Parashot</a></li>
-                <li><a href="/haftara" class="<%= typeof page !== 'undefined' && page === 'haftara' ? 'active' : '' %>"><i class="bi bi-scroll"></i>
-                        Haftará</a></li>
-                <li><a href="/archivo-historico" class="<%= typeof page !== 'undefined' && page === 'archivo-historico' ? 'active' : '' %>"><i class="bi bi-clock-history"></i>
-                        Archivo Histórico</a></li>
-                <li><a href="/semillas-de-torah" class="<%= typeof page !== 'undefined' && page === 'semillas-torah' ? 'active' : '' %>"><i class="bi bi-balloon-heart"></i>
-                        Semillas de Torah</a></li>
+                <li>
+                    <a href="/calendar" class="<%= typeof page !== 'undefined' && page === 'calendar' ? 'active' : '' %>">
+                        <i class="bi bi-calendar3 nav-ico"></i>
+                        <span>Calendario</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/aliyot" class="<%= typeof page !== 'undefined' && page === 'aliyot' ? 'active' : '' %>">
+                        <i class="bi bi-mic nav-ico"></i>
+                        <span>Aliyot</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/#services" class="<%= typeof page !== 'undefined' && page === 'parashot' ? 'active' : '' %>">
+                        <i class="bi bi-journal-text nav-ico"></i>
+                        <span>Parashot</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/haftara" class="<%= typeof page !== 'undefined' && page === 'haftara' ? 'active' : '' %>">
+                        <i class="bi bi-journal-bookmark nav-ico"></i>
+                        <span>Haftará</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/semillas-de-torah" class="<%= typeof page !== 'undefined' && page === 'semillas-torah' ? 'active' : '' %>">
+                        <i class="bi bi-balloon-heart nav-ico"></i>
+                        <span>Semillas de Torah</span>
+                    </a>
+                </li>
 
                 <li class="dropdown">
-                    <a href="javascript:void(0);" class="<%= (typeof page !== 'undefined' && (page === 'ensenanzas' || page === 'about' || page === 'identidad')) || (typeof section !== 'undefined' && section && (section.slug === 'about' || section.slug === 'identidad' || section.slug === 'ensenanzas')) ? 'active' : '' %>">
-                        <span><i class="bi bi-people"></i> Sobre Nosotros</span>
+                    <a href="javascript:void(0);" class="dropdown-trigger <%= (typeof page !== 'undefined' && (page === 'ensenanzas' || page === 'about' || page === 'identidad')) || (typeof section !== 'undefined' && section && (section.slug === 'about' || section.slug === 'identidad' || section.slug === 'ensenanzas')) ? 'active' : '' %>">
+                        <span class="nav-label-group">
+                            <i class="bi bi-people nav-ico"></i>
+                            <span>Sobre Nosotros</span>
+                        </span>
                         <i class="bi bi-chevron-down toggle-dropdown"></i>
                     </a>
                     <ul>
-                        <li><a href="/#about"><i class="bi bi-info-circle me-1"></i> Sobre Nosotros</a></li>
-                        <li><a href="/#section-identidad"><i class="bi bi-person-badge me-1"></i> Identidad</a></li>
-                        <li><a href="/#ensenanzas" class="<%= typeof page !== 'undefined' && page === 'ensenanzas' ? 'active' : '' %>"><i class="bi bi-book me-1"></i> Enseñanzas</a></li>
+                        <li><a href="/#about"><i class="bi bi-info-circle nav-sub-ico"></i> <span>Sobre Nosotros</span></a></li>
+                        <li><a href="/#section-identidad"><i class="bi bi-person-badge nav-sub-ico"></i> <span>Identidad</span></a></li>
+                        <li><a href="/#ensenanzas" class="<%= typeof page !== 'undefined' && page === 'ensenanzas' ? 'active' : '' %>"><i class="bi bi-book nav-sub-ico"></i> <span>Enseñanzas</span></a></li>
                     </ul>
                 </li>
 
-                <li><a href="/noticias" class="<%= typeof page !== 'undefined' && page === 'noticias' ? 'active' : '' %>"><i class="bi bi-globe-americas"></i>
-                        Noticias</a></li>
+                <li>
+                    <a href="/noticias" class="<%= typeof page !== 'undefined' && page === 'noticias' ? 'active' : '' %>">
+                        <i class="bi bi-globe-americas nav-ico ico-noticias"></i>
+                        <span>Noticias</span>
+                    </a>
+                </li>
 
-                <li><a href="/blog" class="<%= typeof page !== 'undefined' && page === 'blog' ? 'active' : '' %>"><i class="bi bi-newspaper"></i>
-                        Blog</a></li>
+                <li>
+                    <a href="/blog" class="<%= typeof page !== 'undefined' && page === 'blog' ? 'active' : '' %>">
+                        <i class="bi bi-newspaper nav-ico ico-blog"></i>
+                        <span>Blog</span>
+                    </a>
+                </li>
 
                 <% if (typeof navbarDynamicSections !=='undefined' && navbarDynamicSections.length> 0) { %>
                     <% 
-                        const excludedSlugs = ['hero', 'noticias', 'calendario', 'about', 'identidad', 'ensenanzas', 'blog', 'parashot', 'contact', 'contacto', 'inicio', 'home', 'semillas', 'semillas-de-torah'];
+                        const excludedSlugs = ['hero', 'noticias', 'calendario', 'about', 'identidad', 'ensenanzas', 'blog', 'parashot', 'contact', 'contacto', 'inicio', 'home', 'semillas', 'semillas-de-torah', 'archivo-historico'];
                     %>
                     <% navbarDynamicSections.forEach(ds=> { %>
                         <% 
@@ -65,25 +94,214 @@
                         %>
                         <li>
                             <a href="<%= href %>" class="<%= isActive ? 'active' : '' %>">
-                                <i class="bi <%= ds.icon %>"></i>
-                                <%= ds.title %>
+                                <i class="bi <%= ds.icon || 'bi-bookmark-star-fill' %> nav-ico ico-dynamic"></i>
+                                <span><%= ds.title %></span>
                             </a>
                         </li>
                     <% }) %>
                 <% } %>
 
                 <% if (user) { %>
-                    <li><a href="/admin/dashboard" class="btn-admin-access"
-                            style="background: #d4b895; color: white; border-radius: 5px; padding: 5px 15px; margin-left: 10px;">Admin</a>
+                    <li class="nav-auth-item">
+                        <a href="/admin/dashboard" class="btn-admin-access">
+                            <i class="bi bi-shield-lock-fill me-1"></i>
+                            <span>Admin</span>
+                        </a>
                     </li>
                 <% } else { %>
-                    <li><a href="/admin/login" class="btn-admin-access"
-                            style="border: 1px solid #d4b895; border-radius: 5px; padding: 5px 15px; margin-left: 10px;">Ingresar</a>
+                    <li class="nav-auth-item">
+                        <a href="/admin/login" class="btn-admin-access btn-login-outline">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>
+                            <span>Ingresar</span>
+                        </a>
                     </li>
                 <% } %>
             </ul>
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
+
+        <style>
+            /* Íconos del menú con el dorado uniforme (#d4b895) igual al desplegable Sobre Nosotros */
+            .navmenu .nav-ico,
+            .navmenu .nav-sub-ico {
+                color: #d4b895 !important;
+            }
+
+            .navmenu .nav-label-group {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            /* Desktop: alinear icono junto al texto */
+            @media (min-width: 1200px) {
+                .navmenu > ul > li > a {
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: flex-start !important;
+                    gap: 6px !important;
+                }
+                .navmenu > ul > li > a > i.nav-ico,
+                .navmenu .nav-label-group > i.nav-ico {
+                    font-size: 15px !important;
+                    margin: 0 !important;
+                    width: auto !important;
+                    height: auto !important;
+                    background: transparent !important;
+                }
+                .navmenu > ul > li > a .toggle-dropdown {
+                    margin-left: 4px !important;
+                    font-size: 12px !important;
+                }
+                .navmenu .btn-admin-access {
+                    background: linear-gradient(135deg, #d4b895, #b89463) !important;
+                    color: #16130f !important;
+                    font-weight: 700 !important;
+                    border-radius: 8px !important;
+                    padding: 6px 14px !important;
+                    margin-left: 10px !important;
+                    box-shadow: 0 3px 10px rgba(212, 184, 149, 0.25);
+                }
+                .navmenu .btn-admin-access.btn-login-outline {
+                    background: rgba(212, 184, 149, 0.12) !important;
+                    color: #f3e5d0 !important;
+                    border: 1px solid #d4b895 !important;
+                }
+            }
+
+            /* Móvil: Mismo estilo exacto que el menú desplegable "Sobre Nosotros" (#181818, borde dorado sutil, íconos #d4b895 y texto #e0e0e0) */
+            @media (max-width: 1199px) {
+                .navmenu > ul {
+                    inset: 64px 18px auto 18px !important;
+                    max-height: calc(100vh - 84px) !important;
+                    background: #181818 !important;
+                    border: 1px solid rgba(212, 184, 149, 0.25) !important;
+                    border-radius: 10px !important;
+                    padding: 10px 0 !important;
+                    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5) !important;
+                    backdrop-filter: blur(10px);
+                }
+                .navmenu > ul > li {
+                    margin: 0 !important;
+                }
+                .navmenu a,
+                .navmenu a:focus {
+                    color: #e0e0e0 !important;
+                    padding: 11px 22px !important;
+                    border-radius: 0 !important;
+                    font-size: 16px !important;
+                    font-weight: 500 !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: flex-start !important;
+                    gap: 14px !important;
+                    transition: all 0.2s ease !important;
+                }
+                .navmenu a:hover,
+                .navmenu .active,
+                .navmenu .active:focus {
+                    background-color: rgba(212, 184, 149, 0.15) !important;
+                    color: #ffffff !important;
+                }
+                /* Evitar que el ícono principal gire 180 grados o tenga círculo de fondo */
+                .navmenu .active i.nav-ico,
+                .navmenu .active:focus i.nav-ico,
+                .navmenu .active i.nav-sub-ico,
+                .navmenu .active:focus i.nav-sub-ico {
+                    transform: none !important;
+                    background: transparent !important;
+                    color: #d4b895 !important;
+                }
+                .navmenu a i.nav-ico,
+                .navmenu a:focus i.nav-ico,
+                .navmenu a i.nav-sub-ico,
+                .navmenu a:focus i.nav-sub-ico {
+                    width: 22px !important;
+                    height: auto !important;
+                    min-width: 22px !important;
+                    border-radius: 0 !important;
+                    font-size: 16px !important;
+                    margin: 0 !important;
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    background: transparent !important;
+                    border: none !important;
+                    color: #d4b895 !important;
+                }
+
+                /* En el desplegable Sobre Nosotros, mantener ícono + texto a la izquierda y la flecha a la derecha */
+                .navmenu .dropdown > a.dropdown-trigger {
+                    justify-content: space-between !important;
+                }
+                .navmenu .dropdown > a .nav-label-group {
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    gap: 14px !important;
+                }
+                .navmenu .dropdown > a .toggle-dropdown {
+                    margin-left: auto !important;
+                    width: 28px !important;
+                    height: 28px !important;
+                    border-radius: 50% !important;
+                    font-size: 12px !important;
+                    color: #d4b895 !important;
+                    background: rgba(212, 184, 149, 0.12) !important;
+                }
+                .navmenu .dropdown ul {
+                    background: #121212 !important;
+                    border: 1px solid rgba(212, 184, 149, 0.2) !important;
+                    border-radius: 10px !important;
+                    margin: 4px 16px 8px 16px !important;
+                    padding: 6px 0 !important;
+                    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+                }
+                .navmenu .dropdown ul a {
+                    font-size: 15px !important;
+                    padding: 10px 18px !important;
+                    gap: 12px !important;
+                }
+                .navmenu .nav-auth-item {
+                    margin: 8px 16px 4px 16px !important;
+                    padding-top: 10px;
+                    border-top: 1px solid rgba(212, 184, 149, 0.2);
+                }
+                .navmenu .btn-admin-access {
+                    background: #d4b895 !important;
+                    color: #181818 !important;
+                    font-weight: 600 !important;
+                    justify-content: center !important;
+                    border-radius: 8px !important;
+                    padding: 10px 16px !important;
+                    margin: 0 !important;
+                }
+                .navmenu .btn-admin-access i {
+                    width: auto !important;
+                    height: auto !important;
+                    background: transparent !important;
+                    color: #181818 !important;
+                    font-size: 15px !important;
+                }
+            }
+
+            @media (max-width: 575px) {
+                .header .logo .sitename {
+                    font-size: 16px !important;
+                    white-space: nowrap;
+                }
+                .header .header-social-links {
+                    display: flex;
+                    align-items: center;
+                    flex-wrap: nowrap;
+                    gap: 8px;
+                    margin-right: 6px;
+                }
+                .header .header-social-links a {
+                    padding-left: 0 !important;
+                    font-size: 15px !important;
+                }
+            }
+        </style>
 
         <div class="header-social-links">
             <% const ss = typeof siteSettings !== 'undefined' ? siteSettings : {}; %>

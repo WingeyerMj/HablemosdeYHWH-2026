@@ -1061,12 +1061,12 @@ body.dark .theme-toggle .sun {
 }
 
 /* CELDA DE SHABAT */
-.calendar-cell.shabat-cell {
+.calendar-cell.shabat-cell:not(.roshjodesh):not(.roshhashana):not(.pesaj):not(.hamatzo):not(.bikurim):not(.shavuot):not(.yomteruah):not(.yomkippur):not(.sukkot):not(.shemini-atzeret):not(.sheminiatzeret) {
   border-color: rgba(79, 195, 255, 0.28) !important;
   background: radial-gradient(circle at top right, rgba(79, 195, 255, 0.05), var(--cell-bg)) !important;
 }
 
-[data-theme="light"] .calendar-cell.shabat-cell {
+[data-theme="light"] .calendar-cell.shabat-cell:not(.roshjodesh):not(.roshhashana):not(.pesaj):not(.hamatzo):not(.bikurim):not(.shavuot):not(.yomteruah):not(.yomkippur):not(.sukkot):not(.shemini-atzeret):not(.sheminiatzeret) {
   border-color: rgba(3, 105, 161, 0.25) !important;
   background: radial-gradient(circle at top right, rgba(14, 165, 233, 0.06), #ffffff) !important;
 }
@@ -2136,7 +2136,7 @@ body.pwa-standalone .section {
     color: #111827 !important;
   }
 
-  /* Ocultar barras, botones, leyendas y elementos ajenos al mes */
+  /* Ocultar barras, botones y elementos interactivos ajenos al mes impreso */
   #header,
   .page-title,
   #footer,
@@ -2146,7 +2146,6 @@ body.pwa-standalone .section {
   .theme-toggle,
   .nav-arrow,
   .month-slider,
-  .calendar-torah-legend,
   .pwa-fab-install,
   .cal-modal-overlay {
     display: none !important;
@@ -2275,11 +2274,11 @@ body.pwa-standalone .section {
   .calendar-grid {
     gap: 4px !important;
     width: 100% !important;
-    grid-auto-rows: 78px !important;
+    grid-auto-rows: 72px !important;
   }
 
   .calendar-grid.rows-6 {
-    grid-auto-rows: 66px !important;
+    grid-auto-rows: 60px !important;
   }
 
   .calendar-cell {
@@ -2291,6 +2290,9 @@ body.pwa-standalone .section {
     overflow: hidden !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+  }
+
+  .calendar-cell:not(.roshjodesh):not(.roshhashana):not(.pesaj):not(.hamatzo):not(.bikurim):not(.shavuot):not(.yomteruah):not(.yomkippur):not(.sukkot):not(.shemini-atzeret):not(.sheminiatzeret) {
     background: #f8fafc !important;
     border: 1px solid #94a3b8 !important;
     color: #0f172a !important;
@@ -2390,6 +2392,69 @@ body.pwa-standalone .section {
 
   .parasha-double-pill {
     display: none !important;
+  }
+
+  /* Leyenda de aclaraciones del Ciclo Anual de Parashot debajo de la grilla en el imprimible */
+  .calendar-torah-legend {
+    display: block !important;
+    margin-top: 5px !important;
+    margin-bottom: 0 !important;
+    padding: 5px 10px !important;
+    background: #f8fafc !important;
+    border: 1px solid #94a3b8 !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .legend-header {
+    font-size: 0.66rem !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin-bottom: 3px !important;
+    gap: 4px !important;
+  }
+
+  .legend-items {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    font-size: 0.59rem !important;
+    line-height: 1.22 !important;
+    color: #1e293b !important;
+  }
+
+  .legend-chip {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 6px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .chip-badge {
+    font-size: 0.55rem !important;
+    padding: 1px 6px !important;
+    border-radius: 3px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .chip-badge.regular {
+    background: #e0f2fe !important;
+    border: 1px solid #38bdf8 !important;
+    color: #0369a1 !important;
+  }
+
+  .chip-badge.double {
+    background: #f3e8ff !important;
+    border: 1px solid #a855f7 !important;
+    color: #6b21a8 !important;
+  }
+
+  .chip-badge.festival {
+    background: #fef3c7 !important;
+    border: 1px solid #f59e0b !important;
+    color: #92400e !important;
   }
 }
 

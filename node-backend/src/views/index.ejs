@@ -86,7 +86,7 @@
                                              onclick="openNoticiaShortModal(<%= s.id %>, '<%= s.title.replace(/'/g, "\\'") %>', '<%= videoLink %>', '<%= isDirectVideo %>', <%= sViews %>)"
                                              onmouseover="this.style.transform='translateY(-6px)'; this.style.borderColor='#d4a853';"
                                              onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(212,168,83,0.35)';">
-                                            <img src="<%= s.thumbnail_url || '/assets/img/blog/blog-1.jpg' %>" alt="<%= s.title %>" class="w-100 h-100 object-fit-cover" style="filter: brightness(0.82);" onerror="this.onerror=null; this.src='/assets/img/blog/blog-1.jpg';">
+                                            <img loading="lazy" decoding="async" src="<%= s.thumbnail_url || '/assets/img/blog/blog-1.jpg' %>" alt="<%= s.title %>" class="w-100 h-100 object-fit-cover" style="filter: brightness(0.82);" onerror="this.onerror=null; this.src='/assets/img/blog/blog-1.jpg';">
                                             
                                             <div class="position-absolute top-0 start-0 m-2">
                                                 <span class="badge px-2 py-1 rounded-pill" style="background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); font-size: 0.65rem; color: #f5cf7c; border: 1px solid rgba(212,168,83,0.3);">
@@ -126,7 +126,7 @@
                                             <div class="position-relative" style="width: 100%; height: 170px; overflow: hidden; background: #000;">
                                                 <a href="/noticias/<%= item.id %>" class="d-block w-100 h-100">
                                                     <% if (item.image_url && item.image_url.trim() !== '') { %>
-                                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;"
+                                                        <img loading="lazy" decoding="async" src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;"
                                                              onerror="this.onerror=null; this.src='/assets/img/blog/blog-1.jpg';"
                                                              onmouseover="this.style.transform='scale(1.08)'"
                                                              onmouseout="this.style.transform='scale(1)'">
@@ -361,7 +361,7 @@
                             <div class="col-lg-5" data-aos="fade-right" data-aos-delay="150">
                                 <div class="position-relative p-2 rounded-4 shadow-lg" style="background: #ffffff; border: 1px solid #ede8df;">
                                     <div class="overflow-hidden rounded-4 position-relative" style="aspect-ratio: 4/3; max-height: 420px;">
-                                        <img src="<%= (sections.About && sections.About.image_url) || '/assets/img/about.png' %>"
+                                        <img loading="lazy" decoding="async" src="<%= (sections.About && sections.About.image_url) || '/assets/img/about.png' %>"
                                             class="img-fluid w-100 h-100 object-fit-cover" 
                                             alt="<%= (sections.About && sections.About.title) || 'Quiénes somos' %>"
                                             style="transition: transform 0.6s ease; object-position: center;"
@@ -417,7 +417,7 @@
 
                                         <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-center gap-3 position-relative">
                                             <div class="flex-shrink-0 text-center">
-                                                <img src="/assets/img/pagina/el_redil_de_yeshua_logo.png" 
+                                                <img loading="lazy" decoding="async" src="/assets/img/pagina/el_redil_de_yeshua_logo.png" 
                                                      alt="El Redil de Yeshua - Congregación Mesiánica" 
                                                      class="img-fluid rounded-circle shadow" 
                                                      style="width: 90px; height: 90px; min-width: 90px; object-fit: cover; border: 2px solid #d4a853; background: #1c130b; transition: transform 0.3s ease;"
@@ -532,13 +532,13 @@
                             </script>
                             <div class="swiper-wrapper">
                                 <div class="swiper-slide" style="border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.6);">
-                                    <img src="/assets/img/toraviviente/slide1.png" alt="Torah Viviente - Fuentes Textuales" style="width: 100%; height: auto; display: block;">
+                                    <img loading="lazy" decoding="async" src="/assets/img/toraviviente/slide1.png" alt="Torah Viviente - Fuentes Textuales" style="width: 100%; height: auto; display: block;">
                                 </div>
                                 <div class="swiper-slide" style="border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.6);">
-                                    <img src="/assets/img/toraviviente/slide2.png" alt="Torah Viviente - Brit Hadasha" style="width: 100%; height: auto; display: block;">
+                                    <img loading="lazy" decoding="async" src="/assets/img/toraviviente/slide2.png" alt="Torah Viviente - Brit Hadasha" style="width: 100%; height: auto; display: block;">
                                 </div>
                                 <div class="swiper-slide" style="border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.6);">
-                                    <img src="/assets/img/toraviviente/slide3.png" alt="Torah Viviente - Bereshit" style="width: 100%; height: auto; display: block;">
+                                    <img loading="lazy" decoding="async" src="/assets/img/toraviviente/slide3.png" alt="Torah Viviente - Bereshit" style="width: 100%; height: auto; display: block;">
                                 </div>
                             </div>
                             <div class="swiper-pagination swiper-pagination-tv" style="bottom: 0;"></div>
@@ -554,7 +554,7 @@
                                class="torah-viviente-btn"
                                onclick="if(typeof gtag === 'function') gtag('event', 'click_descargar_torah', { 'event_category': 'Botones', 'event_label': 'Descargar Torah Viviente' });"
                                style="display: inline-block; transition: transform 0.3s ease, box-shadow 0.3s ease; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(212,168,83,0.4);">
-                                <img src="/assets/img/toraviviente/boton.png" alt="Descargar Torah Viviente"
+                                <img loading="lazy" decoding="async" src="/assets/img/toraviviente/boton.png" alt="Descargar Torah Viviente"
                                      style="height: 70px; display: block;">
                             </a>
                         </div>
@@ -619,7 +619,7 @@
                                             <div class="col-auto">
                                                 <% if (service.image_url && service.image_url.trim() !== '') { %>
                                                     <div class="parasha-cover-mini" style="width: 125px; max-width: 35vw; height: 88px; border-radius: 10px; overflow: hidden; background: #f8f9fa; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center;">
-                                                        <img src="<%= service.image_url %>" alt="<%= service.title %>" style="width: 100%; height: 100%; object-fit: contain;"
+                                                        <img loading="lazy" decoding="async" src="<%= service.image_url %>" alt="<%= service.title %>" style="width: 100%; height: 100%; object-fit: contain;"
                                                              onerror="this.onerror=null; this.closest('.parasha-cover-mini').outerHTML='<div class=\'parasha-cover-placeholder position-relative d-flex flex-column align-items-center justify-content-center text-center p-2\' style=\'width: 120px; max-width: 35vw; height: 85px; border-radius: 10px; background: linear-gradient(135deg, #fdfbf7 0%, #f5ece0 100%); border: 1.5px dashed #d4a853; box-shadow: inset 0 0 8px rgba(212,168,83,0.1);\'><i class=\'bi bi-hourglass-split mb-1\' style=\'font-size: 1.15rem; color: #b8860b;\'></i><span class=\'badge px-2 py-1 shadow-sm\' style=\'font-size: 0.68rem; font-weight: 700; background: linear-gradient(135deg, #d4a853, #b8860b); color: #ffffff; letter-spacing: 0.3px;\'>Próximamente...</span></div>';">
                                                     </div>
                                                 <% } else { %>
@@ -664,7 +664,7 @@
                                                         const hYtThumb = item.youtube_thumbnail || (item.youtube_id ? `https://img.youtube.com/vi/${item.youtube_id}/hqdefault.jpg` : '');
                                                     %>
                                                     <% if (hDisplayImg) { %>
-                                                        <img src="<%= hDisplayImg %>" alt="<%= item.title %>" style="width: 100%; height: 100%; object-fit: <%= (item.img || item.image_url || '').includes('/rosh-jodes/salmos81.png') ? 'contain' : 'cover' %>; transition: transform 0.4s ease;"
+                                                        <img loading="lazy" decoding="async" src="<%= hDisplayImg %>" alt="<%= item.title %>" style="width: 100%; height: 100%; object-fit: <%= (item.img || item.image_url || '').includes('/rosh-jodes/salmos81.png') ? 'contain' : 'cover' %>; transition: transform 0.4s ease;"
                                                              onerror="if(this.src !== '<%= hYtThumb %>' && '<%= hYtThumb %>') { this.src = '<%= hYtThumb %>'; } else { this.style.display = 'none'; const ph = this.parentElement.querySelector('.haftara-home-fallback'); if (ph) { ph.classList.remove('d-none'); ph.classList.add('d-flex'); } }">
                                                         <div class="haftara-home-fallback d-none align-items-center justify-content-center h-100 w-100 position-absolute top-0 start-0" style="background: linear-gradient(135deg, #2b231d, #1a1614); color: #fff;">
                                                             <div class="text-center p-2">
@@ -716,7 +716,7 @@
                                                     <% } %>
                                                     <div class="mt-auto pt-2 border-top d-flex align-items-center justify-content-between">
                                                         <div class="d-flex align-items-center gap-2">
-                                                            <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= item.author || 'Moréh Kaleb' %>" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853;">
+                                                            <img loading="lazy" decoding="async" src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= item.author || 'Moréh Kaleb' %>" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853;">
                                                             <div class="min-width-0">
                                                                 <div class="fw-bold text-truncate" style="font-size: 0.82rem; color: #222;"><%= item.author || 'Moréh Kaleb' %></div>
                                                                 <div class="text-muted" style="font-size: 0.72rem; line-height: 1;"><%= item.author_role || 'Moréh' %></div>
@@ -808,7 +808,7 @@
                                             <div class="evento-card" style="background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: transform 0.3s ease, box-shadow 0.3s ease; height: 100%; display: flex; flex-direction: column;">
                                                 <div style="width: 100%; height: 200px; overflow: hidden; background: #1a1a1a; position: relative;">
                                                     <% if (item.img || item.image_url) { %>
-                                                        <img src="<%= item.img || item.image_url %>" alt="<%= item.title %>"
+                                                        <img loading="lazy" decoding="async" src="<%= item.img || item.image_url %>" alt="<%= item.title %>"
                                                              style="width: 100%; height: 100%; object-fit: <%= (item.img || item.image_url || '').includes('/rosh-jodes/salmos81.png') ? 'contain' : 'cover' %>; transition: transform 0.4s ease;">
                                                     <% } else { %>
                                                         <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
@@ -973,7 +973,7 @@
                                             <div class="ensenanza-card h-100 shadow-sm" style="background: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #eee; transition: all 0.35s ease; display: flex; flex-direction: column;">
                                                 <div class="ensenanza-img-box" style="position: relative; width: 100%; height: 210px; overflow: hidden; background: #1a1a1a;">
                                                     <% if (item.image_url && item.image_url.trim() !== '') { %>
-                                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 100%; height: 100%; object-fit: <%= (item.img || item.image_url || '').includes('/rosh-jodes/salmos81.png') ? 'contain' : 'cover' %>; transition: transform 0.4s ease;">
+                                                        <img loading="lazy" decoding="async" src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 100%; height: 100%; object-fit: <%= (item.img || item.image_url || '').includes('/rosh-jodes/salmos81.png') ? 'contain' : 'cover' %>; transition: transform 0.4s ease;">
                                                     <% } else { %>
                                                         <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #f8f6f0, #eae4d8);">
                                                             <i class="bi bi-journal-bookmark text-muted" style="font-size: 3rem; color: #d4a853 !important;"></i>
@@ -1019,7 +1019,7 @@
                                                             <div class="d-flex align-items-center gap-2">
                                                                 <div class="d-flex" style="margin-left: 2px;">
                                                                     <% item.authors_list.forEach((auth, aIdx) => { %>
-                                                                        <img src="<%= auth.img || '/assets/img/team/kaleb.jpg' %>" alt="<%= auth.name %>" title="<%= auth.name %> (<%= auth.role %>)" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853; margin-left: <%= aIdx === 0 ? '0' : '-10px' %>; position: relative; z-index: <%= 10 - aIdx %>;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                                        <img loading="lazy" decoding="async" src="<%= auth.img || '/assets/img/team/kaleb.jpg' %>" alt="<%= auth.name %>" title="<%= auth.name %> (<%= auth.role %>)" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853; margin-left: <%= aIdx === 0 ? '0' : '-10px' %>; position: relative; z-index: <%= 10 - aIdx %>;" onerror="this.src='/assets/img/team/kaleb.jpg'">
                                                                     <% }) %>
                                                                 </div>
                                                                 <div class="min-width-0">
@@ -1032,7 +1032,7 @@
                                                     <% } else { %>
                                                         <div class="mt-auto pt-2 border-top d-flex align-items-center justify-content-between">
                                                             <div class="d-flex align-items-center gap-2">
-                                                                <img src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= item.author || 'Moréh Kaleb' %>" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853;" onerror="this.src='/assets/img/team/kaleb.jpg'">
+                                                                <img loading="lazy" decoding="async" src="<%= item.author_img || '/assets/img/team/kaleb.jpg' %>" alt="<%= item.author || 'Moréh Kaleb' %>" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a853;" onerror="this.src='/assets/img/team/kaleb.jpg'">
                                                                 <div class="min-width-0">
                                                                     <div class="fw-bold text-truncate" style="font-size: 0.82rem; color: #222;"><%= item.author || 'Moréh Kaleb' %></div>
                                                                     <div class="text-muted" style="font-size: 0.72rem; line-height: 1;"><%= item.author_role || 'Moréh' %></div>
@@ -1105,7 +1105,7 @@
                             <div class="col-lg-6" data-aos="fade-left">
                                 <div class="position-relative overflow-hidden rounded-4 shadow" style="max-height: 380px; border: 3px solid #f3e8ff;">
                                     <a href="/semillas-de-torah">
-                                        <img src="/assets/img/pagina/semillas_torah_banner.png" alt="Semillas de Torah - By Elva Avila" class="img-fluid w-100" style="object-fit: cover; height: 100%; transition: transform 0.4s ease;">
+                                        <img loading="lazy" decoding="async" src="/assets/img/pagina/semillas_torah_banner.png" alt="Semillas de Torah - By Elva Avila" class="img-fluid w-100" style="object-fit: cover; height: 100%; transition: transform 0.4s ease;">
                                     </a>
                                 </div>
                             </div>
@@ -1181,7 +1181,7 @@
                                                      onclick="openShortModalHome(<%= globalIdx %>)" 
                                                      style="cursor: pointer; background: #000; border: 2px solid transparent; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); aspect-ratio: 9 / 16; max-height: 480px;">
                                                     
-                                                    <img src="<%= short.thumbnail_url || '/assets/img/pagina/semillas_torah_banner.png' %>" 
+                                                    <img loading="lazy" decoding="async" src="<%= short.thumbnail_url || '/assets/img/pagina/semillas_torah_banner.png' %>" 
                                                          alt="<%= short.title %>" 
                                                          class="short-thumb w-100 h-100" 
                                                          style="object-fit: cover; transition: transform 0.5s ease;">
@@ -1277,7 +1277,7 @@
 
                 <!-- Testimonials Section -->
                 <section id="testimonials" class="testimonials section dark-background">
-                    <img src="/assets/img/testimonials-bg.jpg" class="testimonials-bg" alt="">
+                    <img loading="lazy" decoding="async" src="/assets/img/testimonials-bg.jpg" class="testimonials-bg" alt="">
                     <div class="container" data-aos="fade-up" data-aos-delay="100">
                         <div class="swiper init-swiper">
                             <script type="application/json" class="swiper-config">
@@ -1293,7 +1293,7 @@
                                 <% testimonials.forEach(t=> { %>
                                     <div class="swiper-slide">
                                         <div class="testimonial-item">
-                                            <img src="<%= t.img %>" class="testimonial-img" alt="">
+                                            <img loading="lazy" decoding="async" src="<%= t.img %>" class="testimonial-img" alt="">
                                             <h3>
                                                 <%= t.name %>
                                             </h3>
@@ -1334,7 +1334,7 @@
                                 <div class="col-6 col-md-4 col-lg-3 col-xl-2 text-center d-flex justify-content-center">
                                     <div class="team-member-card" style="padding: 10px; width: 100%;">
                                         <div style="width: 100%; max-width: 180px; aspect-ratio: 1/1; margin: 0 auto 12px; border-radius: 50%; overflow: hidden; border: 3px solid #d4b895; box-shadow: 0 4px 15px rgba(212,184,149,0.3);">
-                                            <img src="<%= member.img || '/assets/img/team/default.png' %>" alt="<%= member.name %>"
+                                            <img loading="lazy" decoding="async" src="<%= member.img || '/assets/img/team/default.png' %>" alt="<%= member.name %>"
                                                 style="width: 100%; height: 100%; object-fit: cover;">
                                         </div>
                                         <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; color: #222;"><%= member.name %></h4>
@@ -1361,7 +1361,7 @@
                                             <div class="blog-img-box" style="position: relative; width: 100%; height: 220px; overflow: hidden; background: #1a1a1a;">
                                                 <a href="/blog/<%= post.id %>" class="d-block w-100 h-100">
                                                     <% if (post.image_url && post.image_url.trim() !== '') { %>
-                                                        <img src="<%= post.image_url %>" alt="<%= post.title %>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+                                                        <img loading="lazy" decoding="async" src="<%= post.image_url %>" alt="<%= post.title %>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
                                                     <% } else { %>
                                                         <div class="d-flex align-items-center justify-content-center h-100 w-100" style="background: linear-gradient(135deg, #efe8db, #dfd4bf);">
                                                             <i class="bi bi-newspaper text-muted" style="font-size: 3.5rem; color: #d4a853 !important;"></i>
@@ -1496,7 +1496,7 @@
                                                         %>
                                                         <% if (finalImgUrl) { %>
                                                             <div style="height: 200px; overflow: hidden; position: relative;">
-                                                                <img src="<%= finalImgUrl %>" class="card-img-top" alt="<%= item[titleField] %>" style="width: 100%; height: 100%; object-fit: <%= (item.img || item.image_url || '').includes('/rosh-jodes/salmos81.png') ? 'contain' : 'cover' %>; transition: transform 0.4s ease;">
+                                                                <img loading="lazy" decoding="async" src="<%= finalImgUrl %>" class="card-img-top" alt="<%= item[titleField] %>" style="width: 100%; height: 100%; object-fit: <%= (item.img || item.image_url || '').includes('/rosh-jodes/salmos81.png') ? 'contain' : 'cover' %>; transition: transform 0.4s ease;">
                                                                 <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%); opacity: 0; transition: opacity 0.3s ease;" class="card-overlay"></div>
                                                                 <div style="position: absolute; bottom: 12px; left: 0; right: 0; text-align: center; opacity: 0; transition: opacity 0.3s ease; transform: translateY(5px); transition: opacity 0.3s ease, transform 0.3s ease;" class="card-play-icon">
                                                                     <i class="bi bi-play-circle-fill" style="font-size: 2.5rem; color: #fff; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));"></i>

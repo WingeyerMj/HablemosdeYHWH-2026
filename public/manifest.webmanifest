@@ -1,20 +1,28 @@
 {
-  "name": "Calendario Hablemos de YHWH",
+  "id": "/calendar?pwa=1",
+  "name": "Calendario Lunisolar — Hablemos de YHWH",
   "short_name": "Calendario YHWH",
-  "description": "Calendario bíblico y ciclo anual de Parashot disponible sin conexión.",
-  "start_url": "/calendar?source=pwa",
-  "scope": "/",
-  "display": "standalone",
-  "background_color": "#070707",
-  "theme_color": "#d4b895",
+  "description": "Calendario Lunisolar Bíblico (2025-2040) con fases lunares, festividades (Moedim), cuenta del Omer y ciclo anual de Parashot. Funciona 100% sin conexión a internet.",
   "lang": "es",
+  "dir": "ltr",
+  "start_url": "/calendar?pwa=1",
+  "scope": "/calendar",
+  "handle_links": "not-preferred",
+  "display": "standalone",
+  "background_color": "#121316",
+  "theme_color": "#121316",
   "icons": [
     {
-      "src": "/assets/img/pagina/logo.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/assets/calendar/icons/icon-192.png?v=calicon1",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/calendar/icons/icon-512.png?v=calicon1",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
 }
-

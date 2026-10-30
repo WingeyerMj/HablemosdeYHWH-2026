@@ -11,6 +11,13 @@
     pointer-events: none !important;
   }
 </style>
+<script>
+  // Capturar beforeinstallprompt de inmediato (antes de que terminen de cargar los módulos ES en celulares)
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    window.__deferredCalendarInstallPrompt = e;
+  });
+</script>
 
     <body class="calendar-page dark-background">
 
@@ -153,7 +160,7 @@
                         setTimeout(hidePreloader, 3000);
                     })();
                 </script>
-                <script type="module" src="/assets/calendar/js/main.js?v=desktop-logo1"></script>
+                <script type="module" src="/assets/calendar/js/main.js?v=calprint7"></script>
 
 
     </body>

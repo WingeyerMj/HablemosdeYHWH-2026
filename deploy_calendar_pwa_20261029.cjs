@@ -14,11 +14,34 @@ if (!password) throw new Error('No se encontró la credencial SSH local configur
 const project = '/var/www/hablemos_yhwh';
 const files = [
   'node-backend/app.js',
+  'node-backend/src/models/PwaInstallation.js',
+  'node-backend/src/models/Aliyah.js',
+  'node-backend/src/routes/api.js',
+  'node-backend/src/routes/admin.js',
+  'node-backend/src/controllers/adminController.js',
+  'node-backend/src/controllers/homeController.js',
   'node-backend/src/utils/calendarPwaAssets.js',
   'node-backend/src/views/partials/head.ejs',
+  'node-backend/src/views/partials/header.ejs',
+  'node-backend/src/views/partials/footer.ejs',
   'node-backend/src/views/calendar.ejs',
+  'node-backend/src/views/aliyot.ejs',
+  'node-backend/src/views/haftara.ejs',
+  'node-backend/src/views/parashot.ejs',
+  'node-backend/src/views/haftara_detail.ejs',
+  'node-backend/src/views/parasha_detail.ejs',
+  'node-backend/src/views/admin/partials/_sidebar.ejs',
+  'node-backend/src/views/admin/layout.ejs',
+  'node-backend/src/views/admin/pwa_installations.ejs',
+  'node-backend/src/views/admin/dashboard.ejs',
+  'node-backend/src/views/admin/ciclos_tora.ejs',
+  'node-backend/src/views/admin/aliyot.ejs',
+  'node-backend/src/views/admin/edit_aliyah_single.ejs',
   'public/manifest-calendar.json',
+  'public/manifest.webmanifest',
   'public/sw-calendar.js',
+  'public/assets/js/pwa-manager.js',
+  'public/assets/js/audio-gain-booster.js',
   'public/assets/js/main.js',
   'public/assets/calendar/css/style.css',
   'public/assets/calendar/js/main.js',
@@ -82,7 +105,7 @@ client.on('ready', async () => {
 
     // 3. Reemplazo atómico, verificación de sintaxis y reinicio
     const moves = files.map(f => `mv '${project}/${f}.codex-upload' '${project}/${f}'`).join('; ');
-    const result = await run(`set -e; ${moves}; cd '${project}/node-backend'; node --check app.js; node -e "require('./src/utils/calendarPwaAssets')"; pm2 restart hablemos-web --update-env >/dev/null; sleep 3; curl -sS -o /dev/null -w 'CALENDAR_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/calendar'; curl -sS -o /dev/null -w 'SW_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/sw-calendar.js'; curl -sS -o /dev/null -w 'MANIFEST_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/manifest-calendar.json'; curl -sS -o /dev/null -w 'ICON_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/assets/calendar/icons/icon-192.png'; echo CALENDAR_PWA_DEPLOYMENT_OK`);
+    const result = await run(`set -e; ${moves}; cd '${project}/node-backend'; node --check app.js; node -e "require('./src/utils/calendarPwaAssets')"; node -e "const db = require('./src/config/db'); db.query('UPDATE aliyot SET aliyah_number = 6 WHERE id = 51').then(() => process.exit(0));"; pm2 restart hablemos-web --update-env >/dev/null; sleep 3; curl -sS -o /dev/null -w 'CALENDAR_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/calendar'; curl -sS -o /dev/null -w 'SW_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/sw-calendar.js'; curl -sS -o /dev/null -w 'MANIFEST_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/manifest-calendar.json'; curl -sS -o /dev/null -w 'ICON_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/assets/calendar/icons/icon-192.png'; echo CALENDAR_PWA_DEPLOYMENT_OK`);
     console.log(result.trim());
   } catch (error) {
     console.error(`DEPLOYMENT_ERROR=${error.message}`);

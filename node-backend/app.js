@@ -74,17 +74,16 @@ app.use('/uploads', (req, res, next) => {
     }
     next();
 });
-<<<<<<< Updated upstream
 // /calendar/ (con barra) -> /calendar: una única versión del calendario (la que funciona offline e instalable)
 app.use((req, res, next) => {
     if (req.method === 'GET' && req.path === '/calendar/') {
         const qs = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '';
         return res.redirect(302, '/calendar' + qs);
     }
-=======
-app.use(['/sw.js', '/manifest.webmanifest'], (req, res, next) => {
+    next();
+});
+app.use(['/sw.js', '/sw-calendar.js', '/manifest.webmanifest', '/manifest-calendar.json'], (req, res, next) => {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
->>>>>>> Stashed changes
     next();
 });
 app.use(express.static(path.join(__dirname, '../public')));

@@ -110,11 +110,6 @@
                                 </ul>
                             </div>
                         </div>
-                        <div>
-                            <a href="/archivo-historico" class="btn btn-sm btn-link text-decoration-none" style="color: #8c6a2d; font-weight: 600; font-size: 0.85rem;">
-                                <i class="bi bi-collection me-1"></i> Archivo Histórico Completo &rarr;
-                            </a>
-                        </div>
                     </div>
                 <% } %>
 
@@ -336,7 +331,7 @@
                                                                     <i class="bi bi-download me-1"></i> Descargar
                                                                 </a>
                                                             </div>
-                                                            <audio controls preload="metadata" class="aliyah-audio d-block w-100 mt-1" style="min-width: 100%; height: 44px; border-radius: 8px;">
+                                                            <audio controls preload="metadata" data-gain-db="<%= aud.gain_db || 0 %>" class="aliyah-audio d-block w-100 mt-1" style="min-width: 100%; height: 44px; border-radius: 8px;">
                                                                 <source src="<%= aud.url %>" type="audio/mpeg">
                                                                 Tu navegador no soporta el reproductor de audio HTML5.
                                                             </audio>
@@ -602,6 +597,7 @@
         } catch(e) {}
     });
     </script>
+    <script src="/assets/js/audio-gain-booster.js"></script>
 
     <style>
         .aliyot-tabs-nav .nav-pills .nav-link {

@@ -122,7 +122,7 @@ select option:checked, select option:hover {
                                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pb-2 mb-2 border-bottom border-secondary border-opacity-50">
                                                         <div class="d-flex align-items-center gap-2">
                                                             <span class="badge" style="background: var(--primary-color, #d4b895); color: #000; font-weight: 700;">#<%= idx + 1 %></span>
-                                                            <audio controls style="height: 32px; max-width: 280px;">
+                                                            <audio controls data-gain-db="<%= audio.gain_db || 0 %>" style="height: 32px; max-width: 280px;">
                                                                 <source src="<%= audio.url %>" type="audio/mpeg">
                                                             </audio>
                                                         </div>
@@ -190,6 +190,27 @@ select option:checked, select option:hover {
                                                             <input type="text" class="form-control form-control-sm bg-dark text-white border-info mt-1 custom-field-input d-none" placeholder="Nombre completo de la persona...">
                                                         </div>
                                                     </div>
+
+                                                    <!-- Amplificador de Volumen (dB) para audio existente -->
+                                                    <div class="mt-2 pt-2 border-top border-secondary border-opacity-50 d-flex flex-wrap align-items-center justify-content-between gap-2 audio-booster-panel">
+                                                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                            <span class="small fw-bold text-success d-flex align-items-center gap-1">
+                                                                <i class="bi bi-volume-up-fill"></i> Subir Volumen (dB):
+                                                            </span>
+                                                            <input type="range" name="existing_audio_gains[]" class="form-range audio-gain-slider" min="0" max="20" step="1" value="<%= audio.gain_db || 0 %>" style="width: 130px;">
+                                                            <span class="badge bg-success audio-gain-badge" style="min-width: 60px;">+<%= audio.gain_db || 0 %> dB</span>
+                                                            <div class="btn-group btn-group-sm">
+                                                                <button type="button" class="btn btn-outline-secondary py-0 px-2 btn-gain-preset" data-db="0">0 dB</button>
+                                                                <button type="button" class="btn btn-outline-success py-0 px-2 btn-gain-preset" data-db="6">+6 dB</button>
+                                                                <button type="button" class="btn btn-outline-warning py-0 px-2 btn-gain-preset" data-db="12">+12 dB</button>
+                                                                <button type="button" class="btn btn-outline-danger py-0 px-2 btn-gain-preset" data-db="18">+18 dB</button>
+                                                                <button type="button" class="btn btn-outline-info py-0 px-2 btn-gain-autolevel" title="Detectar nivel de voz y calcular los decibeles recomendados automáticamente">
+                                                                    <i class="bi bi-magic"></i> Auto-Nivelar
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <small class="text-white-50 audio-gain-hint">Podés reproducir arriba para escuchar el aumento en vivo</small>
+                                                    </div>
                                                 </div>
                                             <% }) %>
                                         </div>
@@ -254,6 +275,30 @@ select option:checked, select option:hover {
                                                         <button type="button" class="btn btn-sm btn-outline-danger btn-remove-edit-row d-none" title="Eliminar fila">
                                                             <i class="bi bi-trash"></i>
                                                         </button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Amplificador de Volumen (dB) para nuevo archivo -->
+                                                <div class="mt-2 pt-2 border-top border-secondary border-opacity-50 d-flex flex-wrap align-items-center justify-content-between gap-2 audio-booster-panel">
+                                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                        <span class="small fw-bold text-success d-flex align-items-center gap-1">
+                                                            <i class="bi bi-volume-up-fill"></i> Subir Volumen (dB):
+                                                        </span>
+                                                        <input type="range" name="audio_gains[]" class="form-range audio-gain-slider" min="0" max="20" step="1" value="0" style="width: 130px;">
+                                                        <span class="badge bg-success audio-gain-badge" style="min-width: 60px;">+0 dB</span>
+                                                        <div class="btn-group btn-group-sm">
+                                                            <button type="button" class="btn btn-outline-secondary py-0 px-2 btn-gain-preset" data-db="0">0 dB</button>
+                                                            <button type="button" class="btn btn-outline-success py-0 px-2 btn-gain-preset" data-db="6">+6 dB</button>
+                                                            <button type="button" class="btn btn-outline-warning py-0 px-2 btn-gain-preset" data-db="12">+12 dB</button>
+                                                            <button type="button" class="btn btn-outline-danger py-0 px-2 btn-gain-preset" data-db="18">+18 dB</button>
+                                                            <button type="button" class="btn btn-outline-info py-0 px-2 btn-gain-autolevel" title="Detectar nivel de voz y calcular los decibeles recomendados automáticamente">
+                                                                <i class="bi bi-magic"></i> Auto-Nivelar
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <audio controls class="audio-live-preview d-none" style="height: 28px; max-width: 210px;"></audio>
+                                                        <small class="text-white-50 audio-gain-hint">Elegí el archivo para escuchar y ajustar dB</small>
                                                     </div>
                                                 </div>
                                             </div>
@@ -588,8 +633,31 @@ document.addEventListener('DOMContentLoaded', function() {
                         </button>
                     </div>
                 </div>
+                <div class="mt-2 pt-2 border-top border-secondary border-opacity-50 d-flex flex-wrap align-items-center justify-content-between gap-2 audio-booster-panel">
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="small fw-bold text-success d-flex align-items-center gap-1">
+                            <i class="bi bi-volume-up-fill"></i> Subir Volumen (dB):
+                        </span>
+                        <input type="range" name="audio_gains[]" class="form-range audio-gain-slider" min="0" max="20" step="1" value="0" style="width: 130px;">
+                        <span class="badge bg-success audio-gain-badge" style="min-width: 60px;">+0 dB</span>
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-outline-secondary py-0 px-2 btn-gain-preset" data-db="0">0 dB</button>
+                            <button type="button" class="btn btn-outline-success py-0 px-2 btn-gain-preset" data-db="6">+6 dB</button>
+                            <button type="button" class="btn btn-outline-warning py-0 px-2 btn-gain-preset" data-db="12">+12 dB</button>
+                            <button type="button" class="btn btn-outline-danger py-0 px-2 btn-gain-preset" data-db="18">+18 dB</button>
+                            <button type="button" class="btn btn-outline-info py-0 px-2 btn-gain-autolevel" title="Detectar nivel de voz y calcular los decibeles recomendados automáticamente">
+                                <i class="bi bi-magic"></i> Auto-Nivelar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <audio controls class="audio-live-preview d-none" style="height: 28px; max-width: 210px;"></audio>
+                        <small class="text-white-50 audio-gain-hint">Elegí el archivo para escuchar y ajustar dB</small>
+                    </div>
+                </div>
             `;
             editAudioContainer.appendChild(newRow);
+            if (window.initAudioRowBooster) window.initAudioRowBooster(newRow);
 
             newRow.querySelector('.btn-remove-edit-row').addEventListener('click', function() {
                 newRow.remove();
@@ -824,3 +892,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+<script src="/assets/js/audio-gain-booster.js"></script>

@@ -478,11 +478,22 @@ router.delete('/interactions/comment/:id', async (req, res) => {
     }
 });
 
-// PWA Calendario: versión de contenidos y registro anónimo de instalaciones.
-router.get('/pwa/version', (req, res) => {
-    const PwaInstallation = require('../models/PwaInstallation');
-    res.setHeader('Cache-Control', 'no-store, max-age=0');
-    res.json({ ok: true, version: PwaInstallation.getCalendarVersion() });
+// PWA Calendario: versión de contenidos controlada manualmente desde el Dashboard y registro anónimo de instalaciones.
+router.get('/pwa/version', async (req, res) => {
+    try {
+        const PwaInstallation = require('../models/PwaInstallation');
+        const cfg = await PwaInstallation.getReleaseConfig();
+        res.setHeader('Cache-Control', 'no-store, max-age=0');
+        res.json({
+            ok: true,
+            version: cfg.version,
+            alertActive: Boolean(cfg.alertActive),
+            alertMessage: cfg.alertMessage,
+            publishedAt: cfg.publishedAt
+        });
+    } catch (error) {
+        res.json({ ok: true, version: 'calendario-base-v1', alertActive: false });
+    }
 });
 
 router.post('/pwa/installations', async (req, res) => {

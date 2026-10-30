@@ -14,6 +14,17 @@ export const initSwiper = () => {
         let config = JSON.parse(
             swiperElement.querySelector(".swiper-config").innerHTML.trim()
         );
+        if (swiperElement.swiper) return;
+        const count = swiperElement.querySelectorAll('.swiper-wrapper > .swiper-slide').length;
+        if (!count) return;
+        // Rewind cycles through the real slides at every responsive width.
+        // Unlike loop, it needs no duplicated slides or minimum visible count.
+        if (config.loop) {
+            config.loop = false;
+            config.rewind = count > 1;
+        }
+        config.watchOverflow = true;
+        if (count === 1) config.autoplay = false;
         new Swiper(swiperElement, config);
     });
 };

@@ -190,40 +190,8 @@ const homeController = {
         res.render('calendar', { title: 'Calendario - Hablemos de YHWH', page: 'calendar', layout: false });
     },
 
-    archivoHistorico: async (req, res, next) => {
-        try {
-            const TorahCycle = require('../models/TorahCycle');
-            const cycles = await TorahCycle.getAllCycles();
-            const selectedCycleId = req.query.cycle ? parseInt(req.query.cycle) : (cycles.length > 0 ? cycles[0].id : null);
-            
-            let selectedCycle = null;
-            let historicalParashot = [];
-            let historicalAliyot = [];
-            let historicalHaftarot = [];
-
-            if (selectedCycleId) {
-                selectedCycle = await TorahCycle.getCycleById(selectedCycleId);
-                if (selectedCycle) {
-                    historicalParashot = await TorahCycle.getHistoricalParashot(selectedCycleId);
-                    historicalAliyot = await TorahCycle.getHistoricalAliyot(selectedCycleId);
-                    historicalHaftarot = await TorahCycle.getHistoricalHaftarot(selectedCycleId);
-                }
-            }
-
-            res.render('archivo_historico', {
-                title: 'Archivo Histórico de la Torá - Ciclos Anteriores - Hablemos de YHWH',
-                page: 'archivo-historico',
-                cycles,
-                selectedCycle,
-                historicalParashot,
-                historicalAliyot,
-                historicalHaftarot,
-                searchQuery: req.query.q || '',
-                layout: false
-            });
-        } catch (error) {
-            next(error);
-        }
+    archivoHistorico: async (req, res) => {
+        return res.redirect('/parashot');
     },
 
     parashot: async (req, res, next) => {

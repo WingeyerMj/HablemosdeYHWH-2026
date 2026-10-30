@@ -21,7 +21,8 @@ class Aliyah {
                             cycle_name: item.cycle_name || '',
                             reader: item.reader || 'Menajem Ben Leví',
                             reader_role: item.reader_role || 'Lector de Aliyot',
-                            reader_img: item.reader_img || ''
+                            reader_img: item.reader_img || '',
+                            gain_db: Number(item.gain_db) || 0
                         }));
                 } else if (parsed.url) {
                     return [{
@@ -30,7 +31,8 @@ class Aliyah {
                         cycle_name: parsed.cycle_name || '',
                         reader: parsed.reader || 'Menajem Ben Leví',
                         reader_role: parsed.reader_role || 'Lector de Aliyot',
-                        reader_img: parsed.reader_img || ''
+                        reader_img: parsed.reader_img || '',
+                        gain_db: Number(parsed.gain_db) || 0
                     }];
                 }
             } catch (e) {}
@@ -41,12 +43,13 @@ class Aliyah {
             cycle_name: '',
             reader: 'Menajem Ben Leví',
             reader_role: 'Lector de Aliyot',
-            reader_img: ''
+            reader_img: '',
+            gain_db: 0
         }];
     }
 
     /**
-     * Serializar lista de audios a JSON string preservando ciclo y lector
+     * Serializar lista de audios a JSON string preservando ciclo, lector y ganancia dB
      */
     static serializeAudios(audios) {
         if (!audios || !Array.isArray(audios) || audios.length === 0) {
@@ -60,7 +63,8 @@ class Aliyah {
                 cycle_name: a.cycle_name || '',
                 reader: a.reader || 'Menajem Ben Leví',
                 reader_role: a.reader_role || '',
-                reader_img: a.reader_img || ''
+                reader_img: a.reader_img || '',
+                gain_db: Number(a.gain_db) || 0
             }));
         if (clean.length === 0) return '';
         return JSON.stringify(clean);

@@ -244,6 +244,8 @@ router.post('/ciclos-tora/delete/:id', isAuthenticated, isStrictAdmin, adminCont
 
 // Instalaciones de la aplicación offline (Solo Admin)
 router.get('/pwa-installations', isAuthenticated, isStrictAdmin, adminController.pwaInstallationsPage);
+router.post('/pwa-installations/trigger-update', isAuthenticated, isStrictAdmin, adminController.triggerPwaUpdateAlert);
+router.post('/pwa-installations/stop-update', isAuthenticated, isStrictAdmin, adminController.stopPwaUpdateAlert);
 
 module.exports = router;
 

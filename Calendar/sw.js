@@ -1,5 +1,5 @@
 // Service Worker — Carpeta Autónoma Calendar/
-const CACHE_NAME = 'yhwh-calendario-standalone-v8';
+const CACHE_NAME = 'yhwh-calendario-standalone-v9';
 
 const ASSETS = [
   './',
@@ -56,13 +56,17 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+  if (event.request.headers && event.request.headers.has('range')) return;
+  if (event.request.destination === 'video' || event.request.destination === 'audio') return;
+  const u = new URL(event.request.url);
+  if (/\.(mp4|webm|ogg|mp3|wav|m4a|aac|flac)$/i.test(u.pathname)) return;
   event.respondWith(
     caches.match(event.request, { ignoreSearch: true }).then((cached) => {
       const fetchPromise = fetch(event.request)
         .then((res) => {
-          if (res && res.ok) {
+          if (res && res.status === 200 && !(res.headers && res.headers.has('content-range'))) {
             const clone = res.clone();
-            caches.open(CACHE_NAME).then((c) => c.put(event.request, clone));
+            caches.open(CACHE_NAME).then((c) => c.put(event.request, clone).catch(() => {}));
           }
           return res;
         })

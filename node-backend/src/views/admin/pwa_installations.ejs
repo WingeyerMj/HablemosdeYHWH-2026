@@ -6,7 +6,76 @@
             <h1 class="mb-1"><i class="bi bi-phone text-info me-2"></i>Instalaciones del Calendario Offline</h1>
             <p class="text-white-50 mb-0">Dispositivos que instalaron o utilizan la aplicación sin conexión.</p>
         </div>
-        <span class="badge bg-dark border border-warning text-warning px-3 py-2">Versión: <%= dashboard.currentVersion %></span>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <% const releaseCfg = dashboard.releaseConfig || { version: dashboard.currentVersion, alertActive: false, alertMessage: 'Hay una versión nueva. Actualizá ahora para descargarla y seguir usándola sin conexión.', publishedAt: null }; %>
+            <span class="badge <%= releaseCfg.alertActive ? 'bg-success' : 'bg-secondary' %> px-3 py-2">
+                <i class="bi <%= releaseCfg.alertActive ? 'bi-bell-fill' : 'bi-bell-slash' %> me-1"></i>
+                Alerta: <%= releaseCfg.alertActive ? 'ACTIVA' : 'DESACTIVADA (Manual)' %>
+            </span>
+            <span class="badge bg-dark border border-warning text-warning px-3 py-2">Versión: <%= dashboard.currentVersion %></span>
+        </div>
+    </div>
+
+    <% if (typeof msg !== 'undefined' && msg) { %>
+        <div class="alert alert-success border border-success d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-check-circle-fill me-2"></i><%= msg %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger border border-danger d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-exclamation-triangle-fill me-2"></i><%= error %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <!-- Panel de Control Manual de Alerta de Actualización -->
+    <div class="card bg-dark border-warning mb-4 shadow-sm" style="background: linear-gradient(145deg, rgba(212,168,83,0.08), rgba(15,15,20,0.95));">
+        <div class="card-header border-warning border-opacity-50 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="fw-bold text-warning">
+                <i class="bi bi-broadcast-pin me-2"></i>Control Manual de Alerta de Actualización (Solo Dispositivos Instalados)
+            </div>
+            <% if (releaseCfg.publishedAt) { %>
+                <small class="text-white-50">Último envío: <%= new Date(releaseCfg.publishedAt).toLocaleString('es-AR') %></small>
+            <% } %>
+        </div>
+        <div class="card-body">
+            <p class="text-white-50 small mb-3">
+                La alerta de actualización <strong>nunca aparece sola en el navegador común</strong>. Cuando realices cambios en el Calendario y quieras avisarles a los usuarios que ya tienen la App instalada en su celular o PC, presioná <strong>"Enviar Alerta de Actualización"</strong>.
+            </p>
+            <div class="row g-3 align-items-end">
+                <div class="col-lg-8">
+                    <form action="/admin/pwa-installations/trigger-update" method="POST" class="row g-2 align-items-end">
+                        <input type="hidden" name="returnTo" value="pwa-installations">
+                        <div class="col-md-8">
+                            <label class="form-label small text-white-50 mb-1">Mensaje del aviso para los dispositivos instalados:</label>
+                            <input type="text" name="alertMessage" class="form-control bg-black text-white border-secondary"
+                                value="<%= releaseCfg.alertMessage || 'Hay una versión nueva. Actualizá ahora para descargarla y seguir usándola sin conexión.' %>"
+                                maxlength="240">
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-warning w-100 fw-bold text-dark">
+                                <i class="bi bi-bell-fill me-1"></i> Enviar Alerta Ahora
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-4 d-flex justify-content-lg-end">
+                    <% if (releaseCfg.alertActive) { %>
+                        <form action="/admin/pwa-installations/stop-update" method="POST" class="w-100">
+                            <input type="hidden" name="returnTo" value="pwa-installations">
+                            <button type="submit" class="btn btn-outline-danger w-100">
+                                <i class="bi bi-bell-slash me-1"></i> Desactivar Alerta Activa
+                            </button>
+                        </form>
+                    <% } else { %>
+                        <div class="text-white-50 small border border-secondary rounded px-3 py-2 w-100 text-center">
+                            <i class="bi bi-shield-check text-success me-1"></i> Sin alertas activas en este momento
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row g-3 mb-4">

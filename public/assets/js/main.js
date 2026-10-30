@@ -6,7 +6,7 @@ import { initAOS, initSwiper, initGLightbox, initIsotope } from './modules/compo
 
   initNav();
 
-  window.addEventListener('load', () => {
+  const initPage = () => {
     // Quitar el preloader primero, para que nunca quede "pensando" (ej. sin internet)
     const preloader = document.querySelector('#preloader');
     if (preloader) {
@@ -16,7 +16,9 @@ import { initAOS, initSwiper, initGLightbox, initIsotope } from './modules/compo
     [initAOS, initSwiper, initGLightbox, initIsotope].forEach((init) => {
       try { init(); } catch (e) { console.warn('Aviso al iniciar componente:', e); }
     });
-  });
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initPage, { once: true });
+  else initPage();
 
   // Scroll top
   const scrollTop = document.querySelector('.scroll-top');

@@ -168,6 +168,14 @@ const adminController = {
                 console.warn('Aviso ciclos dashboard:', e.message);
             }
 
+            let pwaDashboard = null;
+            try {
+                const PwaInstallation = require('../models/PwaInstallation');
+                pwaDashboard = await PwaInstallation.getDashboard();
+            } catch (e) {
+                console.warn('Aviso pwaDashboard:', e.message);
+            }
+
             res.render('admin/dashboard', {
                 layout: 'admin/layout',
                 parashot,
@@ -191,7 +199,10 @@ const adminController = {
                 semillasCategories,
                 subscribers: typeof subscribers !== 'undefined' ? subscribers : [],
                 currentCycle,
-                allCycles
+                allCycles,
+                pwaDashboard,
+                msg: req.query.msg || null,
+                error: req.query.error || null
             });
         } catch (error) {
             next(error);
@@ -2282,6 +2293,8 @@ const adminController = {
                 const cycles = Array.isArray(rawCycles) ? rawCycles : (rawCycles ? [rawCycles] : []);
                 const rawReaders = req.body.audio_readers || [];
                 const readers = Array.isArray(rawReaders) ? rawReaders : (rawReaders ? [rawReaders] : []);
+                const rawGains = req.body.audio_gains || [];
+                const gains = Array.isArray(rawGains) ? rawGains : (rawGains !== undefined ? [rawGains] : []);
 
                 newFiles.forEach((file, idx) => {
                     const rawTitle = titles[idx];
@@ -2294,12 +2307,14 @@ const adminController = {
                     const cleanReader = (readers[idx] && readers[idx].trim() !== '' && readers[idx] !== '__custom__')
                         ? readers[idx].trim()
                         : 'Menajem Ben Leví';
+                    const cleanGain = Math.max(0, Math.min(24, Number(gains[idx]) || 0));
 
                     audiosList.push({
                         title: cleanTitle,
                         url: '/uploads/audios/' + file.filename,
                         cycle_name: cleanCycle,
-                        reader: cleanReader
+                        reader: cleanReader,
+                        gain_db: cleanGain
                     });
                 });
             }
@@ -2323,10 +2338,19 @@ const adminController = {
             const audio_url = Aliyah.serializeAudios(audiosList);
             const pub = (is_published === '1' || is_published === 1 || is_published === true || is_published === 'on');
 
+            let resolvedAliyahNumber = Number(aliyah_number) || 1;
+            if (resolvedAliyahNumber === 1 && title) {
+                const matchNum = String(title).match(/(?:aliy[aá]\s*([1-7])|([1-7])[°ªºa]?\s*aliy[aá])/i);
+                const detected = Number(matchNum && (matchNum[1] || matchNum[2]));
+                if (detected >= 1 && detected <= 7) {
+                    resolvedAliyahNumber = detected;
+                }
+            }
+
             await Aliyah.create({
                 parasha_id: parasha_id || null,
-                aliyah_number: Number(aliyah_number),
-                title: title || `Aliyá ${aliyah_number}`,
+                aliyah_number: resolvedAliyahNumber,
+                title: title || `Aliyá ${resolvedAliyahNumber}`,
                 verses_reference: verses_reference || '',
                 content: content || '',
                 content_hebrew: content_hebrew || '',
@@ -2400,6 +2424,9 @@ const adminController = {
             const existingReaders = Array.isArray(req.body.existing_audio_readers)
                 ? req.body.existing_audio_readers
                 : (req.body.existing_audio_readers ? [req.body.existing_audio_readers] : []);
+            const existingGains = Array.isArray(req.body.existing_audio_gains)
+                ? req.body.existing_audio_gains
+                : (req.body.existing_audio_gains !== undefined ? [req.body.existing_audio_gains] : []);
 
             if (existingUrls.length > 0) {
                 existingUrls.forEach((url, i) => {
@@ -2412,7 +2439,8 @@ const adminController = {
                                 : defaultCycle,
                             reader: (existingReaders[i] && existingReaders[i].trim() !== '' && existingReaders[i] !== '__custom__')
                                 ? existingReaders[i].trim()
-                                : 'Menajem Ben Leví'
+                                : 'Menajem Ben Leví',
+                            gain_db: Math.max(0, Math.min(24, Number(existingGains[i]) || 0))
                         });
                     }
                 });
@@ -2440,6 +2468,8 @@ const adminController = {
                 const cycles = Array.isArray(rawCycles) ? rawCycles : (rawCycles ? [rawCycles] : []);
                 const rawReaders = req.body.audio_readers || [];
                 const readers = Array.isArray(rawReaders) ? rawReaders : (rawReaders ? [rawReaders] : []);
+                const rawGains = req.body.audio_gains || [];
+                const gains = Array.isArray(rawGains) ? rawGains : (rawGains !== undefined ? [rawGains] : []);
 
                 newFiles.forEach((file, idx) => {
                     const rawTitle = titles[idx];
@@ -2452,12 +2482,14 @@ const adminController = {
                     const cleanReader = (readers[idx] && readers[idx].trim() !== '' && readers[idx] !== '__custom__')
                         ? readers[idx].trim()
                         : 'Menajem Ben Leví';
+                    const cleanGain = Math.max(0, Math.min(24, Number(gains[idx]) || 0));
 
                     audiosList.push({
                         title: cleanTitle,
                         url: '/uploads/audios/' + file.filename,
                         cycle_name: cleanCycle,
-                        reader: cleanReader
+                        reader: cleanReader,
+                        gain_db: cleanGain
                     });
                 });
             }
@@ -2617,6 +2649,9 @@ const adminController = {
             const existingReaders = Array.isArray(req.body.existing_audio_readers)
                 ? req.body.existing_audio_readers
                 : (req.body.existing_audio_readers ? [req.body.existing_audio_readers] : []);
+            const existingGains = Array.isArray(req.body.existing_audio_gains)
+                ? req.body.existing_audio_gains
+                : (req.body.existing_audio_gains !== undefined ? [req.body.existing_audio_gains] : []);
 
             if (existingUrls.length > 0) {
                 existingUrls.forEach((url, i) => {
@@ -2629,7 +2664,8 @@ const adminController = {
                                 : defaultCycle,
                             reader: (existingReaders[i] && existingReaders[i].trim() !== '' && existingReaders[i] !== '__custom__')
                                 ? existingReaders[i].trim()
-                                : 'Menajem Ben Leví'
+                                : 'Menajem Ben Leví',
+                            gain_db: Math.max(0, Math.min(24, Number(existingGains[i]) || 0))
                         });
                     }
                 });
@@ -2655,6 +2691,8 @@ const adminController = {
                 const cycles = Array.isArray(rawCycles) ? rawCycles : (rawCycles ? [rawCycles] : []);
                 const rawReaders = req.body.audio_readers || [];
                 const readers = Array.isArray(rawReaders) ? rawReaders : (rawReaders ? [rawReaders] : []);
+                const rawGains = req.body.audio_gains || [];
+                const gains = Array.isArray(rawGains) ? rawGains : (rawGains !== undefined ? [rawGains] : []);
 
                 newFiles.forEach((file, idx) => {
                     const rawTitle = titles[idx];
@@ -2667,12 +2705,14 @@ const adminController = {
                     const cleanReader = (readers[idx] && readers[idx].trim() !== '' && readers[idx] !== '__custom__')
                         ? readers[idx].trim()
                         : 'Menajem Ben Leví';
+                    const cleanGain = Math.max(0, Math.min(24, Number(gains[idx]) || 0));
 
                     audiosList.push({
                         title: cleanTitle,
                         url: '/uploads/audios/' + file.filename,
                         cycle_name: cleanCycle,
-                        reader: cleanReader
+                        reader: cleanReader,
+                        gain_db: cleanGain
                     });
                 });
             }
@@ -3000,11 +3040,40 @@ const adminController = {
             res.render('admin/pwa_installations', {
                 layout: 'admin/layout',
                 activePage: 'pwa-installations',
-                dashboard
+                dashboard,
+                msg: req.query.msg || null,
+                error: req.query.error || null
             });
         } catch (error) {
             console.error('Error pwaInstallationsPage:', error);
             res.redirect('/admin/dashboard');
+        }
+    },
+
+    triggerPwaUpdateAlert: async (req, res) => {
+        const returnBase = req.body.returnTo === 'dashboard' ? '/admin/dashboard' : '/admin/pwa-installations';
+        try {
+            const PwaInstallation = require('../models/PwaInstallation');
+            const customMessage = req.body.alertMessage || '';
+            const cfg = await PwaInstallation.publishManualUpdate(customMessage);
+            const msg = `Alerta de actualización activada manualmente (${cfg.version}). Se mostrará únicamente a los dispositivos que tienen el Calendario instalado.`;
+            res.redirect(returnBase + '?msg=' + encodeURIComponent(msg));
+        } catch (error) {
+            console.error('Error triggerPwaUpdateAlert:', error);
+            res.redirect(returnBase + '?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    stopPwaUpdateAlert: async (req, res) => {
+        const returnBase = req.body.returnTo === 'dashboard' ? '/admin/dashboard' : '/admin/pwa-installations';
+        try {
+            const PwaInstallation = require('../models/PwaInstallation');
+            await PwaInstallation.deactivateAlert();
+            const msg = 'Alerta de actualización desactivada. Ningún dispositivo recibirá el aviso hasta que lo vuelvas a activar.';
+            res.redirect(returnBase + '?msg=' + encodeURIComponent(msg));
+        } catch (error) {
+            console.error('Error stopPwaUpdateAlert:', error);
+            res.redirect(returnBase + '?error=' + encodeURIComponent(error.message));
         }
     }
 };
