@@ -478,4 +478,35 @@ router.delete('/interactions/comment/:id', async (req, res) => {
     }
 });
 
+// PWA Calendario: versión de contenidos y registro anónimo de instalaciones.
+router.get('/pwa/version', (req, res) => {
+    const PwaInstallation = require('../models/PwaInstallation');
+    res.setHeader('Cache-Control', 'no-store, max-age=0');
+    res.json({ ok: true, version: PwaInstallation.getCalendarVersion() });
+});
+
+router.post('/pwa/installations', async (req, res) => {
+    try {
+        const PwaInstallation = require('../models/PwaInstallation');
+        const installationId = String(req.body.installationId || '').trim();
+        if (!/^[a-zA-Z0-9-]{16,80}$/.test(installationId)) {
+            return res.status(400).json({ ok: false, error: 'Identificador inválido' });
+        }
+        if (rateLimit(`pwa:${installationId}`, 60000, 12)) {
+            return res.status(429).json({ ok: false, error: 'Demasiadas actualizaciones' });
+        }
+        await PwaInstallation.record({
+            installationId,
+            platform: String(req.body.platform || '').substring(0, 80),
+            displayMode: String(req.body.displayMode || '').substring(0, 30),
+            userAgent: String(req.body.userAgent || '').substring(0, 500),
+            appVersion: String(req.body.appVersion || '').substring(0, 80)
+        });
+        res.json({ ok: true });
+    } catch (error) {
+        console.error('Error registrando instalación PWA:', error.message);
+        res.status(500).json({ ok: false, error: 'No se pudo registrar la instalación' });
+    }
+});
+
 module.exports = router;

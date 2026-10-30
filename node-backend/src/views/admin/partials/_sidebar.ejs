@@ -2,7 +2,7 @@
 <nav class="sidebar" id="adminSidebar">
     <% 
         const isEstructura = (typeof activePage !== 'undefined' && ['dynamic-sections', 'sections'].includes(activePage));
-        const isAdmin = (typeof activePage !== 'undefined' && ['ciclos-tora', 'footer', 'settings', 'users'].includes(activePage));
+        const isAdmin = (typeof activePage !== 'undefined' && ['ciclos-tora', 'pwa-installations', 'footer', 'settings', 'users'].includes(activePage));
         const isContenido = !isEstructura && !isAdmin;
     %>
 
@@ -95,6 +95,7 @@
             <div class="collapse <%= isAdmin ? 'show' : '' %>" id="acc-admin">
                 <div class="sidebar-accordion-content">
                     <a href="/admin/ciclos-tora" class="<%= (typeof activePage !== 'undefined' && activePage === 'ciclos-tora') ? 'active' : '' %>"><i class="bi bi-clock-history text-warning"></i> Ciclos & Histórico</a>
+                    <a href="/admin/pwa-installations" class="<%= (typeof activePage !== 'undefined' && activePage === 'pwa-installations') ? 'active' : '' %>"><i class="bi bi-phone text-info"></i> Instalaciones PWA</a>
                     <a href="/admin/entity/footer_links" class="<%= (typeof activePage !== 'undefined' && activePage === 'footer') ? 'active' : '' %>"><i class="bi bi-link-45deg"></i> Enlaces Footer</a>
                     <a href="/admin/settings" class="<%= (typeof activePage !== 'undefined' && activePage === 'settings') ? 'active' : '' %>"><i class="bi bi-gear"></i> Configuración</a>
                     <a href="/admin/users" class="<%= (typeof activePage !== 'undefined' && activePage === 'users') ? 'active' : '' %>"><i class="bi bi-people"></i> Usuarios</a>

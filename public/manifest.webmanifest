@@ -1,0 +1,20 @@
+{
+  "name": "Calendario Hablemos de YHWH",
+  "short_name": "Calendario YHWH",
+  "description": "Calendario bíblico y ciclo anual de Parashot disponible sin conexión.",
+  "start_url": "/calendar?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#070707",
+  "theme_color": "#d4b895",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/assets/img/pagina/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
+

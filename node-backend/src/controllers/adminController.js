@@ -2991,6 +2991,21 @@ const adminController = {
             console.error('Error setCurrentTorahCycle:', error);
             res.redirect('/admin/ciclos-tora?error=' + encodeURIComponent(error.message));
         }
+    },
+
+    pwaInstallationsPage: async (req, res) => {
+        try {
+            const PwaInstallation = require('../models/PwaInstallation');
+            const dashboard = await PwaInstallation.getDashboard();
+            res.render('admin/pwa_installations', {
+                layout: 'admin/layout',
+                activePage: 'pwa-installations',
+                dashboard
+            });
+        } catch (error) {
+            console.error('Error pwaInstallationsPage:', error);
+            res.redirect('/admin/dashboard');
+        }
     }
 };
 

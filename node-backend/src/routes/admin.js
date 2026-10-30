@@ -56,6 +56,7 @@ router.use(async (req, res, next) => {
         else if (path.includes('/settings')) res.locals.activePage = 'settings';
         else if (path.includes('/users')) res.locals.activePage = 'users';
         else if (path.includes('/ciclos-tora')) res.locals.activePage = 'ciclos-tora';
+        else if (path.includes('/pwa-installations')) res.locals.activePage = 'pwa-installations';
 
         try {
             const Interaction = require('../models/Interaction');
@@ -240,6 +241,9 @@ router.get('/ciclos-tora', isAuthenticated, isStrictAdmin, adminController.ciclo
 router.post('/ciclos-tora/archive-reset', isAuthenticated, isStrictAdmin, adminController.archiveResetCycle);
 router.post('/ciclos-tora/set-current/:id', isAuthenticated, isStrictAdmin, adminController.setCurrentTorahCycle);
 router.post('/ciclos-tora/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteTorahCycle);
+
+// Instalaciones de la aplicación offline (Solo Admin)
+router.get('/pwa-installations', isAuthenticated, isStrictAdmin, adminController.pwaInstallationsPage);
 
 module.exports = router;
 
