@@ -87,9 +87,11 @@ function findCurrentLunisolarMonth(yearData, todayUTC) {
   for (let i = 0; i < yearData.months.length; i++) {
     const m = yearData.months[i];
     const rjRaw = new Date(m.roshJodes);
-    const start = new Date(Date.UTC(rjRaw.getUTCFullYear(), rjRaw.getUTCMonth(), rjRaw.getUTCDate()));
+    const start = new Date(Date.UTC(2000, rjRaw.getUTCMonth(), rjRaw.getUTCDate()));
+    start.setUTCFullYear(rjRaw.getUTCFullYear());
     const nextRaw = new Date(m.next);
-    const end = new Date(Date.UTC(nextRaw.getUTCFullYear(), nextRaw.getUTCMonth(), nextRaw.getUTCDate()));
+    const end = new Date(Date.UTC(2000, nextRaw.getUTCMonth(), nextRaw.getUTCDate()));
+    end.setUTCFullYear(nextRaw.getUTCFullYear());
 
     if (todayUTC >= start && todayUTC < end) {
       return i;
@@ -112,18 +114,68 @@ const sliderLabelEl = document.getElementById("slider-label");
 const sidePrev = document.getElementById("side-prev");
 const sideNext = document.getElementById("side-next");
 
+const HISTORICAL_MILESTONES = [
+  { year: 2026, label: "2026 (Año Actual)" },
+  { year: 2000, label: "2000 (Milenio)" },
+  { year: 1582, label: "1582 (Reforma Gregoriana)" },
+  { year: 1000, label: "1000 (Cambio Milenio)" },
+  { year: 500, label: "500 (Era Talmúdica)" },
+  { year: 70, label: "70 (Destrucción del Templo)" },
+  { year: 33, label: "33 (Pésaj • Crucifixión)" },
+  { year: 30, label: "30 (Ministerio de Yeshúa)" },
+  { year: 4, label: "4 (Era Apostólica)" },
+  { year: 1, label: "1 (Origen del Conteo)" }
+];
+
 function populateYearSelect() {
   if (!yearSelectEl) return;
   yearSelectEl.innerHTML = "";
+
+  const standardYears = allYearsData.map(y => y.year);
+  const milestoneYears = HISTORICAL_MILESTONES.map(h => h.year);
+
+  // Si el año seleccionado actual no está en estándar ni en hitos, agregarlo al inicio
+  if (!standardYears.includes(currentYear) && !milestoneYears.includes(currentYear)) {
+    const customOpt = document.createElement("option");
+    customOpt.value = currentYear;
+    customOpt.textContent = `📅 Año ${currentYear}`;
+    customOpt.selected = true;
+    yearSelectEl.appendChild(customOpt);
+  }
+
+  // Grupo 1: Años Estándar (2025 - 2040)
+  const groupStd = document.createElement("optgroup");
+  groupStd.label = "Calendario Vigente (2025 - 2040)";
   allYearsData.forEach(y => {
     const opt = document.createElement("option");
     opt.value = y.year;
-    opt.textContent = y.year;
+    opt.textContent = `Año ${y.year}`;
     if (y.year === currentYear) {
       opt.selected = true;
     }
-    yearSelectEl.appendChild(opt);
+    groupStd.appendChild(opt);
   });
+  yearSelectEl.appendChild(groupStd);
+
+  // Grupo 2: Hitos Históricos Retrospectivos
+  const groupHist = document.createElement("optgroup");
+  groupHist.label = "Hitos Retrospectivos (Año 1 al 2000)";
+  HISTORICAL_MILESTONES.filter(h => h.year < 2025).forEach(h => {
+    const opt = document.createElement("option");
+    opt.value = h.year;
+    opt.textContent = `Año ${h.label}`;
+    if (h.year === currentYear) {
+      opt.selected = true;
+    }
+    groupHist.appendChild(opt);
+  });
+  yearSelectEl.appendChild(groupHist);
+
+  // Opción interactiva para ingresar cualquier año
+  const searchOpt = document.createElement("option");
+  searchOpt.value = "custom";
+  searchOpt.textContent = "🔍 Ir a otro año (del 1 al 2040)...";
+  yearSelectEl.appendChild(searchOpt);
 }
 
 function populateMonthSelect(year, selectedIdx = 0) {
@@ -146,11 +198,34 @@ populateMonthSelect(currentYear, baseLunisolarMonthIndex);
 
 if (yearSelectEl) {
   yearSelectEl.addEventListener("change", (e) => {
+    if (e.target.value === "custom") {
+      const input = prompt("Ingresa el año lunisolar a calcular (del 1 al 2040):", currentYear);
+      if (input) {
+        const selectedYear = parseInt(input.trim(), 10);
+        if (!isNaN(selectedYear) && selectedYear >= 1 && selectedYear <= 3500) {
+          currentYear = selectedYear;
+          baseLunisolarMonthIndex = 0;
+          currentMonthOffset = 0;
+          populateYearSelect();
+          populateMonthSelect(currentYear, 0);
+          if (sliderEl) sliderEl.value = 0;
+          updateSliderLabel();
+          cambiarMesConTransicion(0);
+          return;
+        } else {
+          alert("Por favor ingresa un número de año válido (entre 1 y 2040).");
+        }
+      }
+      populateYearSelect();
+      return;
+    }
+
     const selectedYear = parseInt(e.target.value, 10);
     if (selectedYear) {
       currentYear = selectedYear;
       baseLunisolarMonthIndex = 0;
       currentMonthOffset = 0;
+      populateYearSelect();
       populateMonthSelect(currentYear, 0);
       if (sliderEl) sliderEl.value = 0;
       updateSliderLabel();
@@ -275,11 +350,11 @@ function getHolidaysForYear(year) {
     }
   }
 
-  const shavuotDate = bikurimDate ? new Date(Date.UTC(
-    bikurimDate.getUTCFullYear(),
-    bikurimDate.getUTCMonth(),
-    bikurimDate.getUTCDate() + 49
-  )) : null;
+  let shavuotDate = null;
+  if (bikurimDate) {
+    shavuotDate = new Date(Date.UTC(2000, bikurimDate.getUTCMonth(), bikurimDate.getUTCDate() + 49));
+    shavuotDate.setUTCFullYear(bikurimDate.getUTCFullYear());
+  }
 
   // Festividades Mes 7
   const yomTeruahDate = new Date(month7.days[rj7Idx]);
@@ -318,10 +393,12 @@ function renderCalendar() {
 
   // Sincronizar selector de año si cambia por navegación de meses
   const yearChanged = yearData.year !== currentYear;
-  if (yearSelectEl && parseInt(yearSelectEl.value, 10) !== yearData.year) {
+  if (yearChanged) {
+    currentYear = yearData.year;
+    populateYearSelect();
+  } else if (yearSelectEl && parseInt(yearSelectEl.value, 10) !== yearData.year) {
     yearSelectEl.value = yearData.year;
   }
-  currentYear = yearData.year;
 
   // Sincronizar selector de mes
   if (monthSelectEl) {
@@ -556,10 +633,12 @@ function renderCalendar() {
 
     // --- Cuenta de los días a Shavuot (Omer) ---
     if (bikurimDate && shavuotDate && !isRoshJodesh && !isRoshHashana) {
-      const d1 = Date.UTC(gregDate.getUTCFullYear(), gregDate.getUTCMonth(), gregDate.getUTCDate());
-      const dB = Date.UTC(bikurimDate.getUTCFullYear(), bikurimDate.getUTCMonth(), bikurimDate.getUTCDate());
+      const d1 = new Date(Date.UTC(2000, gregDate.getUTCMonth(), gregDate.getUTCDate()));
+      d1.setUTCFullYear(gregDate.getUTCFullYear());
+      const dB = new Date(Date.UTC(2000, bikurimDate.getUTCMonth(), bikurimDate.getUTCDate()));
+      dB.setUTCFullYear(bikurimDate.getUTCFullYear());
 
-      const diffTime = d1 - dB;
+      const diffTime = d1.getTime() - dB.getTime();
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
       if (diffDays >= 0 && diffDays < 49) {
@@ -1602,8 +1681,9 @@ ${cssText}
     function getMoonPhaseInfo(date) {
       const synodicMonth = 29.53058867;
       const ref = new Date(Date.UTC(2000, 0, 6, 18, 14));
-      const d = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 18, 0, 0));
-      const diff = (d - ref) / (1000 * 60 * 60 * 24);
+      const d = new Date(Date.UTC(2000, date.getUTCMonth(), date.getUTCDate(), 18, 0, 0));
+      d.setUTCFullYear(date.getUTCFullYear());
+      const diff = (d.getTime() - ref.getTime()) / (1000 * 60 * 60 * 24);
       const phase = ((diff % synodicMonth) + synodicMonth) % synodicMonth;
       return { illumination: Math.round((1 - Math.cos((2 * Math.PI * phase) / synodicMonth)) * 50) };
     }
@@ -1627,9 +1707,11 @@ ${cssText}
       }
       const month = yearData.months[index];
       const rj = new Date(month.roshJodes);
-      const start = new Date(Date.UTC(rj.getUTCFullYear(), rj.getUTCMonth(), rj.getUTCDate()));
+      const start = new Date(Date.UTC(2000, rj.getUTCMonth(), rj.getUTCDate()));
+      start.setUTCFullYear(rj.getUTCFullYear());
       const nxt = new Date(month.next);
-      const end = new Date(Date.UTC(nxt.getUTCFullYear(), nxt.getUTCMonth(), nxt.getUTCDate()));
+      const end = new Date(Date.UTC(2000, nxt.getUTCMonth(), nxt.getUTCDate()));
+      end.setUTCFullYear(nxt.getUTCFullYear());
       const days = [];
       let cursor = new Date(start);
       while (cursor <= end) {
@@ -1652,8 +1734,10 @@ ${cssText}
         yData.months.forEach(m => {
           const rj = new Date(m.roshJodes);
           const nxt = new Date(m.next);
-          let cur = new Date(Date.UTC(rj.getUTCFullYear(), rj.getUTCMonth(), rj.getUTCDate()));
-          const end = new Date(Date.UTC(nxt.getUTCFullYear(), nxt.getUTCMonth(), nxt.getUTCDate()));
+          let cur = new Date(Date.UTC(2000, rj.getUTCMonth(), rj.getUTCDate()));
+          cur.setUTCFullYear(rj.getUTCFullYear());
+          const end = new Date(Date.UTC(2000, nxt.getUTCMonth(), nxt.getUTCDate()));
+          end.setUTCFullYear(nxt.getUTCFullYear());
           let dayIdx = 0;
           while (cur < end) {
             allDays.push({ date: new Date(cur), dateKey: toDateKey(cur), year: yData.year, monthIndex: m.index, monthName: m.name, dayIndex: dayIdx, isSaturday: cur.getUTCDay() === 6 });
@@ -1733,8 +1817,10 @@ ${cssText}
       for (let i = 0; i < yData.months.length; i++) {
         const m = yData.months[i];
         const s = new Date(m.roshJodes), e = new Date(m.next);
-        const start = new Date(Date.UTC(s.getUTCFullYear(), s.getUTCMonth(), s.getUTCDate()));
-        const end = new Date(Date.UTC(e.getUTCFullYear(), e.getUTCMonth(), e.getUTCDate()));
+        const start = new Date(Date.UTC(2000, s.getUTCMonth(), s.getUTCDate()));
+        start.setUTCFullYear(s.getUTCFullYear());
+        const end = new Date(Date.UTC(2000, e.getUTCMonth(), e.getUTCDate()));
+        end.setUTCFullYear(e.getUTCFullYear());
         if (tUTC >= start && tUTC < end) return i;
       }
       return 0;
@@ -1813,7 +1899,11 @@ ${cssText}
         const d = new Date(pesajDate); d.setUTCDate(d.getUTCDate() + i);
         if (d.getUTCDay() === 0) { bikurimDate = d; break; }
       }
-      const shavuotDate = bikurimDate ? new Date(Date.UTC(bikurimDate.getUTCFullYear(), bikurimDate.getUTCMonth(), bikurimDate.getUTCDate() + 49)) : null;
+      let shavuotDate = null;
+      if (bikurimDate) {
+        shavuotDate = new Date(Date.UTC(2000, bikurimDate.getUTCMonth(), bikurimDate.getUTCDate() + 49));
+        shavuotDate.setUTCFullYear(bikurimDate.getUTCFullYear());
+      }
       const yomTeruahDate = new Date(month7.days[0]);
       const yomKippurDate = new Date(month7.days[10]);
       const sukkotDate = new Date(month7.days[15]);
@@ -1888,7 +1978,11 @@ ${cssText}
         if (month.index === 2 && isSameDay(gregDate, shavuotDate)) { cell.classList.add("shavuot"); cell.insertAdjacentHTML("beforeend", '<div class="holiday-label shavuot-label">Shavuot</div>'); dayHolidays.push(HOLIDAYS_CANONICAL.shavuot); }
         let omerDay = null;
         if (bikurimDate && shavuotDate && !isRoshJodesh) {
-          const diffDays = Math.floor((Date.UTC(gregDate.getUTCFullYear(), gregDate.getUTCMonth(), gregDate.getUTCDate()) - Date.UTC(bikurimDate.getUTCFullYear(), bikurimDate.getUTCMonth(), bikurimDate.getUTCDate())) / msPerDay);
+          const d1 = new Date(Date.UTC(2000, gregDate.getUTCMonth(), gregDate.getUTCDate()));
+          d1.setUTCFullYear(gregDate.getUTCFullYear());
+          const dB = new Date(Date.UTC(2000, bikurimDate.getUTCMonth(), bikurimDate.getUTCDate()));
+          dB.setUTCFullYear(bikurimDate.getUTCFullYear());
+          const diffDays = Math.floor((d1.getTime() - dB.getTime()) / msPerDay);
           if (diffDays >= 0 && diffDays < 49) {
             omerDay = diffDays + 1;
             const oTag = document.createElement("div"); oTag.className = "omer-row"; oTag.textContent = "Omer " + omerDay;
@@ -1960,7 +2054,11 @@ ${cssText}
         if (month.index === 6 && isSameDay(gregDate, sheminiAtzeretDate)) { cell.classList.add("sheminiatzeret"); cell.insertAdjacentHTML("beforeend", '<div class="holiday-label shemini-label">Shemini Atzeret</div>'); }
         if (month.index === 2 && isSameDay(gregDate, shavuotDate)) { cell.classList.add("shavuot"); cell.insertAdjacentHTML("beforeend", '<div class="holiday-label shavuot-label">Shavuot</div>'); }
         if (bikurimDate && shavuotDate && !isRoshJodesh) {
-          const diffDays = Math.floor((Date.UTC(gregDate.getUTCFullYear(), gregDate.getUTCMonth(), gregDate.getUTCDate()) - Date.UTC(bikurimDate.getUTCFullYear(), bikurimDate.getUTCMonth(), bikurimDate.getUTCDate())) / msPerDay);
+          const d1 = new Date(Date.UTC(2000, gregDate.getUTCMonth(), gregDate.getUTCDate()));
+          d1.setUTCFullYear(gregDate.getUTCFullYear());
+          const dB = new Date(Date.UTC(2000, bikurimDate.getUTCMonth(), bikurimDate.getUTCDate()));
+          dB.setUTCFullYear(bikurimDate.getUTCFullYear());
+          const diffDays = Math.floor((d1.getTime() - dB.getTime()) / msPerDay);
           if (diffDays >= 0 && diffDays < 49) {
             const oTag = document.createElement("div"); oTag.className = "omer-row"; oTag.textContent = "Omer " + (diffDays + 1);
             cell.appendChild(oTag);
@@ -2184,7 +2282,11 @@ function buildOnlinePrintMonthGrid(yearData, month) {
       cell.insertAdjacentHTML("beforeend", '<div class="holiday-label shavuot-label">Shavuot</div>');
     }
     if (bikurimDate && shavuotDate && !isRoshJodesh && !isRoshHashana) {
-      const diffDays = Math.floor((Date.UTC(gregDate.getUTCFullYear(), gregDate.getUTCMonth(), gregDate.getUTCDate()) - Date.UTC(bikurimDate.getUTCFullYear(), bikurimDate.getUTCMonth(), bikurimDate.getUTCDate())) / msPerDay);
+      const d1 = new Date(Date.UTC(2000, gregDate.getUTCMonth(), gregDate.getUTCDate()));
+      d1.setUTCFullYear(gregDate.getUTCFullYear());
+      const dB = new Date(Date.UTC(2000, bikurimDate.getUTCMonth(), bikurimDate.getUTCDate()));
+      dB.setUTCFullYear(bikurimDate.getUTCFullYear());
+      const diffDays = Math.floor((d1.getTime() - dB.getTime()) / msPerDay);
       if (diffDays >= 0 && diffDays < 49) {
         const oTag = document.createElement("div");
         oTag.className = "omer-row";

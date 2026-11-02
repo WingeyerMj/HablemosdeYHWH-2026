@@ -1,5 +1,5 @@
 // Service Worker — Carpeta Autónoma Calendar/
-const CACHE_NAME = 'yhwh-calendario-standalone-v9';
+const CACHE_NAME = 'yhwh-calendario-standalone-v11';
 
 const ASSETS = [
   './',

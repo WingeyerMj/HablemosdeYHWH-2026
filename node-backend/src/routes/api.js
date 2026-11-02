@@ -520,4 +520,46 @@ router.post('/pwa/installations', async (req, res) => {
     }
 });
 
+// ============================================================
+// API Lunisolar: Motor astronómico y cálculo retrospectivo (Año 1 a 2040+)
+// ============================================================
+const calendarService = require('../services/calendarService');
+
+router.get('/calendar/year/:year', (req, res) => {
+    try {
+        const year = parseInt(req.params.year, 10);
+        if (isNaN(year) || year < 1 || year > 3500) {
+            return res.status(400).json({ ok: false, error: 'Año inválido. Debe estar entre 1 y 3500.' });
+        }
+        const data = calendarService.buildLunisolarYear(year);
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        res.json({ ok: true, data });
+    } catch (error) {
+        res.status(500).json({ ok: false, error: error.message });
+    }
+});
+
+router.get('/calendar/years', (req, res) => {
+    try {
+        const from = parseInt(req.query.from, 10) || 1;
+        const to = parseInt(req.query.to, 10) || 2040;
+        const years = calendarService.getRetroSummaryList(from, to);
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        res.json({ ok: true, count: years.length, from, to, years });
+    } catch (error) {
+        res.status(500).json({ ok: false, error: error.message });
+    }
+});
+
+router.get('/calendar/milestones', (req, res) => {
+    try {
+        const milestoneYears = [2026, 2000, 1582, 1000, 500, 70, 33, 30, 4, 1];
+        const milestones = milestoneYears.map(y => calendarService.buildLunisolarYear(y));
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        res.json({ ok: true, milestones });
+    } catch (error) {
+        res.status(500).json({ ok: false, error: error.message });
+    }
+});
+
 module.exports = router;
