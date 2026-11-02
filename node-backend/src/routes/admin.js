@@ -57,6 +57,7 @@ router.use(async (req, res, next) => {
         else if (path.includes('/users')) res.locals.activePage = 'users';
         else if (path.includes('/ciclos-tora')) res.locals.activePage = 'ciclos-tora';
         else if (path.includes('/pwa-installations')) res.locals.activePage = 'pwa-installations';
+        else if (path.includes('/torah-viviente-descargas')) res.locals.activePage = 'torah-viviente-descargas';
 
         try {
             const Interaction = require('../models/Interaction');
@@ -246,6 +247,11 @@ router.post('/ciclos-tora/delete/:id', isAuthenticated, isStrictAdmin, adminCont
 router.get('/pwa-installations', isAuthenticated, isStrictAdmin, adminController.pwaInstallationsPage);
 router.post('/pwa-installations/trigger-update', isAuthenticated, isStrictAdmin, adminController.triggerPwaUpdateAlert);
 router.post('/pwa-installations/stop-update', isAuthenticated, isStrictAdmin, adminController.stopPwaUpdateAlert);
+
+// Descargas y Clics de Torah Viviente (Solo Admin)
+router.get('/torah-viviente-descargas', isAuthenticated, isStrictAdmin, adminController.torahVivienteDownloadsPage);
+router.post('/torah-viviente-descargas/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteTorahVivienteClick);
+router.post('/torah-viviente-descargas/clear', isAuthenticated, isStrictAdmin, adminController.clearTorahVivienteClicks);
 
 module.exports = router;
 

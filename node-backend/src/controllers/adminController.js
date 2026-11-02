@@ -176,6 +176,14 @@ const adminController = {
                 console.warn('Aviso pwaDashboard:', e.message);
             }
 
+            let torahVivienteStats = null;
+            try {
+                const TorahVivienteDownload = require('../models/TorahVivienteDownload');
+                torahVivienteStats = await TorahVivienteDownload.getStats();
+            } catch (e) {
+                console.warn('Aviso torahVivienteStats:', e.message);
+            }
+
             res.render('admin/dashboard', {
                 layout: 'admin/layout',
                 parashot,
@@ -201,6 +209,7 @@ const adminController = {
                 currentCycle,
                 allCycles,
                 pwaDashboard,
+                torahVivienteStats,
                 msg: req.query.msg || null,
                 error: req.query.error || null
             });
@@ -3074,6 +3083,46 @@ const adminController = {
         } catch (error) {
             console.error('Error stopPwaUpdateAlert:', error);
             res.redirect(returnBase + '?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    // --- GESTIÓN Y MONITOREO DE CLICS TORAH VIVIENTE ---
+    torahVivienteDownloadsPage: async (req, res) => {
+        try {
+            const TorahVivienteDownload = require('../models/TorahVivienteDownload');
+            const stats = await TorahVivienteDownload.getStats();
+            res.render('admin/torah_viviente_downloads', {
+                layout: 'admin/layout',
+                activePage: 'torah-viviente-descargas',
+                stats,
+                msg: req.query.msg || null,
+                error: req.query.error || null
+            });
+        } catch (error) {
+            console.error('Error torahVivienteDownloadsPage:', error);
+            res.redirect('/admin/dashboard');
+        }
+    },
+
+    deleteTorahVivienteClick: async (req, res) => {
+        try {
+            const TorahVivienteDownload = require('../models/TorahVivienteDownload');
+            await TorahVivienteDownload.deleteClick(req.params.id);
+            res.redirect('/admin/torah-viviente-descargas?msg=' + encodeURIComponent('Registro eliminado correctamente.'));
+        } catch (error) {
+            console.error('Error deleteTorahVivienteClick:', error);
+            res.redirect('/admin/torah-viviente-descargas?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    clearTorahVivienteClicks: async (req, res) => {
+        try {
+            const TorahVivienteDownload = require('../models/TorahVivienteDownload');
+            await TorahVivienteDownload.clearAll();
+            res.redirect('/admin/torah-viviente-descargas?msg=' + encodeURIComponent('Historial de clics vaciado con éxito.'));
+        } catch (error) {
+            console.error('Error clearTorahVivienteClicks:', error);
+            res.redirect('/admin/torah-viviente-descargas?error=' + encodeURIComponent(error.message));
         }
     }
 };

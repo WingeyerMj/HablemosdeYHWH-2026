@@ -1,0 +1,241 @@
+<%- include('partials/_sidebar', { activePage: 'torah-viviente-descargas' }) %>
+
+<div class="main-content">
+    <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <h1 class="mb-1">
+                <i class="bi bi-book-half text-warning me-2"></i>Descargas Torah Viviente
+            </h1>
+            <p class="text-white-50 mb-0">Monitoreo y control de usuarios que hacen clic en descargar la Torá Viviente.</p>
+        </div>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="badge bg-dark border border-warning text-warning px-3 py-2">
+                <i class="bi bi-activity me-1"></i>En Vivo
+            </span>
+            <button type="button" class="btn btn-outline-light btn-sm" onclick="location.reload()">
+                <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
+            </button>
+        </div>
+    </div>
+
+    <% if (typeof msg !== 'undefined' && msg) { %>
+        <div class="alert alert-success border border-success d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-check-circle-fill me-2"></i><%= msg %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <!-- Tarjetas de Estadísticas Principales -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-xl-3">
+            <div class="card-stat h-100 p-3 rounded-3 shadow-sm" style="background: #1e1915; border: 1px solid rgba(212,168,83,0.3);">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon p-3 rounded-circle" style="background: rgba(212,168,83,0.15); color: #d4a853; font-size: 1.5rem;">
+                        <i class="bi bi-download"></i>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small">Total Clics</div>
+                        <div class="fs-3 fw-bold text-white"><%= stats.totals.total || 0 %></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-xl-3">
+            <div class="card-stat h-100 p-3 rounded-3 shadow-sm" style="background: #1e1915; border: 1px solid rgba(56,189,248,0.3);">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon p-3 rounded-circle" style="background: rgba(56,189,248,0.15); color: #38bdf8; font-size: 1.5rem;">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small">Usuarios Únicos (IPs)</div>
+                        <div class="fs-3 fw-bold text-white"><%= stats.totals.uniques || 0 %></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-xl-3">
+            <div class="card-stat h-100 p-3 rounded-3 shadow-sm" style="background: #1e1915; border: 1px solid rgba(52,211,153,0.3);">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon p-3 rounded-circle" style="background: rgba(52,211,153,0.15); color: #34d399; font-size: 1.5rem;">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small">Últimas 24 Horas</div>
+                        <div class="fs-3 fw-bold text-white"><%= stats.totals.last_24h || 0 %></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-xl-3">
+            <div class="card-stat h-100 p-3 rounded-3 shadow-sm" style="background: #1e1915; border: 1px solid rgba(192,132,252,0.3);">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon p-3 rounded-circle" style="background: rgba(192,132,252,0.15); color: #c084fc; font-size: 1.5rem;">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small">Últimos 30 días</div>
+                        <div class="fs-3 fw-bold text-white"><%= stats.totals.last_30d || 0 %></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desglose por Plataformas y Navegadores -->
+    <div class="row g-4 mb-4">
+        <!-- Plataformas -->
+        <div class="col-lg-6">
+            <div class="card bg-dark border-secondary h-100 shadow-sm">
+                <div class="card-header border-secondary fw-bold text-warning d-flex align-items-center gap-2">
+                    <i class="bi bi-laptop"></i> Dispositivos / Sistemas Operativos
+                </div>
+                <div class="card-body">
+                    <% if (!stats.platforms || !stats.platforms.length) { %>
+                        <p class="text-white-50 mb-0">Todavía no hay clics registrados.</p>
+                    <% } %>
+                    <% (stats.platforms || []).forEach(item => { 
+                        const totalClicks = Number(stats.totals.total || 0);
+                        const pct = totalClicks ? Math.round(Number(item.count) * 100 / totalClicks) : 0;
+                        let pIcon = 'bi-device-hdd';
+                        if (/android/i.test(item.platform)) pIcon = 'bi-android2 text-success';
+                        else if (/ios|iphone|ipad/i.test(item.platform)) pIcon = 'bi-apple text-light';
+                        else if (/windows/i.test(item.platform)) pIcon = 'bi-windows text-info';
+                        else if (/mac/i.test(item.platform)) pIcon = 'bi-apple text-light';
+                        else if (/linux/i.test(item.platform)) pIcon = 'bi-ubuntu text-warning';
+                    %>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span class="d-flex align-items-center gap-2">
+                                    <i class="bi <%= pIcon %>"></i>
+                                    <strong><%= item.platform %></strong>
+                                </span>
+                                <span><%= item.count %> clics · <strong class="text-warning"><%= pct %>%</strong></span>
+                            </div>
+                            <div class="progress bg-black" style="height: 8px;">
+                                <div class="progress-bar" style="width: <%= pct %>%; background: linear-gradient(90deg, #d4a853, #f59e0b);"></div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegadores -->
+        <div class="col-lg-6">
+            <div class="card bg-dark border-secondary h-100 shadow-sm">
+                <div class="card-header border-secondary fw-bold text-info d-flex align-items-center gap-2">
+                    <i class="bi bi-compass"></i> Navegadores Web
+                </div>
+                <div class="card-body">
+                    <% if (!stats.browsers || !stats.browsers.length) { %>
+                        <p class="text-white-50 mb-0">Sin datos de navegadores aún.</p>
+                    <% } %>
+                    <% (stats.browsers || []).forEach(item => { 
+                        let bIcon = 'bi-globe';
+                        if (/chrome/i.test(item.browser)) bIcon = 'bi-browser-chrome text-warning';
+                        else if (/edge/i.test(item.browser)) bIcon = 'bi-browser-edge text-primary';
+                        else if (/firefox/i.test(item.browser)) bIcon = 'bi-browser-firefox text-danger';
+                        else if (/safari/i.test(item.browser)) bIcon = 'bi-browser-safari text-info';
+                    %>
+                        <div class="d-flex justify-content-between align-items-center border-bottom border-secondary py-2">
+                            <span class="d-flex align-items-center gap-2">
+                                <i class="bi <%= bIcon %>"></i>
+                                <span class="text-white"><%= item.browser %></span>
+                            </span>
+                            <span class="badge bg-secondary px-3 py-1 rounded-pill"><%= item.count %> clics</span>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla Detallada de Clics Recientes -->
+    <div class="card bg-dark border-secondary shadow-sm">
+        <div class="card-header border-secondary d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <strong class="text-white"><i class="bi bi-list-ul me-1 text-warning"></i>Historial Reciente de Clics</strong>
+                <span class="text-white-50 small ms-2">(Últimos 100 eventos)</span>
+            </div>
+            <% if (stats.recent && stats.recent.length > 0) { %>
+                <form action="/admin/torah-viviente-descargas/clear" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas vaciar el historial de clics? Esta acción no se puede deshacer.');">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-trash3 me-1"></i>Vaciar Historial
+                    </button>
+                </form>
+            <% } %>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0" data-mobile-cards>
+                <thead>
+                    <tr>
+                        <th>Fecha y Hora</th>
+                        <th>Dirección IP</th>
+                        <th>Dispositivo / SO</th>
+                        <th>Navegador</th>
+                        <th>Origen</th>
+                        <th class="text-end">Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (stats.recent && stats.recent.length > 0) { %>
+                        <% stats.recent.forEach(click => { 
+                            let pIcon = 'bi-laptop';
+                            if (/android/i.test(click.platform)) pIcon = 'bi-android2 text-success';
+                            else if (/ios|iphone|ipad/i.test(click.platform)) pIcon = 'bi-apple text-light';
+                            else if (/windows/i.test(click.platform)) pIcon = 'bi-windows text-info';
+                            else if (/mac/i.test(click.platform)) pIcon = 'bi-apple text-light';
+                            else if (/linux/i.test(click.platform)) pIcon = 'bi-ubuntu text-warning';
+                        %>
+                            <tr>
+                                <td data-label="Fecha y Hora">
+                                    <span class="text-warning fw-semibold">
+                                        <i class="bi bi-calendar3 me-1"></i>
+                                        <%= click.created_at ? new Date(click.created_at).toLocaleString('es-AR') : '-' %>
+                                    </span>
+                                </td>
+                                <td data-label="Dirección IP">
+                                    <code class="text-info bg-black px-2 py-1 rounded border border-secondary border-opacity-50">
+                                        <%= click.ip_address || '0.0.0.0' %>
+                                    </code>
+                                </td>
+                                <td data-label="Dispositivo / SO">
+                                    <span class="badge bg-black border border-secondary px-2 py-1">
+                                        <i class="bi <%= pIcon %> me-1"></i><%= click.platform || 'Desconocido' %>
+                                    </span>
+                                </td>
+                                <td data-label="Navegador">
+                                    <span class="text-white-50"><%= click.browser || 'Navegador Web' %></span>
+                                </td>
+                                <td data-label="Origen">
+                                    <small class="text-white-50 text-truncate d-inline-block" style="max-width: 180px;">
+                                        <%= click.referrer || 'Botón Home Web' %>
+                                    </small>
+                                </td>
+                                <td data-label="Acción" class="text-end">
+                                    <form action="/admin/torah-viviente-descargas/delete/<%= click.id %>" method="POST" class="d-inline" onsubmit="return confirm('¿Eliminar este registro?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2" title="Eliminar registro">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="6" class="text-center text-white-50 py-5">
+                                <i class="bi bi-inbox fs-1 d-block mb-2 text-white-50"></i>
+                                Todavía no se han registrado clics en el botón de la Torá Viviente.<br>
+                                En cuanto un usuario toque el botón de descarga en la página principal, aparecerá aquí al instante.
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

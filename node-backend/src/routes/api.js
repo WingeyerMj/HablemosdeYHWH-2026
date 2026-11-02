@@ -8,6 +8,7 @@ try {
 }
 const db = require('../config/db');
 const Subscriber = require('../models/Subscriber');
+const TorahVivienteDownload = require('../models/TorahVivienteDownload');
 
 // Configurar transporte de Gmail
 const transporter = nodemailer ? nodemailer.createTransport({
@@ -560,6 +561,51 @@ router.get('/calendar/milestones', (req, res) => {
     } catch (error) {
         res.status(500).json({ ok: false, error: error.message });
     }
+});
+
+// ============================================================
+// Métricas y Registro: Clics de Descarga de Torah Viviente
+// ============================================================
+router.post('/torah-viviente/click', async (req, res) => {
+    try {
+        const forwarded = req.headers['x-forwarded-for'];
+        const ip = forwarded ? forwarded.split(',')[0].trim() : (req.socket.remoteAddress || req.ip || '0.0.0.0');
+        const userAgent = req.headers['user-agent'] || '';
+        const referrer = req.headers['referer'] || req.headers['referrer'] || '';
+        const { platform, browser } = req.body || {};
+
+        await TorahVivienteDownload.recordClick({
+            ip,
+            platform,
+            browser,
+            userAgent,
+            referrer
+        });
+
+        res.json({ ok: true });
+    } catch (error) {
+        console.warn('Error al registrar clic de Torah Viviente:', error.message);
+        res.json({ ok: false, error: error.message });
+    }
+});
+
+// Redirección directa con registro (fallback)
+router.get('/torah-viviente/descargar', async (req, res) => {
+    try {
+        const forwarded = req.headers['x-forwarded-for'];
+        const ip = forwarded ? forwarded.split(',')[0].trim() : (req.socket.remoteAddress || req.ip || '0.0.0.0');
+        const userAgent = req.headers['user-agent'] || '';
+        const referrer = req.headers['referer'] || req.headers['referrer'] || '';
+
+        await TorahVivienteDownload.recordClick({
+            ip,
+            userAgent,
+            referrer
+        });
+    } catch (e) {
+        // No bloquear la redirección aunque falle el registro
+    }
+    res.redirect(302, 'http://torahviviente.com');
 });
 
 module.exports = router;
