@@ -63,6 +63,16 @@ const files = [
   'public/assets/calendar/icons/icon-192.png',
   'public/assets/calendar/icons/icon-512.png',
   'public/assets/calendar/icons/apple-touch-icon.png',
+  'public/assets/img/semillas/manualidad_mini_suca.svg',
+  'public/assets/img/semillas/manualidad_shofar_infantil.svg',
+  'public/assets/img/semillas/manualidad_shavuot_tablas.svg',
+  'public/assets/img/semillas/manualidad_afikoman.svg',
+  'public/assets/img/semillas/manualidad_pesaj_plato.svg',
+  'public/assets/img/semillas/manualidad_shabat_hala.svg',
+  'public/assets/img/semillas/bereshit_creacion_colorear.svg',
+  'public/assets/img/semillas/noaj_arca_colorear.svg',
+  'public/assets/img/semillas/lej_leja_estrellas.svg',
+  'public/assets/img/semillas/vayira_hospitalidad.svg',
   'Calendar/index.html',
   'Calendar/manifest.json',
   'Calendar/sw.js',
@@ -117,7 +127,7 @@ client.on('ready', async () => {
 
     // 3. Reemplazo atómico, verificación de sintaxis y reinicio
     const moves = files.map(f => `mv '${project}/${f}.codex-upload' '${project}/${f}'`).join('; ');
-    const result = await run(`set -e; ${moves}; cd '${project}/node-backend'; node --check app.js; node -e "require('./src/utils/calendarPwaAssets')"; node -e "const db = require('./src/config/db'); db.query('UPDATE aliyot SET aliyah_number = 6 WHERE id = 51').then(() => process.exit(0));"; pm2 restart hablemos-web --update-env >/dev/null; sleep 3; curl -sS -o /dev/null -w 'CALENDAR_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/calendar'; curl -sS -o /dev/null -w 'SW_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/sw-calendar.js'; curl -sS -o /dev/null -w 'MANIFEST_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/manifest-calendar.json'; curl -sS -o /dev/null -w 'ICON_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/assets/calendar/icons/icon-192.png'; echo CALENDAR_PWA_DEPLOYMENT_OK`);
+    const result = await run(`set -e; ${moves}; cd '${project}/node-backend'; node --check app.js; node -e "require('./src/utils/calendarPwaAssets')"; node -e "require('./src/models/SemillasManualidad').ensureTable().then(() => console.log('MANUALIDADES_DB_OK')).catch(console.error)"; pm2 restart hablemos-web --update-env >/dev/null; sleep 3; curl -sS -o /dev/null -w 'SEMILLAS_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/semillas-de-torah'; curl -sS -o /dev/null -w 'CALENDAR_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/calendar'; echo DEPLOYMENT_SUCCESS`);
     console.log(result.trim());
   } catch (error) {
     console.error(`DEPLOYMENT_ERROR=${error.message}`);

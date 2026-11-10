@@ -492,13 +492,24 @@
                                             </div>
                                         </div>
                                         <div class="card-body p-4">
-                                            <div class="text-center p-3 mb-3 rounded-3" style="background: #f8fafc; border: 1.5px dashed #cbd5e1;">
-                                                <div class="display-6 fw-bold text-primary mb-2" style="font-family: serif;">
+                                            <div class="text-center p-3 mb-3 rounded-4" style="background: #f0f9ff; border: 2px dashed #38bdf8;">
+                                                <div class="display-6 fw-bold text-primary mb-1" style="font-family: serif;">
                                                     אָלֶף־בֵּית
                                                 </div>
-                                                <p class="small text-muted mb-2">Presiona el botón para reproducir la canción rítmica del Alef-Bet:</p>
-                                                <button type="button" class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm" onclick="cantarAlefBet()">
-                                                    <i class="bi bi-play-circle-fill me-1 fs-5"></i> Escuchar Canto del Alef-Bet
+                                                <p class="small text-muted mb-3">Escucha la música alegre y canta junto a los niños las 22 letras:</p>
+                                                
+                                                <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 mb-2">
+                                                    <button type="button" class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2" 
+                                                            onclick="reproducirCanticoModal('gCAznfygWTY', 'El Canto Alegre del Alef-Bet (Shir HaAlef-Bet)')">
+                                                        <i class="bi bi-play-circle-fill fs-5 text-dark"></i> Reproducir Cántico del Alef-Bet
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-primary rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center justify-content-center gap-1"
+                                                            onclick="reproducirCanticoModal('rfRwuOSsw68', 'Cántico Didáctico del Alef-Bet (Paso a Paso)')">
+                                                        <i class="bi bi-music-note-beamed"></i> Canto Paso a Paso
+                                                    </button>
+                                                </div>
+                                                <button type="button" class="btn btn-sm btn-link text-decoration-none text-muted" onclick="cantarAlefBetSynth()">
+                                                    <i class="bi bi-soundwave me-1"></i> Escuchar pronunciación por voz
                                                 </button>
                                             </div>
 
@@ -525,13 +536,21 @@
                                             </div>
                                         </div>
                                         <div class="card-body p-4">
-                                            <div class="text-center p-3 mb-3 rounded-3" style="background: #faf5ff; border: 1.5px dashed #d8b4fe;">
-                                                <div class="display-6 fw-bold mb-2" style="color: #7c3aed; font-family: serif;">
+                                            <div class="text-center p-3 mb-3 rounded-4" style="background: #faf5ff; border: 2px dashed #c084fc;">
+                                                <div class="display-6 fw-bold mb-1" style="color: #7c3aed; font-family: serif;">
                                                     בְּרֵאשִׁית בָּרָא
                                                 </div>
-                                                <p class="small text-muted mb-2">Con las 22 letras, el Creador dio forma a los cielos y la tierra:</p>
-                                                <button type="button" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-bold" onclick="reproducirMelodiaCreacion()">
-                                                    <i class="bi bi-music-player-fill me-1"></i> Melodía de la Creación
+                                                <p class="small text-muted mb-3">Con las 22 letras, el Creador dio forma a los cielos y la tierra:</p>
+                                                
+                                                <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 mb-2">
+                                                    <button type="button" class="btn rounded-pill px-4 py-2 fw-bold text-white shadow-sm d-inline-flex align-items-center justify-content-center gap-2" 
+                                                            style="background: linear-gradient(135deg, #7c3aed, #6d28d9);"
+                                                            onclick="reproducirCanticoModal('rfRwuOSsw68', 'Las Letras de la Creación (Bereshit)')">
+                                                        <i class="bi bi-play-circle-fill fs-5"></i> Reproducir Melodía Creación
+                                                    </button>
+                                                </div>
+                                                <button type="button" class="btn btn-sm btn-link text-decoration-none text-muted" onclick="reproducirMelodiaCreacionSynth()">
+                                                    <i class="bi bi-soundwave me-1"></i> Tonalidad por notas
                                                 </button>
                                             </div>
 
@@ -764,11 +783,15 @@
                                                 <!-- Portada / Imagen de la Lámina -->
                                                 <div class="position-relative" style="aspect-ratio: 4/3; background: #f8fafc; overflow: hidden; display: flex; align-items: center; justify-content: center;">
                                                     <% if (item.image_url) { %>
-                                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" class="w-100 h-100" style="object-fit: cover;">
+                                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" class="w-100 h-100" style="object-fit: cover;" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                        <div class="text-center p-4 w-100 h-100 align-items-center justify-content-center flex-column" style="display: none; background: linear-gradient(135deg, #fef3c7, #fefce8);">
+                                                            <i class="bi bi-brush display-4 text-warning opacity-75"></i>
+                                                            <div class="fw-bold text-dark small mt-2">Lámina para Colorear</div>
+                                                        </div>
                                                     <% } else { %>
-                                                        <div class="text-center p-4">
-                                                            <i class="bi bi-palette display-4 text-warning opacity-75"></i>
-                                                            <div class="fw-bold text-muted small mt-2">Lámina para Colorear</div>
+                                                        <div class="text-center p-4 w-100 h-100 d-flex align-items-center justify-content-center flex-column" style="background: linear-gradient(135deg, #fef3c7, #fefce8);">
+                                                            <i class="bi bi-brush display-4 text-warning opacity-75"></i>
+                                                            <div class="fw-bold text-dark small mt-2">Lámina para Colorear</div>
                                                         </div>
                                                     <% } %>
                                                     
@@ -880,9 +903,13 @@
                                                 <!-- Imagen / Cabecera Moed -->
                                                 <div class="position-relative" style="aspect-ratio: 4/3; background: #f0fdf4; overflow: hidden; display: flex; align-items: center; justify-content: center;">
                                                     <% if (item.image_url) { %>
-                                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" class="w-100 h-100" style="object-fit: cover;">
+                                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" class="w-100 h-100" style="object-fit: cover;" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                        <div class="text-center p-4 w-100 h-100 align-items-center justify-content-center flex-column" style="display: none; background: linear-gradient(135deg, #dcfce7, #f0fdf4);">
+                                                            <i class="bi bi-stars display-4 text-success opacity-75"></i>
+                                                            <div class="fw-bold text-success small mt-2">Manualidad de Fiesta Bíblica</div>
+                                                        </div>
                                                     <% } else { %>
-                                                        <div class="text-center p-4">
+                                                        <div class="text-center p-4 w-100 h-100 d-flex align-items-center justify-content-center flex-column" style="background: linear-gradient(135deg, #dcfce7, #f0fdf4);">
                                                             <i class="bi bi-stars display-4 text-success opacity-75"></i>
                                                             <div class="fw-bold text-success small mt-2">Manualidad de Fiesta Bíblica</div>
                                                         </div>
@@ -996,7 +1023,10 @@
                                             <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden position-relative" style="background: #ffffff; border: 1px solid #f1f5f9;">
                                                 <div class="position-relative" style="aspect-ratio: 16/10; background: #faf5ff; overflow: hidden; display: flex; align-items: center; justify-content: center;">
                                                     <% if (item.image_url) { %>
-                                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" class="w-100 h-100" style="object-fit: cover;">
+                                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" class="w-100 h-100" style="object-fit: cover;" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                        <div class="text-center p-3 w-100 h-100 align-items-center justify-content-center flex-column" style="display: none; background: #faf5ff;">
+                                                            <i class="bi bi-heart-pulse-fill display-4" style="color: #c084fc;"></i>
+                                                        </div>
                                                     <% } else { %>
                                                         <i class="bi bi-heart-pulse-fill display-4" style="color: #c084fc;"></i>
                                                     <% } %>
@@ -2782,6 +2812,33 @@
         } catch(e) {}
     }
 
+    function reproducirCanticoModal(youtubeId, titulo) {
+        const modalEl = document.getElementById('modalReproductorCantico');
+        const iframe = document.getElementById('canticoIframe');
+        const titleEl = document.getElementById('canticoModalTitulo');
+        if (!modalEl || !iframe) return;
+
+        if (titleEl) titleEl.innerText = titulo || 'Cántico del Alef-Bet';
+        iframe.src = 'https://www.youtube-nocookie.com/embed/' + youtubeId + '?autoplay=1&rel=0';
+
+        if (typeof bootstrap !== 'undefined') {
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            modal.show();
+
+            modalEl.addEventListener('hidden.bs.modal', function () {
+                iframe.src = '';
+            }, { once: true });
+        }
+    }
+
+    function cantarAlefBetSynth() {
+        cantarAlefBet();
+    }
+
+    function reproducirMelodiaCreacionSynth() {
+        reproducirMelodiaCreacion();
+    }
+
     // CANTO DEL ALEF-BET INTERACTIVO
     function cantarAlefBet() {
         tocarTonoAlegre(523.25, 0.3); // C5
@@ -3262,6 +3319,30 @@
                     <a href="#" id="mDetalleDownloadBtn" target="_blank" class="btn btn-warning text-dark fw-bold rounded-pill px-4 shadow-sm d-inline-flex align-items-center gap-2">
                         <i class="bi bi-download"></i> Descargar Material (PDF/Imagen)
                     </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: REPRODUCTOR DE CÁNTICO DEL ALEF-BET -->
+    <div class="modal fade" id="modalReproductorCantico" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden; background: #0f172a;">
+                <div class="modal-header border-0 py-3 px-4 text-white" style="background: linear-gradient(135deg, #0284c7, #0369a1);">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-music-note-beamed fs-5"></i>
+                        <h5 class="modal-title fw-bold mb-0" id="canticoModalTitulo">Cántico del Alef-Bet</h5>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0" style="background: #000;">
+                    <div class="ratio ratio-16x9">
+                        <iframe id="canticoIframe" src="" title="Cántico del Alef-Bet" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-3 px-4 d-flex justify-content-between align-items-center" style="background: #0f172a;">
+                    <small class="text-white-50"><i class="bi bi-heart-fill text-danger me-1"></i>¡Canta y alaba al Creador aprendiendo el idioma hebreo!</small>
+                    <button type="button" class="btn btn-outline-light rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>

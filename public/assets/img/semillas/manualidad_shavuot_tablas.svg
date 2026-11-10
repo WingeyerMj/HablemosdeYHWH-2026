@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#3730a3"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="600" height="450" rx="28" fill="url(#bg)"/>
+  
+  <!-- Subtle Pattern Circles -->
+  <circle cx="50" cy="50" r="120" fill="#ffffff" opacity="0.06"/>
+  <circle cx="550" cy="400" r="160" fill="#ffffff" opacity="0.06"/>
+
+  <!-- Illustration Box -->
+  <g transform="translate(300, 210)">
+    
+        <!-- Stone Tablets -->
+        <!-- Left Tablet -->
+        <path d="M -130 -80 A 55 55 0 0 1 -20 -80 L -20 80 L -130 80 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="8"/>
+        <!-- Right Tablet -->
+        <path d="M 20 -80 A 55 55 0 0 1 130 -80 L 130 80 L 20 80 Z" fill="#f1f5f9" stroke="#94a3b8" stroke-width="8"/>
+
+        <!-- Roman / Hebrew numerals lines on tablets -->
+        <text x="-75" y="-55" text-anchor="middle" font-family="serif" font-weight="bold" font-size="20" fill="#475569">א .I</text>
+        <text x="-75" y="-25" text-anchor="middle" font-family="serif" font-weight="bold" font-size="20" fill="#475569">ב .II</text>
+        <text x="-75" y="5" text-anchor="middle" font-family="serif" font-weight="bold" font-size="20" fill="#475569">ג .III</text>
+        <text x="-75" y="35" text-anchor="middle" font-family="serif" font-weight="bold" font-size="20" fill="#475569">ד .IV</text>
+        <text x="-75" y="65" text-anchor="middle" font-family="serif" font-weight="bold" font-size="20" fill="#475569">ה .V</text>
+
+        <text x="75" y="-55" text-anchor="middle" font-family="serif" font-weight="bold" font-size="20" fill="#475569">ו .VI</text>
+        <text x="75" y="-25" text-anchor="middle" font-family="serif" font-weight="bold" font-size="20" fill="#475569">ז .VII</text>
+        <text x="75" y="5" text-anchor="middle" font-family="serif" font-weight="bold" font-size="20" fill="#475569">ח .VIII</text>
+        <text x="75" y="35" text-anchor="middle" font-family="serif" font-weight="bold" font-size="20" fill="#475569">ט .IX</text>
+        <text x="75" y="65" text-anchor="middle" font-family="serif" font-weight="bold" font-size="20" fill="#475569">י .X</text>
+
+        <!-- Spring Flowers Base -->
+        <ellipse cx="0" cy="95" rx="160" ry="20" fill="#16a34a"/>
+        <text x="-100" y="98" font-size="32">🌸</text>
+        <text x="-40" y="95" font-size="28">🌼</text>
+        <text x="20" y="98" font-size="30">🌷</text>
+        <text x="80" y="95" font-size="28">🌺</text>
+        
+  </g>
+
+  <!-- Title Badge -->
+  <g transform="translate(300, 395)" filter="url(#shadow)">
+    <rect x="-240" y="-30" width="480" height="60" rx="30" fill="#ffffff" opacity="0.96"/>
+    <text x="0" y="-4" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="20" fill="#1e1b4b">
+      Tablas de la Toráh en Masa de Sal
+    </text>
+    <text x="0" y="18" text-anchor="middle" font-family="David, serif" font-weight="bold" font-size="18" fill="#7c3aed">
+      חַג הַשָּׁבוּעוֹת
+    </text>
+  </g>
+
+  <!-- Category Pill -->
+  <g transform="translate(45, 45)">
+    <rect width="130" height="36" rx="18" fill="#ffffff" opacity="0.92" filter="url(#shadow)"/>
+    <text x="65" y="23" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="#4338ca">
+      📜 Semillas
+    </text>
+  </g>
+</svg>

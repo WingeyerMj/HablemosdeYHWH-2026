@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#15803d"/><stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="600" height="450" rx="28" fill="url(#bg)"/>
+  
+  <!-- Subtle Pattern Circles -->
+  <circle cx="50" cy="50" r="120" fill="#ffffff" opacity="0.06"/>
+  <circle cx="550" cy="400" r="160" fill="#ffffff" opacity="0.06"/>
+
+  <!-- Illustration Box -->
+  <g transform="translate(300, 210)">
+    
+        <!-- Stars in sky -->
+        <circle cx="-160" cy="-140" r="3" fill="#fef08a"/>
+        <circle cx="140" cy="-150" r="4" fill="#fef08a"/>
+        <circle cx="-50" cy="-160" r="2.5" fill="#fef08a"/>
+        <circle cx="70" cy="-130" r="3" fill="#fef08a"/>
+        <!-- Moon -->
+        <path d="M 170 -120 A 24 24 0 1 1 146 -144 A 20 20 0 0 0 170 -120 Z" fill="#fef08a"/>
+
+        <!-- Sukkah Booth Walls -->
+        <rect x="-140" y="-40" width="280" height="180" rx="12" fill="#78350f" opacity="0.9"/>
+        <!-- Inner Sukkah back wall -->
+        <rect x="-115" y="-20" width="230" height="150" rx="6" fill="#fef3c7"/>
+
+        <!-- Table and Candlesticks inside -->
+        <ellipse cx="0" cy="95" rx="70" ry="20" fill="#b45309"/>
+        <rect x="-15" y="50" width="30" height="35" rx="4" fill="#d97706"/>
+        <ellipse cx="0" cy="50" rx="15" ry="5" fill="#fef3c7"/>
+        <circle cx="-25" cy="55" r="7" fill="#fbbf24"/>
+        <circle cx="25" cy="55" r="7" fill="#fbbf24"/>
+
+        <!-- S'chach (Roof branches & leaves) -->
+        <ellipse cx="0" cy="-45" rx="160" ry="24" fill="#22c55e" opacity="0.95"/>
+        <ellipse cx="-70" cy="-55" rx="90" ry="20" fill="#16a34a"/>
+        <ellipse cx="70" cy="-55" rx="90" ry="20" fill="#15803d"/>
+        <ellipse cx="0" cy="-65" rx="110" ry="22" fill="#4ade80"/>
+
+        <!-- Hanging fruits (Etrog, Pomegranate, Grapes) -->
+        <circle cx="-70" cy="-10" r="12" fill="#eab308"/> <!-- Etrog -->
+        <circle cx="70" cy="-10" r="14" fill="#dc2626"/> <!-- Pomegranate -->
+        <circle cx="0" cy="-15" r="10" fill="#9333ea"/> <!-- Grapes -->
+        
+  </g>
+
+  <!-- Title Badge -->
+  <g transform="translate(300, 395)" filter="url(#shadow)">
+    <rect x="-240" y="-30" width="480" height="60" rx="30" fill="#ffffff" opacity="0.96"/>
+    <text x="0" y="-4" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="20" fill="#1e1b4b">
+      Mini Sucá Familiar con Ramitas
+    </text>
+    <text x="0" y="18" text-anchor="middle" font-family="David, serif" font-weight="bold" font-size="18" fill="#7c3aed">
+      חַג הַסֻּכּוֹת
+    </text>
+  </g>
+
+  <!-- Category Pill -->
+  <g transform="translate(45, 45)">
+    <rect width="130" height="36" rx="18" fill="#ffffff" opacity="0.92" filter="url(#shadow)"/>
+    <text x="65" y="23" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="#4338ca">
+      🌿 Semillas
+    </text>
+  </g>
+</svg>

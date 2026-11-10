@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7"/><stop offset="100%" stop-color="#0f766e"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="600" height="450" rx="28" fill="url(#bg)"/>
+  
+  <!-- Subtle Pattern Circles -->
+  <circle cx="50" cy="50" r="120" fill="#ffffff" opacity="0.06"/>
+  <circle cx="550" cy="400" r="160" fill="#ffffff" opacity="0.06"/>
+
+  <!-- Illustration Box -->
+  <g transform="translate(300, 210)">
+    
+        <!-- Earth globe -->
+        <circle cx="0" cy="0" r="110" fill="#38bdf8" stroke="#ffffff" stroke-width="8"/>
+        <!-- Continents green -->
+        <path d="M -70 -40 Q -30 -80 20 -60 Q 70 -30 40 10 Q 0 40 -40 20 Z" fill="#22c55e"/>
+        <path d="M -30 30 Q 30 50 60 80 Q -10 90 -50 70 Z" fill="#16a34a"/>
+
+        <!-- Sun on top right -->
+        <circle cx="110" cy="-90" r="32" fill="#fbbf24"/>
+        <path d="M 110 -135 L 110 -125 M 110 -55 L 110 -45 M 65 -90 L 75 -90 M 145 -90 L 155 -90" stroke="#f59e0b" stroke-width="5" stroke-linecap="round"/>
+
+        <!-- Moon & Stars on left -->
+        <path d="M -110 -90 A 24 24 0 1 1 -134 -114 A 20 20 0 0 0 -110 -90 Z" fill="#fef08a"/>
+        <circle cx="-140" cy="-60" r="4" fill="#ffffff"/>
+        <circle cx="-80" cy="-120" r="3" fill="#ffffff"/>
+
+        <!-- 7 Days Badge -->
+        <rect x="-80" y="80" width="160" height="38" rx="19" fill="#ffffff" filter="url(#shadow)"/>
+        <text x="0" y="104" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="800" font-size="16" fill="#0f766e">
+          7 DÍAS + SHABAT
+        </text>
+        
+  </g>
+
+  <!-- Title Badge -->
+  <g transform="translate(300, 395)" filter="url(#shadow)">
+    <rect x="-240" y="-30" width="480" height="60" rx="30" fill="#ffffff" opacity="0.96"/>
+    <text x="0" y="-4" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="20" fill="#1e1b4b">
+      Los 7 Días de la Creación y el Shabat
+    </text>
+    <text x="0" y="18" text-anchor="middle" font-family="David, serif" font-weight="bold" font-size="18" fill="#7c3aed">
+      בְּרֵאשִׁית
+    </text>
+  </g>
+
+  <!-- Category Pill -->
+  <g transform="translate(45, 45)">
+    <rect width="130" height="36" rx="18" fill="#ffffff" opacity="0.92" filter="url(#shadow)"/>
+    <text x="65" y="23" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="#4338ca">
+      🌍 Semillas
+    </text>
+  </g>
+</svg>

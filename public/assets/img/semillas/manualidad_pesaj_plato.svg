@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7"/><stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="600" height="450" rx="28" fill="url(#bg)"/>
+  
+  <!-- Subtle Pattern Circles -->
+  <circle cx="50" cy="50" r="120" fill="#ffffff" opacity="0.06"/>
+  <circle cx="550" cy="400" r="160" fill="#ffffff" opacity="0.06"/>
+
+  <!-- Illustration Box -->
+  <g transform="translate(300, 210)">
+    
+        <!-- Seder Plate Base -->
+        <circle cx="0" cy="0" r="140" fill="#ffffff" stroke="#38bdf8" stroke-width="10"/>
+        <circle cx="0" cy="0" r="126" fill="#f8fafc" stroke="#e0f2fe" stroke-width="3"/>
+
+        <!-- Center Inscription -->
+        <circle cx="0" cy="0" r="40" fill="#e0f2fe"/>
+        <text x="0" y="8" text-anchor="middle" font-family="David, serif" font-weight="bold" font-size="22" fill="#0369a1">
+          פֶּסַח
+        </text>
+
+        <!-- 6 Compartments -->
+        <!-- 1. Zeroah -->
+        <circle cx="0" cy="-80" r="28" fill="#fef3c7" stroke="#f59e0b" stroke-width="3"/>
+        <text x="0" y="-74" text-anchor="middle" font-size="11" font-weight="bold" fill="#b45309">Zeroá</text>
+        
+        <!-- 2. Beitza -->
+        <circle cx="70" cy="-40" r="28" fill="#fef3c7" stroke="#f59e0b" stroke-width="3"/>
+        <text x="70" y="-34" text-anchor="middle" font-size="11" font-weight="bold" fill="#b45309">Beitzá</text>
+
+        <!-- 3. Maror -->
+        <circle cx="70" cy="40" r="28" fill="#dcfce7" stroke="#22c55e" stroke-width="3"/>
+        <text x="70" y="46" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">Maror</text>
+
+        <!-- 4. Charoset -->
+        <circle cx="0" cy="80" r="28" fill="#fed7aa" stroke="#ea580c" stroke-width="3"/>
+        <text x="0" y="86" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">Jaróset</text>
+
+        <!-- 5. Karpas -->
+        <circle cx="-70" cy="40" r="28" fill="#dcfce7" stroke="#22c55e" stroke-width="3"/>
+        <text x="-70" y="46" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">Karpas</text>
+
+        <!-- 6. Chazeret -->
+        <circle cx="-70" cy="-40" r="28" fill="#dcfce7" stroke="#22c55e" stroke-width="3"/>
+        <text x="-70" y="-34" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">Jazéret</text>
+        
+  </g>
+
+  <!-- Title Badge -->
+  <g transform="translate(300, 395)" filter="url(#shadow)">
+    <rect x="-240" y="-30" width="480" height="60" rx="30" fill="#ffffff" opacity="0.96"/>
+    <text x="0" y="-4" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="20" fill="#1e1b4b">
+      Bandeja Didáctica del Séder
+    </text>
+    <text x="0" y="18" text-anchor="middle" font-family="David, serif" font-weight="bold" font-size="18" fill="#7c3aed">
+      פֶּסַח קָדוֹשׁ
+    </text>
+  </g>
+
+  <!-- Category Pill -->
+  <g transform="translate(45, 45)">
+    <rect width="130" height="36" rx="18" fill="#ffffff" opacity="0.92" filter="url(#shadow)"/>
+    <text x="65" y="23" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="#4338ca">
+      🍷 Semillas
+    </text>
+  </g>
+</svg>
