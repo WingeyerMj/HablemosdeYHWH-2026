@@ -23,7 +23,7 @@
                     <i class="bi bi-pencil-square"></i> Editar Datos
                 </div>
                 <div class="card-body">
-                    <form action="/admin/entity/<%= tableName %>/update/<%= data.id %>" method="POST" enctype="multipart/form-data" id="editEntityForm">
+                    <form action="/admin/entity/<%= tableName %>/update/<%= data.id %>" method="POST" enctype="multipart/form-data" id="editEntityForm"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <% columns.forEach(col=> { %>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold text-white-50">

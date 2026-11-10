@@ -130,7 +130,7 @@ class Interaction {
     static async getComments(entity_type, entity_id) {
         await Interaction.ensureTable();
         const [rows] = await db.query(
-            'SELECT * FROM item_comments WHERE entity_type = ? AND entity_id = ? AND is_approved = TRUE ORDER BY created_at ASC',
+            'SELECT id, entity_type, entity_id, user_name, comment_text, parent_id, avatar_color, admin_reply, admin_reply_at, admin_reply_by, created_at FROM item_comments WHERE entity_type = ? AND entity_id = ? AND is_approved = TRUE ORDER BY created_at ASC',
             [entity_type, entity_id]
         );
         return rows;

@@ -9,7 +9,7 @@
         </div>
     </div>
 
-    <form action="/admin/settings/update" method="POST">
+    <form action="/admin/settings/update" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <% 
             const groupLabels = {
                 'general': { icon: 'bi-globe', title: 'General' },

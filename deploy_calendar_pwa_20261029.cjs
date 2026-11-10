@@ -8,7 +8,7 @@ const root = __dirname;
 fs.copyFileSync(path.join(root, 'public/assets/calendar/js/main.js'), path.join(root, 'Calendar/js/main.js'));
 fs.copyFileSync(path.join(root, 'public/assets/calendar/css/style.css'), path.join(root, 'Calendar/css/style.css'));
 const credentialSource = fs.readFileSync(path.join(root, 'check_remote_views.cjs'), 'utf8');
-const password = credentialSource.match(/password:\s*'([^']+)'/)?.[1];
+const password = require('C:/Users/WingeyerMarcelo/Documents/ChatGPT/hablemosdeyhwh/security-hardening/ssh-credentials.cjs').getPassword();
 if (!password) throw new Error('No se encontró la credencial SSH local configurada');
 
 const project = '/var/www/hablemos_yhwh';
@@ -17,12 +17,15 @@ const files = [
   'node-backend/src/models/PwaInstallation.js',
   'node-backend/src/models/Aliyah.js',
   'node-backend/src/models/TorahVivienteDownload.js',
+  'node-backend/src/models/ParashaInfantil.js',
   'node-backend/src/routes/api.js',
   'node-backend/src/routes/admin.js',
+  'node-backend/src/routes/index.js',
   'node-backend/src/controllers/adminController.js',
   'node-backend/src/controllers/homeController.js',
   'node-backend/src/utils/calendarPwaAssets.js',
   'node-backend/src/views/index.ejs',
+  'node-backend/src/views/semillas_torah.ejs',
   'node-backend/src/views/partials/head.ejs',
   'node-backend/src/views/partials/header.ejs',
   'node-backend/src/views/partials/footer.ejs',
@@ -36,6 +39,9 @@ const files = [
   'node-backend/src/views/admin/layout.ejs',
   'node-backend/src/views/admin/pwa_installations.ejs',
   'node-backend/src/views/admin/torah_viviente_downloads.ejs',
+  'node-backend/src/views/admin/parashot_infantiles.ejs',
+  'node-backend/src/views/admin/edit_parasha_infantil.ejs',
+  'node-backend/src/views/admin/edit_parasha.ejs',
   'node-backend/src/views/admin/dashboard.ejs',
   'node-backend/src/views/admin/ciclos_tora.ejs',
   'node-backend/src/views/admin/aliyot.ejs',

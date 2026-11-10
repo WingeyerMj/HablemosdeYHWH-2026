@@ -1,0 +1,200 @@
+<!-- Sidebar -->
+<%- include('partials/_sidebar') %>
+
+<main class="col-md-10 main-content">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h1 class="text-white"><i class="bi bi-pencil-square me-2 text-warning"></i>Editar Parashá Semanal Infantil (PDF)</h1>
+            <p class="text-white-50 mb-0">Ministerio Semillas de Torah • Editando: <strong class="text-warning"><%= item.title %></strong></p>
+        </div>
+        <div class="d-flex gap-2">
+            <% if (item.pdf_file) { %>
+                <a href="<%= item.pdf_file %>" target="_blank" class="btn btn-outline-danger"><i class="bi bi-file-earmark-pdf"></i> Ver PDF Actual</a>
+            <% } %>
+            <a href="/admin/parashot-infantiles" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver a la lista</a>
+        </div>
+    </div>
+
+    <% if (typeof msg !== 'undefined' && msg) { %>
+        <div class="alert alert-success border border-success d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-check-circle-fill me-2"></i><%= msg %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger border border-danger d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-exclamation-triangle-fill me-2"></i><%= error %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <form action="/admin/parashot-infantiles/update" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="<%= item.id %>">
+        
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card bg-dark border-secondary p-4 rounded-4 shadow-sm mb-4">
+                    <h5 class="text-white fw-bold mb-3 pb-2 border-bottom border-secondary">
+                        <i class="bi bi-card-heading me-2 text-warning"></i>Datos de la Parashá
+                    </h5>
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label text-warning fw-bold"><i class="bi bi-link-45deg me-1"></i>Parashá Vinculada de la Torá</label>
+                            <select name="parasha_id" id="edit_pi_parasha_select" class="form-select bg-dark text-white border-warning" onchange="onSelectParashaOption(this)">
+                                <option value="">-- Sin vincular directamente --</option>
+                                <% if (typeof parashot !== 'undefined' && parashot && parashot.length > 0) { %>
+                                    <% parashot.forEach(p => { 
+                                        const isSelected = (item.parasha_id && item.parasha_id == p.id) || (!item.parasha_id && item.parasha_number && item.parasha_number == p.parasha_number);
+                                    %>
+                                        <option value="<%= p.id %>" 
+                                                data-number="<%= p.parasha_number || '' %>"
+                                                data-title="<%= p.title || '' %>"
+                                                data-subtitle="<%= p.subtitle || '' %>"
+                                                <%= isSelected ? 'selected' : '' %>>
+                                            #<%= p.parasha_number || '?' %> - <%= p.title %> <%= p.subtitle ? '(' + p.subtitle + ')' : '' %>
+                                        </option>
+                                    <% }) %>
+                                <% } %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label text-info fw-bold">Nº de Parashá</label>
+                            <input type="number" name="parasha_number" id="pi_parasha_number" class="form-control bg-dark text-white border-secondary" value="<%= item.parasha_number || '' %>" min="1" max="54">
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label text-warning fw-bold">Nombre de la Parashá *</label>
+                            <input type="text" name="parasha_name" id="pi_parasha_name" class="form-control bg-dark text-white border-warning" value="<%= item.parasha_name || '' %>" required>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label text-white fw-bold">Título Completo</label>
+                            <input type="text" name="title" id="pi_title_input" class="form-control bg-dark text-white border-secondary" value="<%= item.title || '' %>" required>
+                        </div>
+
+                        <div class="col-md-5">
+                            <label class="form-label text-light fw-bold">Libro de la Torá</label>
+                            <select name="book" id="pi_book_select" class="form-select bg-dark text-white border-secondary">
+                                <option value="Bereshit / Génesis" <%= item.book && item.book.includes('Génesis') ? 'selected' : '' %>>Bereshit (Génesis)</option>
+                                <option value="Shemot / Éxodo" <%= item.book && item.book.includes('Éxodo') ? 'selected' : '' %>>Shemot (Éxodo)</option>
+                                <option value="Vayikrá / Levítico" <%= item.book && item.book.includes('Levítico') ? 'selected' : '' %>>Vayikrá (Levítico)</option>
+                                <option value="Bamidbar / Números" <%= item.book && item.book.includes('Números') ? 'selected' : '' %>>Bamidbar (Números)</option>
+                                <option value="Devarim / Deuteronomio" <%= item.book && item.book.includes('Deuteronomio') ? 'selected' : '' %>>Devarim (Deuteronomio)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-7">
+                            <label class="form-label text-light fw-bold">Cita Bíblica de la Porción</label>
+                            <input type="text" name="biblical_reference" id="pi_biblical_reference" class="form-control bg-dark text-white border-secondary" value="<%= item.biblical_reference || '' %>">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label text-success fw-bold">Versículo Clave para Memorizar</label>
+                            <input type="text" name="key_verse" class="form-control bg-dark text-white border-secondary" value="<%= item.key_verse || '' %>">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label text-light fw-bold">Resumen Sencillo de la Porción para los Niños</label>
+                            <textarea name="summary" class="form-control bg-dark text-white border-secondary" rows="4"><%= item.summary || '' %></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Archivo PDF -->
+                <div class="card bg-dark border-secondary p-4 rounded-4 shadow-sm mb-4">
+                    <h5 class="text-white fw-bold mb-3 pb-2 border-bottom border-secondary">
+                        <i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Archivo en PDF
+                    </h5>
+                    <% if (item.pdf_file) { %>
+                        <div class="p-3 mb-3 rounded-3 bg-black border border-secondary text-center">
+                            <i class="bi bi-file-earmark-pdf-fill fs-1 text-danger d-block mb-1"></i>
+                            <a href="<%= item.pdf_file %>" target="_blank" class="small text-danger fw-bold text-decoration-none d-block text-truncate">
+                                <%= item.pdf_file.split('/').pop() %>
+                            </a>
+                            <span class="badge bg-secondary mt-2"><i class="bi bi-download me-1"></i><%= item.downloads_count || 0 %> descargas</span>
+                        </div>
+                    <% } %>
+                    <label class="form-label text-white-50 small">Subir Nuevo PDF (Reemplaza al actual)</label>
+                    <input type="file" name="pdf_file" class="form-control bg-dark text-white border-secondary" accept="application/pdf,.pdf">
+                </div>
+
+                <!-- Portada / Imagen -->
+                <div class="card bg-dark border-secondary p-4 rounded-4 shadow-sm mb-4">
+                    <h5 class="text-white fw-bold mb-3 pb-2 border-bottom border-secondary">
+                        <i class="bi bi-image me-2 text-info"></i>Portada / Ilustración
+                    </h5>
+                    <% if (item.cover_image) { %>
+                        <div class="mb-3 text-center rounded-3 p-2 bg-black border border-secondary">
+                            <img src="<%= item.cover_image %>" alt="<%= item.title %>" style="max-width: 100%; max-height: 180px; object-fit: contain;">
+                        </div>
+                    <% } %>
+                    <label class="form-label text-white-50 small">Reemplazar Imagen de Portada</label>
+                    <input type="file" name="cover_image_file" class="form-control bg-dark text-white border-secondary" accept="image/*">
+                </div>
+
+                <!-- Estado y Guardar -->
+                <div class="card bg-dark border-secondary p-4 rounded-4 shadow-sm mb-4">
+                    <h5 class="text-white fw-bold mb-3 pb-2 border-bottom border-secondary">
+                        <i class="bi bi-gear me-2 text-warning"></i>Publicación
+                    </h5>
+                    <div class="mb-3">
+                        <label class="form-label text-light fw-bold">Estado</label>
+                        <select name="is_published" class="form-select bg-dark text-white border-secondary">
+                            <option value="1" <%= item.is_published ? 'selected' : '' %>>✅ Publicada en la Web</option>
+                            <option value="0" <%= !item.is_published ? 'selected' : '' %>>⏳ Borrador / Oculta</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning text-dark fw-bold w-100 py-2">
+                        <i class="bi bi-save-fill me-1"></i> Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</main>
+
+<script>
+    function onSelectParashaOption(sel) {
+        if (!sel || !sel.value) return;
+        const opt = sel.options[sel.selectedIndex];
+        if (!opt) return;
+        const num = opt.getAttribute('data-number');
+        const title = opt.getAttribute('data-title');
+        const subtitle = opt.getAttribute('data-subtitle') || '';
+
+        const numInput = document.getElementById('pi_parasha_number');
+        if (numInput && num) numInput.value = num;
+
+        const nameInput = document.getElementById('pi_parasha_name');
+        if (nameInput && title) nameInput.value = title;
+
+        const titleInput = document.getElementById('pi_title_input');
+        if (titleInput && title) {
+            titleInput.value = `Parashá #${num || ''} ${title} Infantil`;
+        }
+
+        const refInput = document.getElementById('pi_biblical_reference');
+        if (refInput && subtitle) refInput.value = subtitle;
+
+        // Auto-detectar libro de la Torá
+        const bookSelect = document.getElementById('pi_book_select');
+        if (bookSelect && subtitle) {
+            const sub = subtitle.toLowerCase();
+            if (sub.includes('génesis') || sub.includes('genesis') || sub.includes('bereshit')) {
+                bookSelect.value = 'Bereshit / Génesis';
+            } else if (sub.includes('éxodo') || sub.includes('exodo') || sub.includes('shemot')) {
+                bookSelect.value = 'Shemot / Éxodo';
+            } else if (sub.includes('levítico') || sub.includes('levitico') || sub.includes('vayikrá') || sub.includes('vayikra')) {
+                bookSelect.value = 'Vayikrá / Levítico';
+            } else if (sub.includes('números') || sub.includes('numeros') || sub.includes('bamidbar')) {
+                bookSelect.value = 'Bamidbar / Números';
+            } else if (sub.includes('deuteronomio') || sub.includes('devarim')) {
+                bookSelect.value = 'Devarim / Deuteronomio';
+            }
+        }
+    }
+</script>
+

@@ -28,7 +28,7 @@ for (const f of files) {
 }
 
 const project = '/var/www/hablemos_yhwh';
-const password = 'H4bl3m0sd3!yhwh';
+const password = require('C:/Users/WingeyerMarcelo/Documents/ChatGPT/hablemosdeyhwh/security-hardening/ssh-credentials.cjs').getPassword();
 
 const client = new Client();
 const run = command => new Promise((resolve, reject) => {

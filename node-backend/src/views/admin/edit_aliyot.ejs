@@ -71,7 +71,7 @@
                     </div>
 
                     <div class="card-body p-4">
-                        <form action="/admin/aliyot/save" method="POST" enctype="multipart/form-data" class="aliyah-form" data-aliyah-id="<%= i %>">
+                        <form action="/admin/aliyot/save" method="POST" enctype="multipart/form-data" class="aliyah-form" data-aliyah-id="<%= i %>"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <input type="hidden" name="parasha_id" value="<%= parasha.id %>">
                             <input type="hidden" name="aliyah_number" value="<%= i %>">
                             <input type="hidden" name="existing_audio_url" value="<%= aliyah.audio_url || '' %>">
@@ -136,9 +136,9 @@
                                                                 <a href="<%= audio.url %>" target="_blank" download class="btn btn-sm btn-outline-light" title="Descargar">
                                                                     <i class="bi bi-download"></i>
                                                                 </a>
-                                                                <a href="/admin/aliyot/delete-audio/<%= aliyah.id %>/<%= parasha.id %>/<%= i %>" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar este audio?')" title="Eliminar">
+                                                                <form method="POST" action="/admin/aliyot/delete-audio/<%= aliyah.id %>/<%= parasha.id %>/<%= i %>" class="d-inline" onsubmit="return confirm('¿Eliminar este audio?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-sm btn-outline-danger"  title="Eliminar">
                                                                     <i class="bi bi-trash"></i>
-                                                                </a>
+                                                                </button></form>
                                                             </div>
                                                         </div>
 

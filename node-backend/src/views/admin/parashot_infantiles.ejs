@@ -1,0 +1,398 @@
+<!-- Sidebar -->
+<%- include('partials/_sidebar') %>
+
+<main class="col-md-10 main-content">
+    
+    <!-- Header -->
+    <div class="page-header d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h1 class="text-white fw-bold mb-1">
+                <i class="bi bi-file-earmark-pdf me-2 text-warning"></i>Parashá Semanal Infantil (PDF)
+            </h1>
+            <p class="text-white-50 mb-0">Ministerio Semillas de Torah • Sube y administra las porciones semanales en PDF para que los niños puedan estudiarlas.</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="/semillas-de-torah#parasha-infantil" target="_blank" class="btn btn-outline-light"><i class="bi bi-eye"></i> Ver en la Web</a>
+            <button type="button" class="btn btn-warning text-dark fw-bold px-4" data-bs-toggle="modal" data-bs-target="#createParashaInfantilModal">
+                <i class="bi bi-plus-circle-fill me-1"></i> Subir Nueva Parashá en PDF
+            </button>
+        </div>
+    </div>
+
+    <% if (typeof msg !== 'undefined' && msg) { %>
+        <div class="alert alert-success border border-success d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-check-circle-fill me-2"></i><%= msg %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger border border-danger d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-exclamation-triangle-fill me-2"></i><%= error %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <!-- STATS CARDS -->
+    <% 
+        const allItems = typeof items !== 'undefined' && items ? items : [];
+        const publishedCount = allItems.filter(x => x.is_published).length;
+        const draftCount = allItems.length - publishedCount;
+        const totalDownloads = allItems.reduce((acc, cur) => acc + (cur.downloads_count || 0), 0);
+    %>
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-dark border-secondary p-3 rounded-4 d-flex flex-row align-items-center gap-3">
+                <div class="rounded-circle p-3 d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background: rgba(234,179,8,0.2); color: #eab308;">
+                    <i class="bi bi-file-earmark-pdf fs-4 text-warning"></i>
+                </div>
+                <div>
+                    <div class="text-white-50 small">Total Parashot PDF</div>
+                    <div class="fs-4 fw-bold text-white"><%= allItems.length %></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-dark border-secondary p-3 rounded-4 d-flex flex-row align-items-center gap-3">
+                <div class="rounded-circle p-3 d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background: rgba(34,197,94,0.2); color: #22c55e;">
+                    <i class="bi bi-check-circle fs-4 text-success"></i>
+                </div>
+                <div>
+                    <div class="text-white-50 small">Publicadas en Web</div>
+                    <div class="fs-4 fw-bold text-success"><%= publishedCount %></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-dark border-secondary p-3 rounded-4 d-flex flex-row align-items-center gap-3">
+                <div class="rounded-circle p-3 d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background: rgba(148,163,184,0.2); color: #94a3b8;">
+                    <i class="bi bi-eye-slash fs-4 text-secondary"></i>
+                </div>
+                <div>
+                    <div class="text-white-50 small">Borradores / Ocultas</div>
+                    <div class="fs-4 fw-bold text-secondary"><%= draftCount %></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-dark border-secondary p-3 rounded-4 d-flex flex-row align-items-center gap-3">
+                <div class="rounded-circle p-3 d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background: rgba(56,189,248,0.2); color: #38bdf8;">
+                    <i class="bi bi-download fs-4 text-info"></i>
+                </div>
+                <div>
+                    <div class="text-white-50 small">Descargas Totales</div>
+                    <div class="fs-4 fw-bold text-info"><%= totalDownloads %></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BUSCADOR -->
+    <div class="card bg-dark border-secondary p-3 rounded-4 shadow-sm mb-4">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-search"></i></span>
+                    <input type="text" id="piSearchInput" class="form-control bg-dark text-white border-secondary" placeholder="Buscar por nombre de parashá, cita bíblica, libro o título..." onkeyup="filterParashotTable()">
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <span class="text-white-50 small" id="piMatchCount">Mostrando <%= allItems.length %> parashot</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLA DE PARASHOT INFANTILES -->
+    <div class="card bg-dark border-secondary rounded-4 shadow-sm overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle mb-0" id="piTable">
+                <thead class="table-dark text-white-50 border-secondary">
+                    <tr>
+                        <th style="width: 70px;">Nº</th>
+                        <th style="width: 90px;">Portada</th>
+                        <th>Parashá & Cita Bíblica</th>
+                        <th>Libro</th>
+                        <th>Archivo PDF</th>
+                        <th>Descargas</th>
+                        <th>Estado</th>
+                        <th class="text-end" style="min-width: 130px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (allItems.length === 0) { %>
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-white-50">
+                                <i class="bi bi-file-earmark-pdf fs-1 d-block mb-2 text-warning opacity-50"></i>
+                                Todavía no hay parashot infantiles en PDF subidas.<br>
+                                Haz clic en <strong>"Subir Nueva Parashá en PDF"</strong> para publicar la primera semana.
+                            </td>
+                        </tr>
+                    <% } %>
+
+                    <% allItems.forEach((item) => { %>
+                        <tr class="pi-row-item">
+                            <td>
+                                <span class="badge bg-black border border-secondary text-warning fw-bold fs-6">
+                                    #<%= item.parasha_number || '-' %>
+                                </span>
+                            </td>
+                            <td>
+                                <div style="width: 65px; height: 65px; border-radius: 10px; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center;">
+                                    <% if (item.cover_image) { %>
+                                        <img src="<%= item.cover_image %>" alt="<%= item.title %>" style="width: 100%; height: 100%; object-fit: cover;">
+                                    <% } else { %>
+                                        <i class="bi bi-file-earmark-pdf fs-3 text-warning"></i>
+                                    <% } %>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-white fs-6 mb-1">
+                                    <%= item.title %>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                                    <% if (item.parasha_id || item.parasha_name) { %>
+                                        <a href="/parashot/<%= item.parasha_id || '' %>" target="_blank" class="badge rounded-pill bg-warning text-dark text-decoration-none fw-bold shadow-sm" title="Abrir la Parashá vinculada en la web">
+                                            <i class="bi bi-link-45deg me-1"></i>Parashá <%= item.parasha_number ? '#' + item.parasha_number : '' %> <%= item.parasha_title_canonical || item.parasha_name %>
+                                        </a>
+                                    <% } %>
+                                    <span class="text-warning small d-flex align-items-center gap-1">
+                                        <i class="bi bi-book"></i> <%= item.biblical_reference || 'Porción de la Torá' %>
+                                    </span>
+                                </div>
+                                <% if (item.key_verse) { %>
+                                    <div class="text-white-50 small mt-1 text-truncate" style="max-width: 320px;">
+                                        <em>"<%= item.key_verse %>"</em>
+                                    </div>
+                                <% } %>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill px-3 py-1" style="background: rgba(168,85,247,0.2); color: #c084fc; border: 1px solid rgba(168,85,247,0.3);">
+                                    <%= item.book || 'Torah' %>
+                                </span>
+                            </td>
+                            <td>
+                                <% if (item.pdf_file) { %>
+                                    <a href="<%= item.pdf_file %>" target="_blank" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1">
+                                        <i class="bi bi-file-earmark-pdf"></i>
+                                        <span>Ver PDF</span>
+                                    </a>
+                                <% } else { %>
+                                    <span class="text-muted small">Sin PDF</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <span class="badge bg-black border border-secondary text-info">
+                                    <i class="bi bi-download me-1"></i><%= item.downloads_count || 0 %>
+                                </span>
+                            </td>
+                            <td>
+                                <form action="/admin/parashot-infantiles/toggle/<%= item.id %>" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm <%= item.is_published ? 'btn-success' : 'btn-outline-secondary' %> rounded-pill px-3 py-0" style="font-size: 0.75rem;">
+                                        <%= item.is_published ? 'Publicada' : 'Borrador' %>
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group">
+                                    <a href="/admin/parashot-infantiles/edit/<%= item.id %>" class="btn btn-sm btn-outline-primary" title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form action="/admin/parashot-infantiles/delete/<%= item.id %>" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta parashá infantil y su PDF?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- MODAL: SUBIR NUEVA PARASHÁ INFANTIL (PDF) -->
+<div class="modal fade" id="createParashaInfantilModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-warning">
+            <div class="modal-header border-secondary" style="background: linear-gradient(135deg, rgba(212,168,83,0.2), rgba(168,85,247,0.2));">
+                <h5 class="modal-title text-white fw-bold">
+                    <i class="bi bi-file-earmark-pdf me-2 text-warning"></i>Subir Nueva Parashá Semanal Infantil (PDF)
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/parashot-infantiles/create" method="POST" enctype="multipart/form-data">
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        
+                        <!-- SELECCIÓN Y VINCULACIÓN A PARASHÁ CANÓNICA -->
+                        <div class="col-12">
+                            <div class="p-3 rounded-3 border border-warning" style="background: rgba(234, 179, 8, 0.08);">
+                                <label class="form-label text-warning fw-bold fs-6 mb-1">
+                                    <i class="bi bi-journal-check me-1"></i>Vincular a una Parashá de la Torá *
+                                </label>
+                                <div class="small text-white-50 mb-2">Selecciona a cuál de las 54 Parashot corresponde este material infantil para vincularlo y completar los datos automáticamente:</div>
+                                <select name="parasha_id" id="pi_parasha_select" class="form-select bg-dark text-white border-warning" onchange="onSelectParashaOption(this)" required>
+                                    <option value="" disabled selected>-- Elige una Parashá (1 a 54) --</option>
+                                    <% if (typeof parashot !== 'undefined' && parashot && parashot.length > 0) { %>
+                                        <% parashot.forEach(p => { %>
+                                            <option value="<%= p.id %>" 
+                                                    data-number="<%= p.parasha_number || '' %>"
+                                                    data-title="<%= p.title || '' %>"
+                                                    data-subtitle="<%= p.subtitle || '' %>">
+                                                #<%= p.parasha_number || '?' %> - <%= p.title %> <%= p.subtitle ? '(' + p.subtitle + ')' : '' %>
+                                            </option>
+                                        <% }) %>
+                                    <% } %>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Archivo PDF OBLIGATORIO -->
+                        <div class="col-12">
+                            <div class="p-3 rounded-3 border-2 border-warning bg-black bg-opacity-40" style="border: 2px dashed #eab308 !important;">
+                                <label class="form-label text-warning fw-bold fs-6 mb-1">
+                                    <i class="bi bi-file-earmark-pdf-fill me-1"></i>Archivo de la Parashá en PDF (Para estudiar y descargar) *
+                                </label>
+                                <div class="small text-white-50 mb-2">Selecciona el archivo PDF de la semana preparado para los niños.</div>
+                                <input type="file" name="pdf_file" class="form-control bg-dark text-white border-warning" accept="application/pdf,.pdf" required>
+                            </div>
+                        </div>
+
+                        <!-- Número y Nombre de la Parashá -->
+                        <div class="col-md-4">
+                            <label class="form-label text-info fw-bold">Nº de Parashá</label>
+                            <input type="number" name="parasha_number" id="pi_parasha_number" class="form-control bg-dark text-white border-secondary" placeholder="Ej: 6" min="1" max="54">
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label text-warning fw-bold">Nombre de la Parashá *</label>
+                            <input type="text" name="parasha_name" id="pi_parasha_name" class="form-control bg-dark text-white border-secondary" placeholder="Ej: Toldot, Vayerá, Nóaj, Bereshit..." required>
+                        </div>
+
+                        <!-- Título visible -->
+                        <div class="col-12">
+                            <label class="form-label text-white fw-bold">Título Completo para Niños</label>
+                            <input type="text" name="title" id="pi_title_input" class="form-control bg-dark text-white border-secondary" placeholder="Ej: Parashá 06 - Toldot: Las bendiciones del Creador">
+                        </div>
+
+                        <!-- Libro Bíblico & Cita -->
+                        <div class="col-md-5">
+                            <label class="form-label text-light fw-bold">Libro de la Torá</label>
+                            <select name="book" id="pi_book_select" class="form-select bg-dark text-white border-secondary">
+                                <option value="Bereshit / Génesis" selected>Bereshit (Génesis)</option>
+                                <option value="Shemot / Éxodo">Shemot (Éxodo)</option>
+                                <option value="Vayikrá / Levítico">Vayikrá (Levítico)</option>
+                                <option value="Bamidbar / Números">Bamidbar (Números)</option>
+                                <option value="Devarim / Deuteronomio">Devarim (Deuteronomio)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-7">
+                            <label class="form-label text-light fw-bold">Cita Bíblica de la Porción</label>
+                            <input type="text" name="biblical_reference" id="pi_biblical_reference" class="form-control bg-dark text-white border-secondary" placeholder="Ej: Génesis 25:19 – 28:9">
+                        </div>
+
+                        <!-- Versículo Clave para Memorizar -->
+                        <div class="col-12">
+                            <label class="form-label text-success fw-bold">Versículo Clave para Memorizar (Opcional)</label>
+                            <input type="text" name="key_verse" class="form-control bg-dark text-white border-secondary" placeholder="Ej: “Y amó Isaac a Esaú, porque comía de su caza; mas Rebeca amaba a Jacob.” — Génesis 25:28">
+                        </div>
+
+                        <!-- Resumen Breve para Niños -->
+                        <div class="col-12">
+                            <label class="form-label text-light fw-bold">Resumen Sencillo de la Porción para los Niños</label>
+                            <textarea name="summary" class="form-control bg-dark text-white border-secondary" rows="3" placeholder="En esta parashá aprendemos la historia de los gemelos Jacob y Esaú, la importancia de valorar las promesas de Adonai..."></textarea>
+                        </div>
+
+                        <!-- Portada Ilustrada / Dibujo para colorear -->
+                        <div class="col-md-8">
+                            <label class="form-label text-light fw-bold">Portada / Dibujo Ilustrado (Opcional)</label>
+                            <input type="file" name="cover_image_file" class="form-control bg-dark text-white border-secondary" accept="image/*">
+                            <div class="small text-white-50 mt-1">Puedes subir la carátula o dibujo coloreable de la Parashá.</div>
+                        </div>
+
+                        <!-- Estado de Publicación -->
+                        <div class="col-md-4">
+                            <label class="form-label text-light fw-bold">Estado</label>
+                            <select name="is_published" class="form-select bg-dark text-white border-secondary">
+                                <option value="1" selected>✅ Publicar de inmediato</option>
+                                <option value="0">⏳ Guardar como borrador</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning text-dark fw-bold px-4">
+                        <i class="bi bi-cloud-arrow-up-fill me-1"></i> Guardar y Publicar PDF
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function onSelectParashaOption(sel) {
+        if (!sel || !sel.value) return;
+        const opt = sel.options[sel.selectedIndex];
+        if (!opt) return;
+        const num = opt.getAttribute('data-number');
+        const title = opt.getAttribute('data-title');
+        const subtitle = opt.getAttribute('data-subtitle') || '';
+
+        const numInput = document.getElementById('pi_parasha_number');
+        if (numInput && num) numInput.value = num;
+
+        const nameInput = document.getElementById('pi_parasha_name');
+        if (nameInput && title) nameInput.value = title;
+
+        const titleInput = document.getElementById('pi_title_input');
+        if (titleInput && title) {
+            titleInput.value = `Parashá #${num || ''} ${title} Infantil`;
+        }
+
+        const refInput = document.getElementById('pi_biblical_reference');
+        if (refInput && subtitle) refInput.value = subtitle;
+
+        // Auto-detectar libro de la Torá
+        const bookSelect = document.getElementById('pi_book_select');
+        if (bookSelect && subtitle) {
+            const sub = subtitle.toLowerCase();
+            if (sub.includes('génesis') || sub.includes('genesis') || sub.includes('bereshit')) {
+                bookSelect.value = 'Bereshit / Génesis';
+            } else if (sub.includes('éxodo') || sub.includes('exodo') || sub.includes('shemot')) {
+                bookSelect.value = 'Shemot / Éxodo';
+            } else if (sub.includes('levítico') || sub.includes('levitico') || sub.includes('vayikrá') || sub.includes('vayikra')) {
+                bookSelect.value = 'Vayikrá / Levítico';
+            } else if (sub.includes('números') || sub.includes('numeros') || sub.includes('bamidbar')) {
+                bookSelect.value = 'Bamidbar / Números';
+            } else if (sub.includes('deuteronomio') || sub.includes('devarim')) {
+                bookSelect.value = 'Devarim / Deuteronomio';
+            }
+        }
+    }
+
+    function filterParashotTable() {
+        const query = document.getElementById('piSearchInput').value.toLowerCase().trim();
+        const rows = document.querySelectorAll('.pi-row-item');
+        let count = 0;
+
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            if (!query || text.includes(query)) {
+                row.style.display = '';
+                count++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const countEl = document.getElementById('piMatchCount');
+        if (countEl) countEl.textContent = `Mostrando ${count} parashot`;
+    }
+</script>
+

@@ -4,7 +4,7 @@ const SSH_CONFIG = {
   host: '179.43.125.96',
   port: 5640,
   username: 'root',
-  password: 'W1ng3y3r&M4rc3l0',
+  password: require('C:/Users/WingeyerMarcelo/Documents/ChatGPT/hablemosdeyhwh/security-hardening/ssh-credentials.cjs').getPassword(),
   tryKeyboard: true,
   readyTimeout: 30000,
   algorithms: {

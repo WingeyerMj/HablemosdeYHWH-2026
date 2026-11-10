@@ -35,7 +35,7 @@
         }
     %>
 
-    <form action="/admin/semillas-articulos/update" method="POST" enctype="multipart/form-data" id="editSemillasArticuloForm">
+    <form action="/admin/semillas-articulos/update" method="POST" enctype="multipart/form-data" id="editSemillasArticuloForm"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="id" value="<%= item.id %>">
         
         <div class="row g-4">

@@ -21,7 +21,7 @@
         </div>
     </div>
 
-    <form action="/admin/haftara/update" method="POST" enctype="multipart/form-data" id="editHaftaraPageForm">
+    <form action="/admin/haftara/update" method="POST" enctype="multipart/form-data" id="editHaftaraPageForm"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="id" value="<%= haftara.id %>">
         <div class="row g-3">
             <div class="col-md-6">

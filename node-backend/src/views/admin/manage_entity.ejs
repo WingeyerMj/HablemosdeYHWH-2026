@@ -24,7 +24,7 @@
                     <i class="bi bi-plus-lg"></i> Nuevo Registro
                 </div>
                 <div class="card-body">
-                    <form action="/admin/entity/<%= tableName %>/add" method="POST" enctype="multipart/form-data" id="addEntityForm">
+                    <form action="/admin/entity/<%= tableName %>/add" method="POST" enctype="multipart/form-data" id="addEntityForm"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <% columns.forEach(col=> { %>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold text-white-50">
@@ -112,11 +112,11 @@
                                                             class="btn btn-sm btn-outline-primary">
                                                             <i class="bi bi-pencil"></i>
                                                         </a>
-                                                        <a href="/admin/entity/<%= tableName %>/delete/<%= row.id %>"
+                                                        <form method="POST" action="/admin/entity/<%= tableName %>/delete/<%= row.id %>" class="d-inline" onsubmit="return confirm('¿Eliminar este registro?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit"
                                                             class="btn btn-sm btn-outline-danger"
-                                                            onclick="return confirm('¿Eliminar este registro?')">
+                                                            >
                                                             <i class="bi bi-trash"></i>
-                                                        </a>
+                                                        </button></form>
                                                     </td>
                                         </tr>
                                         <% }) %>

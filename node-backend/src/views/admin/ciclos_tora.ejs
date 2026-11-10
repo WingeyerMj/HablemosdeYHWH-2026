@@ -152,7 +152,7 @@
                                 <td class="text-end">
                                     <div class="btn-group btn-group-sm">
                                         <% if (!c.is_current) { %>
-                                            <form action="/admin/ciclos-tora/set-current/<%= c.id %>" method="POST" class="d-inline" onsubmit="return confirm('¿Establecer este ciclo como el Activo?');">
+                                            <form action="/admin/ciclos-tora/set-current/<%= c.id %>" method="POST" class="d-inline" onsubmit="return confirm('¿Establecer este ciclo como el Activo?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                 <button type="submit" class="btn btn-outline-warning" title="Establecer como Ciclo Activo">
                                                     <i class="bi bi-star me-1"></i>Activar
                                                 </button>
@@ -161,7 +161,7 @@
                                         <a href="/parashot?cycle=<%= c.id %>" target="_blank" class="btn btn-outline-info" title="Ver en la Web">
                                             <i class="bi bi-eye"></i> Ver Web
                                         </a>
-                                        <form action="/admin/ciclos-tora/delete/<%= c.id %>" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de eliminar este registro histórico? Esta acción no se puede deshacer.');">
+                                        <form action="/admin/ciclos-tora/delete/<%= c.id %>" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de eliminar este registro histórico? Esta acción no se puede deshacer.');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                             <button type="submit" class="btn btn-outline-danger" title="Eliminar ciclo archivado">
                                                 <i class="bi bi-trash"></i>
                                             </button>
@@ -195,7 +195,7 @@
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="/admin/ciclos-tora/archive-reset" method="POST" id="archiveForm">
+            <form action="/admin/ciclos-tora/archive-reset" method="POST" id="archiveForm"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <div class="modal-body">
                     <div class="alert alert-warning border-warning">
                         <i class="bi bi-exclamation-triangle-fill me-2"></i>

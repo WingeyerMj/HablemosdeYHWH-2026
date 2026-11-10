@@ -7,7 +7,7 @@
         </h1>
     </div>
 
-    <form action="/admin/edit" method="POST" class="card p-4 shadow-sm">
+    <form action="/admin/edit" method="POST" class="card p-4 shadow-sm"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="id" value="<%= section.id %>">
 
         <div class="mb-3">

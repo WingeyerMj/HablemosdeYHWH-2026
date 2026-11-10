@@ -37,13 +37,15 @@ const adminController = {
 
     login: async (req, res) => {
         const { username, password } = req.body;
+        if (typeof username !== 'string' || typeof password !== 'string' || username.length > 150 || password.length > 256) return res.status(400).render('admin/login', {error:'Usuario o contraseña incorrectos',layout:false});
         try {
             const [rows] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
-            if (rows.length === 0) return res.render('admin/login', { error: 'Usuario no encontrado', layout: false });
+
 
             const user = rows[0];
-            const valid = await bcrypt.compare(password, user.password);
-            if (!valid) return res.render('admin/login', { error: 'Contraseña incorrecta', layout: false });
+            const valid = await bcrypt.compare(password, user ? user.password : '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy');
+            if (!user || !valid) return res.status(401).render('admin/login', { error: 'Usuario o contraseña incorrectos', layout: false });
+            await new Promise((resolve, reject) => req.session.regenerate(error => error ? reject(error) : resolve()));
 
             req.session.userId = user.id;
             req.session.username = user.username;
@@ -52,7 +54,7 @@ const adminController = {
             res.redirect('/admin/dashboard');
         } catch (error) {
             console.error('Error de login:', error);
-            res.render('admin/login', { error: 'Error del servidor: ' + error.message, layout: false });
+            res.render('admin/login', { error: 'No se pudo iniciar sesión. Intenta nuevamente.', layout: false });
         }
     },
 
@@ -184,9 +186,18 @@ const adminController = {
                 console.warn('Aviso torahVivienteStats:', e.message);
             }
 
+            let parashotInfantiles = [];
+            try {
+                const ParashaInfantil = require('../models/ParashaInfantil');
+                parashotInfantiles = await ParashaInfantil.getAll();
+            } catch (e) {
+                console.warn('Aviso parashotInfantiles en dashboard:', e.message);
+            }
+
             res.render('admin/dashboard', {
                 layout: 'admin/layout',
                 parashot,
+                parashotInfantiles,
                 portfolio,
                 ensenanzas,
                 haftarot,
@@ -285,6 +296,7 @@ const adminController = {
         try {
             const Parasha = require('../models/Parasha');
             const TorahCycle = require('../models/TorahCycle');
+            const ParashaInfantil = require('../models/ParashaInfantil');
             await Parasha.ensureColumns();
             const parasha = await Parasha.getById(req.params.id);
             if (!parasha) return res.redirect('/admin/dashboard');
@@ -292,9 +304,18 @@ const adminController = {
             const currentCycle = await TorahCycle.getCurrentCycle();
             const allCycles = await TorahCycle.getAllCycles();
 
+            let parashaInfantil = null;
+            try {
+                parashaInfantil = await ParashaInfantil.getByParashaId(parasha.id);
+                if (!parashaInfantil && parasha.parasha_number) {
+                    parashaInfantil = await ParashaInfantil.getByParashaNumber(parasha.parasha_number);
+                }
+            } catch (eInf) {}
+
             res.render('admin/edit_parasha', { 
                 layout: 'admin/layout', 
                 parasha, 
+                parashaInfantil,
                 currentCycle, 
                 allCycles 
             });
@@ -3123,6 +3144,200 @@ const adminController = {
         } catch (error) {
             console.error('Error clearTorahVivienteClicks:', error);
             res.redirect('/admin/torah-viviente-descargas?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    // --- GESTIÓN DE PARASHÁ SEMANAL INFANTIL (PDFs) ---
+    parashotInfantilesPage: async (req, res) => {
+        try {
+            const Parasha = require('../models/Parasha');
+            const ParashaInfantil = require('../models/ParashaInfantil');
+            const items = await ParashaInfantil.getAll();
+            const parashot = await Parasha.getAllAsc();
+            res.render('admin/parashot_infantiles', {
+                layout: 'admin/layout',
+                activePage: 'parashot-infantiles',
+                items,
+                parashot,
+                msg: req.query.msg || null,
+                error: req.query.error || null
+            });
+        } catch (error) {
+            console.error('Error parashotInfantilesPage:', error);
+            res.redirect('/admin/dashboard');
+        }
+    },
+
+    createParashaInfantil: async (req, res) => {
+        try {
+            let {
+                parasha_id,
+                title,
+                parasha_name,
+                parasha_number,
+                book,
+                biblical_reference,
+                key_verse,
+                summary,
+                cover_image,
+                pdf_file,
+                cycle_name,
+                is_published
+            } = req.body;
+
+            if (req.files && req.files.length > 0) {
+                const filesList = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
+                for (const f of filesList) {
+                    if (f.fieldname === 'cover_image_file' || f.fieldname === 'cover_image') {
+                        cover_image = '/uploads/semillas/' + f.filename;
+                    } else if (f.fieldname === 'pdf_upload' || f.fieldname === 'pdf_file') {
+                        pdf_file = '/uploads/pdf/' + f.filename;
+                    }
+                }
+            }
+
+            if (!pdf_file) {
+                return res.redirect('/admin/parashot-infantiles?error=' + encodeURIComponent('El archivo PDF de la Parashá es obligatorio para que los niños puedan estudiarla.'));
+            }
+
+            const Parasha = require('../models/Parasha');
+            if (parasha_id) {
+                const parentParasha = await Parasha.getById(parasha_id);
+                if (parentParasha) {
+                    if (!parasha_name) parasha_name = parentParasha.title;
+                    if (!parasha_number) parasha_number = parentParasha.parasha_number;
+                    if (!biblical_reference && parentParasha.subtitle) biblical_reference = parentParasha.subtitle;
+                    if (!title) title = `Parashá #${parentParasha.parasha_number || ''} ${parentParasha.title} Infantil`;
+                }
+            }
+
+            const ParashaInfantil = require('../models/ParashaInfantil');
+            await ParashaInfantil.create({
+                parasha_id: parasha_id ? parseInt(parasha_id, 10) : null,
+                title: title || (parasha_name ? `Parashá ${parasha_name}` : 'Parashá Semanal Infantil'),
+                parasha_name,
+                parasha_number,
+                book,
+                biblical_reference,
+                key_verse,
+                summary,
+                cover_image,
+                pdf_file,
+                cycle_name: cycle_name || 'Ciclo 2025 - 2026',
+                is_published: is_published !== '0' && is_published !== false
+            });
+
+            res.redirect('/admin/parashot-infantiles?msg=' + encodeURIComponent('Parashá Infantil en PDF subida con éxito y vinculada a la Parashá.'));
+        } catch (error) {
+            console.error('Error createParashaInfantil:', error);
+            res.redirect('/admin/parashot-infantiles?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    editParashaInfantilPage: async (req, res) => {
+        try {
+            const Parasha = require('../models/Parasha');
+            const ParashaInfantil = require('../models/ParashaInfantil');
+            const item = await ParashaInfantil.getById(req.params.id);
+            if (!item) return res.redirect('/admin/parashot-infantiles');
+
+            const parashot = await Parasha.getAllAsc();
+
+            res.render('admin/edit_parasha_infantil', {
+                layout: 'admin/layout',
+                activePage: 'parashot-infantiles',
+                item,
+                parashot,
+                msg: req.query.msg || null,
+                error: req.query.error || null
+            });
+        } catch (error) {
+            console.error('Error editParashaInfantilPage:', error);
+            res.redirect('/admin/parashot-infantiles');
+        }
+    },
+
+    updateParashaInfantil: async (req, res) => {
+        try {
+            let {
+                id,
+                parasha_id,
+                title,
+                parasha_name,
+                parasha_number,
+                book,
+                biblical_reference,
+                key_verse,
+                summary,
+                cover_image,
+                pdf_file,
+                cycle_name,
+                is_published
+            } = req.body;
+
+            if (req.files && req.files.length > 0) {
+                const filesList = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
+                for (const f of filesList) {
+                    if (f.fieldname === 'cover_image_file' || f.fieldname === 'cover_image') {
+                        cover_image = '/uploads/semillas/' + f.filename;
+                    } else if (f.fieldname === 'pdf_upload' || f.fieldname === 'pdf_file') {
+                        pdf_file = '/uploads/pdf/' + f.filename;
+                    }
+                }
+            }
+
+            const Parasha = require('../models/Parasha');
+            if (parasha_id) {
+                const parentParasha = await Parasha.getById(parasha_id);
+                if (parentParasha) {
+                    if (!parasha_name) parasha_name = parentParasha.title;
+                    if (!parasha_number) parasha_number = parentParasha.parasha_number;
+                    if (!biblical_reference && parentParasha.subtitle) biblical_reference = parentParasha.subtitle;
+                }
+            }
+
+            const ParashaInfantil = require('../models/ParashaInfantil');
+            await ParashaInfantil.update(id, {
+                parasha_id: parasha_id ? parseInt(parasha_id, 10) : null,
+                title: title || (parasha_name ? `Parashá ${parasha_name}` : 'Parashá Semanal Infantil'),
+                parasha_name,
+                parasha_number,
+                book,
+                biblical_reference,
+                key_verse,
+                summary,
+                cover_image,
+                pdf_file,
+                cycle_name: cycle_name || 'Ciclo 2025 - 2026',
+                is_published: is_published !== '0' && is_published !== false
+            });
+
+            res.redirect('/admin/parashot-infantiles?msg=' + encodeURIComponent('Parashá Infantil actualizada correctamente.'));
+        } catch (error) {
+            console.error('Error updateParashaInfantil:', error);
+            res.redirect('/admin/parashot-infantiles?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    deleteParashaInfantil: async (req, res) => {
+        try {
+            const ParashaInfantil = require('../models/ParashaInfantil');
+            await ParashaInfantil.delete(req.params.id);
+            res.redirect('/admin/parashot-infantiles?msg=' + encodeURIComponent('Parashá eliminada correctamente.'));
+        } catch (error) {
+            console.error('Error deleteParashaInfantil:', error);
+            res.redirect('/admin/parashot-infantiles?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    toggleParashaInfantil: async (req, res) => {
+        try {
+            const ParashaInfantil = require('../models/ParashaInfantil');
+            await ParashaInfantil.togglePublished(req.params.id);
+            res.redirect('/admin/parashot-infantiles?msg=' + encodeURIComponent('Estado de publicación modificado.'));
+        } catch (error) {
+            console.error('Error toggleParashaInfantil:', error);
+            res.redirect('/admin/parashot-infantiles?error=' + encodeURIComponent(error.message));
         }
     }
 };

@@ -21,7 +21,7 @@
         </div>
     </div>
 
-    <form action="/admin/noticias-shorts/update" method="POST" enctype="multipart/form-data">
+    <form action="/admin/noticias-shorts/update" method="POST" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="id" value="<%= item.id %>">
         <div class="row g-3">
             <div class="col-md-8">

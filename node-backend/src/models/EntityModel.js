@@ -138,7 +138,7 @@ class EntityModel {
     static async incrementViews(tableName, id) {
         if (!tableName || !id) return;
         try {
-            await EntityModel.ensureViewsColumn(tableName);
+            if (!/^[a-z][a-z0-9_]{0,62}$/.test(tableName)) return;
             const sanitizedTable = tableName.replace(/[^a-z0-9_]/gi, '').toLowerCase();
             const isPostgres = !!process.env.DATABASE_URL;
             const quote = isPostgres ? '"' : '`';

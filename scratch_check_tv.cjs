@@ -2,7 +2,7 @@ const fs = require('fs');
 const { Client } = require('ssh2');
 
 const credentialSource = fs.readFileSync('check_remote_views.cjs', 'utf8');
-const password = credentialSource.match(/password:\s*'([^']+)'/)[1];
+const password = require('C:/Users/WingeyerMarcelo/Documents/ChatGPT/hablemosdeyhwh/security-hardening/ssh-credentials.cjs').getPassword();
 
 const conn = new Client();
 conn.on('ready', () => {

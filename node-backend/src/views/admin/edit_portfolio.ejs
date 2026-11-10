@@ -24,7 +24,7 @@
 
     <div class="card bg-dark text-white border-secondary shadow-sm">
         <div class="card-body p-4">
-            <form action="/admin/portfolio/update" method="POST" id="eventoForm" enctype="multipart/form-data">
+            <form action="/admin/portfolio/update" method="POST" id="eventoForm" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="id" value="<%= evento.id %>">
                 
                 <div class="row g-3">

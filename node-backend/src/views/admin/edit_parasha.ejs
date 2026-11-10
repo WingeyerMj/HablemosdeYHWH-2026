@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <form action="/admin/parashot/update" method="POST" enctype="multipart/form-data" id="editParashaForm">
+    <form action="/admin/parashot/update" method="POST" enctype="multipart/form-data" id="editParashaForm"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="id" value="<%= parasha.id %>">
         <div class="row g-3">
             <!-- IDENTIFICACIÓN DEL CICLO DE LECTURA DE LA TORÁ -->
@@ -135,6 +135,50 @@
                     <small class="text-success mt-1 d-block"><i class="bi bi-file-pdf me-1"></i>PDF actual: <a href="<%= parasha.pdf_file %>" target="_blank" class="text-success"><%= parasha.pdf_file %></a></small>
                     <input type="hidden" name="pdf_file" value="<%= parasha.pdf_file %>">
                 <% } %>
+            </div>
+
+            <!-- VINCULACIÓN PARASHÁ INFANTIL (PDF) -->
+            <div class="col-12">
+                <div class="p-3 rounded-3 border" style="background: rgba(168, 85, 247, 0.08); border-color: rgba(168, 85, 247, 0.35) !important;">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge rounded-circle p-2" style="background: #a855f7; color: white;">
+                                <i class="bi bi-file-earmark-pdf fs-6"></i>
+                            </span>
+                            <div>
+                                <label class="form-label mb-0 fw-bold text-white small text-uppercase" style="letter-spacing: 0.5px;">
+                                    Material Infantil Vinculado (PDF)
+                                </label>
+                                <div class="text-white-50 small" style="font-size: 0.76rem;">
+                                    Ministerio Semillas de Torah · Parashá Semanal Infantil
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <% if (typeof parashaInfantil !== 'undefined' && parashaInfantil) { %>
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                    <span class="badge bg-success rounded-pill px-3 py-1">
+                                        <i class="bi bi-check-circle me-1"></i> PDF Infantil Vinculado: <%= parashaInfantil.title %>
+                                    </span>
+                                    <a href="<%= parashaInfantil.pdf_file %>" target="_blank" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-file-pdf me-1"></i> Ver PDF
+                                    </a>
+                                    <a href="/admin/parashot-infantiles/edit/<%= parashaInfantil.id %>" class="btn btn-sm btn-warning text-dark fw-bold">
+                                        <i class="bi bi-pencil-square me-1"></i> Editar Material Infantil
+                                    </a>
+                                </div>
+                            <% } else { %>
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                    <span class="text-white-50 small me-2">No hay PDF infantil cargado para esta porción aún.</span>
+                                    <a href="/admin/parashot-infantiles" class="btn btn-sm btn-outline-warning">
+                                        <i class="bi bi-cloud-arrow-up me-1"></i> Subir Parashá Infantil en PDF
+                                    </a>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="col-md-4">

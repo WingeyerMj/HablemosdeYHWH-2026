@@ -41,6 +41,7 @@
                 <% if (typeof role !== 'undefined' && role === 'admin') { %>
                     <a href="/admin/dashboard#pills-services" data-tab-target="#pills-services"><i class="bi bi-journal-text"></i> Parashot</a>
                     <a href="/admin/aliyot" class="<%= (typeof activePage !== 'undefined' && activePage === 'aliyot') ? 'active' : '' %>"><i class="bi bi-mic"></i> Aliyot (Lecturas)</a>
+                    <a href="/admin/parashot-infantiles" class="<%= (typeof activePage !== 'undefined' && activePage === 'parashot-infantiles') ? 'active' : '' %>"><i class="bi bi-file-earmark-pdf text-warning"></i> Parashá Infantil (PDF)</a>
                     <a href="/admin/dashboard#pills-ensenanzas" data-tab-target="#pills-ensenanzas"><i class="bi bi-book"></i> Enseñanzas</a>
                     <a href="/admin/dashboard#pills-haftara" data-tab-target="#pills-haftara"><i class="bi bi-scroll"></i> Haftará</a>
                 <% } %>
@@ -49,6 +50,7 @@
                 <a href="/admin/dashboard#pills-blog" data-tab-target="#pills-blog"><i class="bi bi-newspaper"></i> Blog</a>
                 <a href="/admin/dashboard#pills-semillas" data-tab-target="#pills-semillas"><i class="bi bi-balloon-heart text-purple"></i> Semillas de Torah</a>
                 <a href="/admin/semillas-articulos" class="<%= (typeof activePage !== 'undefined' && activePage === 'semillas-articulos') ? 'active' : '' %>"><i class="bi bi-journal-richtext text-success"></i> Artículos Semillas</a>
+                <a href="/admin/parashot-infantiles" class="<%= (typeof activePage !== 'undefined' && activePage === 'parashot-infantiles') ? 'active' : '' %>"><i class="bi bi-file-earmark-pdf text-warning"></i> Parashá Infantil (PDF)</a>
                 <a href="/admin/dashboard#pills-portfolio" data-tab-target="#pills-portfolio"><i class="bi bi-calendar-event"></i> Eventos</a>
                 <a href="/admin/comentarios" class="<%= (typeof activePage !== 'undefined' && activePage === 'comentarios') ? 'active' : '' %> d-flex align-items-center justify-content-between">
                     <span><i class="bi bi-chat-heart text-danger me-2"></i>Comentarios</span>
@@ -107,7 +109,7 @@
     
     <div class="mt-auto pt-3">
         <hr style="border-color: rgba(255,255,255,0.1);">
-        <a href="/admin/logout" class="text-danger"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a>
+        <form method="POST" action="/admin/logout" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="text-danger"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</button></form>
         <div class="mt-2 small text-white-50 p-2">
             <i class="bi bi-person-circle"></i> <%= typeof username !== 'undefined' ? username : '' %><br>
             <span class="badge bg-secondary mt-1"><%= typeof role !== 'undefined' ? role : '' %></span>

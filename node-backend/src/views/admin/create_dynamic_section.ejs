@@ -8,7 +8,7 @@
         </a>
     </div>
 
-    <form action="/admin/dynamic-sections/create" method="POST" id="createSectionForm">
+    <form action="/admin/dynamic-sections/create" method="POST" id="createSectionForm"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div class="row g-4">
             <!-- Configuración Básica -->
             <div class="col-md-7">

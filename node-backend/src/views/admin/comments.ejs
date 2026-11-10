@@ -242,7 +242,7 @@
                                         <% if (c.admin_reply_at) { %>
                                             <small class="text-white-50" style="font-size: 0.75rem;"><%= new Date(c.admin_reply_at).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) %></small>
                                         <% } %>
-                                        <form action="/admin/comentarios/delete-reply/<%= c.id %>" method="POST" onsubmit="return confirm('¿Seguro de eliminar esta respuesta oficial?');" class="d-inline">
+                                        <form action="/admin/comentarios/delete-reply/<%= c.id %>" method="POST" onsubmit="return confirm('¿Seguro de eliminar esta respuesta oficial?');" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                             <button type="submit" class="btn btn-link text-danger p-0 ms-2" title="Eliminar respuesta" style="font-size: 0.8rem; text-decoration: none;">
                                                 <i class="bi bi-trash"></i>
                                             </button>
@@ -258,13 +258,13 @@
                             <div class="d-flex align-items-center gap-2">
                                 <!-- Botón Aprobar -->
                                 <% if (!c.is_approved) { %>
-                                    <form action="/admin/comentarios/approve/<%= c.id %>" method="POST" class="d-inline">
+                                    <form action="/admin/comentarios/approve/<%= c.id %>" method="POST" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 fw-bold d-inline-flex align-items-center gap-1">
                                             <i class="bi bi-check2-circle fs-6"></i> Aprobar & Publicar
                                         </button>
                                     </form>
                                 <% } else { %>
-                                    <form action="/admin/comentarios/unapprove/<%= c.id %>" method="POST" class="d-inline">
+                                    <form action="/admin/comentarios/unapprove/<%= c.id %>" method="POST" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <button type="submit" class="btn btn-sm btn-outline-warning rounded-pill px-3 d-inline-flex align-items-center gap-1" title="Ocultar de la vista pública">
                                             <i class="bi bi-eye-slash"></i> Pausar / Ocultar
                                         </button>
@@ -279,7 +279,7 @@
                             </div>
 
                             <!-- Botón Eliminar Comentario -->
-                            <form action="/admin/comentarios/delete/<%= c.id %>" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar permanentemente este comentario de <%= c.user_name %>?');" class="d-inline">
+                            <form action="/admin/comentarios/delete/<%= c.id %>" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar permanentemente este comentario de <%= c.user_name %>?');" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 d-inline-flex align-items-center gap-1">
                                     <i class="bi bi-trash3"></i> Eliminar
                                 </button>
@@ -292,7 +292,7 @@
                 <div class="modal fade" id="replyModal-<%= c.id %>" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content bg-dark text-white border-secondary shadow-lg" style="background: #1a1a1a !important; border: 1px solid rgba(212, 184, 149, 0.3) !important;">
-                            <form action="/admin/comentarios/reply/<%= c.id %>" method="POST">
+                            <form action="/admin/comentarios/reply/<%= c.id %>" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <div class="modal-header border-secondary">
                                     <h5 class="modal-title fs-6" style="color: var(--primary-color);">
                                         <i class="bi bi-reply-all-fill me-2"></i>Responder a <%= c.user_name %>

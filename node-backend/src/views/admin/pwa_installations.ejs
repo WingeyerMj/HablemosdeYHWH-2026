@@ -45,7 +45,7 @@
             </p>
             <div class="row g-3 align-items-end">
                 <div class="col-lg-8">
-                    <form action="/admin/pwa-installations/trigger-update" method="POST" class="row g-2 align-items-end">
+                    <form action="/admin/pwa-installations/trigger-update" method="POST" class="row g-2 align-items-end"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <input type="hidden" name="returnTo" value="pwa-installations">
                         <div class="col-md-8">
                             <label class="form-label small text-white-50 mb-1">Mensaje del aviso para los dispositivos instalados:</label>
@@ -62,7 +62,7 @@
                 </div>
                 <div class="col-lg-4 d-flex justify-content-lg-end">
                     <% if (releaseCfg.alertActive) { %>
-                        <form action="/admin/pwa-installations/stop-update" method="POST" class="w-100">
+                        <form action="/admin/pwa-installations/stop-update" method="POST" class="w-100"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <input type="hidden" name="returnTo" value="pwa-installations">
                             <button type="submit" class="btn btn-outline-danger w-100">
                                 <i class="bi bi-bell-slash me-1"></i> Desactivar Alerta Activa

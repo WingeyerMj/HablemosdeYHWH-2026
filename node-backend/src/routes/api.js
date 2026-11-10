@@ -306,7 +306,7 @@ router.post('/noticias-shorts/:id/view', async (req, res) => {
         const newCount = await Noticia.incrementShortViews(shortId);
         return res.json({ ok: true, views_count: newCount });
     } catch (e) {
-        return res.status(500).json({ ok: false, error: e.message });
+        return res.status(500).json({ ok: false, error: 'No se pudo completar la solicitud.' });
     }
 });
 
@@ -321,7 +321,7 @@ router.post('/semillas-shorts/:id/view', async (req, res) => {
         const newCount = await SemillasShort.incrementViews(shortId);
         return res.json({ ok: true, views_count: newCount });
     } catch (e) {
-        return res.status(500).json({ ok: false, error: e.message });
+        return res.status(500).json({ ok: false, error: 'No se pudo completar la solicitud.' });
     }
 });
 
@@ -335,7 +335,7 @@ router.post('/shorts/:id/view', async (req, res) => {
         const newCount = await SemillasShort.incrementViews(shortId);
         return res.json({ ok: true, views_count: newCount });
     } catch (e) {
-        return res.status(500).json({ ok: false, error: e.message });
+        return res.status(500).json({ ok: false, error: 'No se pudo completar la solicitud.' });
     }
 });
 
@@ -347,11 +347,17 @@ router.post('/entity/:table/:id/view', async (req, res) => {
         if (!table || !itemId || isNaN(itemId)) {
             return res.status(400).json({ ok: false, error: 'Parámetros inválidos' });
         }
+        // Only active published dynamic tables may receive public view counts.
+        if (!/^[a-z][a-z0-9_]{0,62}$/.test(table)) return res.sendStatus(400);
+        const reserved = new Set(['users','newsletter_subscribers','site_settings','dynamic_sections','item_comments','item_likes','sessions']);
+        if (reserved.has(table)) return res.sendStatus(404);
+        const [sections] = await db.query('SELECT id FROM dynamic_sections WHERE data_table = ? AND is_active = TRUE LIMIT 1', [table]);
+        if (!sections.length) return res.sendStatus(404);
         const EntityModel = require('../models/EntityModel');
         await EntityModel.incrementViews(table, itemId);
         return res.json({ ok: true });
     } catch (e) {
-        return res.status(500).json({ ok: false, error: e.message });
+        return res.status(500).json({ ok: false, error: 'No se pudo completar la solicitud.' });
     }
 });
 
@@ -387,7 +393,7 @@ router.get('/interactions/:entity_type/:entity_id', async (req, res) => {
         });
     } catch (error) {
         console.error('Error GET /api/interactions:', error.message);
-        return res.status(500).json({ ok: false, error: error.message });
+        return res.status(500).json({ ok: false, error: 'No se pudo completar la solicitud.' });
     }
 });
 
@@ -411,7 +417,7 @@ router.post('/interactions/like/:entity_type/:entity_id', async (req, res) => {
         });
     } catch (error) {
         console.error('Error POST /api/interactions/like:', error.message);
-        return res.status(500).json({ ok: false, error: error.message });
+        return res.status(500).json({ ok: false, error: 'No se pudo completar la solicitud.' });
     }
 });
 
@@ -461,12 +467,12 @@ router.post('/interactions/comment/:entity_type/:entity_id', async (req, res) =>
         });
     } catch (error) {
         console.error('Error POST /api/interactions/comment:', error.message);
-        return res.status(500).json({ ok: false, error: error.message });
+        return res.status(500).json({ ok: false, error: 'No se pudo completar la solicitud.' });
     }
 });
 
 // DELETE /api/interactions/comment/:id - Eliminar comentario (Moderación)
-router.delete('/interactions/comment/:id', async (req, res) => {
+router.delete('/interactions/comment/:id', require('../utils/security').csrfApi, async (req, res) => {
     try {
         if (!req.session || !req.session.userId) {
             return res.status(403).json({ ok: false, error: 'No autorizado' });
@@ -475,7 +481,7 @@ router.delete('/interactions/comment/:id', async (req, res) => {
         await Interaction.deleteComment(commentId);
         return res.json({ ok: true });
     } catch (error) {
-        return res.status(500).json({ ok: false, error: error.message });
+        return res.status(500).json({ ok: false, error: 'No se pudo completar la solicitud.' });
     }
 });
 
@@ -536,7 +542,7 @@ router.get('/calendar/year/:year', (req, res) => {
         res.setHeader('Cache-Control', 'public, max-age=86400');
         res.json({ ok: true, data });
     } catch (error) {
-        res.status(500).json({ ok: false, error: error.message });
+        res.status(500).json({ ok: false, error: 'No se pudo completar la solicitud.' });
     }
 });
 
@@ -548,7 +554,7 @@ router.get('/calendar/years', (req, res) => {
         res.setHeader('Cache-Control', 'public, max-age=86400');
         res.json({ ok: true, count: years.length, from, to, years });
     } catch (error) {
-        res.status(500).json({ ok: false, error: error.message });
+        res.status(500).json({ ok: false, error: 'No se pudo completar la solicitud.' });
     }
 });
 
@@ -559,7 +565,7 @@ router.get('/calendar/milestones', (req, res) => {
         res.setHeader('Cache-Control', 'public, max-age=86400');
         res.json({ ok: true, milestones });
     } catch (error) {
-        res.status(500).json({ ok: false, error: error.message });
+        res.status(500).json({ ok: false, error: 'No se pudo completar la solicitud.' });
     }
 });
 
@@ -585,7 +591,7 @@ router.post('/torah-viviente/click', async (req, res) => {
         res.json({ ok: true });
     } catch (error) {
         console.warn('Error al registrar clic de Torah Viviente:', error.message);
-        res.json({ ok: false, error: error.message });
+        res.json({ ok: false, error: 'No se pudo completar la solicitud.' });
     }
 });
 

@@ -33,6 +33,8 @@ app.use((req, res, next) => {
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
     res.setHeader('X-XSS-Protection', '1; mode=block');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Content-Security-Policy', "base-uri 'self'; form-action 'self'; frame-ancestors 'self'");
+    if (req.secure) res.setHeader('Strict-Transport-Security', 'max-age=15552000');
     next();
 });
 
@@ -47,33 +49,9 @@ app.set('views', path.join(__dirname, 'src/views'));
 app.use(expressLayouts);
 app.set('layout', false);
 const fs = require('fs');
-app.use('/uploads', (req, res, next) => {
-    const filename = path.basename(req.path);
-    const subfolders = ['noticias', 'blog', 'general', 'portfolio', 'ensenanzas', 'haftara', 'semillas', 'team', 'pdf', 'videos'];
-    
-    // 1. Buscar en path primario
-    const primaryPath1 = path.join(__dirname, '../public/uploads', req.path);
-    if (fs.existsSync(primaryPath1) && fs.statSync(primaryPath1).isFile()) {
-        return res.sendFile(primaryPath1);
-    }
-    const primaryPath2 = path.join(__dirname, 'public/uploads', req.path);
-    if (fs.existsSync(primaryPath2) && fs.statSync(primaryPath2).isFile()) {
-        return res.sendFile(primaryPath2);
-    }
-
-    // 2. Fallback: buscar por nombre de archivo en subcarpetas de uploads
-    for (const folder of subfolders) {
-        const candidate1 = path.join(__dirname, '../public/uploads', folder, filename);
-        if (fs.existsSync(candidate1) && fs.statSync(candidate1).isFile()) {
-            return res.sendFile(candidate1);
-        }
-        const candidate2 = path.join(__dirname, 'public/uploads', folder, filename);
-        if (fs.existsSync(candidate2) && fs.statSync(candidate2).isFile()) {
-            return res.sendFile(candidate2);
-        }
-    }
-    next();
-});
+const { serveUploads } = require('./src/utils/safeUploads');
+app.use('/uploads', serveUploads([path.join(__dirname, '../public/uploads'), path.join(__dirname, 'public/uploads')]));
+app.use('/assets/parashot', serveUploads([path.join(__dirname, '../public/assets/parashot'), path.join(__dirname, 'public/assets/parashot')]));
 // /calendar/ (con barra) -> /calendar: una única versión del calendario (la que funciona offline e instalable)
 app.use((req, res, next) => {
     if (req.method === 'GET' && req.path === '/calendar/') {
@@ -174,7 +152,7 @@ const adminRoutes = require('./src/routes/admin');
 const indexRoutes = require('./src/routes/index');
 const apiRoutes = require('./src/routes/api');
 
-app.use('/admin', adminRoutes);
+app.use('/admin', require('./src/utils/security').csrf, adminRoutes);
 app.use('/api', apiRoutes);
 app.use('/', indexRoutes);
 
@@ -198,7 +176,8 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
     console.error('--- ERROR DETECTADO ---');
     console.error(err.stack);
-    res.status(500).send('Algo salió mal en el servidor: ' + err.message);
+    if (err.status === 400 || err.name === 'MulterError') return res.status(400).send('Archivo o formulario no válido. Verifica el formato y el tamaño.');
+    res.status(500).send('No se pudo completar la solicitud. Intenta nuevamente.');
 });
 
 // Start server

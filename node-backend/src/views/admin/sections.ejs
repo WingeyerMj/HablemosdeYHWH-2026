@@ -21,7 +21,7 @@
                             <span class="badge bg-secondary"><%= section.page %></span>
                         </div>
                         <div class="card-body">
-                            <form action="/admin/sections/update" method="POST" enctype="multipart/form-data">
+                            <form action="/admin/sections/update" method="POST" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <input type="hidden" name="id" value="<%= section.id %>">
                                 <input type="hidden" name="tableName" value="<%= section.tableName %>">
                                 

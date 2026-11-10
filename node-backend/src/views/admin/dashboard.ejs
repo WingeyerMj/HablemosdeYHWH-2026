@@ -41,7 +41,7 @@
                         </div>
                     </div>
                     <div class="d-flex align-items-center gap-2 flex-wrap">
-                        <form action="/admin/pwa-installations/trigger-update" method="POST" class="d-inline">
+                        <form action="/admin/pwa-installations/trigger-update" method="POST" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <input type="hidden" name="returnTo" value="dashboard">
                             <input type="hidden" name="alertMessage" value="<%= pwaCfg.alertMessage || 'Hay una versión nueva. Actualizá ahora para descargarla y seguir usándola sin conexión.' %>">
                             <button type="submit" class="btn btn-sm btn-warning text-dark fw-bold" onclick="return confirm('¿Enviar alerta de nueva versión a todos los dispositivos que tienen el Calendario instalado?')">
@@ -49,7 +49,7 @@
                             </button>
                         </form>
                         <% if (pwaCfg.alertActive) { %>
-                            <form action="/admin/pwa-installations/stop-update" method="POST" class="d-inline">
+                            <form action="/admin/pwa-installations/stop-update" method="POST" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <input type="hidden" name="returnTo" value="dashboard">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">
                                     <i class="bi bi-bell-slash me-1"></i> Desactivar Alerta
@@ -197,7 +197,8 @@
                                 <th>Ciclo</th>
                                 <th>Estado en este Ciclo</th>
                                 <th>Vistas</th>
-                                <th>PDF</th>
+                                <th>PDF Adultos</th>
+                                <th>PDF Infantil</th>
                                 <th class="text-end">Acciones</th>
                             </tr>
                         </thead>
@@ -236,6 +237,20 @@
                                         <a href="<%= p.pdf_file %>" target="_blank" class="badge bg-success text-decoration-none"><i class="bi bi-file-pdf"></i> PDF</a>
                                     <% } else { %>
                                         <span class="text-white-50">-</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% 
+                                        const pi = (typeof parashotInfantiles !== 'undefined' && parashotInfantiles) ? parashotInfantiles.find(x => (x.parasha_id && x.parasha_id == p.id) || (x.parasha_number && x.parasha_number == p.parasha_number)) : null;
+                                        if (pi && pi.pdf_file) {
+                                    %>
+                                        <a href="<%= pi.pdf_file %>" target="_blank" class="badge rounded-pill text-white text-decoration-none shadow-sm" style="background-color: #9333ea;" title="<%= pi.title %>">
+                                            <i class="bi bi-file-earmark-pdf-fill me-1"></i> Infantil
+                                        </a>
+                                    <% } else { %>
+                                        <a href="/admin/parashot-infantiles" class="badge bg-dark border border-secondary text-white-50 text-decoration-none" title="Subir PDF Infantil vinculado a esta Parashá">
+                                            <i class="bi bi-plus"></i> Cargar
+                                        </a>
                                     <% } %>
                                 </td>
                                 <td class="text-end">
@@ -313,7 +328,7 @@
                                     <i class="bi bi-share-fill"></i>
                                 </button>
                                 <a href="/admin/portfolio/edit/<%= item.id %>" class="btn btn-sm btn-primary me-1"><i class="bi bi-pencil me-1"></i>Editar</a>
-                                <a href="/admin/portfolio/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este Evento?')">Eliminar</a>
+                                <form method="POST" action="/admin/portfolio/delete/<%= item.id %>" class="d-inline" onsubmit="return confirm('¿Eliminar este Evento?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-sm btn-danger" >Eliminar</button></form>
                             </td>
                         </tr>
                         <% }) %>
@@ -399,7 +414,7 @@
                                             <i class="bi bi-share-fill"></i>
                                         </button>
                                         <a href="/admin/ensenanzas/edit/<%= item.id %>" class="btn btn-sm btn-primary me-1"><i class="bi bi-pencil me-1"></i>Editar</a>
-                                        <a href="/admin/ensenanzas/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta Enseñanza?')">Eliminar</a>
+                                        <form method="POST" action="/admin/ensenanzas/delete/<%= item.id %>" class="d-inline" onsubmit="return confirm('¿Eliminar esta Enseñanza?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-sm btn-danger" >Eliminar</button></form>
                                     </td>
                                 </tr>
                                 <% }) %>
@@ -516,7 +531,7 @@
                                             <i class="bi bi-share-fill"></i>
                                         </button>
                                         <a href="/admin/haftara/edit/<%= item.id %>" class="btn btn-sm btn-primary me-1"><i class="bi bi-pencil me-1"></i>Editar</a>
-                                        <a href="/admin/haftara/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta Haftará?')">Eliminar</a>
+                                        <form method="POST" action="/admin/haftara/delete/<%= item.id %>" class="d-inline" onsubmit="return confirm('¿Eliminar esta Haftará?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-sm btn-danger" >Eliminar</button></form>
                                     </td>
                                 </tr>
                                 <% }) %>
@@ -603,7 +618,7 @@
                                             <i class="bi bi-share-fill"></i>
                                         </button>
                                         <a href="/admin/seder/edit/<%= item.id %>" class="btn btn-sm btn-primary me-1"><i class="bi bi-pencil me-1"></i>Editar</a>
-                                        <a href="/admin/seder/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este Seder?')">Eliminar</a>
+                                        <form method="POST" action="/admin/seder/delete/<%= item.id %>" class="d-inline" onsubmit="return confirm('¿Eliminar este Seder?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-sm btn-danger" >Eliminar</button></form>
                                     </td>
                                 </tr>
                                 <% }) %>
@@ -762,7 +777,7 @@
                                                 </button>
                                                 <a href="/semillas-de-torah/articulo/<%= art.id %>" target="_blank" class="btn btn-outline-info" title="Ver en la Web"><i class="bi bi-eye"></i></a>
                                                 <a href="/admin/semillas-articulos/edit/<%= art.id %>" class="btn btn-primary" title="Editar artículo"><i class="bi bi-pencil"></i></a>
-                                                <a href="/admin/semillas-articulos/delete/<%= art.id %>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar este artículo infantil?')" title="Eliminar"><i class="bi bi-trash"></i></a>
+                                                <form method="POST" action="/admin/semillas-articulos/delete/<%= art.id %>" class="d-inline" onsubmit="return confirm('¿Estás seguro de eliminar este artículo infantil?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-danger"  title="Eliminar"><i class="bi bi-trash"></i></button></form>
                                             </div>
                                         </td>
                                     </tr>
@@ -859,7 +874,7 @@
                                                     <i class="bi bi-share-fill"></i>
                                                 </button>
                                                 <a href="/admin/semillas/edit/<%= item.id %>" class="btn btn-primary" title="Editar contenido"><i class="bi bi-pencil"></i> Editar</a>
-                                                <a href="/admin/semillas/delete/<%= item.id %>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar este contenido infantil?')" title="Eliminar"><i class="bi bi-trash"></i></a>
+                                                <form method="POST" action="/admin/semillas/delete/<%= item.id %>" class="d-inline" onsubmit="return confirm('¿Estás seguro de eliminar este contenido infantil?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-danger"  title="Eliminar"><i class="bi bi-trash"></i></button></form>
                                             </div>
                                         </td>
                                     </tr>
@@ -983,7 +998,7 @@
                                                     <i class="bi bi-share-fill"></i>
                                                 </button>
                                                 <a href="/admin/semillas-shorts/edit/<%= short.id %>" class="btn btn-primary" title="Editar"><i class="bi bi-pencil"></i></a>
-                                                <a href="/admin/semillas-shorts/delete/<%= short.id %>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar este short infantil?')" title="Eliminar"><i class="bi bi-trash"></i></a>
+                                                <form method="POST" action="/admin/semillas-shorts/delete/<%= short.id %>" class="d-inline" onsubmit="return confirm('¿Estás seguro de eliminar este short infantil?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-danger"  title="Eliminar"><i class="bi bi-trash"></i></button></form>
                                             </div>
                                         </td>
                                     </tr>
@@ -1066,7 +1081,7 @@
                                         </button>
                                         <a href="/noticias/<%= item.id %>" target="_blank" class="btn btn-sm btn-outline-info" title="Ver en la Web"><i class="bi bi-box-arrow-up-right"></i></a>
                                         <a href="/admin/noticias/edit/<%= item.id %>" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
-                                        <a href="/admin/noticias/delete/<%= item.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta noticia?')"><i class="bi bi-trash"></i></a>
+                                        <form method="POST" action="/admin/noticias/delete/<%= item.id %>" class="d-inline" onsubmit="return confirm('¿Eliminar esta noticia?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-sm btn-danger" ><i class="bi bi-trash"></i></button></form>
                                     </div>
                                 </td>
                             </tr>
@@ -1142,7 +1157,7 @@
                                             <i class="bi bi-share-fill"></i>
                                         </button>
                                         <a href="/admin/noticias-shorts/edit/<%= short.id %>" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
-                                        <a href="/admin/noticias-shorts/delete/<%= short.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este short de noticias?')"><i class="bi bi-trash"></i></a>
+                                        <form method="POST" action="/admin/noticias-shorts/delete/<%= short.id %>" class="d-inline" onsubmit="return confirm('¿Eliminar este short de noticias?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-sm btn-danger" ><i class="bi bi-trash"></i></button></form>
                                     </div>
                                 </td>
                             </tr>
@@ -1198,7 +1213,7 @@
                                         </button>
                                         <a href="/blog/<%= post.id %>" target="_blank" class="btn btn-sm btn-outline-info" title="Ver en la Web"><i class="bi bi-box-arrow-up-right"></i></a>
                                         <a href="/admin/blog/edit/<%= post.id %>" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
-                                        <a href="/admin/blog/delete/<%= post.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este artículo del blog?')"><i class="bi bi-trash"></i></a>
+                                        <form method="POST" action="/admin/blog/delete/<%= post.id %>" class="d-inline" onsubmit="return confirm('¿Eliminar este artículo del blog?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-sm btn-danger" ><i class="bi bi-trash"></i></button></form>
                                     </div>
                                 </td>
                             </tr>
@@ -1257,19 +1272,19 @@
                                 </td>
                                 <td>
                                     <% if (isActive) { %>
-                                        <a href="/admin/team/toggle-status/<%= member.id %>" class="btn btn-sm btn-outline-warning me-1" title="Suspender (se oculta del frontend pero se conservan sus fotos y artículos)">
+                                        <form method="POST" action="/admin/team/toggle-status/<%= member.id %>" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-sm btn-outline-warning me-1" title="Suspender (se oculta del frontend pero se conservan sus fotos y artículos)">
                                             <i class="bi bi-pause-fill"></i> Suspender
-                                        </a>
+                                        </button></form>
                                     <% } else { %>
-                                        <a href="/admin/team/toggle-status/<%= member.id %>" class="btn btn-sm btn-outline-success me-1" title="Reactivar en el frontend">
+                                        <form method="POST" action="/admin/team/toggle-status/<%= member.id %>" class="d-inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-sm btn-outline-success me-1" title="Reactivar en el frontend">
                                             <i class="bi bi-play-fill"></i> Reactivar
-                                        </a>
+                                        </button></form>
                                     <% } %>
                                     <button type="button" class="btn btn-sm btn-primary me-1 edit-team-btn"
                                         data-id="<%= member.id %>" data-name="<%= member.name %>" data-role="<%= member.role %>"
                                         data-description="<%= member.description || '' %>" data-img="<%= member.img || '' %>"
                                         data-is-active="<%= isActive ? '1' : '0' %>">Editar</button>
-                                    <a href="/admin/team/delete/<%= member.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar definitivamente este miembro del sistema?')">Eliminar</a>
+                                    <form method="POST" action="/admin/team/delete/<%= member.id %>" class="d-inline" onsubmit="return confirm('¿Eliminar definitivamente este miembro del sistema?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-sm btn-danger" >Eliminar</button></form>
                                 </td>
                             </tr>
                             <% }) %>
@@ -1296,7 +1311,7 @@
                                     <button type="button" class="btn btn-sm btn-primary me-1 edit-testimonial-btn"
                                         data-id="<%= t.id %>" data-name="<%= t.name %>" data-role="<%= t.role %>"
                                         data-text="<%= t.text %>" data-img="<%= t.img || '' %>">Editar</button>
-                                    <a href="/admin/testimonials/delete/<%= t.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este testimonio?')">Eliminar</a>
+                                    <form method="POST" action="/admin/testimonials/delete/<%= t.id %>" class="d-inline" onsubmit="return confirm('¿Eliminar este testimonio?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-sm btn-danger" >Eliminar</button></form>
                                 </td>
                             </tr>
                             <% }) %>
@@ -1351,9 +1366,9 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="/admin/subscribers/delete/<%= s.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este suscriptor?')">
+                                        <form method="POST" action="/admin/subscribers/delete/<%= s.id %>" class="d-inline" onsubmit="return confirm('¿Eliminar este suscriptor?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-sm btn-danger" >
                                             <i class="bi bi-trash"></i> Eliminar
-                                        </a>
+                                        </button></form>
                                     </td>
                                 </tr>
                                 <% }) %>
@@ -1409,7 +1424,7 @@
                                                 data-title="<%= ds.title %>"
                                                 data-id="<%= r.id %>"
                                                 data-record='<%= JSON.stringify(r).replace(/'/g, "&#39;") %>'><i class="bi bi-pencil"></i> Editar</button>
-                                            <a href="/admin/entity/<%= ds.data_table %>/delete/<%= r.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este registro?')"><i class="bi bi-trash"></i> Eliminar</a>
+                                            <form method="POST" action="/admin/entity/<%= ds.data_table %>/delete/<%= r.id %>" class="d-inline" onsubmit="return confirm('¿Eliminar este registro?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-sm btn-danger" ><i class="bi bi-trash"></i> Eliminar</button></form>
                                         </td>
                                     </tr>
                                     <% }) %>

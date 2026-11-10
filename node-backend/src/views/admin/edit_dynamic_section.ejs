@@ -9,7 +9,7 @@
         </a>
     </div>
 
-    <form action="/admin/dynamic-sections/update" method="POST">
+    <form action="/admin/dynamic-sections/update" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="id" value="<%= section.id %>">
         <input type="hidden" name="data_table" value="<%= section.data_table || '' %>">
 

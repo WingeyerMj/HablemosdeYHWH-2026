@@ -44,6 +44,10 @@
             z-index: -1;
         }
     </style>
+<meta name="csrf-token" content="<%= csrfToken %>">
+<script>
+(() => { const nativeFetch=window.fetch; window.fetch=function(input,options={}) { const url=new URL(typeof input==='string'?input:input.url,location.href); const method=(options.method || (typeof input!=='string' && input.method) || 'GET').toUpperCase(); if(url.origin===location.origin && !['GET','HEAD','OPTIONS'].includes(method)){const headers=new Headers(options.headers || (typeof input!=='string' && input.headers) || {});headers.set('X-CSRF-Token',document.querySelector('meta[name="csrf-token"]').content);options={...options,headers};}return nativeFetch.call(this,input,options); }; })();
+</script>
 </head>
 
 <body>
@@ -67,7 +71,7 @@
                         </div>
                         <% } %>
 
-                            <form action="/admin/login" method="POST">
+                            <form action="/admin/login" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <div class="mb-3">
                                     <label class="form-label">Usuario</label>
                                     <input type="text" name="username" class="form-control"

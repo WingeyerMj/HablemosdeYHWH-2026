@@ -524,6 +524,79 @@
                                         <% } %>
                                     </div>
 
+                                    <% if (typeof parashaInfantil !== 'undefined' && parashaInfantil) { %>
+                                        <!-- ============================================== -->
+                                        <!-- SECCIÓN DE PARASHÁ SEMANAL INFANTIL (PDF)       -->
+                                        <!-- ============================================== -->
+                                        <div id="seccion-parasha-infantil" class="parasha-infantil-section mt-5 pt-4 border-top no-print">
+                                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+                                                <div>
+                                                    <h3 class="mb-1 fw-bold text-dark d-flex align-items-center gap-2" style="font-size: 1.6rem;">
+                                                        <i class="bi bi-balloon-heart-fill" style="color: #a855f7;"></i>
+                                                        Parashá Semanal Infantil (PDF)
+                                                    </h3>
+                                                    <p class="text-muted small mb-0">Material didáctico y resumen adaptado para niños y familias por el Ministerio Semillas de Torah.</p>
+                                                </div>
+                                                <a href="/semillas-de-torah" class="badge px-3 py-2 rounded-pill text-decoration-none shadow-sm" style="background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; font-size: 0.85rem;">
+                                                    <i class="bi bi-balloon-heart me-1"></i>Semillas de Torah
+                                                </a>
+                                            </div>
+
+                                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background: linear-gradient(135deg, #faf5ff 0%, #fdf4ff 100%); border: 1.5px solid #d8b4fe !important;">
+                                                <div class="row g-0 align-items-center">
+                                                    <div class="col-md-3 text-center p-3">
+                                                        <div style="width: 140px; height: 140px; margin: 0 auto; border-radius: 16px; overflow: hidden; background: #fff; border: 2px dashed #c084fc; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(168,85,247,0.15);">
+                                                            <% if (parashaInfantil.cover_image) { %>
+                                                                <img src="<%= parashaInfantil.cover_image %>" alt="<%= parashaInfantil.title %>" style="width: 100%; height: 100%; object-fit: cover;">
+                                                            <% } else { %>
+                                                                <i class="bi bi-file-earmark-pdf-fill fs-1" style="color: #9333ea;"></i>
+                                                            <% } %>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-9 p-4">
+                                                        <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                                                            <span class="badge rounded-pill text-white px-3 py-1" style="background-color: #9333ea;">
+                                                                #<%= parashaInfantil.parasha_number || parasha.parasha_number || '' %> <%= parashaInfantil.book || 'Torah' %>
+                                                            </span>
+                                                            <span class="text-muted small">
+                                                                <i class="bi bi-download me-1 text-info"></i> <%= parashaInfantil.downloads_count || 0 %> descargas
+                                                            </span>
+                                                        </div>
+
+                                                        <h4 class="fw-bold mb-2 text-dark" style="color: #581c87 !important; font-size: 1.35rem;">
+                                                            <%= parashaInfantil.title %>
+                                                        </h4>
+
+                                                        <% if (parashaInfantil.biblical_reference) { %>
+                                                            <div class="text-muted small mb-2 fw-semibold">
+                                                                <i class="bi bi-book me-1 text-warning"></i> <%= parashaInfantil.biblical_reference %>
+                                                            </div>
+                                                        <% } %>
+
+                                                        <% if (parashaInfantil.key_verse) { %>
+                                                            <div class="p-2 px-3 rounded-3 mb-2 small" style="background: rgba(168,85,247,0.08); border-left: 3px solid #a855f7; color: #581c87; font-style: italic;">
+                                                                "<%= parashaInfantil.key_verse %>"
+                                                            </div>
+                                                        <% } %>
+
+                                                        <% if (parashaInfantil.summary) { %>
+                                                            <p class="small text-muted mb-3"><%= parashaInfantil.summary %></p>
+                                                        <% } %>
+
+                                                        <div class="d-flex flex-wrap gap-2 align-items-center pt-2">
+                                                            <a href="/semillas-de-torah/parasha-infantil/<%= parashaInfantil.id %>/descargar" class="btn btn-sm rounded-pill px-4 py-2 fw-bold text-white shadow-sm" style="background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);">
+                                                                <i class="bi bi-download me-1"></i> Descargar PDF Infantil
+                                                            </a>
+                                                            <button type="button" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-2 fw-semibold" onclick="abrirVisorPdfInfantil('<%= parashaInfantil.pdf_file %>', '<%= parashaInfantil.title.replace(/'/g, \"\\'\") %>', <%= parashaInfantil.id %>)">
+                                                                <i class="bi bi-eye-fill me-1"></i> Leer en Pantalla
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% } %>
+
                                     <!-- Botón Descargar PDF -->
                                     <div class="text-center mt-5 mb-4 no-print">
                                         <button onclick="window.print()" class="btn btn-lg d-inline-flex align-items-center gap-2 shadow-sm" 
@@ -565,6 +638,11 @@
                                                         <i class="bi bi-scroll me-1 text-warning"></i> Ver Lectura de Haftará
                                                     </a>
                                                 <% } %>
+                                                <% if (typeof parashaInfantil !== 'undefined' && parashaInfantil) { %>
+                                                    <a href="#seccion-parasha-infantil" class="btn btn-sm w-100 rounded-pill fw-bold text-white shadow-sm" style="background: linear-gradient(135deg, #a855f7, #7e22ce);">
+                                                        <i class="bi bi-file-earmark-pdf me-1"></i> Parashá Infantil (PDF) &rarr;
+                                                    </a>
+                                                <% } %>
                                             </div>
                                         </div>
                                     <% } else { %>
@@ -587,6 +665,11 @@
                                                 <% } else { %>
                                                     <a href="#seccion-haftara" class="btn btn-sm w-100 rounded-pill fw-bold btn-outline-secondary">
                                                         <i class="bi bi-scroll me-1 text-warning"></i> Ver Lectura de Haftará
+                                                    </a>
+                                                <% } %>
+                                                <% if (typeof parashaInfantil !== 'undefined' && parashaInfantil) { %>
+                                                    <a href="#seccion-parasha-infantil" class="btn btn-sm w-100 rounded-pill fw-bold text-white shadow-sm" style="background: linear-gradient(135deg, #a855f7, #7e22ce);">
+                                                        <i class="bi bi-file-earmark-pdf me-1"></i> Parashá Infantil (PDF) &rarr;
                                                     </a>
                                                 <% } %>
                                             </div>
@@ -849,6 +932,56 @@
             }
         }
     </style>
+
+    <!-- MODAL VISOR DE PDF INFANTIL EN PANTALLA -->
+    <div class="modal fade" id="pdfViewerModalInfantil" tabindex="-1" aria-labelledby="pdfViewerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 92vw;">
+            <div class="modal-content bg-dark text-white border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                <div class="modal-header border-bottom border-secondary py-3 px-4" style="background: linear-gradient(135deg, #1f1b2e 0%, #2e1065 100%);">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge rounded-pill px-3 py-2" style="background: #a855f7; color: white;">
+                            <i class="bi bi-file-earmark-pdf-fill me-1"></i> Parashá Semanal Infantil
+                        </span>
+                        <h5 class="modal-title fw-bold text-white mb-0 text-truncate" id="pdfModalTitleInfantil" style="max-width: 50vw;">
+                            Lectura en Pantalla
+                        </h5>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <a href="#" id="pdfModalDownloadBtnInfantil" class="btn btn-sm text-white fw-bold px-3 py-2 rounded-pill shadow-sm" style="background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);">
+                            <i class="bi bi-download me-1"></i> Descargar
+                        </a>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-body p-0 position-relative" style="background: #18181b; min-height: 75vh;">
+                    <div id="pdfLoadingSpinnerInfantil" class="position-absolute top-50 start-50 translate-middle text-center text-white-50">
+                        <div class="spinner-border text-warning mb-2" role="status"></div>
+                        <div class="small">Cargando material en PDF...</div>
+                    </div>
+                    <iframe id="pdfIframeInfantil" src="" style="width: 100%; height: 75vh; border: none; display: block;" onload="document.getElementById('pdfLoadingSpinnerInfantil').style.display='none';"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirVisorPdfInfantil(pdfUrl, titulo, parashaId) {
+            if (!pdfUrl) return;
+            const modalEl = document.getElementById('pdfViewerModalInfantil');
+            const iframe = document.getElementById('pdfIframeInfantil');
+            const titleEl = document.getElementById('pdfModalTitleInfantil');
+            const dlBtn = document.getElementById('pdfModalDownloadBtnInfantil');
+            const spinner = document.getElementById('pdfLoadingSpinnerInfantil');
+
+            if (titleEl) titleEl.textContent = titulo || 'Estudio de la Parashá para Niños';
+            if (dlBtn) dlBtn.href = '/semillas-de-torah/parasha-infantil/' + parashaId + '/descargar';
+            if (spinner) spinner.style.display = 'block';
+            if (iframe) iframe.src = pdfUrl;
+
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            modal.show();
+        }
+    </script>
 
     </body>
 

@@ -21,7 +21,7 @@
         </div>
     </div>
 
-    <form action="/admin/blog/update" method="POST" enctype="multipart/form-data" id="editBlogPageForm">
+    <form action="/admin/blog/update" method="POST" enctype="multipart/form-data" id="editBlogPageForm"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="id" value="<%= post.id %>">
         <div class="row g-3">
             <div class="col-md-6">

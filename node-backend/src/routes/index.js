@@ -21,9 +21,11 @@ router.get('/haftara', homeController.haftaraPage);
 router.get('/haftara/:id', homeController.haftaraDetail);
 router.get('/archivo-historico', homeController.archivoHistorico);
 router.get('/semillas-de-torah', homeController.semillasTorah);
+router.get('/semillas-de-torah/parasha-infantil/:id/descargar', homeController.downloadParashaInfantil);
 router.get('/semillas-de-torah/articulo/:id', homeController.semillasArticuloDetail);
 router.get('/semillas-de-torah/:id', homeController.semillasDetail);
 router.get('/semillas', homeController.semillasTorah);
+router.get('/semillas/parasha-infantil/:id/descargar', homeController.downloadParashaInfantil);
 router.get('/semillas/articulo/:id', homeController.semillasArticuloDetail);
 router.get('/semillas/:id', homeController.semillasDetail);
 if (process.env.NODE_ENV !== 'production') {

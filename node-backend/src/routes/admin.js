@@ -1,7 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const adminController = require('../controllers/adminController');
+const adminActions = require('../controllers/adminController');
 const upload = require('../config/multer');
+const { loginLimit, protectAction } = require('../utils/security');
+const adminController = Object.fromEntries(Object.entries(adminActions).map(([name, action]) => [name, protectAction(action)]));
+
+// Old links must never perform writes, even when followed from another website.
+router.use((req, res, next) => {
+    if ((req.method === 'GET' || req.method === 'HEAD') && /(?:^|\/)(?:delete(?:-audio|-item|-reply)?|toggle(?:-status)?|logout)(?:\/|$)/.test(req.path)) {
+        res.setHeader('Allow', 'POST');
+        return res.status(405).send('Esta acción requiere enviar el formulario correspondiente.');
+    }
+    next();
+});
 
 // Middleware para proteger rutas
 const isAuthenticated = (req, res, next) => {
@@ -58,6 +69,7 @@ router.use(async (req, res, next) => {
         else if (path.includes('/ciclos-tora')) res.locals.activePage = 'ciclos-tora';
         else if (path.includes('/pwa-installations')) res.locals.activePage = 'pwa-installations';
         else if (path.includes('/torah-viviente-descargas')) res.locals.activePage = 'torah-viviente-descargas';
+        else if (path.includes('/parashot-infantiles')) res.locals.activePage = 'parashot-infantiles';
 
         try {
             const Interaction = require('../models/Interaction');
@@ -70,8 +82,8 @@ router.use(async (req, res, next) => {
 });
 
 router.get('/login', adminController.loginPage);
-router.post('/login', adminController.login);
-router.get('/logout', adminController.logout);
+router.post('/login', loginLimit, adminController.login);
+router.post('/logout', adminController.logout);
 
 router.get('/', isAuthenticated, (req, res) => res.redirect('/admin/dashboard'));
 router.get('/dashboard', isAuthenticated, adminController.dashboard);
@@ -83,7 +95,6 @@ router.post('/comentarios/unapprove/:id', isAuthenticated, adminController.unapp
 router.post('/comentarios/reply/:id', isAuthenticated, adminController.replyComment);
 router.post('/comentarios/delete-reply/:id', isAuthenticated, adminController.deleteReply);
 router.post('/comentarios/delete/:id', isAuthenticated, adminController.deleteComment);
-router.get('/comentarios/delete/:id', isAuthenticated, adminController.deleteComment);
 
 // Parashot (Solo Admin)
 router.post('/parashot/create', isAuthenticated, isAdmin, upload.fields([
@@ -95,7 +106,7 @@ router.post('/parashot/update', isAuthenticated, isAdmin, upload.fields([
     { name: 'image_file', maxCount: 1 },
     { name: 'pdf_upload', maxCount: 1 }
 ]), adminController.updateParasha);
-router.get('/parashot/delete/:id', isAuthenticated, isAdmin, adminController.deleteParasha);
+router.post('/parashot/delete/:id', isAuthenticated, isAdmin, adminController.deleteParasha);
 
 // Aliyot (Lecturas Diarias por Parashá - Solo Admin)
 router.get('/aliyot', isAuthenticated, isAdmin, adminController.aliyotIndex);
@@ -114,13 +125,13 @@ router.post('/aliyot/update_item', isAuthenticated, isAdmin, upload.fields([
     { name: 'audio_files', maxCount: 20 }
 ]), adminController.updateAliyahSingle);
 router.post('/aliyot/link', isAuthenticated, isAdmin, adminController.linkAliyahToParasha);
-router.get('/aliyot/delete-item/:id', isAuthenticated, isAdmin, adminController.deleteAliyahSingle);
+router.post('/aliyot/delete-item/:id', isAuthenticated, isAdmin, adminController.deleteAliyahSingle);
 router.get('/aliyot/edit/:parashaId', isAuthenticated, isAdmin, adminController.editAliyotPage);
 router.post('/aliyot/save', isAuthenticated, isAdmin, upload.fields([
     { name: 'audio_file', maxCount: 10 },
     { name: 'audio_files', maxCount: 20 }
 ]), adminController.saveAliyah);
-router.get('/aliyot/delete-audio/:id/:parashaId/:aliyahNumber', isAuthenticated, isAdmin, adminController.deleteAliyahAudio);
+router.post('/aliyot/delete-audio/:id/:parashaId/:aliyahNumber', isAuthenticated, isAdmin, adminController.deleteAliyahAudio);
 router.post('/aliyot/api/transliterate', isAuthenticated, isAdmin, adminController.apiTransliterateHebrew);
 router.post('/aliyot/api/fetch-verses', isAuthenticated, isAdmin, adminController.apiFetchVerses);
 router.post('/aliyot/api/translate-spanish', isAuthenticated, isAdmin, adminController.apiTranslateSpanishToHebrew);
@@ -129,68 +140,68 @@ router.post('/aliyot/api/translate-spanish', isAuthenticated, isAdmin, adminCont
 router.post('/portfolio/create', isAuthenticated, upload.any(), adminController.createPortfolio);
 router.get('/portfolio/edit/:id', isAuthenticated, adminController.editPortfolioPage);
 router.post('/portfolio/update', isAuthenticated, upload.any(), adminController.updatePortfolio);
-router.get('/portfolio/delete/:id', isAuthenticated, adminController.deletePortfolio);
+router.post('/portfolio/delete/:id', isAuthenticated, adminController.deletePortfolio);
 
 // Enseñanzas (Solo Admin)
 router.post('/ensenanzas/create', isAuthenticated, isAdmin, upload.single('image_file'), adminController.createEnsenanza);
 router.get('/ensenanzas/edit/:id', isAuthenticated, isAdmin, adminController.editEnsenanzaPage);
 router.post('/ensenanzas/update', isAuthenticated, isAdmin, upload.single('image_file'), adminController.updateEnsenanza);
-router.get('/ensenanzas/delete/:id', isAuthenticated, isAdmin, adminController.deleteEnsenanza);
+router.post('/ensenanzas/delete/:id', isAuthenticated, isAdmin, adminController.deleteEnsenanza);
 
 // Haftará (Lecturas Proféticas - Solo Admin)
 router.post('/haftara/create', isAuthenticated, isAdmin, upload.single('image_file'), adminController.createHaftara);
 router.get('/haftara/edit/:id', isAuthenticated, isAdmin, adminController.editHaftaraPage);
 router.post('/haftara/update', isAuthenticated, isAdmin, upload.single('image_file'), adminController.updateHaftara);
-router.get('/haftara/delete/:id', isAuthenticated, isAdmin, adminController.deleteHaftara);
+router.post('/haftara/delete/:id', isAuthenticated, isAdmin, adminController.deleteHaftara);
 
 // Semillas de Torah (Infantil) - Admin y Editor
 router.post('/semillas/create', isAuthenticated, upload.any(), adminController.createSemillas);
 router.get('/semillas/edit/:id', isAuthenticated, adminController.editSemillasPage);
 router.post('/semillas/update', isAuthenticated, upload.any(), adminController.updateSemillas);
-router.get('/semillas/delete/:id', isAuthenticated, adminController.deleteSemillas);
+router.post('/semillas/delete/:id', isAuthenticated, adminController.deleteSemillas);
 
 // Semillas Shorts / Aliyot con Niños (Novedades)
 router.post('/semillas-shorts/create', isAuthenticated, upload.any(), adminController.createSemillasShort);
 router.get('/semillas-shorts/edit/:id', isAuthenticated, adminController.editSemillasShortPage);
 router.post('/semillas-shorts/update', isAuthenticated, upload.any(), adminController.updateSemillasShort);
-router.get('/semillas-shorts/delete/:id', isAuthenticated, adminController.deleteSemillasShort);
+router.post('/semillas-shorts/delete/:id', isAuthenticated, adminController.deleteSemillasShort);
 
 // Semillas Artículos / Resúmenes de Parashá con Imágenes (Infantil)
 router.get('/semillas-articulos', isAuthenticated, adminController.semillasArticulosIndex);
 router.post('/semillas-articulos/create', isAuthenticated, upload.any(), adminController.createSemillasArticulo);
 router.get('/semillas-articulos/edit/:id', isAuthenticated, adminController.editSemillasArticuloPage);
 router.post('/semillas-articulos/update', isAuthenticated, upload.any(), adminController.updateSemillasArticulo);
-router.get('/semillas-articulos/toggle/:id', isAuthenticated, adminController.toggleSemillasArticulo);
-router.get('/semillas-articulos/delete/:id', isAuthenticated, adminController.deleteSemillasArticulo);
+router.post('/semillas-articulos/toggle/:id', isAuthenticated, adminController.toggleSemillasArticulo);
+router.post('/semillas-articulos/delete/:id', isAuthenticated, adminController.deleteSemillasArticulo);
 
 // Noticias & Acontecimientos Mundiales - Admin y Editor
 router.post('/noticias/create', isAuthenticated, upload.single('image_file'), adminController.createNoticia);
 router.get('/noticias/edit/:id', isAuthenticated, adminController.editNoticiaPage);
 router.post('/noticias/update', isAuthenticated, upload.single('image_file'), adminController.updateNoticia);
-router.get('/noticias/delete/:id', isAuthenticated, adminController.deleteNoticia);
+router.post('/noticias/delete/:id', isAuthenticated, adminController.deleteNoticia);
 
 // Shorts de Noticias (Videos Rápidos)
 router.post('/noticias-shorts/create', isAuthenticated, upload.any(), adminController.createNoticiaShort);
 router.get('/noticias-shorts/edit/:id', isAuthenticated, adminController.editNoticiaShortPage);
 router.post('/noticias-shorts/update', isAuthenticated, upload.any(), adminController.updateNoticiaShort);
-router.get('/noticias-shorts/delete/:id', isAuthenticated, adminController.deleteNoticiaShort);
+router.post('/noticias-shorts/delete/:id', isAuthenticated, adminController.deleteNoticiaShort);
 
 // Blog / Artículos - Admin y Editor
 router.post('/blog/create', isAuthenticated, upload.single('image_file'), adminController.createBlogPost);
 router.get('/blog/edit/:id', isAuthenticated, adminController.editBlogPostPage);
 router.post('/blog/update', isAuthenticated, upload.single('image_file'), adminController.updateBlogPost);
-router.get('/blog/delete/:id', isAuthenticated, adminController.deleteBlogPost);
+router.post('/blog/delete/:id', isAuthenticated, adminController.deleteBlogPost);
 
 // Equipo (Solo Admin)
 router.post('/team/create', isAuthenticated, isAdmin, upload.single('image_file'), adminController.createTeamMember);
 router.post('/team/update', isAuthenticated, isAdmin, upload.single('image_file'), adminController.updateTeamMember);
-router.get('/team/toggle-status/:id', isAuthenticated, isAdmin, adminController.toggleTeamMemberStatus);
-router.get('/team/delete/:id', isAuthenticated, isAdmin, adminController.deleteTeamMember);
+router.post('/team/toggle-status/:id', isAuthenticated, isAdmin, adminController.toggleTeamMemberStatus);
+router.post('/team/delete/:id', isAuthenticated, isAdmin, adminController.deleteTeamMember);
 
 // Testimonios (Solo Admin)
 router.post('/testimonials/create', isAuthenticated, isAdmin, adminController.createTestimonial);
 router.post('/testimonials/update', isAuthenticated, isAdmin, adminController.updateTestimonial);
-router.get('/testimonials/delete/:id', isAuthenticated, isAdmin, adminController.deleteTestimonial);
+router.post('/testimonials/delete/:id', isAuthenticated, isAdmin, adminController.deleteTestimonial);
 
 // Pricing (Solo Admin)
 router.post('/pricing/update', isAuthenticated, isAdmin, adminController.updatePricing);
@@ -208,7 +219,7 @@ router.get('/users', isAuthenticated, isStrictAdmin, adminController.usersPage);
 router.post('/users/create', isAuthenticated, isStrictAdmin, adminController.createUser);
 router.post('/users/edit/:id', isAuthenticated, isStrictAdmin, adminController.updateUser);
 router.post('/users/update/:id', isAuthenticated, isStrictAdmin, adminController.updateUser);
-router.get('/users/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteUser);
+router.post('/users/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteUser);
 
 // Secciones Dinámicas (Solo Admin)
 router.get('/dynamic-sections', isAuthenticated, isStrictAdmin, adminController.listDynamicSections);
@@ -216,8 +227,8 @@ router.get('/dynamic-sections/new', isAuthenticated, isStrictAdmin, adminControl
 router.post('/dynamic-sections/create', isAuthenticated, isStrictAdmin, adminController.createDynamicSection);
 router.get('/dynamic-sections/edit/:id', isAuthenticated, isStrictAdmin, adminController.editDynamicSection);
 router.post('/dynamic-sections/update', isAuthenticated, isStrictAdmin, adminController.updateDynamicSection);
-router.get('/dynamic-sections/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteDynamicSection);
-router.get('/dynamic-sections/toggle/:id', isAuthenticated, isStrictAdmin, adminController.toggleDynamicSection);
+router.post('/dynamic-sections/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteDynamicSection);
+router.post('/dynamic-sections/toggle/:id', isAuthenticated, isStrictAdmin, adminController.toggleDynamicSection);
 
 // Entidades Dinámicas (Solo Admin)
 router.get('/entity/:table', isAuthenticated, isStrictAdmin, adminController.manageEntity);
@@ -230,12 +241,12 @@ router.post('/entity/:table/update/:id', isAuthenticated, isStrictAdmin, upload.
     { name: 'image_file', maxCount: 1 },
     { name: 'pdf_upload', maxCount: 1 }
 ]), adminController.updateEntityData);
-router.get('/entity/:table/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteEntityData);
+router.post('/entity/:table/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteEntityData);
 
 // Suscriptores Boletín (Solo Admin)
 router.post('/subscribers/create', isAuthenticated, isStrictAdmin, adminController.createSubscriber);
 router.post('/subscribers/broadcast', isAuthenticated, isStrictAdmin, adminController.broadcastNewsletter);
-router.get('/subscribers/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteSubscriber);
+router.post('/subscribers/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteSubscriber);
 
 // Ciclos de Torá & Pasaje Histórico (Sucot) (Solo Admin)
 router.get('/ciclos-tora', isAuthenticated, isStrictAdmin, adminController.ciclosToraPage);
@@ -252,6 +263,14 @@ router.post('/pwa-installations/stop-update', isAuthenticated, isStrictAdmin, ad
 router.get('/torah-viviente-descargas', isAuthenticated, isStrictAdmin, adminController.torahVivienteDownloadsPage);
 router.post('/torah-viviente-descargas/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteTorahVivienteClick);
 router.post('/torah-viviente-descargas/clear', isAuthenticated, isStrictAdmin, adminController.clearTorahVivienteClicks);
+
+// Parashá Semanal Infantil (PDFs)
+router.get('/parashot-infantiles', isAuthenticated, adminController.parashotInfantilesPage);
+router.post('/parashot-infantiles/create', isAuthenticated, upload.any(), adminController.createParashaInfantil);
+router.get('/parashot-infantiles/edit/:id', isAuthenticated, adminController.editParashaInfantilPage);
+router.post('/parashot-infantiles/update', isAuthenticated, upload.any(), adminController.updateParashaInfantil);
+router.post('/parashot-infantiles/delete/:id', isAuthenticated, adminController.deleteParashaInfantil);
+router.post('/parashot-infantiles/toggle/:id', isAuthenticated, adminController.toggleParashaInfantil);
 
 module.exports = router;
 

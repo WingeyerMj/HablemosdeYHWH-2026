@@ -1,6 +1,8 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { allowed, validateFile } = require('../utils/safeUploads');
+const { validToken } = require('../utils/security');
 
 // Asegurar que las carpetas de destino existen
 const uploadDirs = [
@@ -78,31 +80,34 @@ const upload = multer({
     storage: storage,
     limits: { 
         fileSize: 250 * 1024 * 1024, // Límite de 250MB para audios/videos/archivos
+        files: 30, fields: 500, parts: 530,
         fieldSize: 50 * 1024 * 1024   // Límite de 50MB para campos de texto / contenido HTML / base64
     },
     fileFilter: (req, file, cb) => {
-        const imageTypes = /jpeg|jpg|png|webp|gif|svg/;
-        const videoTypes = /mp4|webm|mov|avi|mkv/;
-        const audioTypes = /mp3|m4a|wav|aac|ogg|oga|opus|wma|flac|audio/;
-        const pdfType = /pdf/;
-        
-        const extname = path.extname(file.originalname).toLowerCase().replace('.', '');
-        
-        if (imageTypes.test(extname) || imageTypes.test(file.mimetype)) {
-            return cb(null, true);
-        }
-        if (audioTypes.test(extname) || (file.mimetype && (file.mimetype.startsWith('audio/') || file.mimetype.includes('ogg') || file.mimetype.includes('opus')))) {
-            return cb(null, true);
-        }
-        if (videoTypes.test(extname) || videoTypes.test(file.mimetype) || (file.mimetype && file.mimetype.includes('video/'))) {
-            return cb(null, true);
-        }
-        if (pdfType.test(extname) || file.mimetype === 'application/pdf') {
-            return cb(null, true);
-        }
-        // Permitir en caso de duda
-        return cb(null, true);
+        const ext = path.extname(file.originalname).toLowerCase();
+        const imageFields = /^(image_file|seder_image|image|cover|thumbnail)$/i;
+        const allowedHere = allowed.has(ext) && (!imageFields.test(file.fieldname) || ['.jpg','.jpeg','.png','.webp','.gif'].includes(ext));
+        if (!allowedHere) { const error = new Error('Formato de archivo no permitido.'); error.status = 400; return cb(error); }
+        cb(null, true);
     }
 });
 
-module.exports = upload;
+// Wrap every multipart entry point: verify CSRF and file signatures before invoking a controller.
+function protect(middleware) {
+    return (req, res, next) => middleware(req, res, async error => {
+        const files = req.file ? [req.file] : Array.isArray(req.files) ? req.files : Object.values(req.files || {}).flat();
+        try {
+            if (error) throw error;
+            if (!validToken(req)) { const denied = new Error('Solicitud no válida. Recarga la página.'); denied.status=403; throw denied; }
+            req.csrfValidated = true;
+            delete req.body._csrf;
+            for (const file of files) await validateFile(file);
+            return next();
+        } catch (failure) {
+            await Promise.allSettled(files.map(file => fs.promises.unlink(file.path)));
+            if (failure.status===403) return res.status(403).send(failure.message);
+            next(failure);
+        }
+    });
+}
+module.exports = { single: name => protect(upload.single(name)), fields: names => protect(upload.fields(names)), any: () => protect(upload.any()), array: (...args) => protect(upload.array(...args)), none: () => protect(upload.none()) };

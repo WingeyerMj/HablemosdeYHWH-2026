@@ -4,7 +4,7 @@ const { Client } = require('ssh2');
 
 const root = __dirname;
 const credentialSource = fs.readFileSync(path.join(root, 'check_remote_views.cjs'), 'utf8');
-const password = credentialSource.match(/password:\s*'([^']+)'/)?.[1];
+const password = require('C:/Users/WingeyerMarcelo/Documents/ChatGPT/hablemosdeyhwh/security-hardening/ssh-credentials.cjs').getPassword();
 if (!password) throw new Error('No se encontró la credencial SSH local configurada');
 
 const local = path.join(root, 'node-backend', 'src', 'views', 'admin', 'layout.ejs');

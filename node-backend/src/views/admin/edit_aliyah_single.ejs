@@ -47,7 +47,7 @@ select option:checked, select option:hover {
                     <h5 class="mb-0 text-white"><i class="bi bi-pencil-square me-2" style="color: var(--primary-color, #d4b895);"></i>Editar Lectura Diaria</h5>
                 </div>
                 <div class="card-body p-4">
-                    <form action="/admin/aliyot/update-item" method="POST" enctype="multipart/form-data" id="editAliyahSingleForm">
+                    <form action="/admin/aliyot/update-item" method="POST" enctype="multipart/form-data" id="editAliyahSingleForm"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <input type="hidden" name="id" value="<%= aliyah.id %>">
                         <input type="hidden" name="existing_audio_url" value="<%= aliyah.audio_url || '' %>">
 

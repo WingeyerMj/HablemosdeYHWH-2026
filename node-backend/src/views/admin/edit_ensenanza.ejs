@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <form action="/admin/ensenanzas/update" method="POST" enctype="multipart/form-data" id="editEnsenanzaPageForm">
+    <form action="/admin/ensenanzas/update" method="POST" enctype="multipart/form-data" id="editEnsenanzaPageForm"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="id" value="<%= ensenanza.id %>">
         <div class="row g-3">
             <div class="col-md-4">

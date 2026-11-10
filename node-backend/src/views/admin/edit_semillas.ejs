@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <form action="/admin/semillas/update" method="POST" enctype="multipart/form-data" id="editSemillasPageForm">
+    <form action="/admin/semillas/update" method="POST" enctype="multipart/form-data" id="editSemillasPageForm"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="id" value="<%= item.id %>">
         <div class="row g-3">
             <div class="col-md-6">

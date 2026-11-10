@@ -224,10 +224,21 @@ const homeController = {
                     : active;
             }
 
+            let infantilesMap = {};
+            try {
+                const ParashaInfantil = require('../models/ParashaInfantil');
+                const allInfantiles = await ParashaInfantil.getPublished();
+                allInfantiles.forEach(pi => {
+                    if (pi.parasha_id) infantilesMap[pi.parasha_id] = pi;
+                    if (pi.parasha_number) infantilesMap['num_' + pi.parasha_number] = pi;
+                });
+            } catch(e) {}
+
             res.render('parashot', { 
                 title: selectedCycle ? `Parashot - ${selectedCycle.name} - Hablemos de YHWH` : 'Parashot - Hablemos de YHWH', 
                 page: 'parashot', 
                 parashot: allParashot,
+                infantilesMap,
                 cycles,
                 currentCycle,
                 selectedCycle,
@@ -299,12 +310,24 @@ const homeController = {
 
             if (!parasha) return next();
 
+            let parashaInfantil = null;
+            try {
+                const ParashaInfantil = require('../models/ParashaInfantil');
+                parashaInfantil = await ParashaInfantil.getByParashaId(parasha.id);
+                if (!parashaInfantil && parasha.parasha_number) {
+                    parashaInfantil = await ParashaInfantil.getByParashaNumber(parasha.parasha_number);
+                }
+            } catch(e) {
+                console.warn('Aviso cargando parasha infantil vinculada:', e.message);
+            }
+
             res.render('parasha_detail', { 
                 title: parasha.title + ' - Hablemos de YHWH', 
                 page: 'parashot', 
                 parasha, 
                 aliyot,
                 haftara,
+                parashaInfantil,
                 selectedCycle,
                 requestedAliyah: req.query.aliyah || null,
                 layout: false 
@@ -441,12 +464,17 @@ const homeController = {
         try {
             const SemillasTorah = require('../models/SemillasTorah');
             const SemillasShort = require('../models/SemillasShort');
+            const SemillasArticulo = require('../models/SemillasArticulo');
+            const ParashaInfantil = require('../models/ParashaInfantil');
             const Aliyah = require('../models/Aliyah');
             let items = [], categories = [], siteSettings = {}, shorts = [];
+            let articulos = [], parashotInfantiles = [];
             let recentAliyot = [], parashotOverview = [], parashot = [];
 
             try { items = await SemillasTorah.getPublished(); } catch (e) { items = []; }
             try { shorts = await SemillasShort.getPublished(); } catch (e) { shorts = []; }
+            try { articulos = await SemillasArticulo.getPublished(); } catch (e) { articulos = []; }
+            try { parashotInfantiles = await ParashaInfantil.getPublished(); } catch (e) { parashotInfantiles = []; }
             try { categories = await SemillasTorah.getCategories(); } catch (e) { categories = []; }
             try { siteSettings = await SiteSettings.getMap(); } catch (e) { siteSettings = {}; }
 
@@ -455,6 +483,8 @@ const homeController = {
                 page: 'semillas-torah',
                 items,
                 shorts,
+                articulos,
+                parashotInfantiles,
                 categories,
                 siteSettings,
                 layout: false
@@ -638,13 +668,16 @@ const homeController = {
             const SemillasTorah = require('../models/SemillasTorah');
             const SemillasShort = require('../models/SemillasShort');
             const SemillasArticulo = require('../models/SemillasArticulo');
+            const ParashaInfantil = require('../models/ParashaInfantil');
             
             let items = [];
             let shorts = [];
             let articulos = [];
+            let parashotInfantiles = [];
             try { items = await SemillasTorah.getPublished(); } catch(e) { items = []; }
             try { shorts = await SemillasShort.getPublished(); } catch(e) { shorts = []; }
             try { articulos = await SemillasArticulo.getPublished(); } catch(e) { articulos = []; }
+            try { parashotInfantiles = await ParashaInfantil.getPublished(); } catch(e) { parashotInfantiles = []; }
 
             res.render('semillas_torah', {
                 title: 'Semillas de Torah - Ministerio Infantil - Hablemos de YHWH',
@@ -652,8 +685,21 @@ const homeController = {
                 items,
                 shorts,
                 articulos,
+                parashotInfantiles,
                 layout: false
             });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    downloadParashaInfantil: async (req, res, next) => {
+        try {
+            const ParashaInfantil = require('../models/ParashaInfantil');
+            const item = await ParashaInfantil.getById(req.params.id);
+            if (!item || !item.pdf_file) return res.status(404).send('PDF de Parashá no encontrado');
+            await ParashaInfantil.incrementDownloads(item.id);
+            res.redirect(item.pdf_file);
         } catch (error) {
             next(error);
         }

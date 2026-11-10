@@ -4,7 +4,7 @@ const SSH_CONFIG = {
   host: '179.43.125.96',
   port: 5640,
   username: 'root',
-  password: 'H4bl3m0sd3!yhwh',
+  password: require('C:/Users/WingeyerMarcelo/Documents/ChatGPT/hablemosdeyhwh/security-hardening/ssh-credentials.cjs').getPassword(),
   tryKeyboard: true,
   readyTimeout: 30000
 };
@@ -23,6 +23,6 @@ conn.on('ready', () => {
     .on('data', d => process.stdout.write(d.toString()))
     .stderr.on('data', d => process.stderr.write(d.toString()));
   });
-}).on('keyboard-interactive', (n, i, l, p, finish) => finish(['H4bl3m0sd3!yhwh']))
+}).on('keyboard-interactive', (n, i, l, p, finish) => finish([require('C:/Users/WingeyerMarcelo/Documents/ChatGPT/hablemosdeyhwh/security-hardening/ssh-credentials.cjs').getPassword()]))
 .on('error', err => console.error('SSH Error:', err))
 .connect(SSH_CONFIG);

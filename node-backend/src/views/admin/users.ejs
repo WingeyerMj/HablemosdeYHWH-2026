@@ -16,7 +16,7 @@
             </h5>
         </div>
         <div class="card-body p-4" style="background: #161616;">
-            <form action="/admin/users/create" method="POST" class="row g-3 align-items-end">
+            <form action="/admin/users/create" method="POST" class="row g-3 align-items-end"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <div class="col-md-3">
                     <label class="form-label small text-white-50 fw-semibold mb-1">
                         <i class="bi bi-person me-1"></i>Usuario *
@@ -104,10 +104,10 @@
                                             <i class="bi bi-pencil-square me-1"></i> Editar
                                         </button>
                                         <!-- Botón Eliminar -->
-                                        <a href="/admin/users/delete/<%= u.id %>" class="btn btn-sm btn-outline-danger px-3"
-                                            onclick="return confirm('¿Estás seguro de que deseas eliminar al usuario <%= u.username %>?')">
+                                        <form method="POST" action="/admin/users/delete/<%= u.id %>" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar al usuario <%= u.username %>?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-sm btn-outline-danger px-3"
+                                            >
                                             <i class="bi bi-trash3 me-1"></i> Eliminar
-                                        </a>
+                                        </button></form>
                                     </td>
                                 </tr>
 
@@ -121,7 +121,7 @@
                                                 </h5>
                                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                                             </div>
-                                            <form action="/admin/users/edit/<%= u.id %>" method="POST">
+                                            <form action="/admin/users/edit/<%= u.id %>" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                 <div class="modal-body p-4">
                                                     <div class="mb-3">
                                                         <label class="form-label small text-white-50 fw-semibold">

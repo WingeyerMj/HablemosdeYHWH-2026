@@ -188,9 +188,9 @@ select option:checked, select option:hover {
                                                 </a>
 
                                                 <!-- Eliminar -->
-                                                <a href="/admin/aliyot/delete-item/<%= a.id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas eliminar esta Aliyá?');" title="Eliminar">
+                                                <form method="POST" action="/admin/aliyot/delete-item/<%= a.id %>" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar esta Aliyá?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button  type="submit" class="btn btn-sm btn-danger"  title="Eliminar">
                                                     <i class="bi bi-trash"></i>
-                                                </a>
+                                                </button></form>
                                             </td>
                                         </tr>
                                     <% }) %>
@@ -288,7 +288,7 @@ select option:checked, select option:hover {
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <form action="/admin/aliyot/create" method="POST" enctype="multipart/form-data" id="createAliyahModalForm">
+                <form action="/admin/aliyot/create" method="POST" enctype="multipart/form-data" id="createAliyahModalForm"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <div class="row g-3">
                         <!-- Parashá Asociada -->
                         <div class="col-md-6">
@@ -575,7 +575,7 @@ select option:checked, select option:hover {
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <form action="/admin/aliyot/link" method="POST" id="linkParashaForm">
+                <form action="/admin/aliyot/link" method="POST" id="linkParashaForm"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <input type="hidden" name="aliyah_id" id="linkModalAliyahId">
 
                     <p class="text-white-50 small mb-3">
