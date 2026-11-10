@@ -1,0 +1,174 @@
+<!-- Sidebar -->
+<%- include('partials/_sidebar') %>
+
+<main class="col-md-10 main-content">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h1 class="text-white"><i class="bi bi-pencil-square me-2 text-info"></i>Editar Dibujo o Manualidad</h1>
+            <p class="text-white-50 mb-0">Ministerio Semillas de Torah • Editando: <strong class="text-info"><%= item.title %></strong></p>
+        </div>
+        <div class="d-flex gap-2">
+            <% if (item.pdf_file) { %>
+                <a href="<%= item.pdf_file %>" target="_blank" class="btn btn-outline-danger"><i class="bi bi-file-earmark-pdf"></i> Ver PDF</a>
+            <% } %>
+            <% if (item.image_url) { %>
+                <a href="<%= item.image_url %>" target="_blank" class="btn btn-outline-info"><i class="bi bi-image"></i> Ver Foto</a>
+            <% } %>
+            <a href="/admin/semillas-manualidades" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver a la lista</a>
+        </div>
+    </div>
+
+    <% if (typeof msg !== 'undefined' && msg) { %>
+        <div class="alert alert-success border border-success d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-check-circle-fill me-2"></i><%= msg %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger border border-danger d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-exclamation-triangle-fill me-2"></i><%= error %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <form action="/admin/semillas-manualidades/update" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="<%= item.id %>">
+        
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card bg-dark border-secondary p-4 rounded-4 shadow-sm mb-4">
+                    <h5 class="text-white fw-bold mb-3 pb-2 border-bottom border-secondary">
+                        <i class="bi bi-palette me-2 text-info"></i>Información General de la Actividad
+                    </h5>
+
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label text-white fw-bold">Título de la Actividad o Manualidad <span class="text-danger">*</span></label>
+                            <input type="text" name="title" class="form-control bg-black text-white border-secondary" value="<%= item.title %>" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-white fw-bold">Categoría <span class="text-danger">*</span></label>
+                            <select name="category" class="form-select bg-black text-white border-secondary">
+                                <option value="Porción Semanal" <%= item.category === 'Porción Semanal' ? 'selected' : '' %>>Porción Semanal (Dibujos)</option>
+                                <option value="Santas Convocaciones" <%= item.category === 'Santas Convocaciones' ? 'selected' : '' %>>Santas Convocaciones (Fiestas)</option>
+                                <option value="Sugerencia de Encargadas" <%= item.category === 'Sugerencia de Encargadas' ? 'selected' : '' %>>Sugerencia de Encargadas</option>
+                            </select>
+                        </div>
+
+                        <!-- Vinculación con Parashá -->
+                        <div class="col-md-6">
+                            <label class="form-label text-warning fw-bold"><i class="bi bi-link-45deg me-1"></i>Parashá Vinculada de la Torá</label>
+                            <select name="parasha_id" class="form-select bg-dark text-white border-warning">
+                                <option value="">-- Sin vincular directamente --</option>
+                                <% if (typeof parashot !== 'undefined' && parashot && parashot.length > 0) { %>
+                                    <% parashot.forEach(p => { 
+                                        const isSelected = (item.parasha_id && item.parasha_id == p.id) || (!item.parasha_id && item.parasha_number && item.parasha_number == p.parasha_number);
+                                    %>
+                                        <option value="<%= p.id %>" <%= isSelected ? 'selected' : '' %>>
+                                            #<%= p.parasha_number || '?' %> - <%= p.title %> <%= p.subtitle ? '(' + p.subtitle + ')' : '' %>
+                                        </option>
+                                    <% }) %>
+                                <% } %>
+                            </select>
+                        </div>
+
+                        <!-- Fiesta o Convocación -->
+                        <div class="col-md-6">
+                            <label class="form-label text-success fw-bold"><i class="bi bi-calendar2-heart me-1"></i>Santa Convocación / Fiesta</label>
+                            <select name="moed_name" class="form-select bg-dark text-white border-success">
+                                <option value="">-- Ninguna --</option>
+                                <% 
+                                    const fiestas = ['Shabat', 'Pésaj', 'Jag HaMatzot', 'Bikurim / Primicias', 'Shavuot', 'Yom Teruáh', 'Yom Kipur', 'Sucot', 'Janucá', 'Purim'];
+                                    fiestas.forEach(f => {
+                                %>
+                                    <option value="<%= f %>" <%= item.moed_name === f ? 'selected' : '' %>><%= f %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-white fw-bold">Rango de Edad Recomendado</label>
+                            <input type="text" name="age_range" class="form-control bg-black text-white border-secondary" value="<%= item.age_range || '' %>">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white fw-bold">Nombre de la Autora / Encargada</label>
+                            <input type="text" name="author_name" class="form-control bg-black text-white border-secondary" value="<%= item.author_name || '' %>">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label text-white fw-bold">Descripción / Objetivo Espiritual</label>
+                            <textarea name="description" rows="3" class="form-control bg-black text-white border-secondary"><%= item.description || '' %></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-white fw-bold">Materiales Necesarios</label>
+                            <textarea name="materials" rows="3" class="form-control bg-black text-white border-secondary"><%= item.materials || '' %></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-white fw-bold">Instrucciones Paso a Paso</label>
+                            <textarea name="instructions" rows="3" class="form-control bg-black text-white border-secondary"><%= item.instructions || '' %></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LATERAL: ARCHIVOS Y ESTADO -->
+            <div class="col-lg-4">
+                <div class="card bg-dark border-secondary p-4 rounded-4 shadow-sm mb-4">
+                    <h5 class="text-white fw-bold mb-3 pb-2 border-bottom border-secondary">
+                        <i class="bi bi-file-earmark-arrow-up me-2 text-warning"></i>Archivos & Estado
+                    </h5>
+
+                    <!-- IMAGEN ACTUAL -->
+                    <div class="mb-3">
+                        <label class="form-label text-white fw-bold">Imagen / Portada</label>
+                        <% if (item.image_url) { %>
+                            <div class="mb-2 position-relative rounded-3 overflow-hidden border border-secondary" style="max-height: 180px;">
+                                <img src="<%= item.image_url %>" alt="Portada" class="w-100 h-100" style="object-fit: cover;">
+                            </div>
+                        <% } %>
+                        <input type="file" name="image_file" class="form-control bg-black text-white border-secondary" accept="image/*">
+                        <small class="text-white-50">Subir nueva imagen para reemplazar la actual.</small>
+                    </div>
+
+                    <!-- PDF ACTUAL -->
+                    <div class="mb-3">
+                        <label class="form-label text-white fw-bold">Archivo Imprimible (PDF)</label>
+                        <% if (item.pdf_file) { %>
+                            <div class="mb-2">
+                                <a href="<%= item.pdf_file %>" target="_blank" class="btn btn-sm btn-outline-danger w-100">
+                                    <i class="bi bi-file-earmark-pdf"></i> Ver PDF Actual
+                                </a>
+                            </div>
+                        <% } %>
+                        <input type="file" name="pdf_file" class="form-control bg-black text-white border-secondary" accept=".pdf,application/pdf">
+                        <small class="text-white-50">Subir nuevo PDF para reemplazar el actual.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="is_featured" value="1" id="edit_is_featured" <%= item.is_featured ? 'checked' : '' %>>
+                            <label class="form-check-label text-white fw-bold" for="edit_is_featured">⭐ Destacado en Semillas</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="is_approved" value="1" id="edit_is_approved" <%= item.is_approved ? 'checked' : '' %>>
+                            <label class="form-check-label text-white fw-bold" for="edit_is_approved">✅ Visible en la Web (Aprobado)</label>
+                        </div>
+                    </div>
+
+                    <div class="border-top border-secondary pt-3 mt-3">
+                        <button type="submit" class="btn btn-info text-dark fw-bold w-100 py-2 mb-2">
+                            <i class="bi bi-save me-1"></i> Guardar Cambios
+                        </button>
+                        <a href="/admin/semillas-manualidades" class="btn btn-outline-secondary w-100">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</main>
+

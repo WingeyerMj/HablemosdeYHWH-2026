@@ -146,6 +146,18 @@
                             </span>
                         </button>
                     </li>
+                    <!-- Tab 3: Dibujos y Manualidades -->
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn" 
+                                id="tab-manualidades" data-bs-toggle="pill" data-bs-target="#pane-manualidades" type="button" role="tab"
+                                style="border-radius: 16px; border: 2px solid #c084fc; font-size: 1rem; transition: all 0.3s ease;">
+                            <i class="bi bi-palette-fill fs-5" style="color: #9333ea;"></i> 
+                            Dibujos y Manualidades
+                            <span class="badge rounded-pill" style="background: linear-gradient(135deg, #9333ea, #7e22ce); color: #fff; font-size: 0.75rem;">
+                                <%= (typeof manualidades !== 'undefined' && manualidades) ? manualidades.length : 0 %> 🎨 Actividades
+                            </span>
+                        </button>
+                    </li>
                     <!-- Tab 2: Shorts / Novedades -->
                     <li class="nav-item" role="presentation">
                         <button class="nav-link px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn" 
@@ -619,6 +631,406 @@
 
                     </div>
                     <!-- FIN PESTAÑA: ALEF-BET HEBREO INFANTIL -->
+
+                    <!-- ============================================================ -->
+                    <!-- PESTAÑA: DIBUJOS Y MANUALIDADES (PORCIÓN Y CONVOCACIONES)    -->
+                    <!-- ============================================================ -->
+                    <div class="tab-pane fade" id="pane-manualidades" role="tabpanel">
+
+                        <!-- Feedback de Envío de Sugerencias -->
+                        <% if (typeof msg !== 'undefined' && msg) { %>
+                            <div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm mb-4 border-0 d-flex align-items-center gap-3 p-3" style="background: #dcfce7; color: #14532d;">
+                                <i class="bi bi-check-circle-fill fs-3 text-success"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold fs-6">¡Mensaje Recibido!</div>
+                                    <div><%= msg %></div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        <% } %>
+                        <% if (typeof error !== 'undefined' && error) { %>
+                            <div class="alert alert-danger alert-dismissible fade show rounded-4 shadow-sm mb-4 border-0 d-flex align-items-center gap-3 p-3" style="background: #fee2e2; color: #991b1b;">
+                                <i class="bi bi-exclamation-triangle-fill fs-3 text-danger"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold fs-6">Atención</div>
+                                    <div><%= error %></div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        <% } %>
+
+                        <!-- Banner Explicativo Dibujos y Manualidades -->
+                        <div class="p-4 p-md-5 mb-4 rounded-4 shadow-sm border-0 position-relative overflow-hidden" 
+                             style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 40%, #e9d5ff 100%); border-left: 6px solid #9333ea !important;">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-8">
+                                    <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+                                        <span class="badge rounded-pill px-3 py-1 fw-bold text-white shadow-sm" style="background: linear-gradient(135deg, #9333ea, #7e22ce); font-size: 0.8rem;">
+                                            <i class="bi bi-palette-fill me-1"></i> Ministerio Semillas de Toráh
+                                        </span>
+                                        <span class="badge rounded-pill bg-white text-dark border px-3 py-1 small fw-semibold">
+                                            <i class="bi bi-printer me-1 text-purple"></i> 100% Imprimible & Gratuito
+                                        </span>
+                                    </div>
+                                    <h2 class="fw-bold mb-2" style="color: #3b0764; font-size: calc(1.3rem + 0.8vw);">
+                                        Dibujos y Manualidades de la Toráh
+                                    </h2>
+                                    <p class="mb-3 text-muted" style="font-size: 1.05rem; line-height: 1.6; max-width: 720px;">
+                                        Encuentra hojas coloreables de la <strong>porción semanal (Parashá)</strong> que se está estudiando, sugerencias creativas de manualidades para las <strong>Santas Convocaciones futuras (Moedim)</strong> y un espacio abierto para que las maestras y encargadas compartan sus ideas con la congregación.
+                                    </p>
+                                    <div class="d-flex flex-wrap gap-2 pt-1">
+                                        <button type="button" class="btn btn-purple px-4 py-2 rounded-pill fw-bold text-white shadow-sm d-inline-flex align-items-center gap-2" 
+                                                data-bs-toggle="modal" data-bs-target="#modalSugerirManualidad"
+                                                style="background: linear-gradient(135deg, #9333ea, #7e22ce); border: none;">
+                                            <i class="bi bi-heart-fill"></i>
+                                            Subir Sugerencia de Encargada
+                                        </button>
+                                        <a href="#seccion-convocaciones" class="btn btn-outline-dark px-4 py-2 rounded-pill fw-semibold d-inline-flex align-items-center gap-2" style="border-color: #7e22ce; color: #7e22ce;">
+                                            <i class="bi bi-calendar2-heart"></i>
+                                            Ver Santas Convocaciones
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 text-center d-none d-lg-block">
+                                    <div class="p-3 bg-white rounded-4 shadow-sm d-inline-block border" style="transform: rotate(2deg); max-width: 260px;">
+                                        <div class="rounded-3 p-3 text-center mb-2" style="background: #faf5ff;">
+                                            <i class="bi bi-brush-fill display-3" style="color: #9333ea;"></i>
+                                        </div>
+                                        <div class="fw-bold text-dark" style="font-size: 0.95rem;">Creatividad Bíblica Infantil</div>
+                                        <small class="text-muted">Aprender las Escrituras jugando, pintando y creando</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FILTROS DE CATEGORÍA INTERACTIVOS -->
+                        <%
+                            const allMan = (typeof manualidades !== 'undefined' && manualidades) ? manualidades : [];
+                            const drawSem = (typeof dibujosSemanales !== 'undefined' && dibujosSemanales) ? dibujosSemanales : allMan.filter(x => x.category === 'Porción Semanal');
+                            const craftsMoed = (typeof manualidadesFiestas !== 'undefined' && manualidadesFiestas) ? manualidadesFiestas : allMan.filter(x => x.category === 'Santas Convocaciones');
+                            const suggEnc = (typeof sugerenciasEncargadas !== 'undefined' && sugerenciasEncargadas) ? sugerenciasEncargadas : allMan.filter(x => x.category === 'Sugerencia de Encargadas');
+                        %>
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 p-3 bg-white rounded-4 shadow-sm border">
+                            <div class="d-flex flex-wrap gap-2" id="filterPillsManualidades">
+                                <button type="button" class="btn btn-sm rounded-pill fw-bold px-3 py-2 btn-filter-man active" onclick="filtrarManualidadesPublica('all', this)" style="background: #9333ea; color: #fff;">
+                                    Todos los Recursos (<%= allMan.length %>)
+                                </button>
+                                <button type="button" class="btn btn-sm rounded-pill fw-bold px-3 py-2 btn-filter-man btn-light border" onclick="filtrarManualidadesPublica('porcion', this)">
+                                    🎨 Dibujos de la Porción (<%= drawSem.length %>)
+                                </button>
+                                <button type="button" class="btn btn-sm rounded-pill fw-bold px-3 py-2 btn-filter-man btn-light border" onclick="filtrarManualidadesPublica('moed', this)">
+                                    🌟 Santas Convocaciones (<%= craftsMoed.length %>)
+                                </button>
+                                <button type="button" class="btn btn-sm rounded-pill fw-bold px-3 py-2 btn-filter-man btn-light border" onclick="filtrarManualidadesPublica('sugerencias', this)">
+                                    💌 Sugerencias Encargadas (<%= suggEnc.length %>)
+                                </button>
+                            </div>
+                            <div class="text-muted small">
+                                <i class="bi bi-info-circle me-1"></i> Haz clic en los botones para descargar e imprimir gratis
+                            </div>
+                        </div>
+
+                        <!-- ============================================================ -->
+                        <!-- SUBSECCIÓN 1: DIBUJOS PARA COLOREAR DE LA PORCIÓN SEMANAL   -->
+                        <!-- ============================================================ -->
+                        <div class="seccion-bloque-manualidad mb-5" id="seccion-porciones" data-grupo="porcion">
+                            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background: #fef3c7; color: #d97706;">
+                                        <i class="bi bi-brush fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="fw-bold mb-0" style="color: #78350f; font-size: 1.35rem;">Dibujos para Colorear de la Porción (Parashá)</h3>
+                                        <small class="text-muted">Láminas de actividades y coloreables vinculadas a las porciones de la Toráh</small>
+                                    </div>
+                                </div>
+                                <span class="badge rounded-pill bg-warning text-dark fw-bold px-3 py-2">
+                                    <%= drawSem.length %> láminas disponibles
+                                </span>
+                            </div>
+
+                            <% if (drawSem.length === 0) { %>
+                                <div class="text-center py-5 bg-light rounded-4 border border-dashed mb-4">
+                                    <i class="bi bi-brush fs-1 text-muted mb-2 d-block"></i>
+                                    <p class="text-muted mb-0">Pronto se publicarán nuevos dibujos para colorear de la porción semanal.</p>
+                                </div>
+                            <% } else { %>
+                                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+                                    <% drawSem.forEach(item => { %>
+                                        <div class="col item-manualidad-card" data-cat="porcion">
+                                            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden position-relative card-man-hover" 
+                                                 style="background: #ffffff; border: 1px solid #f1f5f9; transition: transform 0.25s ease, box-shadow 0.25s ease;">
+                                                
+                                                <!-- Portada / Imagen de la Lámina -->
+                                                <div class="position-relative" style="aspect-ratio: 4/3; background: #f8fafc; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                                    <% if (item.image_url) { %>
+                                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" class="w-100 h-100" style="object-fit: cover;">
+                                                    <% } else { %>
+                                                        <div class="text-center p-4">
+                                                            <i class="bi bi-palette display-4 text-warning opacity-75"></i>
+                                                            <div class="fw-bold text-muted small mt-2">Lámina para Colorear</div>
+                                                        </div>
+                                                    <% } %>
+                                                    
+                                                    <!-- Badge Parashá Vinculada -->
+                                                    <% if (item.parasha_number || item.parasha_name || item.canonical_parasha_title) { %>
+                                                        <div class="position-absolute top-0 start-0 m-3">
+                                                            <span class="badge rounded-pill px-3 py-2 shadow-sm text-dark fw-bold" style="background: rgba(254,240,138,0.95); backdrop-filter: blur(4px); font-size: 0.78rem; border: 1px solid #fde047;">
+                                                                <i class="bi bi-journal-text me-1 text-warning"></i>
+                                                                Parashá <%= item.parasha_number ? '#' + item.parasha_number : '' %> <%= item.canonical_parasha_title || item.parasha_name %>
+                                                            </span>
+                                                        </div>
+                                                    <% } %>
+
+                                                    <!-- Badge Edad -->
+                                                    <div class="position-absolute top-0 end-0 m-3">
+                                                        <span class="badge rounded-pill bg-dark text-white px-2 py-1 small fw-semibold" style="opacity: 0.85;">
+                                                            <i class="bi bi-people me-1"></i><%= item.age_range || 'Todas las edades' %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Cuerpo de la Tarjeta -->
+                                                <div class="card-body p-4 d-flex flex-column">
+                                                    <h5 class="fw-bold mb-2 text-dark" style="font-size: 1.1rem; line-height: 1.4;">
+                                                        <%= item.title %>
+                                                    </h5>
+                                                    
+                                                    <% if (item.description) { %>
+                                                        <p class="text-muted small mb-3 flex-grow-1" style="line-height: 1.5;">
+                                                            <%= item.description %>
+                                                        </p>
+                                                    <% } %>
+
+                                                    <% if (item.materials) { %>
+                                                        <div class="p-2 px-3 rounded-3 mb-3" style="background: #f8fafc; font-size: 0.82rem; border-left: 3px solid #f59e0b;">
+                                                            <strong class="text-dark"><i class="bi bi-pencil-fill me-1 text-warning"></i>Materiales:</strong> 
+                                                            <span class="text-muted"><%= item.materials %></span>
+                                                        </div>
+                                                    <% } %>
+
+                                                    <!-- Botones de Acción -->
+                                                    <div class="d-flex align-items-center gap-2 pt-2 mt-auto border-top">
+                                                        <% if (item.pdf_file || item.image_url) { %>
+                                                            <a href="/semillas-de-torah/manualidad/<%= item.id %>/descargar" 
+                                                               class="btn btn-warning text-dark fw-bold rounded-pill btn-sm flex-grow-1 d-inline-flex align-items-center justify-content-center gap-1 shadow-sm py-2"
+                                                               target="_blank"
+                                                               title="Descargar e imprimir lámina">
+                                                                <i class="bi bi-download"></i>
+                                                                Descargar para Colorear
+                                                            </a>
+                                                        <% } %>
+                                                        <button type="button" class="btn btn-outline-secondary rounded-pill btn-sm px-3 py-2" 
+                                                                onclick="abrirModalDetalleManualidad(<%= JSON.stringify(item) %>)"
+                                                                title="Ver detalles e instrucciones">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                            <% } %>
+                        </div>
+
+
+                        <!-- ============================================================ -->
+                        <!-- SUBSECCIÓN 2: MANUALIDADES PARA SANTAS CONVOCACIONES (MOEDIM) -->
+                        <!-- ============================================================ -->
+                        <div class="seccion-bloque-manualidad mb-5" id="seccion-convocaciones" data-grupo="moed">
+                            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background: #dcfce7; color: #16a34a;">
+                                        <i class="bi bi-calendar2-heart fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="fw-bold mb-0" style="color: #14532d; font-size: 1.35rem;">Sugerencias de Manualidades para las Santas Convocaciones</h3>
+                                        <small class="text-muted">Proyectos prácticos para celebrar las fiestas bíblicas de YHWH en familia y congregación</small>
+                                    </div>
+                                </div>
+                                <span class="badge rounded-pill bg-success text-white fw-bold px-3 py-2">
+                                    <%= craftsMoed.length %> sugerencias prácticas
+                                </span>
+                            </div>
+
+                            <!-- Pastillas de Moedim Rápidas -->
+                            <div class="d-flex flex-wrap gap-2 mb-4">
+                                <% const fiestasTags = ['Shabat', 'Pésaj', 'Jag HaMatzot', 'Shavuot', 'Yom Teruáh', 'Yom Kipur', 'Sucot', 'Janucá', 'Purim']; %>
+                                <% fiestasTags.forEach(f => { %>
+                                    <span class="badge rounded-pill bg-white text-dark border px-3 py-2 small shadow-sm fw-semibold d-inline-flex align-items-center gap-1" style="font-size: 0.82rem;">
+                                        <i class="bi bi-star-fill text-warning"></i> <%= f %>
+                                    </span>
+                                <% }); %>
+                            </div>
+
+                            <% if (craftsMoed.length === 0) { %>
+                                <div class="text-center py-5 bg-light rounded-4 border border-dashed mb-4">
+                                    <i class="bi bi-stars fs-1 text-muted mb-2 d-block"></i>
+                                    <p class="text-muted mb-0">Pronto se agregarán nuevas manualidades para las próximas Santas Convocaciones.</p>
+                                </div>
+                            <% } else { %>
+                                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+                                    <% craftsMoed.forEach(item => { %>
+                                        <div class="col item-manualidad-card" data-cat="moed">
+                                            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden position-relative card-man-hover" 
+                                                 style="background: #ffffff; border: 1px solid #e2e8f0; transition: transform 0.25s ease, box-shadow 0.25s ease;">
+                                                
+                                                <!-- Imagen / Cabecera Moed -->
+                                                <div class="position-relative" style="aspect-ratio: 4/3; background: #f0fdf4; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                                    <% if (item.image_url) { %>
+                                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" class="w-100 h-100" style="object-fit: cover;">
+                                                    <% } else { %>
+                                                        <div class="text-center p-4">
+                                                            <i class="bi bi-stars display-4 text-success opacity-75"></i>
+                                                            <div class="fw-bold text-success small mt-2">Manualidad de Fiesta Bíblica</div>
+                                                        </div>
+                                                    <% } %>
+
+                                                    <!-- Badge Fiesta -->
+                                                    <% if (item.moed_name) { %>
+                                                        <div class="position-absolute top-0 start-0 m-3">
+                                                            <span class="badge rounded-pill px-3 py-2 shadow-sm text-white fw-bold" style="background: linear-gradient(135deg, #16a34a, #15803d); font-size: 0.8rem;">
+                                                                <i class="bi bi-calendar2-check me-1"></i><%= item.moed_name %>
+                                                            </span>
+                                                        </div>
+                                                    <% } %>
+
+                                                    <div class="position-absolute top-0 end-0 m-3">
+                                                        <span class="badge rounded-pill bg-dark text-white px-2 py-1 small fw-semibold" style="opacity: 0.85;">
+                                                            <i class="bi bi-people me-1"></i><%= item.age_range || 'Todas las edades' %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Contenido de la Manualidad -->
+                                                <div class="card-body p-4 d-flex flex-column">
+                                                    <h5 class="fw-bold mb-2 text-dark" style="font-size: 1.1rem; line-height: 1.4;">
+                                                        <%= item.title %>
+                                                    </h5>
+
+                                                    <% if (item.description) { %>
+                                                        <p class="text-muted small mb-3 flex-grow-1" style="line-height: 1.5;">
+                                                            <%= item.description %>
+                                                        </p>
+                                                    <% } %>
+
+                                                    <% if (item.materials) { %>
+                                                        <div class="p-2 px-3 rounded-3 mb-2" style="background: #f0fdf4; font-size: 0.82rem; border-left: 3px solid #22c55e;">
+                                                            <strong class="text-success"><i class="bi bi-scissors me-1"></i>Materiales:</strong> 
+                                                            <span class="text-muted"><%= item.materials %></span>
+                                                        </div>
+                                                    <% } %>
+
+                                                    <% if (item.instructions) { %>
+                                                        <div class="p-2 px-3 rounded-3 mb-3" style="background: #faf5ff; font-size: 0.82rem; border-left: 3px solid #a855f7;">
+                                                            <strong class="text-purple"><i class="bi bi-list-ol me-1"></i>Paso a paso:</strong> 
+                                                            <span class="text-muted text-truncate d-block"><%= item.instructions %></span>
+                                                        </div>
+                                                    <% } %>
+
+                                                    <div class="d-flex align-items-center gap-2 pt-2 mt-auto border-top">
+                                                        <% if (item.pdf_file || item.image_url) { %>
+                                                            <a href="/semillas-de-torah/manualidad/<%= item.id %>/descargar" 
+                                                               class="btn btn-success text-white fw-bold rounded-pill btn-sm flex-grow-1 d-inline-flex align-items-center justify-content-center gap-1 shadow-sm py-2"
+                                                               target="_blank"
+                                                               title="Descargar guía o molde imprimible">
+                                                                <i class="bi bi-file-earmark-arrow-down-fill"></i>
+                                                                Descargar Guía / Molde
+                                                            </a>
+                                                        <% } %>
+                                                        <button type="button" class="btn btn-outline-secondary rounded-pill btn-sm px-3 py-2" 
+                                                                onclick="abrirModalDetalleManualidad(<%= JSON.stringify(item) %>)"
+                                                                title="Ver manualidad completa">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                            <% } %>
+                        </div>
+
+
+                        <!-- ============================================================ -->
+                        <!-- SUBSECCIÓN 3: BUZÓN Y ESPACIO DE LAS ENCARGADAS Y MAESTRAS   -->
+                        <!-- ============================================================ -->
+                        <div class="seccion-bloque-manualidad mb-4" id="seccion-sugerencias" data-grupo="sugerencias">
+                            
+                            <!-- Tarjeta de Llamado al Buzón -->
+                            <div class="card border-0 rounded-4 shadow-sm p-4 p-md-5 mb-4 text-center position-relative overflow-hidden" 
+                                 style="background: linear-gradient(135deg, #faf5ff 0%, #f5f3ff 100%); border: 2px dashed #c084fc !important;">
+                                <div class="max-w-700 mx-auto">
+                                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-sm" style="width: 70px; height: 70px; background: #9333ea; color: #fff; font-size: 2rem;">
+                                        <i class="bi bi-envelope-heart-fill"></i>
+                                    </div>
+                                    <h3 class="fw-bold mb-2" style="color: #3b0764;">¿Tienes una Manualidad o Dinámica Bíblica?</h3>
+                                    <p class="text-muted mb-4" style="font-size: 1.05rem; line-height: 1.6;">
+                                        Invitamos a todas las <strong>maestras de niños, encargadas y madres de familia</strong> a compartir sus manualidades, fotos y fichas de actividades realizadas para las porciones o las fiestas bíblicas. ¡Edifiquemos juntos a la nueva generación!
+                                    </p>
+                                    <button type="button" class="btn btn-lg px-5 py-3 rounded-pill fw-bold text-white shadow" 
+                                            data-bs-toggle="modal" data-bs-target="#modalSugerirManualidad"
+                                            style="background: linear-gradient(135deg, #9333ea, #7e22ce); border: none;">
+                                        <i class="bi bi-upload me-2"></i> Subir Mi Sugerencia de Manualidad
+                                    </button>
+                                </div>
+                            </div>
+
+                            <% if (suggEnc.length > 0) { %>
+                                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                                    <h4 class="fw-bold mb-0" style="color: #4c1d95; font-size: 1.25rem;">
+                                        <i class="bi bi-chat-heart text-purple me-1"></i> Sugerencias de las Encargadas Publicadas
+                                    </h4>
+                                    <span class="badge rounded-pill bg-purple text-white fw-bold px-3 py-2" style="background: #9333ea;">
+                                        <%= suggEnc.length %> ideas compartidas
+                                    </span>
+                                </div>
+
+                                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                                    <% suggEnc.forEach(item => { %>
+                                        <div class="col item-manualidad-card" data-cat="sugerencias">
+                                            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden position-relative" style="background: #ffffff; border: 1px solid #f1f5f9;">
+                                                <div class="position-relative" style="aspect-ratio: 16/10; background: #faf5ff; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                                    <% if (item.image_url) { %>
+                                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" class="w-100 h-100" style="object-fit: cover;">
+                                                    <% } else { %>
+                                                        <i class="bi bi-heart-pulse-fill display-4" style="color: #c084fc;"></i>
+                                                    <% } %>
+                                                    <span class="position-absolute top-0 start-0 m-3 badge rounded-pill bg-white text-dark shadow-sm">
+                                                        <i class="bi bi-person-fill text-purple me-1"></i><%= item.author_name || 'Encargada' %>
+                                                    </span>
+                                                </div>
+                                                <div class="card-body p-4 d-flex flex-column">
+                                                    <h5 class="fw-bold mb-2 text-dark"><%= item.title %></h5>
+                                                    <% if (item.description) { %>
+                                                        <p class="text-muted small mb-3 flex-grow-1"><%= item.description %></p>
+                                                    <% } %>
+                                                    <div class="d-flex align-items-center gap-2 pt-2 border-top mt-auto">
+                                                        <% if (item.pdf_file || item.image_url) { %>
+                                                            <a href="/semillas-de-torah/manualidad/<%= item.id %>/descargar" class="btn btn-outline-purple btn-sm rounded-pill flex-grow-1" style="color: #9333ea; border-color: #9333ea;" target="_blank">
+                                                                <i class="bi bi-download me-1"></i>Descargar
+                                                            </a>
+                                                        <% } %>
+                                                        <button type="button" class="btn btn-sm btn-light border rounded-pill px-3" onclick="abrirModalDetalleManualidad(<%= JSON.stringify(item) %>)">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                            <% } %>
+
+                        </div>
+
+                    </div>
+                    <!-- FIN PESTAÑA: DIBUJOS Y MANUALIDADES -->
+
 
 
                     <!-- ============================================================ -->
@@ -1328,14 +1740,28 @@
                         </div>
                     </div>
 
-                    <!-- Pilar 2 -->
+                    <!-- Pilar 2: Dibujos y Manualidades -->
                     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                        <div class="card h-100 border-0 p-4 shadow-sm feature-card" style="border-radius: 20px; background: #faf5ff; border-top: 5px solid #22c55e !important;">
-                            <div class="icon-box mb-3 d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 16px; background: #dcfce7; color: #16a34a; font-size: 1.8rem;">
-                                <i class="bi bi-palette-fill"></i>
+                        <div class="card h-100 border-0 p-4 shadow-sm feature-card pilar-manualidades-card" 
+                             onclick="activarTabManualidades()"
+                             style="border-radius: 20px; background: #faf5ff; border-top: 5px solid #9333ea !important; cursor: pointer; transition: all 0.3s ease;"
+                             onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 12px 25px rgba(147,51,234,0.15)';"
+                             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div class="icon-box d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 16px; background: #f3e8ff; color: #9333ea; font-size: 1.8rem;">
+                                    <i class="bi bi-palette-fill"></i>
+                                </div>
+                                <span class="badge rounded-pill text-white fw-bold px-3 py-1 shadow-sm" style="background: linear-gradient(135deg, #9333ea, #7e22ce); font-size: 0.75rem;">
+                                    <i class="bi bi-stars me-1"></i>Para Imprimir y Colorear
+                                </span>
                             </div>
-                            <h4 class="fw-bold mb-2" style="color: #14532d;">Dibujos y Manualidades</h4>
-                            <p class="text-muted mb-0">Hojas de actividades imprimibles, coloreables de las fiestas bíblicas (Moedim), laberintos, crucigramas y dinámicas didácticas.</p>
+                            <h4 class="fw-bold mb-2" style="color: #4c1d95;">Dibujos y Manualidades</h4>
+                            <p class="text-muted mb-3">Hojas de actividades imprimibles, coloreables de la porción semanal, manualidades para las Santas Convocaciones y sugerencias de maestras.</p>
+                            <div class="mt-auto pt-2">
+                                <span class="btn btn-sm rounded-pill px-3 fw-bold d-inline-flex align-items-center gap-1 shadow-sm" style="background: #9333ea; color: #fff;">
+                                    <i class="bi bi-brush me-1"></i> Explorar Dibujos y Manualidades <i class="bi bi-arrow-right"></i>
+                                </span>
+                            </div>
                         </div>
                     </div>
 
@@ -2083,6 +2509,126 @@
         }
     }
 
+    function activarTabManualidades() {
+        const tabBtn = document.getElementById('tab-manualidades');
+        if (tabBtn) {
+            tabBtn.click();
+            const targetSection = document.getElementById('actividades-seccion');
+            if (targetSection) {
+                targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    }
+
+    function filtrarManualidadesPublica(cat, btn) {
+        const buttons = document.querySelectorAll('#filterPillsManualidades .btn-filter-man');
+        buttons.forEach(b => {
+            b.classList.remove('active');
+            b.style.background = '';
+            b.style.color = '';
+            b.classList.add('btn-light');
+        });
+        if (btn) {
+            btn.classList.add('active');
+            btn.classList.remove('btn-light');
+            btn.style.background = '#9333ea';
+            btn.style.color = '#fff';
+        }
+
+        const cards = document.querySelectorAll('#pane-manualidades .item-manualidad-card');
+        const sections = document.querySelectorAll('#pane-manualidades .seccion-bloque-manualidad');
+
+        if (cat === 'all') {
+            cards.forEach(c => c.style.display = '');
+            sections.forEach(s => s.style.display = '');
+        } else {
+            cards.forEach(c => {
+                const cCat = c.getAttribute('data-cat');
+                c.style.display = (cCat === cat) ? '' : 'none';
+            });
+            sections.forEach(s => {
+                const sGrupo = s.getAttribute('data-grupo');
+                s.style.display = (sGrupo === cat) ? '' : 'none';
+            });
+        }
+    }
+
+    function abrirModalDetalleManualidad(item) {
+        if (!item) return;
+        const modalEl = document.getElementById('modalDetalleManualidad');
+        if (!modalEl) return;
+
+        document.getElementById('mDetalleTitulo').innerText = item.title || 'Actividad Bíblica Infantil';
+        document.getElementById('mDetalleCat').innerText = item.category || 'Manualidad';
+        
+        const catBadge = document.getElementById('mDetalleCat');
+        if (item.category === 'Porción Semanal') {
+            catBadge.className = 'badge rounded-pill bg-warning text-dark';
+        } else if (item.category === 'Santas Convocaciones') {
+            catBadge.className = 'badge rounded-pill bg-success';
+        } else {
+            catBadge.className = 'badge rounded-pill text-white';
+            catBadge.style.background = '#9333ea';
+        }
+
+        const refWrap = document.getElementById('mDetalleRefWrap');
+        let refText = '';
+        if (item.parasha_number || item.parasha_name || item.canonical_parasha_title) {
+            refText = 'Parashá ' + (item.parasha_number ? '#' + item.parasha_number + ' ' : '') + (item.canonical_parasha_title || item.parasha_name || '');
+        } else if (item.moed_name) {
+            refText = 'Santa Convocación: ' + item.moed_name;
+        }
+        if (refText) {
+            refWrap.style.display = 'block';
+            document.getElementById('mDetalleRef').innerText = refText;
+        } else {
+            refWrap.style.display = 'none';
+        }
+
+        document.getElementById('mDetalleEdad').innerText = item.age_range || 'Todas las edades';
+        document.getElementById('mDetalleDesc').innerText = item.description || 'Sin descripción adicional.';
+        
+        const matBox = document.getElementById('mDetalleMaterialesBox');
+        if (item.materials) {
+            matBox.style.display = 'block';
+            document.getElementById('mDetalleMateriales').innerText = item.materials;
+        } else {
+            matBox.style.display = 'none';
+        }
+
+        const instBox = document.getElementById('mDetalleInstruccionesBox');
+        if (item.instructions) {
+            instBox.style.display = 'block';
+            document.getElementById('mDetalleInstrucciones').innerText = item.instructions;
+        } else {
+            instBox.style.display = 'none';
+        }
+
+        document.getElementById('mDetalleAutora').innerText = (item.author_name || 'Semillas de Toráh') + (item.author_role ? ' (' + item.author_role + ')' : '');
+
+        const imgEl = document.getElementById('mDetalleImg');
+        const imgWrap = document.getElementById('mDetalleImgWrap');
+        if (item.image_url) {
+            imgEl.src = item.image_url;
+            imgWrap.style.display = 'block';
+        } else {
+            imgWrap.style.display = 'none';
+        }
+
+        const downBtn = document.getElementById('mDetalleDownloadBtn');
+        if (item.pdf_file || item.image_url) {
+            downBtn.href = '/semillas-de-torah/manualidad/' + item.id + '/descargar';
+            downBtn.style.display = 'inline-flex';
+        } else {
+            downBtn.style.display = 'none';
+        }
+
+        if (typeof bootstrap !== 'undefined') {
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            modal.show();
+        }
+    }
+
     // ========================================================
     // DATOS DE LAS 22 LETRAS DEL ALEF-BET HEBREO
     // ========================================================
@@ -2528,6 +3074,8 @@
             activarTabParashaInfantil();
         } else if (window.location.hash === '#alef-bet' || window.location.hash === '#alefbet' || window.location.hash === '#pane-alefbet') {
             activarTabAlefBet();
+        } else if (window.location.hash === '#manualidades' || window.location.hash === '#dibujos' || window.location.hash === '#pane-manualidades') {
+            activarTabManualidades();
         }
     });
     </script>
@@ -2570,6 +3118,150 @@
                             <i class="bi bi-printer me-1"></i> Imprimir Lámina
                         </button>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: BUZÓN PARA SUBIR SUGERENCIA DE MANUALIDAD (ENCARGADAS Y MAESTRAS) -->
+    <div class="modal fade" id="modalSugerirManualidad" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden;">
+                <div class="modal-header border-0 py-3 px-4 text-white" style="background: linear-gradient(135deg, #9333ea, #7e22ce);">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-heart-fill fs-5"></i>
+                        <h5 class="modal-title fw-bold mb-0">Buzón de Encargadas: Subir Sugerencia de Manualidad</h5>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="/semillas-de-torah/sugerir-manualidad" method="POST" enctype="multipart/form-data">
+                    <div class="modal-body p-4" style="background: #ffffff;">
+                        <p class="text-muted small mb-4">
+                            ¡Gracias por tu servicio a los niños! Comparte con todas las maestras los dibujos, plantillas o manualidades que realizas en tus clases para bendecir a más familias.
+                        </p>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark small">Tu Nombre y Apellido <span class="text-danger">*</span></label>
+                                <input type="text" name="author_name" class="form-control rounded-3" placeholder="Ej: Maestra Sara / Hermana Débora" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark small">Congregación / Rol / Ciudad</label>
+                                <input type="text" name="author_role" class="form-control rounded-3" placeholder="Ej: Maestra de Niños - Madrid / Madre de Familia">
+                            </div>
+
+                            <div class="col-md-8">
+                                <label class="form-label fw-bold text-dark small">Título de la Actividad o Manualidad <span class="text-danger">*</span></label>
+                                <input type="text" name="title" class="form-control rounded-3" placeholder="Ej: Farolito de Janucá con papel reciclado" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold text-dark small">Categoría</label>
+                                <select name="category" class="form-select rounded-3">
+                                    <option value="Sugerencia de Encargadas">Sugerencia de Encargada</option>
+                                    <option value="Porción Semanal">Porción Semanal (Dibujo)</option>
+                                    <option value="Santas Convocaciones">Santas Convocaciones (Fiesta)</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark small">Fiesta Bíblica o Parashá (Opcional)</label>
+                                <input type="text" name="moed_name" class="form-control rounded-3" placeholder="Ej: Shabat / Sucot / Parashá Bereshit">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark small">Edad Recomendada</label>
+                                <input type="text" name="age_range" class="form-control rounded-3" placeholder="Ej: 3 a 7 años / Todas las edades" value="Todas las edades">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-bold text-dark small">Breve Explicación / Objetivo de la Lección</label>
+                                <textarea name="description" rows="2" class="form-control rounded-3" placeholder="¿Qué aprenden los niños con esta actividad?"></textarea>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark small">Materiales Necesarios</label>
+                                <textarea name="materials" rows="3" class="form-control rounded-3" placeholder="Ej: Cartón corrugado, témpera blanca, pegamento escolar, lana..."></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark small">Instrucciones Paso a Paso</label>
+                                <textarea name="instructions" rows="3" class="form-control rounded-3" placeholder="1. Recortar la figura... 2. Pegar los laterales... 3. Decorar con brillantina..."></textarea>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark small">
+                                    <i class="bi bi-camera text-primary me-1"></i> Foto de la Manualidad (Opcional)
+                                </label>
+                                <input type="file" name="image_file" class="form-control rounded-3" accept="image/*">
+                                <small class="text-muted" style="font-size: 0.78rem;">Foto de la muestra terminada por los niños.</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark small">
+                                    <i class="bi bi-file-earmark-pdf text-danger me-1"></i> Archivo Imprimible o Molde (PDF)
+                                </label>
+                                <input type="file" name="pdf_file" class="form-control rounded-3" accept=".pdf,application/pdf">
+                                <small class="text-muted" style="font-size: 0.78rem;">Plantilla en PDF para que otras maestras puedan imprimirla.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-3 px-4" style="background: #f8fafc;">
+                        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn rounded-pill px-4 fw-bold text-white shadow-sm" style="background: linear-gradient(135deg, #9333ea, #7e22ce);">
+                            <i class="bi bi-send-fill me-1"></i> Enviar Sugerencia
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: DETALLE DE MANUALIDAD / DIBUJO -->
+    <div class="modal fade" id="modalDetalleManualidad" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden;">
+                <div class="modal-header border-0 py-3 px-4 text-white" style="background: #1e1b4b;">
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="badge rounded-pill bg-warning text-dark" id="mDetalleCat">Actividad</span>
+                        <h5 class="modal-title fw-bold mb-0 text-white" id="mDetalleTitulo">Título</h5>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4" style="background: #ffffff;">
+                    <!-- Imagen destacada si existe -->
+                    <div class="mb-4 text-center rounded-4 overflow-hidden border" id="mDetalleImgWrap" style="max-height: 320px; background: #000; display: none;">
+                        <img src="" id="mDetalleImg" alt="Vista previa" class="w-100 h-100" style="object-fit: contain;">
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <div id="mDetalleRefWrap" style="display: none;">
+                            <span class="badge rounded-pill bg-light text-dark border px-3 py-2 fw-bold" id="mDetalleRef">Referencia</span>
+                        </div>
+                        <span class="badge rounded-pill bg-light text-dark border px-3 py-2">
+                            <i class="bi bi-people me-1 text-primary"></i> <span id="mDetalleEdad">Edad</span>
+                        </span>
+                        <span class="badge rounded-pill bg-light text-muted border px-3 py-2">
+                            <i class="bi bi-person-heart me-1 text-danger"></i> <span id="mDetalleAutora">Autora</span>
+                        </span>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="fw-bold text-dark mb-1">Descripción:</h6>
+                        <p class="text-muted" id="mDetalleDesc" style="line-height: 1.6;"></p>
+                    </div>
+
+                    <div class="p-3 rounded-4 mb-3" style="background: #f8fafc; border-left: 4px solid #22c55e;" id="mDetalleMaterialesBox">
+                        <h6 class="fw-bold text-success mb-1"><i class="bi bi-scissors me-1"></i>Materiales necesarios:</h6>
+                        <p class="text-dark small mb-0" id="mDetalleMateriales"></p>
+                    </div>
+
+                    <div class="p-3 rounded-4 mb-3" style="background: #faf5ff; border-left: 4px solid #9333ea;" id="mDetalleInstruccionesBox">
+                        <h6 class="fw-bold text-purple mb-1"><i class="bi bi-list-check me-1"></i>Instrucciones paso a paso:</h6>
+                        <p class="text-dark small mb-0" id="mDetalleInstrucciones" style="white-space: pre-line;"></p>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-3 px-4" style="background: #f8fafc;">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
+                    <a href="#" id="mDetalleDownloadBtn" target="_blank" class="btn btn-warning text-dark fw-bold rounded-pill px-4 shadow-sm d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-download"></i> Descargar Material (PDF/Imagen)
+                    </a>
                 </div>
             </div>
         </div>

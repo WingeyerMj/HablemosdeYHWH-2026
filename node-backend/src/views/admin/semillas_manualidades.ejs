@@ -1,0 +1,418 @@
+<!-- Sidebar -->
+<%- include('partials/_sidebar') %>
+
+<main class="col-md-10 main-content">
+    
+    <!-- Header -->
+    <div class="page-header d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h1 class="text-white fw-bold mb-1">
+                <i class="bi bi-palette me-2 text-info"></i>Dibujos y Manualidades
+            </h1>
+            <p class="text-white-50 mb-0">Ministerio Semillas de Torah • Administra dibujos para colorear de la porción semanal, manualidades para las Santas Convocaciones y sugerencias de encargadas.</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="/semillas-de-torah#manualidades" target="_blank" class="btn btn-outline-light">
+                <i class="bi bi-eye"></i> Ver en la Web
+            </a>
+            <button type="button" class="btn btn-info text-dark fw-bold px-4" data-bs-toggle="modal" data-bs-target="#createManualidadModal">
+                <i class="bi bi-plus-circle-fill me-1"></i> Subir Nuevo Dibujo / Manualidad
+            </button>
+        </div>
+    </div>
+
+    <% if (typeof msg !== 'undefined' && msg) { %>
+        <div class="alert alert-success border border-success d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-check-circle-fill me-2"></i><%= msg %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger border border-danger d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-exclamation-triangle-fill me-2"></i><%= error %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <!-- STATS CARDS -->
+    <% 
+        const allItems = typeof items !== 'undefined' && items ? items : [];
+        const parashaDrawings = allItems.filter(x => x.category === 'Porción Semanal').length;
+        const feastCrafts = allItems.filter(x => x.category === 'Santas Convocaciones').length;
+        const suggestions = allItems.filter(x => x.category === 'Sugerencia de Encargadas').length;
+        const totalDownloads = allItems.reduce((acc, cur) => acc + (cur.downloads_count || 0), 0);
+    %>
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-dark border-secondary p-3 rounded-4 d-flex flex-row align-items-center gap-3">
+                <div class="rounded-circle p-3 d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background: rgba(56,189,248,0.2); color: #38bdf8;">
+                    <i class="bi bi-palette fs-4 text-info"></i>
+                </div>
+                <div>
+                    <div class="text-white-50 small">Total Actividades</div>
+                    <div class="fs-4 fw-bold text-white"><%= allItems.length %></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-dark border-secondary p-3 rounded-4 d-flex flex-row align-items-center gap-3">
+                <div class="rounded-circle p-3 d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background: rgba(234,179,8,0.2); color: #eab308;">
+                    <i class="bi bi-brush fs-4 text-warning"></i>
+                </div>
+                <div>
+                    <div class="text-white-50 small">Porciones Semanales</div>
+                    <div class="fs-4 fw-bold text-warning"><%= parashaDrawings %></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-dark border-secondary p-3 rounded-4 d-flex flex-row align-items-center gap-3">
+                <div class="rounded-circle p-3 d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background: rgba(34,197,94,0.2); color: #22c55e;">
+                    <i class="bi bi-stars fs-4 text-success"></i>
+                </div>
+                <div>
+                    <div class="text-white-50 small">Santas Convocaciones</div>
+                    <div class="fs-4 fw-bold text-success"><%= feastCrafts %></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-dark border-secondary p-3 rounded-4 d-flex flex-row align-items-center gap-3">
+                <div class="rounded-circle p-3 d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background: rgba(168,85,247,0.2); color: #c084fc;">
+                    <i class="bi bi-heart fs-4 text-purple"></i>
+                </div>
+                <div>
+                    <div class="text-white-50 small">Sugerencias Encargadas</div>
+                    <div class="fs-4 fw-bold text-purple"><%= suggestions %></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BUSCADOR Y FILTROS -->
+    <div class="card bg-dark border-secondary p-3 rounded-4 shadow-sm mb-4">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-search"></i></span>
+                    <input type="text" id="manualidadSearchInput" class="form-control bg-dark text-white border-secondary" placeholder="Buscar por título, parashá, fiesta bíblica, materiales o encargada..." onkeyup="filterManualidadesTable()">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select id="categoryFilter" class="form-select bg-dark text-white border-secondary" onchange="filterManualidadesTable()">
+                    <option value="">Todas las categorías</option>
+                    <option value="Porción Semanal">Porción Semanal (Dibujos)</option>
+                    <option value="Santas Convocaciones">Santas Convocaciones (Fiestas)</option>
+                    <option value="Sugerencia de Encargadas">Sugerencias de Encargadas</option>
+                </select>
+            </div>
+            <div class="col-md-3 text-md-end">
+                <span class="text-white-50 small" id="manualidadMatchCount">Mostrando <%= allItems.length %> actividades</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLA DE DIBUJOS Y MANUALIDADES -->
+    <div class="card bg-dark border-secondary rounded-4 shadow-sm overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle mb-0" id="manualidadesTable">
+                <thead class="table-dark text-white-50 border-secondary">
+                    <tr>
+                        <th style="width: 80px;">Portada</th>
+                        <th>Título & Categoría</th>
+                        <th>Vinculación Bíblica</th>
+                        <th>Edad & Materiales</th>
+                        <th>Archivos</th>
+                        <th>Autora</th>
+                        <th>Descargas</th>
+                        <th>Visible</th>
+                        <th class="text-end" style="min-width: 120px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (allItems.length === 0) { %>
+                        <tr>
+                            <td colspan="9" class="text-center py-5 text-white-50">
+                                <i class="bi bi-palette fs-1 d-block mb-2 text-info opacity-50"></i>
+                                Todavía no hay dibujos o manualidades cargadas.<br>
+                                Haz clic en <strong>"Subir Nuevo Dibujo / Manualidad"</strong> para publicar el primer material infantil.
+                            </td>
+                        </tr>
+                    <% } %>
+
+                    <% allItems.forEach((item) => { %>
+                        <tr class="manualidad-row-item" data-category="<%= item.category %>">
+                            <td>
+                                <div style="width: 60px; height: 60px; border-radius: 10px; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center;">
+                                    <% if (item.image_url) { %>
+                                        <img src="<%= item.image_url %>" alt="<%= item.title %>" style="width: 100%; height: 100%; object-fit: cover;">
+                                    <% } else if (item.pdf_file) { %>
+                                        <i class="bi bi-file-earmark-pdf fs-3 text-danger"></i>
+                                    <% } else { %>
+                                        <i class="bi bi-palette fs-3 text-info"></i>
+                                    <% } %>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-white fs-6 mb-1">
+                                    <%= item.title %>
+                                </div>
+                                <div>
+                                    <% if (item.category === 'Porción Semanal') { %>
+                                        <span class="badge rounded-pill bg-warning text-dark"><i class="bi bi-brush me-1"></i>Porción Semanal</span>
+                                    <% } else if (item.category === 'Santas Convocaciones') { %>
+                                        <span class="badge rounded-pill bg-success"><i class="bi bi-stars me-1"></i>Santas Convocaciones</span>
+                                    <% } else { %>
+                                        <span class="badge rounded-pill bg-purple" style="background: #9333ea;"><i class="bi bi-heart-fill me-1"></i>Sugerencia Encargada</span>
+                                    <% } %>
+                                    <% if (item.is_featured) { %>
+                                        <span class="badge rounded-pill bg-info text-dark ms-1"><i class="bi bi-star-fill"></i> Destacado</span>
+                                    <% } %>
+                                </div>
+                            </td>
+                            <td>
+                                <% if (item.category === 'Porción Semanal' && (item.parasha_name || item.canonical_parasha_title)) { %>
+                                    <div class="text-warning small fw-bold mb-1">
+                                        <i class="bi bi-journal-text me-1"></i>Parashá <%= item.parasha_number ? '#' + item.parasha_number : '' %> <%= item.canonical_parasha_title || item.parasha_name %>
+                                    </div>
+                                <% } %>
+                                <% if (item.moed_name) { %>
+                                    <div class="text-success small fw-semibold">
+                                        <i class="bi bi-calendar2-check me-1"></i><%= item.moed_name %>
+                                    </div>
+                                <% } %>
+                                <% if (!item.parasha_name && !item.canonical_parasha_title && !item.moed_name) { %>
+                                    <span class="text-white-50 small">Tema General</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <div class="badge rounded-pill px-2 py-1 mb-1" style="background: rgba(255,255,255,0.1); color: #e2e8f0; font-size: 0.75rem;">
+                                    <i class="bi bi-people me-1"></i><%= item.age_range || 'Todas las edades' %>
+                                </div>
+                                <% if (item.materials) { %>
+                                    <div class="text-white-50 small text-truncate" style="max-width: 180px;" title="<%= item.materials %>">
+                                        <%= item.materials %>
+                                    </div>
+                                <% } %>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column gap-1">
+                                    <% if (item.pdf_file) { %>
+                                        <a href="<%= item.pdf_file %>" target="_blank" class="btn btn-sm btn-outline-danger py-0 px-2 d-inline-flex align-items-center gap-1" style="font-size: 0.75rem;">
+                                            <i class="bi bi-file-earmark-pdf"></i> PDF
+                                        </a>
+                                    <% } %>
+                                    <% if (item.image_url) { %>
+                                        <a href="<%= item.image_url %>" target="_blank" class="btn btn-sm btn-outline-info py-0 px-2 d-inline-flex align-items-center gap-1" style="font-size: 0.75rem;">
+                                            <i class="bi bi-image"></i> Foto
+                                        </a>
+                                    <% } %>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-white small fw-bold"><%= item.author_name || 'Semillas de Toráh' %></div>
+                                <div class="text-white-50" style="font-size: 0.75rem;"><%= item.author_role || 'Maestra' %></div>
+                            </td>
+                            <td>
+                                <span class="badge bg-black border border-secondary text-info">
+                                    <i class="bi bi-download me-1"></i><%= item.downloads_count || 0 %>
+                                </span>
+                            </td>
+                            <td>
+                                <form action="/admin/semillas-manualidades/toggle/<%= item.id %>" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm <%= item.is_approved ? 'btn-success' : 'btn-outline-secondary' %> rounded-pill px-3 py-0" style="font-size: 0.75rem;">
+                                        <%= item.is_approved ? 'Visible' : 'Oculto' %>
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group">
+                                    <a href="/admin/semillas-manualidades/edit/<%= item.id %>" class="btn btn-sm btn-outline-primary" title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form action="/admin/semillas-manualidades/delete/<%= item.id %>" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar esta actividad/manualidad?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<!-- MODAL CREAR DIBUJO / MANUALIDAD -->
+<div class="modal fade" id="createManualidadModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold text-info">
+                    <i class="bi bi-plus-circle me-2"></i>Publicar Nuevo Dibujo / Manualidad
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/admin/semillas-manualidades/create" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-bold">Título de la Actividad o Manualidad <span class="text-danger">*</span></label>
+                            <input type="text" name="title" class="form-control bg-black text-white border-secondary" placeholder="Ej: Bereshit: Los 7 Días de la Creación y el Shabat" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Categoría <span class="text-danger">*</span></label>
+                            <select name="category" class="form-select bg-black text-white border-secondary" id="modalCategorySelect" required onchange="toggleCategoryFields()">
+                                <option value="Porción Semanal">Porción Semanal (Dibujos)</option>
+                                <option value="Santas Convocaciones">Santas Convocaciones (Fiestas)</option>
+                                <option value="Sugerencia de Encargadas">Sugerencia de Encargadas</option>
+                            </select>
+                        </div>
+
+                        <!-- Vinculación con Parashá -->
+                        <div class="col-md-6" id="fieldParashaWrap">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-journal-bookmark-fill text-warning me-1"></i> Vincular a Parashá Semanal
+                            </label>
+                            <select name="parasha_id" class="form-select bg-black text-white border-secondary">
+                                <option value="">-- No vincular a Parashá específica --</option>
+                                <% if (typeof parashot !== 'undefined' && parashot && parashot.length > 0) { %>
+                                    <% parashot.forEach(p => { %>
+                                        <option value="<%= p.id %>">
+                                            #<%= p.parasha_number || '?' %> - <%= p.title %> (<%= p.book || 'Torah' %>)
+                                        </option>
+                                    <% }); %>
+                                <% } %>
+                            </select>
+                        </div>
+
+                        <!-- Fiesta o Convocación -->
+                        <div class="col-md-6" id="fieldMoedWrap">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-calendar2-heart text-success me-1"></i> Santa Convocación / Moed
+                            </label>
+                            <select name="moed_name" class="form-select bg-black text-white border-secondary">
+                                <option value="">-- Ninguna (o tema bíblico libre) --</option>
+                                <option value="Shabat">Shabat (Día de Reposo)</option>
+                                <option value="Pésaj">Pésaj (Pascua)</option>
+                                <option value="Jag HaMatzot">Jag HaMatzot (Panes sin Levadura)</option>
+                                <option value="Bikurim / Primicias">Bikurim (Primicias)</option>
+                                <option value="Shavuot">Shavuot (Fiesta de las Semanas / Pentecostés)</option>
+                                <option value="Yom Teruáh">Yom Teruáh (Fiesta de las Trompetas)</option>
+                                <option value="Yom Kipur">Yom Kipur (Día de la Expiación)</option>
+                                <option value="Sucot">Sucot (Fiesta de las Cabañas)</option>
+                                <option value="Janucá">Janucá (Fiesta de las Luces)</option>
+                                <option value="Purim">Purim</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Rango de Edad Recomendado</label>
+                            <input type="text" name="age_range" class="form-control bg-black text-white border-secondary" placeholder="Ej: 4 a 10 años / Todas las edades" value="3 a 12 años">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nombre de la Autora o Maestra</label>
+                            <input type="text" name="author_name" class="form-control bg-black text-white border-secondary" placeholder="Ej: Elva Ávila / Maestra Raquel" value="Ministerio Semillas de Toráh">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Descripción / Objetivo Espiritual</label>
+                            <textarea name="description" rows="2" class="form-control bg-black text-white border-secondary" placeholder="Breve resumen de la enseñanza que transmite este dibujo o manualidad..."></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Materiales Necesarios</label>
+                            <textarea name="materials" rows="2" class="form-control bg-black text-white border-secondary" placeholder="Ej: Tijera de punta redonda, cartulina, crayones, pegamento..."></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Instrucciones Paso a Paso</label>
+                            <textarea name="instructions" rows="2" class="form-control bg-black text-white border-secondary" placeholder="1. Colorear las figuras... 2. Recortar por la línea punteada..."></textarea>
+                        </div>
+
+                        <!-- ARCHIVOS -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-info">
+                                <i class="bi bi-image me-1"></i> Imagen / Portada / Foto de la Manualidad
+                            </label>
+                            <input type="file" name="image_file" class="form-control bg-black text-white border-secondary" accept="image/*">
+                            <small class="text-white-50">Opcional: JPG, PNG o WebP con el ejemplo terminado.</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-danger">
+                                <i class="bi bi-file-earmark-pdf-fill me-1"></i> Archivo Imprimible (PDF)
+                            </label>
+                            <input type="file" name="pdf_file" class="form-control bg-black text-white border-secondary" accept=".pdf,application/pdf">
+                            <small class="text-white-50">Hoja imprimible o plantilla para recortar y colorear.</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="is_featured" value="1" id="is_featured">
+                                <label class="form-check-label text-white" for="is_featured">⭐ Destacar en la portada de Semillas de Toráh</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="is_approved" value="1" id="is_approved" checked>
+                                <label class="form-check-label text-white" for="is_approved">✅ Publicar de inmediato (Visible en la web)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-info text-dark fw-bold">
+                        <i class="bi bi-cloud-arrow-up-fill me-1"></i> Guardar y Publicar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function filterManualidadesTable() {
+    const input = document.getElementById('manualidadSearchInput').value.toLowerCase();
+    const catFilter = document.getElementById('categoryFilter').value;
+    const rows = document.querySelectorAll('#manualidadesTable tbody tr.manualidad-row-item');
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        const cat = row.getAttribute('data-category') || '';
+        const matchesText = text.includes(input);
+        const matchesCat = !catFilter || cat === catFilter;
+
+        if (matchesText && matchesCat) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    const matchEl = document.getElementById('manualidadMatchCount');
+    if (matchEl) matchEl.innerText = `Mostrando ${visibleCount} actividades`;
+}
+
+function toggleCategoryFields() {
+    const cat = document.getElementById('modalCategorySelect').value;
+    const pWrap = document.getElementById('fieldParashaWrap');
+    const mWrap = document.getElementById('fieldMoedWrap');
+    if (cat === 'Porción Semanal') {
+        if (pWrap) pWrap.style.display = 'block';
+    } else if (cat === 'Santas Convocaciones') {
+        if (mWrap) mWrap.style.display = 'block';
+    }
+}
+</script>
+

@@ -3339,6 +3339,213 @@ const adminController = {
             console.error('Error toggleParashaInfantil:', error);
             res.redirect('/admin/parashot-infantiles?error=' + encodeURIComponent(error.message));
         }
+    },
+
+    semillasManualidadesPage: async (req, res) => {
+        try {
+            const SemillasManualidad = require('../models/SemillasManualidad');
+            const Parasha = require('../models/Parasha');
+            const items = await SemillasManualidad.getAll();
+            const parashot = await Parasha.getAllAsc();
+
+            res.render('admin/semillas_manualidades', {
+                layout: 'admin/layout',
+                activePage: 'semillas-manualidades',
+                items,
+                parashot,
+                msg: req.query.msg || null,
+                error: req.query.error || null
+            });
+        } catch (error) {
+            console.error('Error semillasManualidadesPage:', error);
+            res.status(500).send('Error interno cargando Dibujos y Manualidades: ' + error.message);
+        }
+    },
+
+    createSemillasManualidad: async (req, res) => {
+        try {
+            let {
+                title,
+                category,
+                parasha_id,
+                parasha_name,
+                parasha_number,
+                moed_name,
+                description,
+                age_range,
+                materials,
+                instructions,
+                image_url,
+                pdf_file,
+                author_name,
+                author_role,
+                author_phone,
+                is_approved,
+                is_featured
+            } = req.body;
+
+            if (req.files && req.files.length > 0) {
+                const filesList = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
+                for (const f of filesList) {
+                    if (f.mimetype === 'application/pdf' || f.originalname.toLowerCase().endsWith('.pdf') || f.fieldname === 'pdf_file' || f.fieldname === 'pdf_upload') {
+                        pdf_file = '/uploads/pdf/' + f.filename;
+                    } else if (f.mimetype.startsWith('image/') || f.fieldname === 'image_file' || f.fieldname === 'image_url') {
+                        image_url = '/uploads/semillas/' + f.filename;
+                    }
+                }
+            }
+
+            if (parasha_id) {
+                const Parasha = require('../models/Parasha');
+                const p = await Parasha.getById(parasha_id);
+                if (p) {
+                    if (!parasha_name) parasha_name = p.title;
+                    if (!parasha_number) parasha_number = p.parasha_number;
+                }
+            }
+
+            const SemillasManualidad = require('../models/SemillasManualidad');
+            await SemillasManualidad.create({
+                title: title ? title.trim() : 'Dibujo / Manualidad Infantil',
+                category: category || 'Porción Semanal',
+                parasha_id: parasha_id ? parseInt(parasha_id, 10) : null,
+                parasha_number: parasha_number ? parseInt(parasha_number, 10) : null,
+                parasha_name,
+                moed_name: moed_name || null,
+                description,
+                age_range: age_range || '3 a 12 años',
+                materials,
+                instructions,
+                image_url,
+                pdf_file,
+                author_name: author_name || 'Ministerio Semillas de Toráh',
+                author_role: author_role || 'Maestra de Niños',
+                author_phone: author_phone || null,
+                is_approved: is_approved !== '0' && is_approved !== false,
+                is_featured: is_featured === '1' || is_featured === true || is_featured === 'on'
+            });
+
+            res.redirect('/admin/semillas-manualidades?msg=' + encodeURIComponent('Dibujo o manualidad agregada con éxito.'));
+        } catch (error) {
+            console.error('Error createSemillasManualidad:', error);
+            res.redirect('/admin/semillas-manualidades?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    editSemillasManualidadPage: async (req, res) => {
+        try {
+            const SemillasManualidad = require('../models/SemillasManualidad');
+            const Parasha = require('../models/Parasha');
+            const item = await SemillasManualidad.getById(req.params.id);
+            if (!item) return res.redirect('/admin/semillas-manualidades');
+
+            const parashot = await Parasha.getAllAsc();
+
+            res.render('admin/edit_semillas_manualidad', {
+                layout: 'admin/layout',
+                activePage: 'semillas-manualidades',
+                item,
+                parashot,
+                msg: req.query.msg || null,
+                error: req.query.error || null
+            });
+        } catch (error) {
+            console.error('Error editSemillasManualidadPage:', error);
+            res.redirect('/admin/semillas-manualidades');
+        }
+    },
+
+    updateSemillasManualidad: async (req, res) => {
+        try {
+            let {
+                id,
+                title,
+                category,
+                parasha_id,
+                parasha_name,
+                parasha_number,
+                moed_name,
+                description,
+                age_range,
+                materials,
+                instructions,
+                image_url,
+                pdf_file,
+                author_name,
+                author_role,
+                author_phone,
+                is_approved,
+                is_featured
+            } = req.body;
+
+            if (req.files && req.files.length > 0) {
+                const filesList = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
+                for (const f of filesList) {
+                    if (f.mimetype === 'application/pdf' || f.originalname.toLowerCase().endsWith('.pdf') || f.fieldname === 'pdf_file' || f.fieldname === 'pdf_upload') {
+                        pdf_file = '/uploads/pdf/' + f.filename;
+                    } else if (f.mimetype.startsWith('image/') || f.fieldname === 'image_file' || f.fieldname === 'image_url') {
+                        image_url = '/uploads/semillas/' + f.filename;
+                    }
+                }
+            }
+
+            if (parasha_id) {
+                const Parasha = require('../models/Parasha');
+                const p = await Parasha.getById(parasha_id);
+                if (p) {
+                    if (!parasha_name) parasha_name = p.title;
+                    if (!parasha_number) parasha_number = p.parasha_number;
+                }
+            }
+
+            const SemillasManualidad = require('../models/SemillasManualidad');
+            await SemillasManualidad.update(id, {
+                title: title ? title.trim() : 'Dibujo / Manualidad',
+                category: category || 'Porción Semanal',
+                parasha_id: parasha_id ? parseInt(parasha_id, 10) : null,
+                parasha_number: parasha_number ? parseInt(parasha_number, 10) : null,
+                parasha_name,
+                moed_name: moed_name || null,
+                description,
+                age_range: age_range || '3 a 12 años',
+                materials,
+                instructions,
+                image_url,
+                pdf_file,
+                author_name,
+                author_role,
+                author_phone,
+                is_approved: is_approved !== '0' && is_approved !== false,
+                is_featured: is_featured === '1' || is_featured === true || is_featured === 'on'
+            });
+
+            res.redirect('/admin/semillas-manualidades?msg=' + encodeURIComponent('Dibujo / manualidad actualizada correctamente.'));
+        } catch (error) {
+            console.error('Error updateSemillasManualidad:', error);
+            res.redirect('/admin/semillas-manualidades?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    deleteSemillasManualidad: async (req, res) => {
+        try {
+            const SemillasManualidad = require('../models/SemillasManualidad');
+            await SemillasManualidad.delete(req.params.id);
+            res.redirect('/admin/semillas-manualidades?msg=' + encodeURIComponent('Elemento eliminado correctamente.'));
+        } catch (error) {
+            console.error('Error deleteSemillasManualidad:', error);
+            res.redirect('/admin/semillas-manualidades?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    toggleSemillasManualidad: async (req, res) => {
+        try {
+            const SemillasManualidad = require('../models/SemillasManualidad');
+            await SemillasManualidad.toggleApproved(req.params.id);
+            res.redirect('/admin/semillas-manualidades?msg=' + encodeURIComponent('Estado de visibilidad / aprobación actualizado.'));
+        } catch (error) {
+            console.error('Error toggleSemillasManualidad:', error);
+            res.redirect('/admin/semillas-manualidades?error=' + encodeURIComponent(error.message));
+        }
     }
 };
 

@@ -669,15 +669,25 @@ const homeController = {
             const SemillasShort = require('../models/SemillasShort');
             const SemillasArticulo = require('../models/SemillasArticulo');
             const ParashaInfantil = require('../models/ParashaInfantil');
+            const SemillasManualidad = require('../models/SemillasManualidad');
             
             let items = [];
             let shorts = [];
             let articulos = [];
             let parashotInfantiles = [];
+            let manualidades = [];
+            let dibujosSemanales = [];
+            let manualidadesFiestas = [];
+            let sugerenciasEncargadas = [];
+
             try { items = await SemillasTorah.getPublished(); } catch(e) { items = []; }
             try { shorts = await SemillasShort.getPublished(); } catch(e) { shorts = []; }
             try { articulos = await SemillasArticulo.getPublished(); } catch(e) { articulos = []; }
             try { parashotInfantiles = await ParashaInfantil.getPublished(); } catch(e) { parashotInfantiles = []; }
+            try { manualidades = await SemillasManualidad.getApproved(); } catch(e) { manualidades = []; }
+            try { dibujosSemanales = await SemillasManualidad.getWeeklyDrawings(); } catch(e) { dibujosSemanales = []; }
+            try { manualidadesFiestas = await SemillasManualidad.getFeastCrafts(); } catch(e) { manualidadesFiestas = []; }
+            try { sugerenciasEncargadas = await SemillasManualidad.getSuggestions(); } catch(e) { sugerenciasEncargadas = []; }
 
             res.render('semillas_torah', {
                 title: 'Semillas de Torah - Ministerio Infantil - Hablemos de YHWH',
@@ -686,6 +696,12 @@ const homeController = {
                 shorts,
                 articulos,
                 parashotInfantiles,
+                manualidades,
+                dibujosSemanales,
+                manualidadesFiestas,
+                sugerenciasEncargadas,
+                msg: req.query.msg || null,
+                error: req.query.error || null,
                 layout: false
             });
         } catch (error) {
@@ -702,6 +718,81 @@ const homeController = {
             res.redirect(item.pdf_file);
         } catch (error) {
             next(error);
+        }
+    },
+
+    downloadManualidad: async (req, res, next) => {
+        try {
+            const SemillasManualidad = require('../models/SemillasManualidad');
+            const item = await SemillasManualidad.getById(req.params.id);
+            if (!item || (!item.pdf_file && !item.image_url)) {
+                return res.status(404).send('Material descargable no encontrado');
+            }
+            await SemillasManualidad.incrementDownloads(item.id);
+            const targetUrl = item.pdf_file || item.image_url;
+            res.redirect(targetUrl);
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    submitSugerenciaManualidad: async (req, res, next) => {
+        try {
+            const SemillasManualidad = require('../models/SemillasManualidad');
+            let {
+                title,
+                category,
+                parasha_name,
+                moed_name,
+                description,
+                age_range,
+                materials,
+                instructions,
+                author_name,
+                author_role,
+                author_phone
+            } = req.body;
+
+            let image_url = null;
+            let pdf_file = null;
+
+            if (req.files && req.files.length > 0) {
+                const filesList = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
+                for (const f of filesList) {
+                    if (f.mimetype === 'application/pdf' || f.originalname.toLowerCase().endsWith('.pdf') || f.fieldname === 'pdf_file') {
+                        pdf_file = '/uploads/pdf/' + f.filename;
+                    } else if (f.mimetype.startsWith('image/') || f.fieldname === 'image_file' || f.fieldname === 'image_url') {
+                        image_url = '/uploads/semillas/' + f.filename;
+                    }
+                }
+            }
+
+            if (!title) {
+                return res.redirect('/semillas-de-torah#manualidades?error=' + encodeURIComponent('El título de la actividad o manualidad es requerido.'));
+            }
+
+            await SemillasManualidad.create({
+                title: title.trim(),
+                category: category || 'Sugerencia de Encargadas',
+                parasha_name: parasha_name || null,
+                moed_name: moed_name || null,
+                description: description || null,
+                age_range: age_range || 'Todas las edades',
+                materials: materials || null,
+                instructions: instructions || null,
+                image_url,
+                pdf_file,
+                author_name: author_name || 'Encargada / Maestra',
+                author_role: author_role || 'Maestra de Niños',
+                author_phone: author_phone || null,
+                is_approved: true, // Visible para enriquecer a todas las maestras
+                is_featured: false
+            });
+
+            res.redirect('/semillas-de-torah#manualidades?msg=' + encodeURIComponent('¡Muchas gracias! Tu sugerencia de manualidad ha sido recibida con éxito y bendecirá a los pequeños.'));
+        } catch (error) {
+            console.error('Error submitSugerenciaManualidad:', error);
+            res.redirect('/semillas-de-torah#manualidades?error=' + encodeURIComponent('Ocurrió un error al enviar tu sugerencia: ' + error.message));
         }
     },
 

@@ -3,6 +3,7 @@ const router = express.Router();
 const homeController = require('../controllers/homeController');
 const DynamicSection = require('../models/DynamicSection');
 const FooterModel = require('../models/FooterModel');
+const upload = require('../config/multer');
 
 router.get('/', homeController.index);
 router.get('/noticias', homeController.noticias);
@@ -22,10 +23,14 @@ router.get('/haftara/:id', homeController.haftaraDetail);
 router.get('/archivo-historico', homeController.archivoHistorico);
 router.get('/semillas-de-torah', homeController.semillasTorah);
 router.get('/semillas-de-torah/parasha-infantil/:id/descargar', homeController.downloadParashaInfantil);
+router.get('/semillas-de-torah/manualidad/:id/descargar', homeController.downloadManualidad);
+router.post('/semillas-de-torah/sugerir-manualidad', upload.any(), homeController.submitSugerenciaManualidad);
 router.get('/semillas-de-torah/articulo/:id', homeController.semillasArticuloDetail);
 router.get('/semillas-de-torah/:id', homeController.semillasDetail);
 router.get('/semillas', homeController.semillasTorah);
 router.get('/semillas/parasha-infantil/:id/descargar', homeController.downloadParashaInfantil);
+router.get('/semillas/manualidad/:id/descargar', homeController.downloadManualidad);
+router.post('/semillas/sugerir-manualidad', upload.any(), homeController.submitSugerenciaManualidad);
 router.get('/semillas/articulo/:id', homeController.semillasArticuloDetail);
 router.get('/semillas/:id', homeController.semillasDetail);
 if (process.env.NODE_ENV !== 'production') {

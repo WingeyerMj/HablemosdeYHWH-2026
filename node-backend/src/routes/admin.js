@@ -70,6 +70,7 @@ router.use(async (req, res, next) => {
         else if (path.includes('/pwa-installations')) res.locals.activePage = 'pwa-installations';
         else if (path.includes('/torah-viviente-descargas')) res.locals.activePage = 'torah-viviente-descargas';
         else if (path.includes('/parashot-infantiles')) res.locals.activePage = 'parashot-infantiles';
+        else if (path.includes('/semillas-manualidades')) res.locals.activePage = 'semillas-manualidades';
 
         try {
             const Interaction = require('../models/Interaction');
@@ -271,6 +272,14 @@ router.get('/parashot-infantiles/edit/:id', isAuthenticated, adminController.edi
 router.post('/parashot-infantiles/update', isAuthenticated, upload.any(), adminController.updateParashaInfantil);
 router.post('/parashot-infantiles/delete/:id', isAuthenticated, adminController.deleteParashaInfantil);
 router.post('/parashot-infantiles/toggle/:id', isAuthenticated, adminController.toggleParashaInfantil);
+
+// Dibujos y Manualidades (Semillas de Torah)
+router.get('/semillas-manualidades', isAuthenticated, adminController.semillasManualidadesPage);
+router.post('/semillas-manualidades/create', isAuthenticated, upload.any(), adminController.createSemillasManualidad);
+router.get('/semillas-manualidades/edit/:id', isAuthenticated, adminController.editSemillasManualidadPage);
+router.post('/semillas-manualidades/update', isAuthenticated, upload.any(), adminController.updateSemillasManualidad);
+router.post('/semillas-manualidades/delete/:id', isAuthenticated, adminController.deleteSemillasManualidad);
+router.post('/semillas-manualidades/toggle/:id', isAuthenticated, adminController.toggleSemillasManualidad);
 
 module.exports = router;
 
