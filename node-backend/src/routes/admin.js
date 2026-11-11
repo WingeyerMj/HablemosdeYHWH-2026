@@ -253,6 +253,7 @@ router.post('/subscribers/delete/:id', isAuthenticated, isStrictAdmin, adminCont
 router.get('/ciclos-tora', isAuthenticated, isStrictAdmin, adminController.ciclosToraPage);
 router.post('/ciclos-tora/archive-reset', isAuthenticated, isStrictAdmin, adminController.archiveResetCycle);
 router.post('/ciclos-tora/set-current/:id', isAuthenticated, isStrictAdmin, adminController.setCurrentTorahCycle);
+router.post('/ciclos-tora/update-reader/:id', isAuthenticated, isStrictAdmin, adminController.updateTorahCycleReader);
 router.post('/ciclos-tora/delete/:id', isAuthenticated, isStrictAdmin, adminController.deleteTorahCycle);
 
 // Instalaciones de la aplicación offline (Solo Admin)

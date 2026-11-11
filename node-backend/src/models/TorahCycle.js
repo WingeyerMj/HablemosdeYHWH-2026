@@ -14,6 +14,7 @@ class TorahCycle {
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     name VARCHAR(150) NOT NULL,
                     year_label VARCHAR(50) DEFAULT '',
+                    default_reader VARCHAR(150) NULL,
                     start_date DATE NULL,
                     end_date DATE NULL,
                     notes TEXT NULL,
@@ -21,6 +22,18 @@ class TorahCycle {
                     archived_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             `);
+
+            // Migración segura de columna default_reader
+            try {
+                const [cols] = await db.query("SHOW COLUMNS FROM torah_cycles LIKE 'default_reader'");
+                if (!cols || cols.length === 0) {
+                    await db.query("ALTER TABLE torah_cycles ADD COLUMN default_reader VARCHAR(150) NULL AFTER year_label");
+                }
+                await db.query("UPDATE torah_cycles SET default_reader = 'Manakhen Ben Leví' WHERE ((default_reader IS NULL OR default_reader = '') OR (default_reader = 'Daini Ríos' AND is_current = 0)) AND (name LIKE '%2025 - 2026%' OR year_label LIKE '%2025-2026%')");
+                await db.query("UPDATE torah_cycles SET default_reader = 'Daini Ríos' WHERE (default_reader IS NULL OR default_reader = '') AND (name LIKE '%2026 - 2027%' OR name LIKE '%2026-2027%' OR year_label LIKE '%2026-2027%')");
+            } catch (migErr) {
+                console.warn('⚠️ Aviso migrando default_reader en torah_cycles:', migErr.message);
+            }
 
             // 2. Tabla histórica de Parashot
             await db.query(`
@@ -140,16 +153,97 @@ class TorahCycle {
     }
 
     /**
+     * Actualizar lector oficial de un ciclo
+     */
+    static async updateDefaultReader(cycleId, defaultReader) {
+        await this.ensureTables();
+        const readerVal = defaultReader ? String(defaultReader).trim() : null;
+        return await db.query('UPDATE torah_cycles SET default_reader = ? WHERE id = ?', [readerVal || null, cycleId]);
+    }
+
+    /**
+     * Resolver dinámicamente el lector por defecto de un ciclo (sin hardcodear lectores históricos en ciclos nuevos)
+     */
+    static async resolveDefaultReader(cycleOrId = null, teamList = null) {
+        await this.ensureTables();
+        let cycle = null;
+        if (cycleOrId && typeof cycleOrId === 'object') {
+            cycle = cycleOrId;
+        } else if (cycleOrId) {
+            cycle = await this.getCycleById(cycleOrId);
+        }
+        if (!cycle) {
+            cycle = await this.getCurrentCycle();
+        }
+
+        if (cycle && cycle.default_reader && cycle.default_reader.trim() !== '') {
+            return cycle.default_reader.trim();
+        }
+
+        const cName = (cycle && cycle.name ? cycle.name : '').toLowerCase();
+        if (cName.includes('2025 - 2026') || cName.includes('2025-2026')) {
+            return 'Manakhen Ben Leví';
+        }
+
+        // Inferir dinámicamente desde los audios ya cargados en el ciclo activo
+        try {
+            const [recentRows] = await db.query(`
+                SELECT a.audio_url
+                FROM aliyot a
+                LEFT JOIN parashot p ON a.parasha_id = p.id
+                WHERE a.audio_url IS NOT NULL AND a.audio_url != ''
+                ${cycle && cycle.name ? 'AND (p.cycle_name = ? OR p.cycle_id = ?)' : ''}
+                ORDER BY a.updated_at DESC, a.id DESC
+                LIMIT 20
+            `, cycle && cycle.name ? [cycle.name, cycle.id || 0] : []);
+
+            if (recentRows && recentRows.length > 0) {
+                const counts = {};
+                const Aliyah = require('./Aliyah');
+                for (const r of recentRows) {
+                    const auds = Aliyah.parseAudios(r.audio_url, '');
+                    for (const aud of auds) {
+                        const rName = (aud.reader || '').trim();
+                        if (rName) {
+                            counts[rName] = (counts[rName] || 0) + 1;
+                        }
+                    }
+                }
+                const ranked = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+                if (ranked.length > 0) {
+                    return ranked[0][0];
+                }
+            }
+        } catch (inferErr) {
+            console.warn('Aviso al inferir lector por defecto:', inferErr.message);
+        }
+
+        // Último fallback desde el equipo configurado
+        try {
+            const members = Array.isArray(teamList) ? teamList : await require('./Team').getAll();
+            if (members && members.length > 0) {
+                const preferred = members.find(m => m.name && /daini/i.test(m.name));
+                if (preferred) return preferred.name;
+                return members[0].name;
+            }
+        } catch (teamErr) {}
+
+        return 'Servidor / Voz de Aliyot';
+    }
+
+    /**
      * Crear un nuevo ciclo
      */
-    static async createCycle({ name, yearLabel = '', notes = '', isCurrent = true }) {
+    static async createCycle({ name, yearLabel = '', notes = '', isCurrent = true, defaultReader = null }) {
         await this.ensureTables();
+        const currentBefore = await this.getCurrentCycle().catch(() => null);
+        const inheritedReader = (defaultReader && defaultReader.trim()) || (currentBefore && currentBefore.default_reader) || null;
         if (isCurrent) {
             await db.query('UPDATE torah_cycles SET is_current = 0');
         }
         const [res] = await db.query(
-            'INSERT INTO torah_cycles (name, year_label, start_date, is_current, notes) VALUES (?, ?, CURDATE(), ?, ?)',
-            [name.trim(), yearLabel.trim(), isCurrent ? 1 : 0, notes.trim()]
+            'INSERT INTO torah_cycles (name, year_label, default_reader, start_date, is_current, notes) VALUES (?, ?, ?, CURDATE(), ?, ?)',
+            [name.trim(), yearLabel.trim(), inheritedReader, isCurrent ? 1 : 0, notes.trim()]
         );
         return await this.getCycleById(res.insertId);
     }
@@ -569,13 +663,15 @@ class TorahCycle {
                 views = 0
         `);
 
-        // 8. Crear el registro del Nuevo Ciclo Activo
+        // 8. Crear el registro del Nuevo Ciclo Activo heredando el lector oficial configurado (si no se especifica otro)
+        const currentActiveCycle = await this.getCurrentCycle().catch(() => null);
+        const inheritedDefaultReader = (currentActiveCycle && currentActiveCycle.default_reader) ? currentActiveCycle.default_reader : null;
         const newCycleTitle = newCycleName && newCycleName.trim() ? newCycleName.trim() : `Ciclo ${new Date().getFullYear()} - ${new Date().getFullYear() + 1}`;
         await db.query('UPDATE torah_cycles SET is_current = 0');
         const [ncRes] = await db.query(`
-            INSERT INTO torah_cycles (name, year_label, start_date, notes, is_current)
-            VALUES (?, ?, CURDATE(), 'Ciclo activo actual de la Torá iniciado después de Sucot', 1)
-        `, [newCycleTitle, `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`]);
+            INSERT INTO torah_cycles (name, year_label, default_reader, start_date, notes, is_current)
+            VALUES (?, ?, ?, CURDATE(), 'Ciclo activo actual de la Torá iniciado después de Sucot', 1)
+        `, [newCycleTitle, `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`, inheritedDefaultReader]);
         const newCycleId = ncRes.insertId;
 
         // 9. Actualizar ciclo en parashot activas

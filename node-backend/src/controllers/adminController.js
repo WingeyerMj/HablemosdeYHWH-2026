@@ -2284,6 +2284,7 @@ const adminController = {
             const allCycles = await TorahCycle.getAllCycles();
             const currentCycle = await TorahCycle.getCurrentCycle();
             const team = await Team.getAll();
+            const activeDefaultReader = await TorahCycle.resolveDefaultReader(currentCycle, team);
 
             res.render('admin/aliyot', {
                 layout: 'admin/layout',
@@ -2295,6 +2296,7 @@ const adminController = {
                 allCycles,
                 currentCycle,
                 team,
+                activeDefaultReader,
                 created: req.query.created || null,
                 updated: req.query.updated || null,
                 deleted: req.query.deleted || null
@@ -2313,6 +2315,7 @@ const adminController = {
 
             const currentCycle = await TorahCycle.getCurrentCycle();
             const defaultCycle = (currentCycle && currentCycle.name) ? currentCycle.name : 'Ciclo Activo';
+            const defaultReader = await TorahCycle.resolveDefaultReader(currentCycle);
 
             let audiosList = [];
             if (req.files) {
@@ -2336,7 +2339,7 @@ const adminController = {
                         : defaultCycle;
                     const cleanReader = (readers[idx] && readers[idx].trim() !== '' && readers[idx] !== '__custom__')
                         ? readers[idx].trim()
-                        : 'Menajem Ben Leví';
+                        : defaultReader;
                     const cleanGain = Math.max(0, Math.min(24, Number(gains[idx]) || 0));
 
                     audiosList.push({
@@ -2355,7 +2358,7 @@ const adminController = {
                     : defaultCycle;
                 const extReader = (req.body.custom_audio_reader && req.body.custom_audio_reader.trim() !== '' && req.body.custom_audio_reader !== '__custom__')
                     ? req.body.custom_audio_reader.trim()
-                    : 'Menajem Ben Leví';
+                    : defaultReader;
 
                 audiosList.push({
                     title: req.body.custom_audio_title || `Audio ${audiosList.length + 1}`,
@@ -2413,6 +2416,7 @@ const adminController = {
             const allCycles = await TorahCycle.getAllCycles();
             const currentCycle = await TorahCycle.getCurrentCycle();
             const team = await Team.getAll();
+            const activeDefaultReader = await TorahCycle.resolveDefaultReader(currentCycle, team);
 
             res.render('admin/edit_aliyah_single', {
                 layout: 'admin/layout',
@@ -2422,7 +2426,8 @@ const adminController = {
                 parashot,
                 allCycles,
                 currentCycle,
-                team
+                team,
+                activeDefaultReader
             });
         } catch (error) {
             console.error('Error editAliyahSinglePage:', error);
@@ -2438,6 +2443,7 @@ const adminController = {
 
             const currentCycle = await TorahCycle.getCurrentCycle();
             const defaultCycle = (currentCycle && currentCycle.name) ? currentCycle.name : 'Ciclo Activo';
+            const defaultReader = await TorahCycle.resolveDefaultReader(currentCycle);
 
             let audiosList = [];
 
@@ -2469,7 +2475,7 @@ const adminController = {
                                 : defaultCycle,
                             reader: (existingReaders[i] && existingReaders[i].trim() !== '' && existingReaders[i] !== '__custom__')
                                 ? existingReaders[i].trim()
-                                : 'Menajem Ben Leví',
+                                : defaultReader,
                             gain_db: Math.max(0, Math.min(24, Number(existingGains[i]) || 0))
                         });
                     }
@@ -2511,7 +2517,7 @@ const adminController = {
                         : defaultCycle;
                     const cleanReader = (readers[idx] && readers[idx].trim() !== '' && readers[idx] !== '__custom__')
                         ? readers[idx].trim()
-                        : 'Menajem Ben Leví';
+                        : defaultReader;
                     const cleanGain = Math.max(0, Math.min(24, Number(gains[idx]) || 0));
 
                     audiosList.push({
@@ -2531,7 +2537,7 @@ const adminController = {
                     : defaultCycle;
                 const extReader = (req.body.custom_audio_reader && req.body.custom_audio_reader.trim() !== '' && req.body.custom_audio_reader !== '__custom__')
                     ? req.body.custom_audio_reader.trim()
-                    : 'Menajem Ben Leví';
+                    : defaultReader;
 
                 audiosList.push({
                     title: req.body.custom_audio_title || `Audio ${audiosList.length + 1}`,
@@ -2607,6 +2613,7 @@ const adminController = {
             const allCycles = await TorahCycle.getAllCycles();
             const currentCycle = await TorahCycle.getCurrentCycle();
             const team = await Team.getAll();
+            const activeDefaultReader = await TorahCycle.resolveDefaultReader(currentCycle, team);
             
             const dayNames = [
                 '1ª Aliyá (Domingo - Día 1)',
@@ -2647,6 +2654,7 @@ const adminController = {
                 allCycles,
                 currentCycle,
                 team,
+                activeDefaultReader,
                 savedDay: req.query.saved || '1'
             });
         } catch (error) {
@@ -2663,6 +2671,7 @@ const adminController = {
 
             const currentCycle = await TorahCycle.getCurrentCycle();
             const defaultCycle = (currentCycle && currentCycle.name) ? currentCycle.name : 'Ciclo Activo';
+            const defaultReader = await TorahCycle.resolveDefaultReader(currentCycle);
 
             let audiosList = [];
 
@@ -2694,7 +2703,7 @@ const adminController = {
                                 : defaultCycle,
                             reader: (existingReaders[i] && existingReaders[i].trim() !== '' && existingReaders[i] !== '__custom__')
                                 ? existingReaders[i].trim()
-                                : 'Menajem Ben Leví',
+                                : defaultReader,
                             gain_db: Math.max(0, Math.min(24, Number(existingGains[i]) || 0))
                         });
                     }
@@ -2734,7 +2743,7 @@ const adminController = {
                         : defaultCycle;
                     const cleanReader = (readers[idx] && readers[idx].trim() !== '' && readers[idx] !== '__custom__')
                         ? readers[idx].trim()
-                        : 'Menajem Ben Leví';
+                        : defaultReader;
                     const cleanGain = Math.max(0, Math.min(24, Number(gains[idx]) || 0));
 
                     audiosList.push({
@@ -2754,7 +2763,7 @@ const adminController = {
                     : defaultCycle;
                 const extReader = (req.body.custom_audio_reader && req.body.custom_audio_reader.trim() !== '' && req.body.custom_audio_reader !== '__custom__')
                     ? req.body.custom_audio_reader.trim()
-                    : 'Menajem Ben Leví';
+                    : defaultReader;
 
                 audiosList.push({
                     title: req.body.custom_audio_title || `Audio ${audiosList.length + 1}`,
@@ -2985,7 +2994,11 @@ const adminController = {
     ciclosToraPage: async (req, res) => {
         try {
             const TorahCycle = require('../models/TorahCycle');
+            const Team = require('../models/Team');
             const cycles = await TorahCycle.getAllCycles();
+            const team = await Team.getAll();
+            const currentCycle = await TorahCycle.getCurrentCycle();
+            const activeDefaultReader = await TorahCycle.resolveDefaultReader(currentCycle, team);
 
             // Estadísticas del ciclo activo actual
             const [pTotal] = await db.query('SELECT COUNT(*) as c FROM parashot');
@@ -3008,6 +3021,9 @@ const adminController = {
                 layout: 'admin/layout',
                 activePage: 'ciclos-tora',
                 cycles,
+                team,
+                currentCycle,
+                activeDefaultReader,
                 currentStats,
                 successMsg: req.query.msg || null,
                 errorMsg: req.query.error || null
@@ -3059,6 +3075,19 @@ const adminController = {
             res.redirect('/admin/ciclos-tora?msg=' + encodeURIComponent('Ciclo activo actualizado correctamente.'));
         } catch (error) {
             console.error('Error setCurrentTorahCycle:', error);
+            res.redirect('/admin/ciclos-tora?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    updateTorahCycleReader: async (req, res) => {
+        try {
+            const TorahCycle = require('../models/TorahCycle');
+            const id = parseInt(req.params.id);
+            const reader = (req.body.default_reader || '').trim();
+            await TorahCycle.updateDefaultReader(id, reader);
+            res.redirect('/admin/ciclos-tora?msg=' + encodeURIComponent(`Lector oficial del ciclo actualizado a "${reader || 'Automático'}".`));
+        } catch (error) {
+            console.error('Error updateTorahCycleReader:', error);
             res.redirect('/admin/ciclos-tora?error=' + encodeURIComponent(error.message));
         }
     },

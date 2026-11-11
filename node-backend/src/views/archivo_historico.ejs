@@ -244,7 +244,7 @@
                                                                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-1 mb-1">
                                                                     <small class="text-white-50"><%= aud.title || ('Audio ' + (audIdx + 1)) %></small>
                                                                     <div class="d-flex gap-1 align-items-center">
-                                                                        <span class="badge bg-secondary text-white" style="font-size: 0.7rem;"><i class="bi bi-mic me-1"></i><%= aud.reader || 'Menajem Ben Leví' %></span>
+                                                                        <span class="badge bg-secondary text-white" style="font-size: 0.7rem;"><i class="bi bi-mic me-1"></i><%= aud.reader || (typeof activeDefaultReader !== 'undefined' && activeDefaultReader ? activeDefaultReader : 'Voz de Aliyot') %></span>
                                                                         <% if (aud.cycle_name) { %>
                                                                             <span class="badge bg-warning text-dark" style="font-size: 0.7rem;"><i class="bi bi-arrow-repeat me-1"></i><%= aud.cycle_name %></span>
                                                                         <% } %>

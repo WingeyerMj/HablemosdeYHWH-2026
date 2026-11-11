@@ -6,6 +6,7 @@ const { Client } = require('ssh2');
 
 const root = __dirname;
 fs.copyFileSync(path.join(root, 'public/assets/calendar/js/main.js'), path.join(root, 'Calendar/js/main.js'));
+fs.copyFileSync(path.join(root, 'public/assets/calendar/js/parashotEngine.js'), path.join(root, 'Calendar/js/parashotEngine.js'));
 fs.copyFileSync(path.join(root, 'public/assets/calendar/css/style.css'), path.join(root, 'Calendar/css/style.css'));
 const credentialSource = fs.readFileSync(path.join(root, 'check_remote_views.cjs'), 'utf8');
 const password = process.env.SSH_PASSWORD || (() => { try { return require('C:/Users/WingeyerMarcelo/Documents/ChatGPT/hablemosdeyhwh/security-hardening/ssh-credentials.cjs').getPassword(); } catch { return null; } })();
@@ -16,6 +17,7 @@ const files = [
   'node-backend/app.js',
   'node-backend/src/models/PwaInstallation.js',
   'node-backend/src/models/Aliyah.js',
+  'node-backend/src/models/TorahCycle.js',
   'node-backend/src/models/TorahVivienteDownload.js',
   'node-backend/src/models/ParashaInfantil.js',
   'node-backend/src/models/SemillasManualidad.js',
@@ -36,6 +38,7 @@ const files = [
   'node-backend/src/views/parashot.ejs',
   'node-backend/src/views/haftara_detail.ejs',
   'node-backend/src/views/parasha_detail.ejs',
+  'node-backend/src/views/archivo_historico.ejs',
   'node-backend/src/views/admin/partials/_sidebar.ejs',
   'node-backend/src/views/admin/layout.ejs',
   'node-backend/src/views/admin/pwa_installations.ejs',
@@ -49,6 +52,7 @@ const files = [
   'node-backend/src/views/admin/ciclos_tora.ejs',
   'node-backend/src/views/admin/aliyot.ejs',
   'node-backend/src/views/admin/edit_aliyah_single.ejs',
+  'node-backend/src/views/admin/edit_aliyot.ejs',
   'public/manifest-calendar.json',
   'public/manifest.webmanifest',
   'public/sw-calendar.js',

@@ -321,6 +321,8 @@ const homeController = {
                 console.warn('Aviso cargando parasha infantil vinculada:', e.message);
             }
 
+            const activeDefaultReader = await TorahCycle.resolveDefaultReader(selectedCycle || null);
+
             res.render('parasha_detail', { 
                 title: parasha.title + ' - Hablemos de YHWH', 
                 page: 'parashot', 
@@ -329,6 +331,7 @@ const homeController = {
                 haftara,
                 parashaInfantil,
                 selectedCycle,
+                activeDefaultReader,
                 requestedAliyah: req.query.aliyah || null,
                 layout: false 
             });
@@ -397,6 +400,8 @@ const homeController = {
                 }
             }
 
+            const activeDefaultReader = await TorahCycle.resolveDefaultReader(selectedCycle || currentCycle, team);
+
             res.render('aliyot', {
                 title: selectedCycle ? `Aliyot - ${selectedCycle.name} - Hablemos de YHWH` : 'Aliyot - Lecturas Diarias de la Torá - Hablemos de YHWH',
                 page: 'aliyot',
@@ -407,6 +412,7 @@ const homeController = {
                 currentCycle,
                 selectedCycle,
                 team,
+                activeDefaultReader,
                 requestedAliyah: req.query.aliyah || null,
                 layout: false
             });

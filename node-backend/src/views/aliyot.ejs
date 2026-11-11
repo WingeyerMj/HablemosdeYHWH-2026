@@ -29,33 +29,67 @@
                     <p class="text-white-50 mb-0" style="font-size: 1.05rem; max-width: 680px;">Escucha los audios de cada día y estudia los versículos correspondientes a cada porción semanal.</p>
                 </div>
 
-                <!-- Columna Derecha: Tarjeta de Lector / Servidor de Aliyot (Dinámica) -->
+                <!-- Columna Derecha: Tarjeta de Lector / Servidor de Aliyot (Dinámica por Ciclo y Audios) -->
                 <%
-                    const aliyotReaders = [];
+                    const normReader = (s) => String(s || '')
+                        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                        .toLowerCase()
+                        .replace(/menajem/g, 'manakhen')
+                        .trim();
+
+                    const fallbackCycleReader = (typeof activeDefaultReader !== 'undefined' && activeDefaultReader)
+                        ? activeDefaultReader
+                        : ((typeof selectedCycle !== 'undefined' && selectedCycle && selectedCycle.default_reader)
+                            || (typeof currentCycle !== 'undefined' && currentCycle && currentCycle.default_reader)
+                            || 'Servidor / Voz de Aliyot');
+
+                    const readerCounts = {};
                     (aliyot || []).forEach(a => {
                         (a.audios || []).forEach(aud => {
-                            const rName = (aud.reader || '').trim();
-                            if (rName && !aliyotReaders.includes(rName)) {
-                                aliyotReaders.push(rName);
+                            const rName = (aud.reader || '').trim() || fallbackCycleReader;
+                            if (rName) {
+                                readerCounts[rName] = (readerCounts[rName] || 0) + 1;
                             }
                         });
                     });
-                    if (aliyotReaders.length === 0) aliyotReaders.push('Menajem Ben Leví');
+
+                    const normDefault = normReader(fallbackCycleReader);
+                    const aliyotReaders = Object.keys(readerCounts).sort((a, b) => {
+                        if (readerCounts[b] !== readerCounts[a]) return readerCounts[b] - readerCounts[a];
+                        const aIsDef = normReader(a) === normDefault ? 1 : 0;
+                        const bIsDef = normReader(b) === normDefault ? 1 : 0;
+                        return bIsDef - aIsDef;
+                    });
+
+                    if (aliyotReaders.length === 0) {
+                        aliyotReaders.push(fallbackCycleReader);
+                    }
 
                     const featuredReaderName = aliyotReaders[0];
                     const teamList = (typeof team !== 'undefined' && team && team.length > 0) ? team : [];
-                    const featuredTeamMember = teamList.find(m => m.name && m.name.toLowerCase().includes(featuredReaderName.toLowerCase()));
-                    const featuredReaderPhoto = (featuredTeamMember && featuredTeamMember.img) 
-                        ? featuredTeamMember.img 
-                        : (featuredReaderName.toLowerCase().includes('menajem') ? '/assets/img/team/menajem.jpg' : '/assets/img/team/kaleb.jpg');
-                    const featuredReaderRole = (featuredTeamMember && featuredTeamMember.role) 
-                        ? featuredTeamMember.role 
+                    const normFeatured = normReader(featuredReaderName);
+                    const featuredTeamMember = teamList.find(m => m.name && (
+                        normReader(m.name) === normFeatured ||
+                        normReader(m.name).includes(normFeatured) ||
+                        normFeatured.includes(normReader(m.name))
+                    ));
+                    const featuredReaderPhoto = (featuredTeamMember && featuredTeamMember.img)
+                        ? featuredTeamMember.img
+                        : (normFeatured.includes('manakhen') ? '/assets/img/team/menajem.jpg' : '');
+                    const featuredReaderRole = (featuredTeamMember && featuredTeamMember.role)
+                        ? featuredTeamMember.role
                         : 'Servidor / Voz de Aliyot';
+                    const featuredInitials = featuredReaderName.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
                 %>
                 <div class="flex-shrink-0">
                     <div class="d-flex flex-column align-items-center text-center p-3 px-4 rounded-4 shadow-lg" style="background: #191512; border: 2px solid rgba(212, 168, 83, 0.45); min-width: 220px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
                         <div class="position-relative mb-2">
-                            <img src="<%= featuredReaderPhoto %>" alt="<%= featuredReaderName %>" class="rounded-circle" style="width: 88px; height: 88px; object-fit: cover; border: 3px solid #d4a853; box-shadow: 0 6px 15px rgba(0,0,0,0.6);" onerror="this.src='/assets/img/team/menajem.jpg'">
+                            <% if (featuredReaderPhoto) { %>
+                                <img src="<%= featuredReaderPhoto %>" alt="<%= featuredReaderName %>" class="rounded-circle" style="width: 88px; height: 88px; object-fit: cover; border: 3px solid #d4a853; box-shadow: 0 6px 15px rgba(0,0,0,0.6);" onerror="this.style.display='none'; if(this.nextElementSibling){ this.nextElementSibling.style.display='flex'; }">
+                            <% } %>
+                            <div class="rounded-circle align-items-center justify-content-center fw-bold" style="width: 88px; height: 88px; background: linear-gradient(135deg, #2d2318, #191512); color: #d4a853; font-size: 1.5rem; border: 3px solid #d4a853; box-shadow: 0 6px 15px rgba(0,0,0,0.6); display: <%= featuredReaderPhoto ? 'none' : 'flex' %>;">
+                                <%= featuredInitials || '🎙️' %>
+                            </div>
                             <span class="position-absolute bottom-0 end-0 rounded-circle d-flex align-items-center justify-content-center shadow" style="width: 28px; height: 28px; background: #d4a853; color: #1a1a1a; font-size: 0.85rem; transform: translate(15%, 5%); border: 2px solid #191512;" title="Voz de Aliyot">
                                 <i class="bi bi-mic-fill"></i>
                             </span>
@@ -317,7 +351,7 @@
                                                                     <div>
                                                                         <div class="d-flex flex-wrap align-items-center gap-2 mt-1">
                                                                             <span class="text-white-50" style="font-size: 0.74rem;">
-                                                                                <i class="bi bi-mic-fill me-1 text-warning"></i>Lectura por: <strong class="text-white"><%= aud.reader || 'Menajem Ben Leví' %></strong>
+                                                                                <i class="bi bi-mic-fill me-1 text-warning"></i>Lectura por: <strong class="text-white"><%= aud.reader || fallbackCycleReader %></strong>
                                                                             </span>
                                                                             <% if (aud.cycle_name) { %>
                                                                                 <span class="badge rounded-pill bg-black bg-opacity-75 border border-secondary text-warning" style="font-size: 0.68rem; letter-spacing: 0.3px;">

@@ -51,7 +51,7 @@ export const HOLIDAYS_CANONICAL = {
     hebrew: "פֶּסַח",
     torahRef: "Éxodo 12:1-14; Levítico 23:4-5; Números 28:16",
     prophetsRef: "Isaías 53:1-12; 1 Corintios 5:7-8",
-    summary: "Memorial perpetuo de la liberación de Israel de la esclavitud en Egipto mediante la sangre del cordero, cumplido proféticamente en Yeshúa como el Cordero de Elohim que quita el pecado."
+    summary: "Memorial perpetuo de la liberación de Israel de la esclavitud en Egipto mediante la sangre del cordero, cumplido proféticamente en Yeshúa como el Cordero de Elohim que quita el pecado (su crucifixión coincide con el 14 de Abib, calculado en el año 27 o 30 d.C.)."
   },
   hamatzo: {
     key: "hamatzo",

@@ -115,6 +115,7 @@
                         <tr>
                             <th>Nombre del Ciclo</th>
                             <th>Período / Año</th>
+                            <th>Lector Oficial (Aliyot)</th>
                             <th>Fecha de Archivo</th>
                             <th>Contenido Resguardado</th>
                             <th>Estado</th>
@@ -132,6 +133,25 @@
                                     <% } %>
                                 </td>
                                 <td><span class="badge bg-secondary"><%= c.year_label || '-' %></span></td>
+                                <td>
+                                    <form action="/admin/ciclos-tora/update-reader/<%= c.id %>" method="POST" class="d-flex align-items-center gap-1">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <select name="default_reader" class="form-select form-select-sm bg-dark text-white border-secondary" style="min-width: 170px;">
+                                            <option value="">Automático (según audios)</option>
+                                            <% if (typeof team !== 'undefined' && team && team.length > 0) { %>
+                                                <% team.forEach(m => { %>
+                                                    <option value="<%= m.name %>" <%= (c.default_reader === m.name) ? 'selected' : '' %>><%= m.name %></option>
+                                                <% }) %>
+                                            <% } %>
+                                            <% if (c.default_reader && !(typeof team !== 'undefined' && team && team.some(m => m.name === c.default_reader))) { %>
+                                                <option value="<%= c.default_reader %>" selected><%= c.default_reader %></option>
+                                            <% } %>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-outline-info" title="Guardar Lector Oficial del Ciclo">
+                                            <i class="bi bi-check2"></i>
+                                        </button>
+                                    </form>
+                                </td>
                                 <td>
                                     <%= c.archived_at ? new Date(c.archived_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-' %>
                                 </td>
@@ -172,7 +192,7 @@
                             <% }) %>
                         <% } else { %>
                             <tr>
-                                <td colspan="6" class="text-center py-4 text-white-50">
+                                <td colspan="7" class="text-center py-4 text-white-50">
                                     <i class="bi bi-archive fs-2 d-block mb-2 text-secondary"></i>
                                     Aún no hay ciclos archivados. Puedes iniciar el primer pasaje histórico cuando concluya el ciclo de lecturas.
                                 </td>

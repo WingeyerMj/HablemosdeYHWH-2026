@@ -94,8 +94,11 @@ select option:checked, select option:hover {
                             <!-- SECCIÓN DE AUDIOS (Soporta múltiples archivos con Ciclo de Torá y Lector) -->
                             <%
                                 const cycleList = (typeof allCycles !== 'undefined' && allCycles && allCycles.length > 0) ? allCycles : [];
-                                const currCycleName = (typeof currentCycle !== 'undefined' && currentCycle && currentCycle.name) ? currentCycle.name : 'Ciclo 2025 - 2026';
+                                const currCycleName = (typeof currentCycle !== 'undefined' && currentCycle && currentCycle.name) ? currentCycle.name : 'Ciclo Activo';
                                 const teamMembers = (typeof team !== 'undefined' && team && team.length > 0) ? team : [];
+                                const defaultReaderSingle = (typeof activeDefaultReader !== 'undefined' && activeDefaultReader)
+                                    ? activeDefaultReader
+                                    : ((teamMembers[0] && teamMembers[0].name) || 'Servidor / Voz de Aliyot');
                             %>
                             <div class="col-12">
                                 <div class="p-3 rounded border border-secondary" style="background: rgba(255, 255, 255, 0.03);">
@@ -113,7 +116,7 @@ select option:checked, select option:hover {
                                             <% aliyah.audios.forEach((audio, idx) => { %>
                                                 <%
                                                     const audioCycle = audio.cycle_name || aliyah.cycle_name || currCycleName;
-                                                    const audioReader = audio.reader || 'Menajem Ben Leví';
+                                                    const audioReader = audio.reader || defaultReaderSingle;
                                                 %>
                                                 <div class="p-3 rounded-3 bg-black bg-opacity-60 border border-secondary border-opacity-75 shadow-sm existing-audio-card position-relative">
                                                     <input type="hidden" name="existing_audio_urls[]" value="<%= audio.url %>">
@@ -174,16 +177,13 @@ select option:checked, select option:hover {
                                                                 <i class="bi bi-mic-fill"></i> ¿Quién lo hizo? (Lector)
                                                             </label>
                                                             <select name="existing_audio_readers[]" class="form-select form-select-sm bg-dark text-white border-secondary select-reader-field" onchange="toggleCustomInput(this)">
-                                                                <option value="Menajem Ben Leví" <%= (audioReader === 'Menajem Ben Leví') ? 'selected' : '' %>>
-                                                                    🎙️ Menajem Ben Leví (Servidor / Voz anterior)
-                                                                </option>
-                                                                <% teamMembers.filter(m => !m.name.toLowerCase().includes('menajem')).forEach(m => { %>
+                                                                <% teamMembers.forEach(m => { %>
                                                                     <option value="<%= m.name %>" <%= (audioReader === m.name) ? 'selected' : '' %>>
-                                                                        👤 <%= m.name %> <%= m.role ? `(${m.role})` : '' %>
+                                                                        <%= (m.name === defaultReaderSingle) ? '⭐ ' : '👤 ' %><%= m.name %> <%= m.role ? `(${m.role})` : '' %>
                                                                     </option>
                                                                 <% }) %>
-                                                                <% if (audioReader && audioReader !== 'Menajem Ben Leví' && !teamMembers.some(m => m.name === audioReader)) { %>
-                                                                    <option value="<%= audioReader %>" selected>👤 <%= audioReader %></option>
+                                                                <% if (audioReader && !teamMembers.some(m => m.name === audioReader)) { %>
+                                                                    <option value="<%= audioReader %>" selected>🎙️ <%= audioReader %></option>
                                                                 <% } %>
                                                                 <option value="__custom__">➕ Otra persona / Nuevo lector...</option>
                                                             </select>
@@ -263,10 +263,12 @@ select option:checked, select option:hover {
                                                             <i class="bi bi-mic-fill"></i> ¿Quién lo hizo?
                                                         </label>
                                                         <select name="audio_readers[]" class="form-select form-select-sm bg-dark text-white border-secondary select-reader-field" onchange="toggleCustomInput(this)">
-                                                            <option value="Menajem Ben Leví">🎙️ Menajem Ben Leví</option>
-                                                            <% teamMembers.filter(m => !m.name.toLowerCase().includes('menajem')).forEach(m => { %>
-                                                                <option value="<%= m.name %>">👤 <%= m.name %> <%= m.role ? `(${m.role})` : '' %></option>
+                                                            <% teamMembers.forEach(m => { %>
+                                                                <option value="<%= m.name %>" <%= (m.name === defaultReaderSingle) ? 'selected' : '' %>><%= (m.name === defaultReaderSingle) ? '⭐ ' : '👤 ' %><%= m.name %> <%= m.role ? `(${m.role})` : '' %></option>
                                                             <% }) %>
+                                                            <% if (defaultReaderSingle && !teamMembers.some(m => m.name === defaultReaderSingle)) { %>
+                                                                <option value="<%= defaultReaderSingle %>" selected>⭐ <%= defaultReaderSingle %></option>
+                                                            <% } %>
                                                             <option value="__custom__">➕ Otra persona...</option>
                                                         </select>
                                                         <input type="text" class="form-control form-control-sm bg-dark text-white border-info mt-1 custom-field-input d-none" placeholder="Nombre completo...">
@@ -335,10 +337,12 @@ select option:checked, select option:hover {
                                             </div>
                                             <div class="col-md-3">
                                                 <select name="custom_audio_reader" class="form-select form-select-sm bg-dark text-white border-secondary select-reader-field" onchange="toggleCustomInput(this)">
-                                                    <option value="Menajem Ben Leví">🎙️ Menajem Ben Leví</option>
-                                                    <% teamMembers.filter(m => !m.name.toLowerCase().includes('menajem')).forEach(m => { %>
-                                                        <option value="<%= m.name %>">👤 <%= m.name %> <%= m.role ? `(${m.role})` : '' %></option>
+                                                    <% teamMembers.forEach(m => { %>
+                                                        <option value="<%= m.name %>" <%= (m.name === defaultReaderSingle) ? 'selected' : '' %>><%= (m.name === defaultReaderSingle) ? '⭐ ' : '👤 ' %><%= m.name %> <%= m.role ? `(${m.role})` : '' %></option>
                                                     <% }) %>
+                                                    <% if (defaultReaderSingle && !teamMembers.some(m => m.name === defaultReaderSingle)) { %>
+                                                        <option value="<%= defaultReaderSingle %>" selected>⭐ <%= defaultReaderSingle %></option>
+                                                    <% } %>
                                                     <option value="__custom__">➕ Otra persona...</option>
                                                 </select>
                                                 <input type="text" class="form-control form-control-sm bg-dark text-white border-info mt-1 custom-field-input d-none" placeholder="Nombre completo...">
@@ -583,10 +587,12 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
 
     const readerOptionsHtml = `
-        <option value="Menajem Ben Leví">🎙️ Menajem Ben Leví</option>
-        <% teamMembers.filter(m => !m.name.toLowerCase().includes('menajem')).forEach(m => { %>
-            <option value="<%= m.name %>">👤 <%= m.name %> <%= m.role ? `(${m.role})` : '' %></option>
+        <% teamMembers.forEach(m => { %>
+            <option value="<%= m.name %>" <%= (m.name === defaultReaderSingle) ? 'selected' : '' %>><%= (m.name === defaultReaderSingle) ? '⭐ ' : '👤 ' %><%= m.name %> <%= m.role ? `(${m.role})` : '' %></option>
         <% }) %>
+        <% if (defaultReaderSingle && !teamMembers.some(m => m.name === defaultReaderSingle)) { %>
+            <option value="<%= defaultReaderSingle %>" selected>⭐ <%= defaultReaderSingle %></option>
+        <% } %>
         <option value="__custom__">➕ Otra persona...</option>
     `;
 

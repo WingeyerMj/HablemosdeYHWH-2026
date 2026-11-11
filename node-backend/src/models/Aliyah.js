@@ -4,11 +4,24 @@ class Aliyah {
     /**
      * Parsear audio_url a un array estructurado de audios [{ title, url, cycle_name, reader, reader_role, reader_img }]
      */
-    static parseAudios(audio_url) {
+    static parseAudios(audio_url, fallbackReader = '') {
         if (!audio_url || typeof audio_url !== 'string' || audio_url.trim() === '') {
             return [];
         }
         const trimmed = audio_url.trim();
+        const resolveReader = (item) => {
+            if (item && item.reader && String(item.reader).trim() !== '') {
+                return String(item.reader).trim();
+            }
+            if (fallbackReader && String(fallbackReader).trim() !== '') {
+                return String(fallbackReader).trim();
+            }
+            const cName = (item && item.cycle_name ? String(item.cycle_name) : '').toLowerCase();
+            if (cName.includes('2025 - 2026') || cName.includes('2025-2026')) {
+                return 'Menajem Ben Leví';
+            }
+            return '';
+        };
         if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
             try {
                 const parsed = JSON.parse(trimmed);
@@ -19,7 +32,7 @@ class Aliyah {
                             title: item.title || 'Audio de la Lectura',
                             url: item.url.trim(),
                             cycle_name: item.cycle_name || '',
-                            reader: item.reader || 'Menajem Ben Leví',
+                            reader: resolveReader(item),
                             reader_role: item.reader_role || 'Lector de Aliyot',
                             reader_img: item.reader_img || '',
                             gain_db: Number(item.gain_db) || 0
@@ -29,7 +42,7 @@ class Aliyah {
                         title: parsed.title || 'Audio de la Lectura',
                         url: parsed.url.trim(),
                         cycle_name: parsed.cycle_name || '',
-                        reader: parsed.reader || 'Menajem Ben Leví',
+                        reader: resolveReader(parsed),
                         reader_role: parsed.reader_role || 'Lector de Aliyot',
                         reader_img: parsed.reader_img || '',
                         gain_db: Number(parsed.gain_db) || 0
@@ -41,7 +54,7 @@ class Aliyah {
             title: 'Audio de la Lectura', 
             url: trimmed,
             cycle_name: '',
-            reader: 'Menajem Ben Leví',
+            reader: fallbackReader || '',
             reader_role: 'Lector de Aliyot',
             reader_img: '',
             gain_db: 0
@@ -51,7 +64,7 @@ class Aliyah {
     /**
      * Serializar lista de audios a JSON string preservando ciclo, lector y ganancia dB
      */
-    static serializeAudios(audios) {
+    static serializeAudios(audios, fallbackReader = '') {
         if (!audios || !Array.isArray(audios) || audios.length === 0) {
             return '';
         }
@@ -61,7 +74,7 @@ class Aliyah {
                 title: a.title || 'Audio de la Lectura',
                 url: a.url.trim(),
                 cycle_name: a.cycle_name || '',
-                reader: a.reader || 'Menajem Ben Leví',
+                reader: (a.reader && String(a.reader).trim() !== '') ? String(a.reader).trim() : (fallbackReader || ''),
                 reader_role: a.reader_role || '',
                 reader_img: a.reader_img || '',
                 gain_db: Number(a.gain_db) || 0

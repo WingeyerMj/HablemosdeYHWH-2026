@@ -97,8 +97,11 @@
                                 <!-- SECCIÓN DE AUDIOS CON CICLO Y LECTOR -->
                                 <%
                                     const cycleListEdit = (typeof allCycles !== 'undefined' && allCycles && allCycles.length > 0) ? allCycles : [];
-                                    const currCycleNameEdit = (typeof currentCycle !== 'undefined' && currentCycle && currentCycle.name) ? currentCycle.name : 'Ciclo 2025 - 2026';
+                                    const currCycleNameEdit = (typeof currentCycle !== 'undefined' && currentCycle && currentCycle.name) ? currentCycle.name : 'Ciclo Activo';
                                     const teamMembersEdit = (typeof team !== 'undefined' && team && team.length > 0) ? team : [];
+                                    const defaultReaderEdit = (typeof activeDefaultReader !== 'undefined' && activeDefaultReader)
+                                        ? activeDefaultReader
+                                        : ((teamMembersEdit[0] && teamMembersEdit[0].name) || 'Servidor / Voz de Aliyot');
                                 %>
                                 <div class="col-12">
                                     <div class="p-3 rounded border border-secondary" style="background: rgba(255, 255, 255, 0.03);">
@@ -121,7 +124,7 @@
                                                 <% dayAudios.forEach((audio, aIdx) => { %>
                                                     <%
                                                         const aCycle = audio.cycle_name || parasha.cycle_name || currCycleNameEdit;
-                                                        const aReader = audio.reader || 'Menajem Ben Leví';
+                                                        const aReader = audio.reader || defaultReaderEdit;
                                                     %>
                                                     <div class="p-3 rounded-3 bg-black bg-opacity-60 border border-secondary border-opacity-75">
                                                         <input type="hidden" name="existing_audio_urls[]" value="<%= audio.url %>">
@@ -168,12 +171,11 @@
                                                                     <i class="bi bi-mic-fill"></i> ¿Quién lo hizo? (Lector)
                                                                 </label>
                                                                 <select name="existing_audio_readers[]" class="form-select form-select-sm bg-dark text-white border-secondary">
-                                                                    <option value="Menajem Ben Leví" <%= (aReader === 'Menajem Ben Leví') ? 'selected' : '' %>>🎙️ Menajem Ben Leví</option>
-                                                                    <% teamMembersEdit.filter(m => !m.name.toLowerCase().includes('menajem')).forEach(m => { %>
-                                                                        <option value="<%= m.name %>" <%= (aReader === m.name) ? 'selected' : '' %>>👤 <%= m.name %> <%= m.role ? `(${m.role})` : '' %></option>
+                                                                    <% teamMembersEdit.forEach(m => { %>
+                                                                        <option value="<%= m.name %>" <%= (aReader === m.name) ? 'selected' : '' %>><%= (m.name === defaultReaderEdit) ? '⭐ ' : '👤 ' %><%= m.name %> <%= m.role ? `(${m.role})` : '' %></option>
                                                                     <% }) %>
-                                                                    <% if (aReader && aReader !== 'Menajem Ben Leví' && !teamMembersEdit.some(m => m.name === aReader)) { %>
-                                                                        <option value="<%= aReader %>" selected>👤 <%= aReader %></option>
+                                                                    <% if (aReader && !teamMembersEdit.some(m => m.name === aReader)) { %>
+                                                                        <option value="<%= aReader %>" selected>🎙️ <%= aReader %></option>
                                                                     <% } %>
                                                                 </select>
                                                             </div>
@@ -209,10 +211,12 @@
                                             <div class="col-md-2">
                                                 <label class="form-label small text-info mb-1 fw-bold"><i class="bi bi-mic-fill"></i> ¿Quién lo hizo?</label>
                                                 <select name="audio_readers[]" class="form-select form-select-sm bg-dark text-white border-secondary">
-                                                    <option value="Menajem Ben Leví">🎙️ Menajem Ben Leví</option>
-                                                    <% teamMembersEdit.filter(m => !m.name.toLowerCase().includes('menajem')).forEach(m => { %>
-                                                        <option value="<%= m.name %>">👤 <%= m.name %></option>
+                                                    <% teamMembersEdit.forEach(m => { %>
+                                                        <option value="<%= m.name %>" <%= (m.name === defaultReaderEdit) ? 'selected' : '' %>><%= (m.name === defaultReaderEdit) ? '⭐ ' : '👤 ' %><%= m.name %></option>
                                                     <% }) %>
+                                                    <% if (defaultReaderEdit && !teamMembersEdit.some(m => m.name === defaultReaderEdit)) { %>
+                                                        <option value="<%= defaultReaderEdit %>" selected>⭐ <%= defaultReaderEdit %></option>
+                                                    <% } %>
                                                 </select>
                                             </div>
                                         </div>
@@ -241,10 +245,12 @@
                                             <div class="col-md-3">
                                                 <label class="form-label small text-info mb-1"><i class="bi bi-mic-fill"></i> Lector</label>
                                                 <select name="custom_audio_reader" class="form-select form-select-sm bg-dark text-white border-secondary">
-                                                    <option value="Menajem Ben Leví">🎙️ Menajem Ben Leví</option>
-                                                    <% teamMembersEdit.filter(m => !m.name.toLowerCase().includes('menajem')).forEach(m => { %>
-                                                        <option value="<%= m.name %>">👤 <%= m.name %></option>
+                                                    <% teamMembersEdit.forEach(m => { %>
+                                                        <option value="<%= m.name %>" <%= (m.name === defaultReaderEdit) ? 'selected' : '' %>><%= (m.name === defaultReaderEdit) ? '⭐ ' : '👤 ' %><%= m.name %></option>
                                                     <% }) %>
+                                                    <% if (defaultReaderEdit && !teamMembersEdit.some(m => m.name === defaultReaderEdit)) { %>
+                                                        <option value="<%= defaultReaderEdit %>" selected>⭐ <%= defaultReaderEdit %></option>
+                                                    <% } %>
                                                 </select>
                                             </div>
                                         </div>

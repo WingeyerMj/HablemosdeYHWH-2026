@@ -121,8 +121,8 @@ const HISTORICAL_MILESTONES = [
   { year: 1000, label: "1000 (Cambio Milenio)" },
   { year: 500, label: "500 (Era Talmúdica)" },
   { year: 70, label: "70 (Destrucción del Templo)" },
-  { year: 33, label: "33 (Pésaj • Crucifixión)" },
-  { year: 30, label: "30 (Ministerio de Yeshúa)" },
+  { year: 30, label: "30 (Pésaj • 14 de Abib · Crucifixión de Yeshúa)" },
+  { year: 27, label: "27 (Pésaj • 14 de Abib · Crucifixión / Ministerio)" },
   { year: 4, label: "4 (Era Apostólica)" },
   { year: 1, label: "1 (Origen del Conteo)" }
 ];
@@ -545,10 +545,17 @@ function renderCalendar() {
     if (month.index === 0 && isSameDay(gregDate, pesajDate)) {
       const label = document.createElement("div");
       label.className = "holiday-label pesaj-label";
-      label.textContent = "Pesaj";
+      label.textContent = (yearData.year === 27 || yearData.year === 30) ? "Pesaj • 14 Abib" : "Pesaj";
       cell.appendChild(label);
       cell.classList.add("pesaj");
-      dayHolidays.push(HOLIDAYS_CANONICAL.pesaj);
+      if (yearData.year === 27 || yearData.year === 30) {
+        dayHolidays.push({
+          ...HOLIDAYS_CANONICAL.pesaj,
+          summary: `${HOLIDAYS_CANONICAL.pesaj.summary} En el año ${yearData.year} d.C., esta fecha (14 de Abib) coincide con una de las referencias históricas calculadas para la crucifixión de Yeshúa (años 27 o 30).`
+        });
+      } else {
+        dayHolidays.push(HOLIDAYS_CANONICAL.pesaj);
+      }
     }
 
     // Hamatzo (7 días en Mes 1 / Abib)
