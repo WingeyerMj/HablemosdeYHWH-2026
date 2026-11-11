@@ -6,6 +6,7 @@ const { Client } = require('ssh2');
 
 const root = __dirname;
 fs.copyFileSync(path.join(root, 'public/assets/calendar/js/main.js'), path.join(root, 'Calendar/js/main.js'));
+fs.copyFileSync(path.join(root, 'public/assets/calendar/js/calendarEngine.js'), path.join(root, 'Calendar/js/calendarEngine.js'));
 fs.copyFileSync(path.join(root, 'public/assets/calendar/js/parashotEngine.js'), path.join(root, 'Calendar/js/parashotEngine.js'));
 fs.copyFileSync(path.join(root, 'public/assets/calendar/css/style.css'), path.join(root, 'Calendar/css/style.css'));
 const credentialSource = fs.readFileSync(path.join(root, 'check_remote_views.cjs'), 'utf8');
@@ -61,6 +62,7 @@ const files = [
   'public/assets/js/main.js',
   'public/assets/calendar/css/style.css',
   'public/assets/calendar/js/main.js',
+  'public/assets/calendar/js/calendarEngine.js',
   'public/assets/calendar/js/parashotEngine.js',
   'public/assets/calendar/icons/calendar-icon.svg',
   'public/assets/calendar/icons/cal-icon.jpg',
@@ -94,6 +96,7 @@ const files = [
   'Calendar/sw.js',
   'Calendar/css/style.css',
   'Calendar/js/main.js',
+  'Calendar/js/calendarEngine.js',
   'Calendar/js/parashotEngine.js',
   'Calendar/icons/calendar-icon.svg',
   'Calendar/icons/cal-icon.jpg',

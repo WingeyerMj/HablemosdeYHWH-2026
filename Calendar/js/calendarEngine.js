@@ -37,15 +37,12 @@ const yearsMap = {
   2040: lunisolar2040
 };
 
-// ------------------------------------------------------------
-// Motor astronómico de alta precisión Jean Meeus (puro JS cliente/offline)
-// Permite calcular dinámicamente cualquier año retrospectivo hasta el año 1
-// ------------------------------------------------------------
-const D2R = Math.PI / 180;
-const ck = 1 / 1236.85;
-const { sin, cos, floor, round, abs } = Math;
+export function createLunisolarEngine(yearsMap) {
+  const D2R = Math.PI / 180;
+  const ck = 1 / 1236.85;
+  const { sin, cos, floor, round, abs } = Math;
 
-function horner(x, ...coeffs) {
+  function horner(x, ...coeffs) {
   let res = 0;
   for (let i = coeffs.length - 1; i >= 0; i--) {
     res = res * x + coeffs[i];
@@ -285,7 +282,7 @@ function buildDynamicLunisolarYear(year) {
 // 1. Cargar año lunisolar (con cálculo dinámico retrospectivo)
 // ------------------------------------------------------------
 
-export function generateLunisolarYear(year) {
+function generateLunisolarYear(year) {
   const y = parseInt(year, 10);
   if (yearsMap[y]) return yearsMap[y];
   if (isNaN(y) || y < 1 || y > 3500) {
@@ -300,7 +297,7 @@ export function generateLunisolarYear(year) {
 // 2. Obtener vista del mes lunisolar
 // ------------------------------------------------------------
 
-export function getLunisolarMonthView(year, baseMonthIndex, monthOffset) {
+function getLunisolarMonthView(year, baseMonthIndex, monthOffset) {
   let yearData = generateLunisolarYear(year);
 
   // Índice real del mes
@@ -356,3 +353,9 @@ export function getLunisolarMonthView(year, baseMonthIndex, monthOffset) {
     monthIndex: index
   };
 }
+
+  return { generateLunisolarYear, getLunisolarMonthView };
+}
+
+const defaultEngine = createLunisolarEngine(yearsMap);
+export const { generateLunisolarYear, getLunisolarMonthView } = defaultEngine;

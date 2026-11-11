@@ -1,7 +1,6 @@
-import { buildWindowsCalendarPackage } from "./windowsInstaller.js";
 // js/main.js
 
-import { generateLunisolarYear, getLunisolarMonthView } from "./calendarEngine.js";
+import { createLunisolarEngine, generateLunisolarYear, getLunisolarMonthView } from "./calendarEngine.js";
 import { getMoonPhaseInfo } from "./moonPhase.js";
 import {
   getParashaForDate,
@@ -1455,11 +1454,11 @@ function openInstallModal() {
       <div class="cal-install-steps">
         <div class="cal-step-item">
           <span class="cal-step-num">1</span>
-          <div>En la barra de direcciones de tu navegador (arriba a la derecha en Chrome, Edge o Brave), haz clic en el icono <strong>Instalar Calendario YHWH</strong> <span class="cal-inline-ico">🖥️⬇️</span> (o en el menú <strong>⋮ → Guardar y compartir → Instalar página como aplicación</strong>).</div>
+          <div>En <strong>Google Chrome, Microsoft Edge o Brave</strong>, haz clic en el icono <strong>Instalar Calendario YHWH</strong> <span class="cal-inline-ico">🖥️⬇️</span> en la barra de direcciones (arriba a la derecha), o entra en el menú <strong>⋮ / ⋯ → Aplicaciones (o Guardar y compartir) → Instalar este sitio como aplicación</strong>.</div>
         </div>
         <div class="cal-step-item">
           <span class="cal-step-num">2</span>
-          <div>Confirma haciendo clic en <strong>"Instalar"</strong>. Se creará un acceso directo en tu Escritorio y Menú Inicio, y abrirá en su propia ventana sin necesitar conexión a internet.</div>
+          <div>Confirma en <strong>"Instalar"</strong>. El propio navegador creará el acceso directo con el logo en tu <strong>Escritorio y Menú Inicio</strong> para abrirlo sin internet, <strong>100% libre de bloqueos de Windows Defender</strong>.</div>
         </div>
       </div>
     `;
@@ -1471,7 +1470,7 @@ function openInstallModal() {
       <div>
         <div class="cal-modal-badges">
           <span class="cal-pill gold">📲 Software 100% Sin Conexión</span>
-          <span class="cal-pill cyan">Años 2025 – 2040 Incluidos</span>
+          <span class="cal-pill cyan">Años 1 – 2040 (Hitos Retrospectivos)</span>
         </div>
         <h3 id="cal-modal-title" class="cal-modal-main-title">Instalar Calendario en tu Dispositivo</h3>
         <p class="cal-modal-gregorian">Crea un acceso directo en tu Escritorio o pantalla de inicio para abrir el calendario sin conexión a internet.</p>
@@ -1490,8 +1489,8 @@ function openInstallModal() {
 
     ${promptEvent ? `
       <div class="cal-detail-section" style="text-align:center; border-left: 4px solid #d4a853;">
-        <h4 class="cal-detail-heading">Opción 1: Instalar Aplicación Directa (Recomendado)</h4>
-        <p class="cal-detail-text">Crea automáticamente la aplicación <strong>Calendario YHWH</strong> en tu dispositivo:</p>
+        <h4 class="cal-detail-heading">Opción 1: Instalar Aplicación Directa con Logo (Recomendado · Sin Bloqueos)</h4>
+        <p class="cal-detail-text">Instala la aplicación <strong>Calendario YHWH</strong> directo desde el navegador con su logo en el Escritorio y Menú Inicio (Windows Defender no la bloquea):</p>
         <button type="button" id="modal-direct-install-btn" class="cal-primary-install-btn">
           📲 Instalar Aplicación Ahora (1 Clic)
         </button>
@@ -1505,25 +1504,25 @@ function openInstallModal() {
       </div>
     ` : ""}
 
-    <div class="cal-detail-section portable-box">
-      <div class="cal-detail-badge-row">
-        <span class="cal-pill gold">🖥️ Acceso Directo Portable (100% Sin Internet)</span>
-      </div>
-      <h4 class="cal-detail-heading">${isMobile ? "Opción Alternativa: Descargar Archivo Offline (.html)" : (promptEvent ? "Opción 2: Guardar Programa Autónomo en el Escritorio" : "Opción 1: Descargar Calendario para Escritorio (Windows / PC)")}</h4>
-      <p class="cal-detail-text">
-        En Windows, descarga el paquete ZIP, extrae todos sus archivos y abre <strong>Instalar Calendario.cmd</strong>. Se crean accesos con el logo en el Escritorio y en el menú Inicio:
-      </p>
-      <button type="button" id="modal-download-portable-btn" class="cal-primary-install-btn">
-        🖥️ Descargar Calendario para Escritorio
-      </button>
-    </div>
-
     ${!promptEvent && !isMobile ? `
-      <div class="cal-detail-section">
-        <h4 class="cal-detail-heading">Opción 2: Instalar como App desde el Navegador</h4>
+      <div class="cal-detail-section" style="border-left: 4px solid #d4a853;">
+        <h4 class="cal-detail-heading">Opción 1: Instalar con Logo en Escritorio y Menú Inicio (Recomendado · Sin Bloqueos)</h4>
         ${platformStepsHtml}
       </div>
     ` : ""}
+
+    <div class="cal-detail-section portable-box">
+      <div class="cal-detail-badge-row">
+        <span class="cal-pill gold">🖥️ Archivo Portable Directo (.html · Sin Bloqueos de Windows Defender)</span>
+      </div>
+      <h4 class="cal-detail-heading">${isMobile ? "Opción Alternativa: Descargar Archivo Offline (.html)" : "Opción 2: Guardar Calendario Portable Sin Internet (.html)"}</h4>
+      <p class="cal-detail-text">
+        Descarga un único archivo <strong>Calendario Lunisolar YHWH.html</strong> directo en tu Escritorio (sin ZIP ni scripts <code>.cmd</code>, por lo que <strong>Windows Defender no lo bloquea</strong>). Incluye todos los años retrospectivos del 1 al 2040+ y el nuevo fondo incorporado:
+      </p>
+      <button type="button" id="modal-download-portable-btn" class="cal-primary-install-btn">
+        💾 Descargar Calendario Portable (.html)
+      </button>
+    </div>
 
     <div class="cal-detail-section install-status-box">
       <div class="cal-install-ready-row">
@@ -1531,7 +1530,7 @@ function openInstallModal() {
         <div>
           <strong>Memoria sin conexión activada en este navegador</strong>
           <p class="cal-detail-text" style="margin-top:4px;">
-            Todos los meses lunisolares (2025–2040), fases de la luna, cuenta del Omer, Moedim (Festividades) y las 54 Parashot ya están guardados en tu dispositivo.
+            Incluye el calendario vigente (2025–2040), cálculo astronómico retrospectivo (Año 1 al 2040, hitos 27 y 30 d.C.), fases lunares, Moedim, Omer y las 54 Parashot sin conexión a internet.
           </p>
         </div>
       </div>
@@ -1564,12 +1563,26 @@ async function downloadStandaloneCalendarApp() {
   }
 
   try {
-    // Recopilar el CSS del calendario desde las hojas de estilo cargadas o desde /assets/calendar/css/style.css
+    const fetchFirstOk = async (urls) => {
+      for (const u of urls) {
+        try {
+          const r = await fetch(u);
+          if (r.ok) return r;
+        } catch (e) {}
+      }
+      return null;
+    };
+    const blobToDataUrl = blob => new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result || "");
+      reader.onerror = () => resolve("");
+      reader.readAsDataURL(blob);
+    });
+
+    // Recopilar el CSS del calendario desde /assets/calendar/css/style.css o ./css/style.css
     let cssText = "";
-    try {
-      const res = await fetch("/assets/calendar/css/style.css");
-      if (res.ok) cssText = await res.text();
-    } catch (e) {}
+    const cssRes = await fetchFirstOk(["/assets/calendar/css/style.css", "./css/style.css"]);
+    if (cssRes) cssText = await cssRes.text();
 
     if (!cssText) {
       for (const sheet of Array.from(document.styleSheets)) {
@@ -1583,24 +1596,44 @@ async function downloadStandaloneCalendarApp() {
     }
 
     const yearsJson = JSON.stringify(allYearsData);
+    const milestonesJson = JSON.stringify(HISTORICAL_MILESTONES);
     const holidaysJson = JSON.stringify(HOLIDAYS_CANONICAL);
     const parashotJson = JSON.stringify(PARASHOT_CANONICAL);
     const pairsJson = JSON.stringify(PAIRS_COMBINABLE);
 
-    // Incrustar el icono/logo del calendario en base64 para que el archivo del Escritorio lo muestre sin internet
+    // Incrustar el icono/logo y el fondo nuevo del calendario en base64 para 100% uso sin internet
     let iconDataUrl = "";
-    try {
-      const iconRes = await fetch("/assets/calendar/icons/icon-192.png?v=calicon1");
-      if (iconRes.ok) {
-        const iconBlob = await iconRes.blob();
-        iconDataUrl = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result || "");
-          reader.onerror = () => resolve("");
-          reader.readAsDataURL(iconBlob);
-        });
-      }
-    } catch (e) {}
+    const iconRes = await fetchFirstOk(["/assets/calendar/icons/icon-192.png?v=calicon1", "./icons/icon-192.png?v=calicon1"]);
+    if (iconRes) iconDataUrl = await blobToDataUrl(await iconRes.blob());
+
+    let bgDataUrl = "";
+    const bgRes = await fetchFirstOk(["/assets/calendar/img/fondo-calendario.png", "./img/fondo-calendario.png"]);
+    if (bgRes) bgDataUrl = await blobToDataUrl(await bgRes.blob());
+
+    if (bgDataUrl) {
+      cssText = cssText.replace(/url\(["']?\.\.\/img\/fondo-calendario\.png["']?\)/g, `url("${bgDataUrl}")`);
+    }
+    const standaloneBgCss = bgDataUrl ? `
+    body.calendar-page.pwa-standalone,
+    body.calendar-page.pwa-standalone .main,
+    body.calendar-page.pwa-standalone .section {
+      min-height: 100vh;
+      background-color: var(--bg) !important;
+      background-image:
+        linear-gradient(180deg, rgba(8, 10, 16, 0.35) 0%, rgba(8, 10, 16, 0.25) 45%, rgba(8, 10, 16, 0.55) 100%),
+        url("${bgDataUrl}") !important;
+      background-size: cover !important;
+      background-position: center center !important;
+      background-repeat: no-repeat !important;
+      background-attachment: fixed !important;
+    }
+    :root[data-theme="light"] body.calendar-page.pwa-standalone,
+    :root[data-theme="light"] body.calendar-page.pwa-standalone .main,
+    :root[data-theme="light"] body.calendar-page.pwa-standalone .section {
+      background-image:
+        linear-gradient(180deg, rgba(66, 50, 36, 0.52) 0%, rgba(78, 61, 47, 0.62) 100%),
+        url("${bgDataUrl}") !important;
+    }` : "";
 
     const standaloneHtml = `<!DOCTYPE html>
 <html lang="es" data-theme="dark">
@@ -1611,9 +1644,12 @@ async function downloadStandaloneCalendarApp() {
   ${iconDataUrl ? `<link rel="icon" type="image/png" href="${iconDataUrl}" />` : ""}
   <style>
 ${cssText}
+${standaloneBgCss}
   </style>
 </head>
 <body class="calendar-page dark pwa-standalone">
+  <main class="main">
+  <section class="section">
   <div class="calendar-container">
     <button id="theme-toggle" class="theme-toggle" aria-label="Cambiar tema">
       <svg class="icon moon" viewBox="0 0 24 24" fill="none">
@@ -1676,9 +1712,12 @@ ${cssText}
       </div>
     </div>
   </div>
+  </section>
+  </main>
 
   <script>
     const allYearsData = ${yearsJson};
+    const HISTORICAL_MILESTONES = ${milestonesJson};
     const HOLIDAYS_CANONICAL = ${holidaysJson};
     const PARASHOT_CANONICAL = ${parashotJson};
     const PAIRS_COMBINABLE = ${pairsJson};
@@ -1695,38 +1734,8 @@ ${cssText}
       return { illumination: Math.round((1 - Math.cos((2 * Math.PI * phase) / synodicMonth)) * 50) };
     }
 
-    function generateLunisolarYear(year) {
-      return yearsMap[year] || allYearsData[0];
-    }
-
-    function getLunisolarMonthView(year, baseMonthIndex, monthOffset) {
-      let yearData = generateLunisolarYear(year);
-      let index = baseMonthIndex + monthOffset;
-      while (index >= yearData.months.length) {
-        index -= yearData.months.length;
-        year++;
-        yearData = generateLunisolarYear(year);
-      }
-      while (index < 0) {
-        year--;
-        yearData = generateLunisolarYear(year);
-        index += yearData.months.length;
-      }
-      const month = yearData.months[index];
-      const rj = new Date(month.roshJodes);
-      const start = new Date(Date.UTC(2000, rj.getUTCMonth(), rj.getUTCDate()));
-      start.setUTCFullYear(rj.getUTCFullYear());
-      const nxt = new Date(month.next);
-      const end = new Date(Date.UTC(2000, nxt.getUTCMonth(), nxt.getUTCDate()));
-      end.setUTCFullYear(nxt.getUTCFullYear());
-      const days = [];
-      let cursor = new Date(start);
-      while (cursor <= end) {
-        days.push(new Date(cursor));
-        cursor.setUTCDate(cursor.getUTCDate() + 1);
-      }
-      return { yearData, month: { ...month, days }, monthIndex: index };
-    }
+    ${createLunisolarEngine.toString()}
+    const { generateLunisolarYear, getLunisolarMonthView } = createLunisolarEngine(yearsMap);
 
     function toDateKey(d) {
       return d.getUTCFullYear() + "-" + String(d.getUTCMonth() + 1).padStart(2, "0") + "-" + String(d.getUTCDate()).padStart(2, "0");
@@ -1844,12 +1853,41 @@ ${cssText}
 
     function populateYearSelect() {
       yearSelectEl.innerHTML = "";
+      const standardYears = allYearsData.map(y => y.year);
+      const milestoneYears = HISTORICAL_MILESTONES.map(h => h.year);
+      if (!standardYears.includes(currentYear) && !milestoneYears.includes(currentYear)) {
+        const customOpt = document.createElement("option");
+        customOpt.value = currentYear;
+        customOpt.textContent = "📅 Año " + currentYear;
+        customOpt.selected = true;
+        yearSelectEl.appendChild(customOpt);
+      }
+      const groupStd = document.createElement("optgroup");
+      groupStd.label = "Calendario Vigente (2025 - 2040)";
       allYearsData.forEach(y => {
         const opt = document.createElement("option");
-        opt.value = y.year; opt.textContent = y.year;
+        opt.value = y.year;
+        opt.textContent = "Año " + y.year;
         if (y.year === currentYear) opt.selected = true;
-        yearSelectEl.appendChild(opt);
+        groupStd.appendChild(opt);
       });
+      yearSelectEl.appendChild(groupStd);
+
+      const groupHist = document.createElement("optgroup");
+      groupHist.label = "Hitos Retrospectivos (Año 1 al 2000)";
+      HISTORICAL_MILESTONES.filter(h => h.year < 2025).forEach(h => {
+        const opt = document.createElement("option");
+        opt.value = h.year;
+        opt.textContent = "Año " + h.label;
+        if (h.year === currentYear) opt.selected = true;
+        groupHist.appendChild(opt);
+      });
+      yearSelectEl.appendChild(groupHist);
+
+      const searchOpt = document.createElement("option");
+      searchOpt.value = "custom";
+      searchOpt.textContent = "🔍 Ir a otro año (del 1 al 2040)...";
+      yearSelectEl.appendChild(searchOpt);
     }
     function populateMonthSelect(year, selIdx) {
       const yData = generateLunisolarYear(year);
@@ -1865,9 +1903,32 @@ ${cssText}
     populateMonthSelect(currentYear, baseLunisolarMonthIndex);
 
     yearSelectEl.addEventListener("change", e => {
-      currentYear = parseInt(e.target.value, 10);
-      baseLunisolarMonthIndex = 0; currentMonthOffset = 0;
-      populateMonthSelect(currentYear, 0); renderCalendar();
+      if (e.target.value === "custom") {
+        const input = prompt("Ingresa el año lunisolar a calcular (del 1 al 2040):", currentYear);
+        if (input) {
+          const selectedYear = parseInt(input.trim(), 10);
+          if (!isNaN(selectedYear) && selectedYear >= 1 && selectedYear <= 3500) {
+            currentYear = selectedYear;
+            baseLunisolarMonthIndex = 0;
+            currentMonthOffset = 0;
+            populateYearSelect();
+            populateMonthSelect(currentYear, 0);
+            renderCalendar();
+            return;
+          } else {
+            alert("Por favor ingresa un número de año válido (entre 1 y 2040).");
+          }
+        }
+        populateYearSelect();
+        return;
+      }
+      const selectedYear = parseInt(e.target.value, 10);
+      if (selectedYear) {
+        currentYear = selectedYear;
+        baseLunisolarMonthIndex = 0; currentMonthOffset = 0;
+        populateYearSelect();
+        populateMonthSelect(currentYear, 0); renderCalendar();
+      }
     });
     monthSelectEl.addEventListener("change", e => {
       baseLunisolarMonthIndex = parseInt(e.target.value, 10);
@@ -1936,7 +1997,7 @@ ${cssText}
       const { yearData, month, monthIndex } = getLunisolarMonthView(currentYear, baseLunisolarMonthIndex, currentMonthOffset);
       titleEl.textContent = month.name;
       currentYear = yearData.year;
-      yearSelectEl.value = yearData.year;
+      populateYearSelect();
       populateMonthSelect(yearData.year, monthIndex);
       const firstDay = month.days[0], lastDay = month.days[month.days.length - 1];
       subtitleEl.innerHTML = '<div class="subtitle-dates">Rosh Hashaná: ' + formatLatam(yearData.roshHashana) + ' | Mes: ' + formatLatam(firstDay) + ' a ' + formatLatam(lastDay) + '</div>';
@@ -1975,7 +2036,16 @@ ${cssText}
         const msPerDay = 86400000;
         const hamatzoDiff = Math.round((gregDate - hamatzoDate) / msPerDay);
         const sukkotDiff = Math.round((gregDate - sukkotDate) / msPerDay);
-        if (month.index === 0 && isSameDay(gregDate, pesajDate)) { cell.classList.add("pesaj"); cell.insertAdjacentHTML("beforeend", '<div class="holiday-label pesaj-label">Pesaj</div>'); dayHolidays.push(HOLIDAYS_CANONICAL.pesaj); }
+        if (month.index === 0 && isSameDay(gregDate, pesajDate)) {
+          cell.classList.add("pesaj");
+          const pLabel = (yearData.year === 27 || yearData.year === 30) ? "Pesaj • 14 Abib" : "Pesaj";
+          cell.insertAdjacentHTML("beforeend", '<div class="holiday-label pesaj-label">' + pLabel + '</div>');
+          if (yearData.year === 27 || yearData.year === 30) {
+            dayHolidays.push({ ...HOLIDAYS_CANONICAL.pesaj, summary: HOLIDAYS_CANONICAL.pesaj.summary + " En el año " + yearData.year + " d.C., esta fecha (14 de Abib) coincide con una de las referencias históricas calculadas para la crucifixión de Yeshúa (años 27 o 30)." });
+          } else {
+            dayHolidays.push(HOLIDAYS_CANONICAL.pesaj);
+          }
+        }
         if (month.index === 0 && hamatzoDiff >= 0 && hamatzoDiff < 7) { cell.classList.add("hamatzo"); if (hamatzoDiff === 0) cell.insertAdjacentHTML("beforeend", '<div class="holiday-label hamatzo-label">Hamatzo</div>'); dayHolidays.push(HOLIDAYS_CANONICAL.hamatzo); }
         if (month.index === 0 && isSameDay(gregDate, bikurimDate)) { cell.classList.add("bikurim"); cell.insertAdjacentHTML("beforeend", '<div class="holiday-label bikurim-label">Bikurim</div>'); dayHolidays.push(HOLIDAYS_CANONICAL.bikurim); }
         if (month.index === 6 && isSameDay(gregDate, yomTeruahDate)) { cell.classList.add("yomteruah"); cell.insertAdjacentHTML("beforeend", '<div class="holiday-label yomteruah-label">Yom Teruah</div>'); dayHolidays.push(HOLIDAYS_CANONICAL.yomTeruah); }
@@ -2052,7 +2122,11 @@ ${cssText}
         const msPerDay = 86400000;
         const hamatzoDiff = Math.round((gregDate - hamatzoDate) / msPerDay);
         const sukkotDiff = Math.round((gregDate - sukkotDate) / msPerDay);
-        if (month.index === 0 && isSameDay(gregDate, pesajDate)) { cell.classList.add("pesaj"); cell.insertAdjacentHTML("beforeend", '<div class="holiday-label pesaj-label">Pesaj</div>'); }
+        if (month.index === 0 && isSameDay(gregDate, pesajDate)) {
+          cell.classList.add("pesaj");
+          const pLabel = (yearData.year === 27 || yearData.year === 30) ? "Pesaj • 14 Abib" : "Pesaj";
+          cell.insertAdjacentHTML("beforeend", '<div class="holiday-label pesaj-label">' + pLabel + '</div>');
+        }
         if (month.index === 0 && hamatzoDiff >= 0 && hamatzoDiff < 7) { cell.classList.add("hamatzo"); if (hamatzoDiff === 0) cell.insertAdjacentHTML("beforeend", '<div class="holiday-label hamatzo-label">Hamatzo</div>'); }
         if (month.index === 0 && isSameDay(gregDate, bikurimDate)) { cell.classList.add("bikurim"); cell.insertAdjacentHTML("beforeend", '<div class="holiday-label bikurim-label">Bikurim</div>'); }
         if (month.index === 6 && isSameDay(gregDate, yomTeruahDate)) { cell.classList.add("yomteruah"); cell.insertAdjacentHTML("beforeend", '<div class="holiday-label yomteruah-label">Yom Teruah</div>'); }
@@ -2143,21 +2217,6 @@ ${cssText}
 </body>
 </html>`;
 
-    // Windows needs an actual shortcut with an ICO; an HTML file always uses its associated browser icon.
-    if (/Windows/i.test(navigator.userAgent)) {
-      const iconResponse = await fetch('/assets/calendar/icons/calendar.ico?v=desktop-logo1');
-      if (!iconResponse.ok) throw new Error('No se pudo descargar el icono del calendario.');
-      const packageBlob = buildWindowsCalendarPackage(standaloneHtml, await iconResponse.arrayBuffer());
-      const packageUrl = URL.createObjectURL(packageBlob);
-      const link = document.createElement('a');
-      link.href = packageUrl;
-      link.download = 'Calendario-YHWH-Windows.zip';
-      document.body.appendChild(link); link.click(); link.remove();
-      setTimeout(() => URL.revokeObjectURL(packageUrl), 30000);
-      const bodyEl = document.getElementById('cal-modal-body');
-      if (bodyEl) bodyEl.innerHTML = '<div class="cal-modal-header"><h3 class="cal-modal-main-title">Paquete de Windows descargado</h3></div><div class="cal-detail-section"><p class="cal-detail-text">Extrae todos los archivos de <strong>Calendario-YHWH-Windows.zip</strong> y abre <strong>Instalar Calendario.cmd</strong>. Se crearán accesos con el logo en el Escritorio y en el menú Inicio. Luego puedes abrir el calendario sin internet.</p></div>';
-      return;
-    }
     const blob = new Blob([standaloneHtml], { type: "text/html;charset=utf-8" });
 
     // Si el navegador en PC soporta showSaveFilePicker, abrir directamente en la carpeta Escritorio (Desktop)
@@ -2197,6 +2256,10 @@ ${cssText}
     setTimeout(() => URL.revokeObjectURL(url), 1500);
     try { localStorage.setItem("yhwhCalendarInstalled", "1"); } catch (e) {}
     hideFloatingInstallButton();
+    const bodyEl = document.getElementById("cal-modal-body");
+    if (bodyEl) {
+      bodyEl.innerHTML = '<div class="cal-modal-header"><h3 class="cal-modal-main-title">✅ Calendario Portable Guardado</h3></div><div class="cal-detail-section install-status-box"><p class="cal-detail-text">Se descargó <strong>Calendario Lunisolar YHWH.html</strong> (sin archivos .cmd ni bloqueos de Windows Defender). Puedes moverlo a tu Escritorio y abrirlo en cualquier momento sin internet, con los años retrospectivos (1 al 2040+) y el nuevo fondo incorporado.</p></div>';
+    }
   } catch (err) {
     console.error("Error empaquetando HTML autónomo:", err);
   } finally {
