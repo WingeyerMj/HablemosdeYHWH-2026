@@ -32,6 +32,7 @@
     <% } %>
 
     <form action="/admin/semillas-manualidades/update" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="id" value="<%= item.id %>">
         
         <div class="row g-4">

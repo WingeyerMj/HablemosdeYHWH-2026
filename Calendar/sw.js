@@ -1,5 +1,5 @@
 // Service Worker — Carpeta Autónoma Calendar/
-const CACHE_NAME = 'yhwh-calendario-standalone-v11';
+const CACHE_NAME = 'yhwh-calendario-standalone-v12';
 
 const ASSETS = [
   './',
@@ -32,7 +32,8 @@ const ASSETS = [
   './icons/cal-icon.jpg',
   './icons/icon-192.png',
   './icons/icon-512.png',
-  './icons/apple-touch-icon.png'
+  './icons/apple-touch-icon.png',
+  './img/fondo-calendario.png'
 ];
 
 self.addEventListener('install', (event) => {

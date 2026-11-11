@@ -1,5 +1,5 @@
 // Service Worker — Calendario Lunisolar Hablemos de YHWH (100% Offline PWA)
-const CACHE_NAME = 'yhwh-calendario-pwa-v17';
+const CACHE_NAME = 'yhwh-calendario-pwa-v18';
 
 async function safeCachePut(cache, key, response) {
   try {
@@ -70,6 +70,7 @@ const CORE_CALENDAR_ASSETS = [
   '/assets/calendar/icons/icon-192.png',
   '/assets/calendar/icons/icon-512.png',
   '/assets/calendar/icons/apple-touch-icon.png',
+  '/assets/calendar/img/fondo-calendario.png',
   // Plantilla general del sitio (necesaria para que la página nunca quede "pensando")
   '/assets/css/main.css',
   '/assets/js/main.js',

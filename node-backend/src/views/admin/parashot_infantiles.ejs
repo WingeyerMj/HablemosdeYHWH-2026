@@ -189,6 +189,7 @@
                             </td>
                             <td>
                                 <form action="/admin/parashot-infantiles/toggle/<%= item.id %>" method="POST" class="d-inline">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                     <button type="submit" class="btn btn-sm <%= item.is_published ? 'btn-success' : 'btn-outline-secondary' %> rounded-pill px-3 py-0" style="font-size: 0.75rem;">
                                         <%= item.is_published ? 'Publicada' : 'Borrador' %>
                                     </button>
@@ -199,7 +200,8 @@
                                     <a href="/admin/parashot-infantiles/edit/<%= item.id %>" class="btn btn-sm btn-outline-primary" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form action="/admin/parashot-infantiles/delete/<%= item.id %>" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta parashá infantil y su PDF?');">
+                                    <form action="/admin/parashot-infantiles/delete/<%= item.id %>" method="POST" class="d-inline swal-delete-form" data-confirm-title="¿Eliminar Parashá Infantil?" data-confirm-text="Se eliminará «<%= item.title %>» y su PDF de forma permanente.">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
                                             <i class="bi bi-trash"></i>
                                         </button>
@@ -225,6 +227,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form action="/admin/parashot-infantiles/create" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <div class="modal-body p-4">
                     <div class="row g-3">
                         

@@ -224,6 +224,7 @@
                             </td>
                             <td>
                                 <form action="/admin/semillas-manualidades/toggle/<%= item.id %>" method="POST" class="d-inline">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                     <button type="submit" class="btn btn-sm <%= item.is_approved ? 'btn-success' : 'btn-outline-secondary' %> rounded-pill px-3 py-0" style="font-size: 0.75rem;">
                                         <%= item.is_approved ? 'Visible' : 'Oculto' %>
                                     </button>
@@ -234,7 +235,8 @@
                                     <a href="/admin/semillas-manualidades/edit/<%= item.id %>" class="btn btn-sm btn-outline-primary" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form action="/admin/semillas-manualidades/delete/<%= item.id %>" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar esta actividad/manualidad?');">
+                                    <form action="/admin/semillas-manualidades/delete/<%= item.id %>" method="POST" class="d-inline swal-delete-form" data-confirm-title="¿Eliminar actividad/manualidad?" data-confirm-text="Se eliminará «<%= item.title %>» de forma permanente.">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
                                             <i class="bi bi-trash"></i>
                                         </button>
@@ -261,6 +263,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form action="/admin/semillas-manualidades/create" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-md-8">

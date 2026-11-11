@@ -621,7 +621,149 @@
         <%- body %>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <%- include('partials/_share_modal') %>
+
+    <!-- Global SweetAlert2 Delete Confirmation, Flash Alerts & CSRF Safety Net -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = csrfMeta ? csrfMeta.content : '';
+
+        // 1. Defensive CSRF injection on any POST form missing _csrf
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            if (!form || form.tagName !== 'FORM') return;
+            const method = (form.getAttribute('method') || 'GET').toUpperCase();
+            if (method !== 'POST' || !csrfToken) return;
+            if (!form.querySelector('input[name="_csrf"]')) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = '_csrf';
+                input.value = csrfToken;
+                form.prepend(input);
+            }
+        }, true);
+
+        // 2. SweetAlert2 confirmation & result alert for delete forms
+        document.addEventListener('submit', async function(e) {
+            const form = e.target;
+            if (!form || !form.classList || !form.classList.contains('swal-delete-form')) return;
+            e.preventDefault();
+
+            const title = form.getAttribute('data-confirm-title') || '¿Estás seguro de eliminar?';
+            const text = form.getAttribute('data-confirm-text') || 'Esta acción no se puede deshacer.';
+
+            if (typeof Swal === 'undefined') {
+                if (window.confirm(text)) form.submit();
+                return;
+            }
+
+            const decision = await Swal.fire({
+                title: title,
+                text: text,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#475569',
+                background: '#16181d',
+                color: '#ffffff',
+                reverseButtons: true,
+                focusCancel: true
+            });
+
+            if (!decision.isConfirmed) return;
+
+            Swal.fire({
+                title: 'Eliminando...',
+                text: 'Por favor espera un momento.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                background: '#16181d',
+                color: '#ffffff',
+                didOpen: () => Swal.showLoading()
+            });
+
+            try {
+                const formData = new FormData(form);
+                if (csrfToken && !formData.has('_csrf')) {
+                    formData.append('_csrf', csrfToken);
+                }
+
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    body: new URLSearchParams(formData)
+                });
+
+                if (!response.ok) {
+                    const errBody = await response.text().catch(() => '');
+                    throw new Error(errBody || ('Error HTTP ' + response.status));
+                }
+
+                let finalMsg = 'Elemento eliminado correctamente.';
+                let finalError = '';
+                try {
+                    const finalUrl = new URL(response.url, window.location.origin);
+                    finalError = finalUrl.searchParams.get('error') || '';
+                    if (finalUrl.searchParams.get('msg')) {
+                        finalMsg = finalUrl.searchParams.get('msg');
+                    }
+                } catch (_) {}
+
+                if (finalError) {
+                    throw new Error(finalError);
+                }
+
+                await Swal.fire({
+                    icon: 'success',
+                    title: '¡Eliminado!',
+                    text: finalMsg,
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#22c55e',
+                    background: '#16181d',
+                    color: '#ffffff'
+                });
+                window.location.reload();
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al eliminar',
+                    text: err && err.message ? err.message : 'No se pudo completar la eliminación.',
+                    confirmButtonText: 'Entendido',
+                    confirmButtonColor: '#d4b895',
+                    background: '#16181d',
+                    color: '#ffffff'
+                });
+            }
+        });
+
+        // 3. Show SweetAlert2 for ?msg= or ?error= query params on admin pages
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const msg = params.get('msg');
+            const err = params.get('error');
+            if ((msg || err) && typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: err ? 'error' : 'success',
+                    title: err ? 'Ocurrió un error' : '¡Operación exitosa!',
+                    text: err || msg,
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: err ? '#dc2626' : '#22c55e',
+                    background: '#16181d',
+                    color: '#ffffff'
+                });
+                params.delete('msg');
+                params.delete('error');
+                const cleanUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '') + window.location.hash;
+                window.history.replaceState({}, document.title, cleanUrl);
+            }
+        } catch (_) {}
+    });
+    </script>
 
     <!-- Global Mobile Sidebar Toggle Script -->
     <script>
