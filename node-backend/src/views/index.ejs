@@ -10,7 +10,11 @@
             <main class="main">
 
                 <!-- Hero Section -->
-                <section id="hero" class="hero section dark-background" style="<%= (sections.Hero && sections.Hero.image_url) ? `background: url('${sections.Hero.image_url}') center center / cover no-repeat !important;` : '' %>">
+                <section id="hero" class="hero section dark-background">
+                    <div class="hero-bg-animated" style="background-image: url('<%= (sections.Hero && sections.Hero.image_url) ? sections.Hero.image_url : "/assets/img/hero-bg.png" %>');"></div>
+                    <div class="hero-sunrays-overlay" aria-hidden="true"></div>
+                    <div class="hero-mist-overlay" aria-hidden="true"></div>
+                    <canvas id="heroParticlesCanvas" class="hero-particles-canvas" aria-hidden="true"></canvas>
                     <div class="container text-center">
                         <div class="row justify-content-center" data-aos="zoom-out">
                             <div class="col-lg-10 col-xl-9">
@@ -2155,6 +2159,100 @@
             </style>
 
             <%- include('partials/footer') %>
+
+            <script>
+                (function () {
+                    const canvas = document.getElementById('heroParticlesCanvas');
+                    if (!canvas) return;
+                    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+                    const ctx = canvas.getContext('2d');
+                    if (!ctx) return;
+
+                    let width = 0;
+                    let height = 0;
+                    let animationId = null;
+                    let isVisible = true;
+                    const PARTICLE_COUNT = 28;
+                    const particles = [];
+
+                    function resize() {
+                        const rect = canvas.parentElement.getBoundingClientRect();
+                        width = canvas.width = Math.max(1, Math.floor(rect.width));
+                        height = canvas.height = Math.max(1, Math.floor(rect.height));
+                    }
+
+                    function createParticle(randomY) {
+                        return {
+                            x: Math.random() * width,
+                            y: randomY ? Math.random() * height : height + 10,
+                            radius: 1.1 + Math.random() * 2.2,
+                            speedY: 0.18 + Math.random() * 0.35,
+                            drift: (Math.random() - 0.5) * 0.25,
+                            phase: Math.random() * Math.PI * 2,
+                            alpha: 0.25 + Math.random() * 0.45
+                        };
+                    }
+
+                    resize();
+                    for (let i = 0; i < PARTICLE_COUNT; i++) {
+                        particles.push(createParticle(true));
+                    }
+
+                    window.addEventListener('resize', resize, { passive: true });
+
+                    if ('IntersectionObserver' in window) {
+                        const observer = new IntersectionObserver((entries) => {
+                            isVisible = entries[0].isIntersecting;
+                            if (isVisible && !animationId && !document.hidden) {
+                                animationId = requestAnimationFrame(render);
+                            }
+                        }, { threshold: 0.05 });
+                        observer.observe(canvas.parentElement);
+                    }
+
+                    document.addEventListener('visibilitychange', () => {
+                        if (!document.hidden && isVisible && !animationId) {
+                            animationId = requestAnimationFrame(render);
+                        }
+                    });
+
+                    function render() {
+                        if (!isVisible || document.hidden) {
+                            animationId = null;
+                            return;
+                        }
+
+                        ctx.clearRect(0, 0, width, height);
+
+                        for (let i = 0; i < particles.length; i++) {
+                            const p = particles[i];
+                            p.phase += 0.015;
+                            p.y -= p.speedY;
+                            p.x += p.drift + Math.sin(p.phase) * 0.18;
+
+                            if (p.y < -12 || p.x < -12 || p.x > width + 12) {
+                                particles[i] = createParticle(false);
+                                continue;
+                            }
+
+                            const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * 3);
+                            glow.addColorStop(0, `rgba(255, 232, 165, ${p.alpha})`);
+                            glow.addColorStop(0.5, `rgba(212, 168, 83, ${p.alpha * 0.45})`);
+                            glow.addColorStop(1, 'rgba(212, 168, 83, 0)');
+
+                            ctx.beginPath();
+                            ctx.fillStyle = glow;
+                            ctx.arc(p.x, p.y, p.radius * 3, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+
+                        animationId = requestAnimationFrame(render);
+                    }
+
+                    animationId = requestAnimationFrame(render);
+                })();
+            </script>
 
     </body>
 
