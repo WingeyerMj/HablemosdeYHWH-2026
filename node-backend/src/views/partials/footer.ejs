@@ -130,6 +130,17 @@
 
 <!-- Preloader -->
 <div id="preloader"></div>
+<script>
+  (function () {
+    function removePreloader() {
+      var p = document.getElementById('preloader');
+      if (p) p.remove();
+    }
+    if (document.readyState !== 'loading') removePreloader();
+    else document.addEventListener('DOMContentLoaded', removePreloader, { once: true });
+    setTimeout(removePreloader, 1200);
+  })();
+</script>
 
 <!-- Vendor JS Files -->
 <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

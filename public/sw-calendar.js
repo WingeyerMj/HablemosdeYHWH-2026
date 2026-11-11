@@ -1,5 +1,5 @@
 // Service Worker — Calendario Lunisolar Hablemos de YHWH (100% Offline PWA)
-const CACHE_NAME = 'yhwh-calendario-pwa-v19';
+const CACHE_NAME = 'yhwh-calendario-pwa-v20';
 
 async function safeCachePut(cache, key, response) {
   try {
@@ -16,7 +16,7 @@ async function safeCachePut(cache, key, response) {
 // redirect cannot be returned to them: Chromium rejects it with ERR_FAILED.
 // Rebuild the final HTML response to remove its internal redirected URL list.
 async function calendarDocumentResponse(response) {
-  if (!response || !response.ok || !response.headers.get('content-type')?.includes('text/html')) return response;
+  if (!response || !response.ok || response.status === 204 || response.status === 205 || !response.headers.get('content-type')?.includes('text/html')) return response;
   const headers = new Headers(response.headers);
   headers.delete('content-length');
   headers.delete('content-encoding');
@@ -311,7 +311,7 @@ self.addEventListener('fetch', (event) => {
         }
 
         try {
-          const netRes = await fetchWithTimeout(request, 4000);
+          const netRes = await fetchWithTimeout(request, 15000);
           if (netRes && (netRes.status === 200 || netRes.type === 'opaque')) {
             await safeCachePut(cache, request, netRes.clone());
           }
@@ -323,7 +323,7 @@ self.addEventListener('fetch', (event) => {
           if (request.destination === 'script') {
             return new Response('', { status: 200, headers: { 'Content-Type': 'application/javascript' } });
           }
-          return new Response('', { status: 204 });
+          return new Response(null, { status: 204 });
         }
       })()
     );
