@@ -901,8 +901,8 @@
                                                         <% if (item.pdf_file || item.image_url) { %>
                                                             <a href="/semillas-de-torah/manualidad/<%= item.id %>/descargar" 
                                                                class="btn btn-warning text-dark fw-bold rounded-pill btn-sm flex-grow-1 d-inline-flex align-items-center justify-content-center gap-1 shadow-sm py-2"
-                                                               target="_blank"
-                                                               title="Descargar e imprimir lámina">
+                                                               download
+                                                               title="Descargar imagen en blanco para colorear e imprimir">
                                                                 <i class="bi bi-download"></i>
                                                                 Descargar para Colorear
                                                             </a>
@@ -1025,8 +1025,8 @@
                                                         <% if (item.pdf_file || item.image_url) { %>
                                                             <a href="/semillas-de-torah/manualidad/<%= item.id %>/descargar" 
                                                                class="btn btn-success text-white fw-bold rounded-pill btn-sm flex-grow-1 d-inline-flex align-items-center justify-content-center gap-1 shadow-sm py-2"
-                                                               target="_blank"
-                                                               title="Descargar guía o molde imprimible">
+                                                               download
+                                                               title="Descargar guía o molde en blanco para imprimir">
                                                                 <i class="bi bi-file-earmark-arrow-down-fill"></i>
                                                                 Descargar Guía / Molde
                                                             </a>
@@ -1105,7 +1105,7 @@
                                                     <% } %>
                                                     <div class="d-flex align-items-center gap-2 pt-2 border-top mt-auto">
                                                         <% if (item.pdf_file || item.image_url) { %>
-                                                            <a href="/semillas-de-torah/manualidad/<%= item.id %>/descargar" class="btn btn-outline-purple btn-sm rounded-pill flex-grow-1" style="color: #9333ea; border-color: #9333ea;" target="_blank">
+                                                            <a href="/semillas-de-torah/manualidad/<%= item.id %>/descargar" class="btn btn-outline-purple btn-sm rounded-pill flex-grow-1" style="color: #9333ea; border-color: #9333ea;" download>
                                                                 <i class="bi bi-download me-1"></i>Descargar
                                                             </a>
                                                         <% } %>
@@ -2710,11 +2710,17 @@
         }
 
         const downBtn = document.getElementById('mDetalleDownloadBtn');
+        const prevBnBtn = document.getElementById('mDetallePreviewBnBtn');
         if (item.pdf_file || item.image_url) {
             downBtn.href = '/semillas-de-torah/manualidad/' + item.id + '/descargar';
             downBtn.style.display = 'inline-flex';
+            if (prevBnBtn) {
+                prevBnBtn.href = item.pdf_file || item.image_url;
+                prevBnBtn.style.display = 'inline-flex';
+            }
         } else {
             downBtn.style.display = 'none';
+            if (prevBnBtn) prevBnBtn.style.display = 'none';
         }
 
         if (typeof bootstrap !== 'undefined') {
@@ -3442,10 +3448,13 @@
                         <p class="text-dark small mb-0" id="mDetalleInstrucciones" style="white-space: pre-line;"></p>
                     </div>
                 </div>
-                <div class="modal-footer border-0 p-3 px-4" style="background: #f8fafc;">
+                <div class="modal-footer border-0 p-3 px-4 flex-wrap gap-2" style="background: #f8fafc;">
                     <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
-                    <a href="#" id="mDetalleDownloadBtn" target="_blank" class="btn btn-warning text-dark fw-bold rounded-pill px-4 shadow-sm d-inline-flex align-items-center gap-2">
-                        <i class="bi bi-download"></i> Descargar Material (PDF/Imagen)
+                    <a href="#" id="mDetallePreviewBnBtn" target="_blank" class="btn btn-outline-dark fw-semibold rounded-pill px-3 d-inline-flex align-items-center gap-1">
+                        <i class="bi bi-printer"></i> Ver en Blanco / Imprimir
+                    </a>
+                    <a href="#" id="mDetalleDownloadBtn" download class="btn btn-warning text-dark fw-bold rounded-pill px-4 shadow-sm d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-download"></i> Descargar en Blanco para Colorear
                     </a>
                 </div>
             </div>

@@ -729,14 +729,57 @@ const homeController = {
 
     downloadManualidad: async (req, res, next) => {
         try {
+            const fs = require('fs');
+            const path = require('path');
             const SemillasManualidad = require('../models/SemillasManualidad');
             const item = await SemillasManualidad.getById(req.params.id);
             if (!item || (!item.pdf_file && !item.image_url)) {
                 return res.status(404).send('Material descargable no encontrado');
             }
+
+            const resolveLocalAsset = (urlPath) => {
+                if (!urlPath || typeof urlPath !== 'string') return null;
+                if (/^https?:\/\//i.test(urlPath.trim())) return { externalUrl: urlPath.trim() };
+                const cleanRel = urlPath.trim().replace(/^\/+/, '').replace(/\.\./g, '');
+                const candidates = [
+                    path.join(__dirname, '../../../public', cleanRel),
+                    path.join(__dirname, '../../public', cleanRel)
+                ];
+                for (const candidate of candidates) {
+                    if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+                        return { diskPath: candidate };
+                    }
+                }
+                return null;
+            };
+
+            let resolved = resolveLocalAsset(item.pdf_file);
+            if (!resolved && item.image_url) {
+                // Intentar primero la versión en blanco para colorear si existe en /assets/img/semillas/colorear/
+                const imgBase = path.basename(item.image_url, path.extname(item.image_url)).replace(/_colorear$/, '');
+                resolved = resolveLocalAsset(`/assets/img/semillas/colorear/${imgBase}_bn.svg`) || resolveLocalAsset(item.image_url);
+            }
+
+            if (!resolved) {
+                return res.status(404).send('Archivo descargable no encontrado en el servidor');
+            }
+
             await SemillasManualidad.incrementDownloads(item.id);
-            const targetUrl = item.pdf_file || item.image_url;
-            res.redirect(targetUrl);
+
+            if (resolved.externalUrl) {
+                return res.redirect(resolved.externalUrl);
+            }
+
+            const ext = path.extname(resolved.diskPath) || '.svg';
+            const slugTitle = String(item.title || 'lamina-para-colorear')
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .slice(0, 60) || 'lamina-para-colorear';
+            const downloadFilename = `${slugTitle}-para-colorear${ext}`;
+
+            return res.download(resolved.diskPath, downloadFilename);
         } catch (error) {
             next(error);
         }

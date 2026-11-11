@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <!-- Fondo completamente blanco listo para imprimir y colorear -->
+  <rect width="800" height="600" fill="#ffffff"/>
+  <!-- Marco decorativo para colorear -->
+  <rect x="18" y="18" width="764" height="564" rx="22" fill="#ffffff" stroke="#111827" stroke-width="4"/>
+  <rect x="28" y="28" width="744" height="544" rx="16" fill="none" stroke="#111827" stroke-width="1.5" stroke-dasharray="8 6"/>
+
+  <!-- Encabezado -->
+  <g transform="translate(400, 62)">
+    <text x="0" y="0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="24" fill="#ffffff" stroke="#111827" stroke-width="1.4" letter-spacing="0.5">SUCOT: CABAÑA FESTIVA PARA COLOREAR</text>
+    <text x="0" y="28" text-anchor="middle" font-family="Georgia, serif" font-weight="bold" font-size="20" fill="#111827">חַג הַסֻּכּוֹת  •  Fiesta de los Tabernáculos en familia</text>
+  </g>
+  <line x1="60" y1="106" x2="740" y2="106" stroke="#111827" stroke-width="2"/>
+
+  <!-- Ilustración principal en blanco y negro (trazos limpios para colorear) -->
+  <g transform="translate(400, 315)" fill="#ffffff" stroke="#111827" stroke-linecap="round" stroke-linejoin="round">
+    
+      <!-- Paredes de la Sucá -->
+      <rect x="-150" y="-45" width="300" height="185" stroke-width="4.5"/>
+      <rect x="-55" y="15" width="110" height="125" stroke-width="3.5"/>
+      <!-- Techo de ramas (Sejaj) -->
+      <path d="M -185 -45 L 185 -45 L 160 -95 L -160 -95 Z" stroke-width="4"/>
+      <line x1="-120" y1="-95" x2="-100" y2="-45" stroke-width="3"/>
+      <line x1="-40" y1="-95" x2="-30" y2="-45" stroke-width="3"/>
+      <line x1="40" y1="-95" x2="30" y2="-45" stroke-width="3"/>
+      <line x1="120" y1="-95" x2="100" y2="-45" stroke-width="3"/>
+      <!-- Guirnaldas decorativas -->
+      <path d="M -150 -30 Q -75 10 0 -30 Q 75 10 150 -30" fill="none" stroke-width="3"/>
+    
+  </g>
+
+  <!-- Pie educativo para niños -->
+  <line x1="60" y1="520" x2="740" y2="520" stroke="#111827" stroke-width="1.5"/>
+  <text x="400" y="546" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="bold" fill="#111827">“En tabernáculos habitaréis siete días... regocijaos delante de YHWH.” (Levítico 23:42)</text>
+  <text x="400" y="566" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#374151">Ministerio Infantil Semillas de Toráh • Hablemos de YHWH • Lámina para Colorear</text>
+</svg>

@@ -74,36 +74,36 @@ class SemillasManualidad {
             if (parseInt(count) === 0) {
                 await this.seedDefaults();
             } else {
-                // Actualizar rutas de imágenes a los nuevos SVGs ilustrados
+                // Actualizar rutas de imágenes a los nuevos SVGs ilustrados y láminas en blanco para colorear
                 await db.query(`
-                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/manualidad_mini_suca.svg' WHERE title LIKE '%Sucá%' OR moed_name = 'Sucot';
+                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/manualidad_mini_suca.svg', pdf_file = '/assets/img/semillas/colorear/manualidad_mini_suca_bn.svg' WHERE title LIKE '%Sucá%' OR moed_name = 'Sucot';
                 `);
                 await db.query(`
-                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/manualidad_shofar_infantil.svg' WHERE title LIKE '%Shofar%' OR moed_name = 'Yom Teruáh';
+                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/manualidad_shofar_infantil.svg', pdf_file = '/assets/img/semillas/colorear/manualidad_shofar_infantil_bn.svg' WHERE title LIKE '%Shofar%' OR moed_name = 'Yom Teruáh';
                 `);
                 await db.query(`
-                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/manualidad_shavuot_tablas.svg' WHERE title LIKE '%Tablas%' OR moed_name = 'Shavuot';
+                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/manualidad_shavuot_tablas.svg', pdf_file = '/assets/img/semillas/colorear/manualidad_shavuot_tablas_bn.svg' WHERE title LIKE '%Tablas%' OR moed_name = 'Shavuot';
                 `);
                 await db.query(`
-                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/manualidad_afikoman.svg' WHERE title LIKE '%Afikomán%' OR moed_name = 'Jag HaMatzot';
+                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/manualidad_afikoman.svg', pdf_file = '/assets/img/semillas/colorear/manualidad_afikoman_bn.svg' WHERE title LIKE '%Afikomán%' OR moed_name = 'Jag HaMatzot';
                 `);
                 await db.query(`
-                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/manualidad_pesaj_plato.svg' WHERE title LIKE '%Séder%' OR moed_name = 'Pésaj';
+                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/manualidad_pesaj_plato.svg', pdf_file = '/assets/img/semillas/colorear/manualidad_pesaj_plato_bn.svg' WHERE title LIKE '%Séder%' OR moed_name = 'Pésaj';
                 `);
                 await db.query(`
-                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/manualidad_shabat_hala.svg' WHERE title LIKE '%Jalá%' OR (moed_name = 'Shabat' AND category = 'Santas Convocaciones');
+                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/manualidad_shabat_hala.svg', pdf_file = '/assets/img/semillas/colorear/manualidad_shabat_hala_bn.svg' WHERE title LIKE '%Jalá%' OR (moed_name = 'Shabat' AND category = 'Santas Convocaciones');
                 `);
                 await db.query(`
-                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/bereshit_creacion_colorear.svg' WHERE parasha_number = 1 OR title LIKE '%Bereshit%';
+                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/bereshit_creacion_colorear.svg', pdf_file = '/assets/img/semillas/colorear/bereshit_creacion_bn.svg' WHERE parasha_number = 1 OR title LIKE '%Bereshit%';
                 `);
                 await db.query(`
-                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/noaj_arca_colorear.svg' WHERE parasha_number = 2 OR title LIKE '%Nóaj%';
+                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/noaj_arca_colorear.svg', pdf_file = '/assets/img/semillas/colorear/noaj_arca_bn.svg' WHERE parasha_number = 2 OR title LIKE '%Nóaj%';
                 `);
                 await db.query(`
-                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/lej_leja_estrellas.svg' WHERE parasha_number = 3 OR title LIKE '%Léj Lejá%';
+                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/lej_leja_estrellas.svg', pdf_file = '/assets/img/semillas/colorear/lej_leja_estrellas_bn.svg' WHERE parasha_number = 3 OR title LIKE '%Léj Lejá%';
                 `);
                 await db.query(`
-                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/vayira_hospitalidad.svg' WHERE parasha_number = 4 OR title LIKE '%Vayirá%';
+                    UPDATE semillas_manualidades SET image_url = '/assets/img/semillas/vayira_hospitalidad.svg', pdf_file = '/assets/img/semillas/colorear/vayira_hospitalidad_bn.svg' WHERE parasha_number = 4 OR title LIKE '%Vayirá%';
                 `);
             }
         } catch (eSeed) {
@@ -124,7 +124,7 @@ class SemillasManualidad {
                 materials: 'Crayones, lápices de colores, brillantina para las estrellas del día 4.',
                 instructions: 'Colorear cada círculo con su día correspondiente. Al llegar al día 7 (Shabat), agregar un marco dorado como señal de reposo y santidad.',
                 image_url: '/assets/img/semillas/bereshit_creacion_colorear.svg',
-                pdf_file: '/assets/pdf/semillas_bereshit_creacion.pdf',
+                pdf_file: '/assets/img/semillas/colorear/bereshit_creacion_bn.svg',
                 author_name: 'Elva Ávila',
                 author_role: 'Directora Semillas de Toráh',
                 is_approved: true,
@@ -141,7 +141,7 @@ class SemillasManualidad {
                 materials: 'Acuarelas o marcadores de agua, algodón para las nubes.',
                 instructions: 'Pintar el arcoíris respetando los 7 colores. Pegar copos de algodón suave sobre las nubes para dar volumen.',
                 image_url: '/assets/img/semillas/noaj_arca_colorear.svg',
-                pdf_file: '/assets/pdf/semillas_noaj_arca.pdf',
+                pdf_file: '/assets/img/semillas/colorear/noaj_arca_bn.svg',
                 author_name: 'Equipo Semillas de Toráh',
                 author_role: 'Ministerio Infantil',
                 is_approved: true,
@@ -158,7 +158,7 @@ class SemillasManualidad {
                 materials: 'Cartulina negra o azul marino, tiza blanca, estrellas autoadhesivas fluorescentes.',
                 instructions: 'Delinear la silueta de Abraham y pegar las estrellitas en el firmamento para recordar la promesa de multiplicar su descendencia.',
                 image_url: '/assets/img/semillas/lej_leja_estrellas.svg',
-                pdf_file: '/assets/pdf/semillas_lej_leja_estrellas.pdf',
+                pdf_file: '/assets/img/semillas/colorear/lej_leja_estrellas_bn.svg',
                 author_name: 'Semillas de Toráh',
                 author_role: 'Equipo Docente',
                 is_approved: true,
@@ -175,7 +175,7 @@ class SemillasManualidad {
                 materials: 'Palitos de helado para la estructura de la carpa, tela o papel barrilete, pegamento escolar.',
                 instructions: 'Armar los postes de la carpa pegando palitos sobre el dibujo y plegar la tela para mostrar cómo se recibía con amor a los visitantes.',
                 image_url: '/assets/img/semillas/vayira_hospitalidad.svg',
-                pdf_file: '/assets/pdf/semillas_vayira_carpa.pdf',
+                pdf_file: '/assets/img/semillas/colorear/vayira_hospitalidad_bn.svg',
                 author_name: 'Elva Ávila',
                 author_role: 'Directora Semillas de Toráh',
                 is_approved: true,
@@ -192,7 +192,7 @@ class SemillasManualidad {
                 materials: 'Fieltro blanco o lienzo de 30x30 cm, marcadores para tela, cintas doradas, plastilina amarilla y blanca.',
                 instructions: '1. Dibujar espigas de trigo y letras hebreas en el fieltro. 2. Moldear 2 velitas con plastilina blanca y llamas doradas. 3. Cubrir el pan de Shabat en la cena familiar.',
                 image_url: '/assets/img/semillas/manualidad_shabat_hala.svg',
-                pdf_file: '/assets/pdf/manualidad_shabat_infantil.pdf',
+                pdf_file: '/assets/img/semillas/colorear/manualidad_shabat_hala_bn.svg',
                 author_name: 'Elva Ávila',
                 author_role: 'Directora Semillas de Toráh',
                 is_approved: true,
@@ -209,7 +209,7 @@ class SemillasManualidad {
                 materials: 'Plato descartable blanco, tijeras de punta redonda, pegamento, lámina recortable descargable.',
                 instructions: 'Recortar las 6 insignias del Séder, explicar su significado bíblico en Éxodo 12 y pegarlas en su compartimento correspondiente en el plato.',
                 image_url: '/assets/img/semillas/manualidad_pesaj_plato.svg',
-                pdf_file: '/assets/pdf/manualidad_pesaj_seder.pdf',
+                pdf_file: '/assets/img/semillas/colorear/manualidad_pesaj_plato_bn.svg',
                 author_name: 'Equipo Semillas de Toráh',
                 author_role: 'Maestras de Niños',
                 is_approved: true,
@@ -226,7 +226,7 @@ class SemillasManualidad {
                 materials: 'Bolsita de liencillo o friselina blanca, lana azul o púrpura, aguja de plástico.',
                 instructions: 'Enhebrar la lana y pasar puntadas simples alrededor del borde. Estampar con sello de papa o marcador el nombre Afikomán.',
                 image_url: '/assets/img/semillas/manualidad_afikoman.svg',
-                pdf_file: '/assets/pdf/manualidad_afikoman_bolsa.pdf',
+                pdf_file: '/assets/img/semillas/colorear/manualidad_afikoman_bn.svg',
                 author_name: 'Maestra Raquel M.',
                 author_role: 'Encargada de Taller',
                 is_approved: true,
@@ -243,7 +243,7 @@ class SemillasManualidad {
                 materials: 'Harina (2 tazas), sal (1 taza), agua tibia, témperas grises o piedra, florcitas secas o de papel crepe.',
                 instructions: 'Amasar hasta obtener consistencia suave, cortar en dos tabletas arqueadas en la parte superior. Grabar las 10 letras del Alef-Bet (Alef a Yod) con un palito y dejar secar al aire.',
                 image_url: '/assets/img/semillas/manualidad_shavuot_tablas.svg',
-                pdf_file: '/assets/pdf/manualidad_shavuot_tablas.pdf',
+                pdf_file: '/assets/img/semillas/colorear/manualidad_shavuot_tablas_bn.svg',
                 author_name: 'Elva Ávila',
                 author_role: 'Directora Semillas de Toráh',
                 is_approved: true,
@@ -260,7 +260,7 @@ class SemillasManualidad {
                 materials: 'Rollo de cocina de cartón, papel craft en cono, cinta de carrocero, pintura marrón o dorada.',
                 instructions: 'Curvar suavemente el extremo del cono humedeciéndolo con un poco de agua, unirlo al tubo, encintar y pintar imitando el cuerno de carnero.',
                 image_url: '/assets/img/semillas/manualidad_shofar_infantil.svg',
-                pdf_file: '/assets/pdf/manualidad_yom_teruah_shofar.pdf',
+                pdf_file: '/assets/img/semillas/colorear/manualidad_shofar_infantil_bn.svg',
                 author_name: 'Equipo Semillas de Toráh',
                 author_role: 'Maestras de Niños',
                 is_approved: true,
@@ -277,7 +277,7 @@ class SemillasManualidad {
                 materials: 'Cajita de zapatos vacía, ramitas secas de jardín, hojas de palmera o pino, gomitas de pegar, frutitas miniatura de masa.',
                 instructions: 'Retirar la tapa y un lateral de la caja. En el techo colocar las ramitas separadas para que pase la luz. Colgar pequeñas guirnaldas de colores en el interior.',
                 image_url: '/assets/img/semillas/manualidad_mini_suca.svg',
-                pdf_file: '/assets/pdf/manualidad_sucot_mini_suca.pdf',
+                pdf_file: '/assets/img/semillas/colorear/manualidad_mini_suca_bn.svg',
                 author_name: 'Elva Ávila',
                 author_role: 'Directora Semillas de Toráh',
                 is_approved: true,
