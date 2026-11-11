@@ -8,7 +8,7 @@ const root = __dirname;
 fs.copyFileSync(path.join(root, 'public/assets/calendar/js/main.js'), path.join(root, 'Calendar/js/main.js'));
 fs.copyFileSync(path.join(root, 'public/assets/calendar/css/style.css'), path.join(root, 'Calendar/css/style.css'));
 const credentialSource = fs.readFileSync(path.join(root, 'check_remote_views.cjs'), 'utf8');
-const password = require('C:/Users/WingeyerMarcelo/Documents/ChatGPT/hablemosdeyhwh/security-hardening/ssh-credentials.cjs').getPassword();
+const password = process.env.SSH_PASSWORD || (() => { try { return require('C:/Users/WingeyerMarcelo/Documents/ChatGPT/hablemosdeyhwh/security-hardening/ssh-credentials.cjs').getPassword(); } catch { return null; } })();
 if (!password) throw new Error('No se encontró la credencial SSH local configurada');
 
 const project = '/var/www/hablemos_yhwh';
@@ -73,6 +73,8 @@ const files = [
   'public/assets/img/semillas/noaj_arca_colorear.svg',
   'public/assets/img/semillas/lej_leja_estrellas.svg',
   'public/assets/img/semillas/vayira_hospitalidad.svg',
+  'public/assets/audio/alefato-hebreo.mp3',
+  'node-backend/public/assets/audio/alefato-hebreo.mp3',
   'Calendar/index.html',
   'Calendar/manifest.json',
   'Calendar/sw.js',
@@ -127,7 +129,7 @@ client.on('ready', async () => {
 
     // 3. Reemplazo atómico, verificación de sintaxis y reinicio
     const moves = files.map(f => `mv '${project}/${f}.codex-upload' '${project}/${f}'`).join('; ');
-    const result = await run(`set -e; ${moves}; cd '${project}/node-backend'; node --check app.js; node -e "require('./src/utils/calendarPwaAssets')"; node -e "require('./src/models/SemillasManualidad').ensureTable().then(() => console.log('MANUALIDADES_DB_OK')).catch(console.error)"; pm2 restart hablemos-web --update-env >/dev/null; sleep 3; curl -sS -o /dev/null -w 'SEMILLAS_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/semillas-de-torah'; curl -sS -o /dev/null -w 'CALENDAR_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/calendar'; echo DEPLOYMENT_SUCCESS`);
+    const result = await run(`set -e; ${moves}; cd '${project}/node-backend'; node --check app.js; node -e "require('./src/utils/calendarPwaAssets')"; node -e "require('./src/models/SemillasManualidad').ensureTable().then(() => { console.log('MANUALIDADES_DB_OK'); process.exit(0); }).catch(e => { console.error(e); process.exit(1); })"; pm2 restart hablemos-web --update-env >/dev/null; sleep 3; curl -sS -o /dev/null -w 'SEMILLAS_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/semillas-de-torah'; curl -sS -o /dev/null -w 'AUDIO_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/assets/audio/alefato-hebreo.mp3'; curl -sS -o /dev/null -w 'CALENDAR_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/calendar'; echo DEPLOYMENT_SUCCESS`);
     console.log(result.trim());
   } catch (error) {
     console.error(`DEPLOYMENT_ERROR=${error.message}`);

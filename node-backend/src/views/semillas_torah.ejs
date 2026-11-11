@@ -496,31 +496,95 @@
                                                 <div class="display-6 fw-bold text-primary mb-1" style="font-family: serif;">
                                                     אָלֶף־בֵּית
                                                 </div>
-                                                <p class="small text-muted mb-3">Escucha la música alegre y canta junto a los niños las 22 letras:</p>
+                                                <p class="small text-muted mb-3">Presiona el botón para reproducir la canción rítmica del Alef-Bet:</p>
                                                 
-                                                <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 mb-2">
-                                                    <button type="button" class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2" 
-                                                            onclick="reproducirCanticoModal('gCAznfygWTY', 'El Canto Alegre del Alef-Bet (Shir HaAlef-Bet)')">
-                                                        <i class="bi bi-play-circle-fill fs-5 text-dark"></i> Reproducir Cántico del Alef-Bet
+                                                <div class="d-flex flex-column align-items-center justify-content-center gap-2 mb-2">
+                                                    <button type="button" id="btnPlayAlefBetAudio" class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2" 
+                                                            onclick="toggleAudioAlefBet()">
+                                                        <i class="bi bi-play-circle-fill fs-5 text-dark" id="iconPlayAlefBetAudio"></i>
+                                                        <span id="txtPlayAlefBetAudio">Escuchar Canto del Alef-Bet</span>
                                                     </button>
-                                                    <button type="button" class="btn btn-outline-primary rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center justify-content-center gap-1"
-                                                            onclick="reproducirCanticoModal('rfRwuOSsw68', 'Cántico Didáctico del Alef-Bet (Paso a Paso)')">
-                                                        <i class="bi bi-music-note-beamed"></i> Canto Paso a Paso
-                                                    </button>
+                                                    <audio id="audioAlefBetServer" src="/assets/audio/alefato-hebreo.mp3" preload="metadata" controls class="w-100 mt-2 rounded-pill" style="max-width: 420px; height: 40px;"></audio>
                                                 </div>
                                                 <button type="button" class="btn btn-sm btn-link text-decoration-none text-muted" onclick="cantarAlefBetSynth()">
                                                     <i class="bi bi-soundwave me-1"></i> Escuchar pronunciación por voz
                                                 </button>
                                             </div>
 
-                                            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-card-text me-1 text-primary"></i>Letra para cantar juntos:</h6>
-                                            <div class="p-3 rounded-3 small" style="background: #f1f5f9; line-height: 1.8; color: #334155;">
-                                                <strong>Alef</strong> es el buey con gran poder,<br>
-                                                <strong>Bet</strong> es la casita donde quiero crecer,<br>
-                                                <strong>Guímel</strong> el camello que anda sin parar,<br>
-                                                <strong>Dálet</strong> es la puerta que vamos a cruzar.<br>
-                                                <em>¡Hei, Vav, Záyin, Jet, Tet, Yud!</em><br>
-                                                ¡Cantando la Torá con amor y gratitud! 🎶
+                                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                                <h6 class="fw-bold text-dark mb-0"><i class="bi bi-card-text me-1 text-primary"></i>Letra para cantar juntos:</h6>
+                                                <span class="badge bg-info bg-opacity-10 text-primary border border-info border-opacity-25 rounded-pill px-2 py-1 small">Canción completa</span>
+                                            </div>
+                                            <div id="letraAlefBetContainer" class="p-3 rounded-3 small" style="background: #f1f5f9; line-height: 1.75; color: #334155; max-height: 380px; overflow-y: auto;">
+                                                <div class="mb-3 pb-2 border-bottom border-secondary border-opacity-10 estrofa-alefbet" data-start="0" data-end="14">
+                                                    <span class="badge bg-warning text-dark mb-1">Introducción</span><br>
+                                                    ¡Vamos niños, a cantar!<br>
+                                                    El alefato vamos a aprender,<br>
+                                                    con alegría y con amor,<br>
+                                                    las letras hebreas, ¡qué emoción!
+                                                </div>
+
+                                                <div class="mb-3 pb-2 border-bottom border-secondary border-opacity-10 estrofa-alefbet" data-start="14" data-end="30">
+                                                    <span class="badge bg-primary mb-1">Estrofa 1 (א - ד)</span><br>
+                                                    <strong>Alef (א)</strong> es la primera, como un buey fuerte y fiel,<br>
+                                                    <strong>Bet (ב)</strong> viene después, como una casa fiel,<br>
+                                                    <strong>Guímel (ג)</strong> es un camello que camina sin parar,<br>
+                                                    <strong>Dálet (ד)</strong> es una puerta abierta para jugar.
+                                                </div>
+
+                                                <div class="mb-3 p-2 rounded-3 estrofa-alefbet" style="background: #e0f2fe; border-left: 3px solid #0284c7;" data-start="30" data-end="52">
+                                                    <span class="badge bg-info text-dark mb-1">Coro (ה - ח)</span><br>
+                                                    <em>¡<strong>Alef</strong>, <strong>Bet</strong>, <strong>Guímel</strong>, <strong>Dálet</strong>!</em><br>
+                                                    Cantemos todos sin parar,<br>
+                                                    <em>¡<strong>Hei (ה)</strong>, <strong>Vav (ו)</strong>, <strong>Záyin (ז)</strong>, <strong>Jet (ח)</strong>!</em><br>
+                                                    Las letras hebreas, ¡qué placer!<br>
+                                                    Aprender jugando es genial,<br>
+                                                    ¡el alefato es especial! 🎶
+                                                </div>
+
+                                                <div class="mb-3 pb-2 border-bottom border-secondary border-opacity-10 estrofa-alefbet" data-start="52" data-end="68">
+                                                    <span class="badge bg-primary mb-1">Estrofa 2 (ט - ל)</span><br>
+                                                    <strong>Tet (ט)</strong> es una cesta llena de sorpresas mil,<br>
+                                                    <strong>Yod (י)</strong> es una mano pequeña que dice «ven aquí»,<br>
+                                                    <strong>Kaf (כ)</strong> es como una palma que te quiere saludar,<br>
+                                                    <strong>Lámed (ל)</strong> es un corazón que aprende a amar.
+                                                </div>
+
+                                                <div class="mb-3 p-2 rounded-3 estrofa-alefbet" style="background: #e0f2fe; border-left: 3px solid #0284c7;" data-start="68" data-end="85">
+                                                    <span class="badge bg-info text-dark mb-1">Coro</span><br>
+                                                    <em>¡<strong>Alef</strong>, <strong>Bet</strong>, <strong>Guímel</strong>, <strong>Dálet</strong>!</em><br>
+                                                    Cantemos todos sin parar,<br>
+                                                    <em>¡<strong>Hei</strong>, <strong>Vav</strong>, <strong>Záyin</strong>, <strong>Jet</strong>!</em><br>
+                                                    Las letras hebreas, ¡qué placer!<br>
+                                                    Aprender jugando es genial,<br>
+                                                    ¡el alefato es especial! 🎶
+                                                </div>
+
+                                                <div class="mb-3 pb-2 border-bottom border-secondary border-opacity-10 estrofa-alefbet" data-start="85" data-end="101">
+                                                    <span class="badge bg-primary mb-1">Estrofa 3 (מ - ר)</span><br>
+                                                    <strong>Mem (מ)</strong> es agua que fluye, <strong>Nun (נ)</strong> es un pez feliz,<br>
+                                                    <strong>Sámej (ס)</strong> es un apoyo, <strong>Áyin (ע)</strong> un ojo que te ve,<br>
+                                                    <strong>Pei (פ)</strong> es una boca que canta, <strong>Tsadi (צ)</strong> una persona justa,<br>
+                                                    <strong>Qof (ק)</strong> es un mono travieso, <strong>Reish (ר)</strong> una cabeza lista.
+                                                </div>
+
+                                                <div class="mb-3 pb-2 border-bottom border-secondary border-opacity-10 estrofa-alefbet" data-start="101" data-end="117">
+                                                    <span class="badge bg-primary mb-1">Estrofa 4 (ש - ת)</span><br>
+                                                    <strong>Shin (ש)</strong> es como un diente que brilla al sonreír,<br>
+                                                    <strong>Tav (ת)</strong> es la última letra, ya llegamos al fin,<br>
+                                                    22 letras juntas, un tesoro sin igual,<br>
+                                                    ¡el alefato hebreo lo vamos a dominar!
+                                                </div>
+
+                                                <div class="p-2 rounded-3 estrofa-alefbet" style="background: #fef9c3; border-left: 3px solid #eab308;" data-start="117" data-end="180">
+                                                    <span class="badge bg-warning text-dark mb-1">Coro Final</span><br>
+                                                    <em>¡<strong>Alef</strong>, <strong>Bet</strong>, <strong>Guímel</strong>, <strong>Dálet</strong>!</em> Cantemos todos sin parar,<br>
+                                                    <em>¡<strong>Hei</strong>, <strong>Vav</strong>, <strong>Záyin</strong>, <strong>Jet</strong>!</em> Las letras hebreas, ¡qué placer!<br>
+                                                    Aprender jugando es genial, ¡el alefato es especial!<br>
+                                                    <em>¡<strong>Alef</strong>, <strong>Bet</strong>, <strong>Guímel</strong>, <strong>Dálet</strong>!</em><br>
+                                                    El alefato aprendimos ya, con canciones y alegría,<br>
+                                                    ¡hasta la próxima, amigos! ¡<strong>Shalom</strong> y adiós! 🎶✨
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -2831,6 +2895,69 @@
         }
     }
 
+    function toggleAudioAlefBet() {
+        const audio = document.getElementById('audioAlefBetServer');
+        if (!audio) return;
+        if (audio.paused) {
+            audio.play().catch(function() {});
+        } else {
+            audio.pause();
+        }
+    }
+
+    function inicializarReproductorAlefBet() {
+        const audio = document.getElementById('audioAlefBetServer');
+        const icon = document.getElementById('iconPlayAlefBetAudio');
+        const txt = document.getElementById('txtPlayAlefBetAudio');
+        const container = document.getElementById('letraAlefBetContainer');
+        if (!audio) return;
+
+        function actualizarEstadoBoton(reproduciendo) {
+            if (icon) {
+                icon.className = reproduciendo
+                    ? 'bi bi-pause-circle-fill fs-5 text-dark'
+                    : 'bi bi-play-circle-fill fs-5 text-dark';
+            }
+            if (txt) {
+                txt.textContent = reproduciendo
+                    ? 'Pausar Canto del Alef-Bet'
+                    : 'Escuchar Canto del Alef-Bet';
+            }
+        }
+
+        audio.addEventListener('play', function() {
+            actualizarEstadoBoton(true);
+        });
+        audio.addEventListener('pause', function() {
+            actualizarEstadoBoton(false);
+        });
+        audio.addEventListener('ended', function() {
+            actualizarEstadoBoton(false);
+        });
+        audio.addEventListener('timeupdate', function() {
+            if (!container) return;
+            const t = audio.currentTime;
+            const estrofas = container.querySelectorAll('.estrofa-alefbet');
+            estrofas.forEach(function(el) {
+                const start = parseFloat(el.getAttribute('data-start') || '0');
+                const end = parseFloat(el.getAttribute('data-end') || '999');
+                const activa = t >= start && t < end;
+                if (activa) {
+                    if (!el.classList.contains('estrofa-activa')) {
+                        el.classList.add('estrofa-activa', 'shadow-sm');
+                        el.style.outline = '2px solid #0284c7';
+                        el.style.borderRadius = '8px';
+                        el.style.padding = '8px';
+                        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                } else if (el.classList.contains('estrofa-activa')) {
+                    el.classList.remove('estrofa-activa', 'shadow-sm');
+                    el.style.outline = '';
+                }
+            });
+        });
+    }
+
     function cantarAlefBetSynth() {
         cantarAlefBet();
     }
@@ -3126,6 +3253,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         renderizarAlefBetGrid();
         cargarPreguntaJuego();
+        inicializarReproductorAlefBet();
 
         if (window.location.hash === '#parasha-infantil' || window.location.hash === '#pane-parasha-infantil') {
             activarTabParashaInfantil();
