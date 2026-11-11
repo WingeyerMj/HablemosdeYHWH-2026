@@ -811,14 +811,14 @@ section,
 
 .hero-bg-animated {
   position: absolute;
-  inset: -4%;
+  inset: -6%;
   z-index: 0;
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
   will-change: transform;
   transform-origin: center center;
-  animation: heroKenBurns 28s ease-in-out infinite alternate;
+  animation: heroKenBurns 13s ease-in-out infinite alternate;
   pointer-events: none;
 }
 
@@ -827,12 +827,12 @@ section,
   inset: 0;
   z-index: 1;
   background:
-    radial-gradient(ellipse 65% 55% at 78% 22%, rgba(255, 208, 120, 0.24) 0%, rgba(212, 168, 83, 0.08) 45%, transparent 75%),
+    radial-gradient(ellipse 65% 55% at 78% 22%, rgba(255, 208, 120, 0.28) 0%, rgba(212, 168, 83, 0.1) 45%, transparent 75%),
     linear-gradient(180deg, rgba(16, 12, 8, 0.25) 0%, rgba(16, 12, 8, 0.12) 48%, rgba(16, 12, 8, 0.42) 100%);
   mix-blend-mode: screen;
   opacity: 0.85;
   will-change: opacity, transform;
-  animation: heroSunGlow 14s ease-in-out infinite alternate;
+  animation: heroSunGlow 7s ease-in-out infinite alternate;
   pointer-events: none;
 }
 
@@ -841,10 +841,10 @@ section,
   inset: -5% -10%;
   z-index: 1;
   background:
-    radial-gradient(ellipse 70% 35% at 30% 68%, rgba(255, 240, 205, 0.14) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 30% at 72% 58%, rgba(255, 224, 160, 0.12) 0%, transparent 72%);
+    radial-gradient(ellipse 70% 35% at 30% 68%, rgba(255, 240, 205, 0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 30% at 72% 58%, rgba(255, 224, 160, 0.15) 0%, transparent 72%);
   will-change: transform, opacity;
-  animation: heroMistDrift 22s ease-in-out infinite alternate;
+  animation: heroMistDrift 11s ease-in-out infinite alternate;
   pointer-events: none;
 }
 
@@ -859,13 +859,13 @@ section,
 
 @keyframes heroKenBurns {
   0% {
-    transform: scale(1) translate3d(0%, 0%, 0);
+    transform: scale(1.02) translate3d(2%, 1%, 0);
   }
   50% {
-    transform: scale(1.06) translate3d(-1.2%, -0.6%, 0);
+    transform: scale(1.1) translate3d(-1.5%, -0.8%, 0);
   }
   100% {
-    transform: scale(1.1) translate3d(1%, -1.4%, 0);
+    transform: scale(1.16) translate3d(-3%, -2%, 0);
   }
 }
 
