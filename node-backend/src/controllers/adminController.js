@@ -3575,6 +3575,190 @@ const adminController = {
             console.error('Error toggleSemillasManualidad:', error);
             res.redirect('/admin/semillas-manualidades?error=' + encodeURIComponent(error.message));
         }
+    },
+
+    musicaPage: async (req, res) => {
+        try {
+            const MusicTrack = require('../models/MusicTrack');
+            const tracks = await MusicTrack.getAll();
+
+            res.render('admin/musica', {
+                layout: 'admin/layout',
+                activePage: 'musica',
+                tracks,
+                msg: req.query.msg || null,
+                error: req.query.error || null
+            });
+        } catch (error) {
+            console.error('Error musicaPage:', error);
+            res.status(500).send('Error interno cargando Música: ' + error.message);
+        }
+    },
+
+    createMusicTrack: async (req, res) => {
+        try {
+            let {
+                title,
+                artist,
+                category,
+                target_section,
+                in_auto_playlist,
+                description,
+                lyrics,
+                audio_url,
+                cover_image,
+                duration_label,
+                sort_order,
+                is_active
+            } = req.body;
+
+            if (req.files && req.files.length > 0) {
+                const filesList = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
+                for (const f of filesList) {
+                    if (f.fieldname === 'audio_file' || (f.mimetype && f.mimetype.startsWith('audio/')) || /\.(mp3|mpeg|wav|ogg)$/i.test(f.originalname || '')) {
+                        audio_url = '/uploads/audios/' + f.filename;
+                    } else if (f.fieldname === 'cover_image_file' || (f.mimetype && f.mimetype.startsWith('image/'))) {
+                        cover_image = '/uploads/general/' + f.filename;
+                    }
+                }
+            }
+
+            if (!audio_url || !String(audio_url).trim()) {
+                return res.redirect('/admin/musica?error=' + encodeURIComponent('Debes subir un archivo de audio MP3 o ingresar la URL del audio.'));
+            }
+
+            const MusicTrack = require('../models/MusicTrack');
+            await MusicTrack.create({
+                title: title ? title.trim() : 'Alabanza sin título',
+                artist: artist ? artist.trim() : 'Hablemos de YHWH',
+                category: category || 'Alabanza',
+                target_section: target_section || 'general',
+                in_auto_playlist: in_auto_playlist === '1' || in_auto_playlist === true || in_auto_playlist === 'on',
+                description: description ? description.trim() : null,
+                lyrics: lyrics ? lyrics.trim() : null,
+                audio_url: String(audio_url).trim(),
+                cover_image: cover_image ? String(cover_image).trim() : null,
+                duration_label: duration_label ? duration_label.trim() : null,
+                sort_order: sort_order ? parseInt(sort_order, 10) : 0,
+                is_active: is_active === '1' || is_active === true || is_active === 'on'
+            });
+
+            res.redirect('/admin/musica?msg=' + encodeURIComponent('Canción agregada correctamente.'));
+        } catch (error) {
+            console.error('Error createMusicTrack:', error);
+            res.redirect('/admin/musica?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    editMusicTrackPage: async (req, res) => {
+        try {
+            const MusicTrack = require('../models/MusicTrack');
+            const item = await MusicTrack.getById(req.params.id);
+            if (!item) return res.redirect('/admin/musica?error=' + encodeURIComponent('Canción no encontrada.'));
+
+            res.render('admin/edit_musica', {
+                layout: 'admin/layout',
+                activePage: 'musica',
+                item,
+                msg: req.query.msg || null,
+                error: req.query.error || null
+            });
+        } catch (error) {
+            console.error('Error editMusicTrackPage:', error);
+            res.redirect('/admin/musica?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    updateMusicTrack: async (req, res) => {
+        try {
+            const {
+                id,
+                title,
+                artist,
+                category,
+                target_section,
+                in_auto_playlist,
+                description,
+                lyrics,
+                existing_cover_image,
+                duration_label,
+                sort_order,
+                is_active
+            } = req.body;
+
+            const MusicTrack = require('../models/MusicTrack');
+            const existing = await MusicTrack.getById(id);
+            if (!existing) {
+                return res.redirect('/admin/musica?error=' + encodeURIComponent('Canción no encontrada.'));
+            }
+
+            let audio_url = req.body.audio_url && req.body.audio_url.trim() ? req.body.audio_url.trim() : existing.audio_url;
+            let cover_image = existing_cover_image || existing.cover_image || null;
+
+            if (req.files && req.files.length > 0) {
+                const filesList = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
+                for (const f of filesList) {
+                    if (f.fieldname === 'audio_file' || (f.mimetype && f.mimetype.startsWith('audio/')) || /\.(mp3|mpeg|wav|ogg)$/i.test(f.originalname || '')) {
+                        audio_url = '/uploads/audios/' + f.filename;
+                    } else if (f.fieldname === 'cover_image_file' || (f.mimetype && f.mimetype.startsWith('image/'))) {
+                        cover_image = '/uploads/general/' + f.filename;
+                    }
+                }
+            }
+
+            await MusicTrack.update(id, {
+                title: title ? title.trim() : existing.title,
+                artist: artist ? artist.trim() : 'Hablemos de YHWH',
+                category: category || 'Alabanza',
+                target_section: target_section || 'general',
+                in_auto_playlist: in_auto_playlist === '1' || in_auto_playlist === true || in_auto_playlist === 'on',
+                description: description ? description.trim() : null,
+                lyrics: lyrics ? lyrics.trim() : null,
+                audio_url,
+                cover_image,
+                duration_label: duration_label ? duration_label.trim() : null,
+                sort_order: sort_order !== undefined && sort_order !== '' ? parseInt(sort_order, 10) : 0,
+                is_active: is_active === '1' || is_active === true || is_active === 'on'
+            });
+
+            res.redirect('/admin/musica?msg=' + encodeURIComponent('Canción actualizada correctamente.'));
+        } catch (error) {
+            console.error('Error updateMusicTrack:', error);
+            res.redirect('/admin/musica?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    toggleMusicTrack: async (req, res) => {
+        try {
+            const MusicTrack = require('../models/MusicTrack');
+            await MusicTrack.toggleActive(req.params.id);
+            res.redirect('/admin/musica?msg=' + encodeURIComponent('Estado de visibilidad de la canción actualizado.'));
+        } catch (error) {
+            console.error('Error toggleMusicTrack:', error);
+            res.redirect('/admin/musica?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    toggleMusicAutoPlaylist: async (req, res) => {
+        try {
+            const MusicTrack = require('../models/MusicTrack');
+            await MusicTrack.toggleAutoPlaylist(req.params.id);
+            res.redirect('/admin/musica?msg=' + encodeURIComponent('Lista de reproducción automática actualizada.'));
+        } catch (error) {
+            console.error('Error toggleMusicAutoPlaylist:', error);
+            res.redirect('/admin/musica?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    deleteMusicTrack: async (req, res) => {
+        try {
+            const MusicTrack = require('../models/MusicTrack');
+            await MusicTrack.delete(req.params.id);
+            res.redirect('/admin/musica?msg=' + encodeURIComponent('Canción eliminada correctamente.'));
+        } catch (error) {
+            console.error('Error deleteMusicTrack:', error);
+            res.redirect('/admin/musica?error=' + encodeURIComponent(error.message));
+        }
     }
 };
 

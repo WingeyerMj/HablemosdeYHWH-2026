@@ -1,5 +1,5 @@
 // Service Worker — Calendario Lunisolar Hablemos de YHWH (100% Offline PWA)
-const CACHE_NAME = 'yhwh-calendario-pwa-v20';
+const CACHE_NAME = 'yhwh-calendario-pwa-v21';
 
 async function safeCachePut(cache, key, response) {
   try {
@@ -298,7 +298,7 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       (async () => {
         const cache = await caches.open(CACHE_NAME);
-        const cached = (await cache.match(request)) || (await cache.match(request, { ignoreSearch: true }));
+        const cached = (await cache.match(request)) || (!url.search ? await cache.match(request, { ignoreSearch: true }) : null);
         if (cached) {
           event.waitUntil(
             fetchWithTimeout(request, 4000)

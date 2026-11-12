@@ -194,6 +194,18 @@
                             </span>
                         </button>
                     </li>
+                    <!-- Tab 5: Canciones y Alabanzas Infantiles -->
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn" 
+                                id="tab-canciones-semillas" data-bs-toggle="pill" data-bs-target="#pane-canciones-semillas" type="button" role="tab"
+                                style="border-radius: 16px; border: 2px solid #fbbf24; font-size: 1rem; transition: all 0.3s ease;">
+                            <i class="bi bi-music-note-beamed fs-5 text-warning"></i> 
+                            Canciones Infantiles
+                            <span class="badge rounded-pill" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 0.75rem;">
+                                <%= (typeof cancionesInfantiles !== 'undefined' && cancionesInfantiles) ? cancionesInfantiles.length : 0 %> 🎶 Cantos
+                            </span>
+                        </button>
+                    </li>
                 </ul>
 
                 <div class="tab-content" id="semillasTabContent">
@@ -1765,6 +1777,104 @@
                         </div>
                     </div>
 
+                    <!-- ============================================================ -->
+                    <!-- PESTAÑA: CANCIONES Y ALABANZAS INFANTILES (SEMILLAS DE TORAH) -->
+                    <!-- ============================================================ -->
+                    <div class="tab-pane fade" id="pane-canciones-semillas" role="tabpanel">
+                        <div class="p-4 mb-4 rounded-4 shadow-sm border-0 d-flex align-items-center justify-content-between flex-wrap gap-3"
+                             style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fdf4ff 100%); border-left: 5px solid #f59e0b !important;">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle p-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                                     style="background: rgba(245,158,11,0.22); width: 58px; height: 58px; color: #b45309;">
+                                    <i class="bi bi-music-note-beamed fs-2"></i>
+                                </div>
+                                <div>
+                                    <h3 class="fw-bold mb-1" style="color: #78350f;">Canciones y Alabanzas Infantiles</h3>
+                                    <p class="text-muted mb-0">Melodías alegres para cantar con los niños en casa, aprender las Escrituras y descargar en MP3.</p>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm" onclick="activarTabAlefBet()">
+                                <i class="bi bi-translate me-1"></i> Ir al Canto del Alef-Bet
+                            </button>
+                        </div>
+
+                        <% const listaCancionesSemillas = (typeof cancionesInfantiles !== 'undefined' && Array.isArray(cancionesInfantiles)) ? cancionesInfantiles : []; %>
+                        <% if (listaCancionesSemillas.length === 0) { %>
+                            <div class="text-center py-5 bg-light rounded-4 border">
+                                <i class="bi bi-music-note-list fs-1 text-warning d-block mb-2"></i>
+                                <h5 class="fw-bold text-dark">Pronto subiremos más cantos infantiles</h5>
+                                <p class="text-muted mb-0">Mientras tanto, puedes escuchar el Canto del Alef-Bet en la pestaña Alef-Bet Hebreo Infantil.</p>
+                            </div>
+                        <% } else { %>
+                            <div class="row g-4">
+                                <% listaCancionesSemillas.forEach((canto) => { %>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden" style="background: #ffffff; border: 2px solid #fde68a !important;">
+                                            <div class="card-header border-0 py-3 px-4 d-flex align-items-center justify-content-between"
+                                                 style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff;">
+                                                <span class="badge bg-white text-dark rounded-pill px-3 py-1 fw-bold">
+                                                    <i class="bi bi-music-note me-1 text-warning"></i><%= canto.category || 'Infantil' %>
+                                                </span>
+                                                <% if (canto.duration_label) { %>
+                                                    <span class="small fw-semibold"><i class="bi bi-clock me-1"></i><%= canto.duration_label %></span>
+                                                <% } %>
+                                            </div>
+                                            <div class="card-body p-4 d-flex flex-column justify-content-between">
+                                                <div>
+                                                    <div class="d-flex align-items-center gap-3 mb-3">
+                                                        <% if (canto.cover_image) { %>
+                                                            <img src="<%= canto.cover_image %>" alt="<%= canto.title %>" class="rounded-3 shadow-sm flex-shrink-0" style="width: 60px; height: 60px; object-fit: cover;">
+                                                        <% } else { %>
+                                                            <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 shadow-sm"
+                                                                 style="width: 60px; height: 60px; background: #fef3c7; color: #d97706; font-size: 1.8rem;">
+                                                                <i class="bi bi-disc-fill"></i>
+                                                            </div>
+                                                        <% } %>
+                                                        <div>
+                                                            <h5 class="fw-bold mb-1" style="color: #78350f;"><%= canto.title %></h5>
+                                                            <div class="small text-muted"><i class="bi bi-mic me-1"></i><%= canto.artist || 'Semillas de Torah' %></div>
+                                                        </div>
+                                                    </div>
+
+                                                    <% if (canto.description) { %>
+                                                        <p class="small text-muted mb-3"><%= canto.description %></p>
+                                                    <% } %>
+
+                                                    <div class="p-2 rounded-3 mb-3" style="background: #fffbeb; border: 1px dashed #f59e0b;">
+                                                        <audio controls preload="metadata" class="w-100 semillas-kid-audio" data-track-id="<%= canto.id %>" style="height: 38px;">
+                                                            <source src="<%= canto.audio_url %>" type="audio/mpeg">
+                                                        </audio>
+                                                    </div>
+
+                                                    <% if (canto.lyrics && canto.lyrics.trim()) { %>
+                                                        <div class="mb-3">
+                                                            <button class="btn btn-sm btn-outline-warning text-dark rounded-pill px-3 fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#letraSemillasCanto<%= canto.id %>">
+                                                                <i class="bi bi-card-text me-1"></i> Ver Letra para Cantar
+                                                            </button>
+                                                            <div class="collapse mt-2" id="letraSemillasCanto<%= canto.id %>">
+                                                                <div class="p-3 rounded-3 small" style="background: #f8fafc; white-space: pre-line; line-height: 1.7; color: #334155; max-height: 200px; overflow-y: auto;"><%= canto.lyrics %></div>
+                                                            </div>
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+
+                                                <div class="pt-3 border-top d-flex align-items-center justify-content-between">
+                                                    <span class="small text-muted">
+                                                        <i class="bi bi-headphones me-1"></i><%= canto.plays_count || 0 %> •
+                                                        <i class="bi bi-download me-1"></i><%= canto.downloads_count || 0 %>
+                                                    </span>
+                                                    <a href="/musica/download/<%= canto.id %>" class="btn btn-sm btn-warning text-dark fw-bold rounded-pill px-3 shadow-sm">
+                                                        <i class="bi bi-download me-1"></i> Descargar MP3
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% } %>
+                    </div>
+
                 </div><!-- End Tab Content -->
 
             </div>
@@ -1895,12 +2005,26 @@
 
                     <!-- Pilar 5 -->
                     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
-                        <div class="card h-100 border-0 p-4 shadow-sm feature-card" style="border-radius: 20px; background: #faf5ff; border-top: 5px solid #f59e0b !important;">
-                            <div class="icon-box mb-3 d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 16px; background: #fef3c7; color: #d97706; font-size: 1.8rem;">
-                                <i class="bi bi-music-note-beamed"></i>
+                        <div class="card h-100 border-0 p-4 shadow-sm feature-card"
+                             onclick="activarTabCancionesSemillas()"
+                             style="border-radius: 20px; background: #faf5ff; border-top: 5px solid #f59e0b !important; cursor: pointer; transition: all 0.3s ease;"
+                             onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 12px 25px rgba(245,158,11,0.18)';"
+                             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div class="icon-box d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 16px; background: #fef3c7; color: #d97706; font-size: 1.8rem;">
+                                    <i class="bi bi-music-note-beamed"></i>
+                                </div>
+                                <span class="badge rounded-pill text-dark fw-bold px-3 py-1 shadow-sm" style="background: #fde68a; font-size: 0.75rem;">
+                                    <i class="bi bi-download me-1"></i>Escuchar y Descargar
+                                </span>
                             </div>
                             <h4 class="fw-bold mb-2" style="color: #78350f;">Canciones y Alabanzas</h4>
-                            <p class="text-muted mb-0">Melodías alegres y fáciles de recordar para cantar en Shabat y en familia, aprendiendo versículos bíblicos de memoria.</p>
+                            <p class="text-muted mb-3">Melodías alegres y fáciles de recordar para cantar en Shabat y en familia, aprendiendo versículos bíblicos de memoria.</p>
+                            <div class="mt-auto pt-2">
+                                <span class="btn btn-sm rounded-pill px-3 fw-bold d-inline-flex align-items-center gap-1 shadow-sm" style="background: #f59e0b; color: #1c1917;">
+                                    <i class="bi bi-play-circle-fill me-1"></i> Ver Cantos Infantiles <i class="bi bi-arrow-right"></i>
+                                </span>
+                            </div>
                         </div>
                     </div>
 
@@ -3267,8 +3391,41 @@
             activarTabAlefBet();
         } else if (window.location.hash === '#manualidades' || window.location.hash === '#dibujos' || window.location.hash === '#pane-manualidades') {
             activarTabManualidades();
+        } else if (window.location.hash === '#canciones' || window.location.hash === '#pane-canciones-semillas') {
+            activarTabCancionesSemillas();
         }
+
+        // Volumen suave (20%) y exclusividad de reproducción en los reproductores de Canciones Infantiles
+        document.querySelectorAll('.semillas-kid-audio').forEach(function(aud) {
+            aud.volume = 0.20;
+            aud.addEventListener('play', function() {
+                document.querySelectorAll('.semillas-kid-audio').forEach(function(other) {
+                    if (other !== aud && !other.paused) other.pause();
+                });
+                const globalAud = document.getElementById('yhwhGlobalMusicAudio');
+                if (globalAud && !globalAud.paused) {
+                    try { globalAud.pause(); } catch (e) {}
+                }
+                const tid = aud.getAttribute('data-track-id');
+                if (tid && !aud._countedPlay) {
+                    aud._countedPlay = true;
+                    fetch('/api/musica/' + tid + '/play', { method: 'POST' }).catch(function() {});
+                }
+            });
+        });
     });
+
+    function activarTabCancionesSemillas() {
+        const tabBtn = document.getElementById('tab-canciones-semillas');
+        if (tabBtn && typeof bootstrap !== 'undefined') {
+            const tab = new bootstrap.Tab(tabBtn);
+            tab.show();
+        } else if (tabBtn) {
+            tabBtn.click();
+        }
+        const seccion = document.getElementById('actividades-seccion');
+        if (seccion) seccion.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
     </script>
 
     <!-- MODAL: DETALLE Y PRÁCTICA DE LETRA DEL ALEF-BET -->

@@ -1,0 +1,462 @@
+<!-- Sidebar -->
+<%- include('partials/_sidebar') %>
+
+<main class="col-md-10 main-content">
+    
+    <!-- Header -->
+    <div class="page-header d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h1 class="text-white fw-bold mb-1">
+                <i class="bi bi-music-note-beamed me-2 text-warning"></i>Música & Alabanzas
+            </h1>
+            <p class="text-white-50 mb-0">Administra los temas de la web en general (<code class="text-info">/musica</code>), los cantos infantiles de <code class="text-success">Semillas de Torah</code> y cuáles suenan en la <strong>lista de reproducción automática</strong> al abrir la plataforma.</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="/musica" target="_blank" class="btn btn-outline-light">
+                <i class="bi bi-eye"></i> Ver /musica
+            </a>
+            <a href="/semillas-de-torah#canciones" target="_blank" class="btn btn-outline-info">
+                <i class="bi bi-balloon-heart"></i> Ver en Semillas
+            </a>
+            <button type="button" class="btn btn-warning text-dark fw-bold px-4" data-bs-toggle="modal" data-bs-target="#createMusicModal">
+                <i class="bi bi-plus-circle-fill me-1"></i> Subir Nueva Canción
+            </button>
+        </div>
+    </div>
+
+    <% if (typeof msg !== 'undefined' && msg) { %>
+        <div class="alert alert-success border border-success d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-check-circle-fill me-2"></i><%= msg %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger border border-danger d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-exclamation-triangle-fill me-2"></i><%= error %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <!-- STATS CARDS -->
+    <% 
+        const allTracks = typeof tracks !== 'undefined' && tracks ? tracks : [];
+        const autoPlaylistCount = allTracks.filter(t => t.is_active && t.in_auto_playlist !== 0 && t.in_auto_playlist !== false).length;
+        const semillasCount = allTracks.filter(t => t.target_section === 'semillas' || t.target_section === 'ambas' || t.category === 'Infantil').length;
+        const totalPlays = allTracks.reduce((acc, cur) => acc + (Number(cur.plays_count) || 0), 0);
+        const totalDownloads = allTracks.reduce((acc, cur) => acc + (Number(cur.downloads_count) || 0), 0);
+    %>
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="glass-panel p-3 border border-secondary border-opacity-25 rounded-3 d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-warning bg-opacity-25 p-3 text-warning">
+                    <i class="bi bi-music-note-list fs-4"></i>
+                </div>
+                <div>
+                    <small class="text-white-50 d-block">Total Canciones</small>
+                    <span class="fs-4 fw-bold text-white"><%= allTracks.length %></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="glass-panel p-3 border border-secondary border-opacity-25 rounded-3 d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-success bg-opacity-25 p-3 text-success">
+                    <i class="bi bi-volume-up-fill fs-4"></i>
+                </div>
+                <div>
+                    <small class="text-white-50 d-block">En Autoplay Web</small>
+                    <span class="fs-4 fw-bold text-success"><%= autoPlaylistCount %></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="glass-panel p-3 border border-secondary border-opacity-25 rounded-3 d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-info bg-opacity-25 p-3 text-info">
+                    <i class="bi bi-balloon-heart-fill fs-4"></i>
+                </div>
+                <div>
+                    <small class="text-white-50 d-block">Semillas de Torah</small>
+                    <span class="fs-4 fw-bold text-info"><%= semillasCount %></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="glass-panel p-3 border border-secondary border-opacity-25 rounded-3 d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-primary bg-opacity-25 p-3 text-primary">
+                    <i class="bi bi-headphones fs-4"></i>
+                </div>
+                <div>
+                    <small class="text-white-50 d-block">Reprod. / Descargas</small>
+                    <span class="fs-4 fw-bold text-white"><%= totalPlays %> <small class="text-info fs-6">/ <i class="bi bi-download"></i> <%= totalDownloads %></small></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="glass-panel p-3 mb-4 rounded-3 border border-secondary border-opacity-25">
+        <div class="row g-2 align-items-center">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-search"></i></span>
+                    <input type="text" id="musicAdminSearch" class="form-control bg-dark border-secondary text-white" placeholder="Buscar por título, artista o descripción...">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select id="musicAdminSectionFilter" class="form-select bg-dark border-secondary text-white">
+                    <option value="">Todas las secciones</option>
+                    <option value="general">🌐 Web en General</option>
+                    <option value="semillas">🌱 Semillas de Torah (Infantil)</option>
+                    <option value="ambas">✨ Ambas Secciones</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="musicAdminCatFilter" class="form-select bg-dark border-secondary text-white">
+                    <option value="">Todas las categorías</option>
+                    <option value="Alabanza">Alabanza</option>
+                    <option value="Shabat">Shabat</option>
+                    <option value="Reflexión">Reflexión</option>
+                    <option value="Infantil">Infantil</option>
+                    <option value="Santas Convocaciones">Santas Convocaciones</option>
+                    <option value="Instrumental">Instrumental</option>
+                </select>
+            </div>
+            <div class="col-md-2 text-end text-white-50 small">
+                Mostrando <span id="musicAdminVisibleCount"><%= allTracks.length %></span> temas
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="glass-panel p-0 rounded-3 border border-secondary border-opacity-25 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle mb-0" id="musicAdminTable">
+                <thead class="table-active text-uppercase small text-white-50">
+                    <tr>
+                        <th style="width: 55px;" class="ps-3">Orden</th>
+                        <th style="width: 64px;">Portada</th>
+                        <th>Título & Artista</th>
+                        <th>Sección & Categoría</th>
+                        <th style="min-width: 230px;">Vista Previa Audio</th>
+                        <th class="text-center">Lista Automática</th>
+                        <th class="text-center">Métricas</th>
+                        <th class="text-center">Estado</th>
+                        <th class="text-end pe-3">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (allTracks.length === 0) { %>
+                        <tr>
+                            <td colspan="9" class="text-center py-5 text-white-50">
+                                <i class="bi bi-music-note-list fs-1 d-block mb-2 opacity-50"></i>
+                                No hay canciones cargadas aún. Haz clic en <strong>Subir Nueva Canción</strong> para comenzar.
+                            </td>
+                        </tr>
+                    <% } else { %>
+                        <% allTracks.forEach(track => { 
+                            const sec = track.target_section || 'general';
+                            const isAuto = track.in_auto_playlist !== 0 && track.in_auto_playlist !== false;
+                        %>
+                            <tr class="music-admin-row"
+                                data-search="<%= ((track.title || '') + ' ' + (track.artist || '') + ' ' + (track.description || '') + ' ' + (track.category || '')).toLowerCase() %>"
+                                data-cat="<%= track.category || 'Alabanza' %>"
+                                data-section="<%= sec %>">
+                                <td class="ps-3">
+                                    <span class="badge bg-dark border border-secondary text-white-50">#<%= track.sort_order || 0 %></span>
+                                </td>
+                                <td>
+                                    <% if (track.cover_image) { %>
+                                        <img src="<%= track.cover_image %>" alt="<%= track.title %>" class="rounded-2 border border-secondary border-opacity-50" style="width: 48px; height: 48px; object-fit: cover;">
+                                    <% } else { %>
+                                        <div class="rounded-2 bg-warning bg-opacity-10 border border-warning border-opacity-25 d-flex align-items-center justify-content-center text-warning" style="width: 48px; height: 48px;">
+                                            <i class="bi bi-disc fs-5"></i>
+                                        </div>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-white"><%= track.title %></div>
+                                    <div class="small text-white-50">
+                                        <i class="bi bi-mic me-1"></i><%= track.artist || 'Hablemos de YHWH' %>
+                                        <% if (track.duration_label) { %>
+                                            • <i class="bi bi-clock ms-1"></i> <%= track.duration_label %>
+                                        <% } %>
+                                    </div>
+                                    <% if (track.description) { %>
+                                        <div class="small text-secondary text-truncate" style="max-width: 240px;"><%= track.description %></div>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <div class="mb-1">
+                                        <% if (sec === 'semillas') { %>
+                                            <span class="badge bg-info bg-opacity-15 text-info border border-info border-opacity-50">
+                                                🌱 Semillas de Torah
+                                            </span>
+                                        <% } else if (sec === 'ambas') { %>
+                                            <span class="badge bg-primary bg-opacity-20 text-light border border-primary border-opacity-50">
+                                                ✨ Web General + Semillas
+                                            </span>
+                                        <% } else { %>
+                                            <span class="badge bg-secondary bg-opacity-25 text-light border border-secondary border-opacity-50">
+                                                🌐 Web en General
+                                            </span>
+                                        <% } %>
+                                    </div>
+                                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25">
+                                        <%= track.category || 'Alabanza' %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <audio controls preload="none" class="w-100" style="height: 34px; max-width: 240px;">
+                                        <source src="<%= track.audio_url %>" type="audio/mpeg">
+                                    </audio>
+                                    <div class="small text-white-50 text-truncate mt-1" style="max-width: 240px;">
+                                        <code><%= track.audio_url %></code>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <form action="/admin/musica/toggle-autoplay/<%= track.id %>" method="POST" class="d-inline">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <button type="submit" class="btn btn-sm <%= isAuto ? 'btn-warning text-dark fw-semibold' : 'btn-outline-secondary' %>" title="Haz clic para agregar o quitar de la reproducción automática de la web">
+                                            <% if (isAuto) { %>
+                                                <i class="bi bi-volume-up-fill me-1"></i> En Autoplay
+                                            <% } else { %>
+                                                <i class="bi bi-volume-mute me-1"></i> Solo Sección
+                                            <% } %>
+                                        </button>
+                                    </form>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex flex-column gap-1 align-items-center">
+                                        <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25" title="Reproducciones">
+                                            <i class="bi bi-headphones me-1"></i><%= track.plays_count || 0 %>
+                                        </span>
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25" title="Descargas">
+                                            <i class="bi bi-download me-1"></i><%= track.downloads_count || 0 %>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <form action="/admin/musica/toggle/<%= track.id %>" method="POST" class="d-inline">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <button type="submit" class="btn btn-sm <%= track.is_active ? 'btn-success' : 'btn-outline-secondary' %>" title="Cambiar visibilidad">
+                                            <% if (track.is_active) { %>
+                                                <i class="bi bi-check-circle-fill me-1"></i> Activa
+                                            <% } else { %>
+                                                <i class="bi bi-eye-slash me-1"></i> Oculta
+                                            <% } %>
+                                        </button>
+                                    </form>
+                                </td>
+                                <td class="text-end pe-3">
+                                    <div class="d-flex justify-content-end gap-1">
+                                        <a href="/musica/download/<%= track.id %>" class="btn btn-sm btn-outline-warning" title="Descargar MP3">
+                                            <i class="bi bi-download"></i>
+                                        </a>
+                                        <a href="/admin/musica/edit/<%= track.id %>" class="btn btn-sm btn-outline-info" title="Editar canción">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <form action="/admin/musica/delete/<%= track.id %>"
+                                              method="POST"
+                                              class="d-inline swal-delete-form"
+                                              data-confirm-title="¿Eliminar canción?"
+                                              data-confirm-text="Se eliminará '<%= track.title %>' de la plataforma.">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar canción">
+                                                <i class="bi bi-trash3-fill"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- CREATE MODAL -->
+<div class="modal fade" id="createMusicModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border border-secondary">
+            <form action="/admin/musica/create" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-music-note-beamed text-warning me-2"></i>Subir Nueva Canción / Alabanza
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-7">
+                            <label class="form-label fw-semibold">Título de la canción *</label>
+                            <input type="text" name="title" class="form-control bg-dark text-white border-secondary" required placeholder="Ej: Shalom Jerusalén / Canto de Shabat">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label fw-semibold">Intérprete / Autor</label>
+                            <input type="text" name="artist" id="createMusicArtist" class="form-control bg-dark text-white border-secondary" value="Hablemos de YHWH" placeholder="Ej: Ministerio de Alabanza">
+                        </div>
+
+                        <!-- DESTINO DE LA CANCIÓN Y LISTA DE REPRODUCCIÓN AUTOMÁTICA -->
+                        <div class="col-12">
+                            <div class="p-3 rounded-3 border border-warning border-opacity-50" style="background: rgba(212,168,83,0.08);">
+                                <div class="row g-3 align-items-center">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold text-warning mb-1">
+                                            <i class="bi bi-diagram-3-fill me-1"></i> ¿A qué sección pertenece este tema? *
+                                        </label>
+                                        <select name="target_section" id="createMusicTargetSection" class="form-select bg-dark text-white border-warning">
+                                            <option value="general">🌐 Web en General (Sección Música y Alabanzas)</option>
+                                            <option value="semillas">🌱 Semillas de Torah (Temas Infantiles)</option>
+                                            <option value="ambas">✨ Ambas Secciones (Web General + Semillas de Torah)</option>
+                                        </select>
+                                        <div class="form-text text-white-50 small">
+                                            Elige <strong>Semillas de Torah</strong> para cantos infantiles o <strong>Web en General</strong> para temas comunes.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold text-warning mb-1 d-block">
+                                            <i class="bi bi-broadcast-pin me-1"></i> Lista de Reproducción Automática
+                                        </label>
+                                        <div class="form-check form-switch pt-1">
+                                            <input class="form-check-input" type="checkbox" name="in_auto_playlist" value="1" id="createMusicAutoPlaylist" checked style="transform: scale(1.25); cursor: pointer;">
+                                            <label class="form-check-label text-white ms-2 fw-semibold" for="createMusicAutoPlaylist" style="cursor: pointer;">
+                                                Agregar a la reproducción automática al abrir la web
+                                            </label>
+                                        </div>
+                                        <div class="form-text text-white-50 small mt-1" id="createMusicAutoHint">
+                                            Sonará automáticamente a volumen suave (20%) cuando un visitante entre a la plataforma.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Categoría</label>
+                            <select name="category" id="createMusicCategory" class="form-select bg-dark text-white border-secondary">
+                                <option value="Alabanza">Alabanza</option>
+                                <option value="Shabat">Shabat</option>
+                                <option value="Reflexión">Reflexión</option>
+                                <option value="Infantil">Infantil (Semillas de Torah)</option>
+                                <option value="Santas Convocaciones">Santas Convocaciones</option>
+                                <option value="Instrumental">Instrumental</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Duración (opcional)</label>
+                            <input type="text" name="duration_label" class="form-control bg-dark text-white border-secondary" placeholder="Ej: 4:15">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Orden de reproducción</label>
+                            <input type="number" name="sort_order" class="form-control bg-dark text-white border-secondary" value="<%= allTracks.length + 1 %>" min="0">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-warning"><i class="bi bi-file-earmark-music me-1"></i> Subir Archivo MP3 / Audio</label>
+                            <input type="file" name="audio_file" accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,.mp3,.mpeg" class="form-control bg-dark text-white border-secondary">
+                            <div class="form-text text-white-50">Formatos permitidos: MP3, MPEG, WAV, OGG.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">O URL directa del Audio (si no subes archivo)</label>
+                            <input type="text" name="audio_url" class="form-control bg-dark text-white border-secondary" placeholder="/assets/audio/musica/cancion.mp3">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold"><i class="bi bi-image me-1"></i> Portada (Opcional)</label>
+                            <input type="file" name="cover_image_file" accept="image/*" class="form-control bg-dark text-white border-secondary">
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end">
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" name="is_active" value="1" id="createMusicActive" checked>
+                                <label class="form-check-label text-white" for="createMusicActive">Canción publicada / visible en la plataforma</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Descripción breve (Opcional)</label>
+                            <textarea name="description" rows="2" class="form-control bg-dark text-white border-secondary" placeholder="Breve reseña o cita bíblica inspiradora..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Letra del Cántico (Opcional)</label>
+                            <textarea name="lyrics" rows="4" class="form-control bg-dark text-white border-secondary" placeholder="Escribe la letra para que los usuarios puedan leerla mientras escuchan..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning text-dark fw-bold px-4">
+                        <i class="bi bi-cloud-upload-fill me-1"></i> Guardar Canción
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('musicAdminSearch');
+    const secSelect = document.getElementById('musicAdminSectionFilter');
+    const catSelect = document.getElementById('musicAdminCatFilter');
+    const countEl = document.getElementById('musicAdminVisibleCount');
+    const rows = document.querySelectorAll('#musicAdminTable tbody tr.music-admin-row');
+
+    function filterMusicRows() {
+        const q = (searchInput ? searchInput.value : '').trim().toLowerCase();
+        const sec = secSelect ? secSelect.value : '';
+        const cat = catSelect ? catSelect.value : '';
+        let visible = 0;
+
+        rows.forEach(row => {
+            const hay = row.dataset.search || '';
+            const rowCat = row.dataset.cat || '';
+            const rowSec = row.dataset.section || 'general';
+            const matchesSearch = !q || hay.includes(q);
+            const matchesCat = !cat || rowCat === cat;
+            const matchesSec = !sec || rowSec === sec || (sec === 'semillas' && rowSec === 'ambas') || (sec === 'general' && rowSec === 'ambas');
+            const show = matchesSearch && matchesCat && matchesSec;
+            row.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+
+        if (countEl) countEl.textContent = visible;
+    }
+
+    if (searchInput) searchInput.addEventListener('input', filterMusicRows);
+    if (secSelect) secSelect.addEventListener('change', filterMusicRows);
+    if (catSelect) catSelect.addEventListener('change', filterMusicRows);
+
+    // Cuando el admin elige "Semillas de Torah" en el modal, sugerir categoría Infantil y desmarcar autoplay general por defecto
+    const targetSecEl = document.getElementById('createMusicTargetSection');
+    const autoCheckEl = document.getElementById('createMusicAutoPlaylist');
+    const catModalEl = document.getElementById('createMusicCategory');
+    const artistModalEl = document.getElementById('createMusicArtist');
+
+    if (targetSecEl) {
+        targetSecEl.addEventListener('change', function() {
+            if (this.value === 'semillas') {
+                if (catModalEl) catModalEl.value = 'Infantil';
+                if (autoCheckEl) autoCheckEl.checked = false;
+                if (artistModalEl && artistModalEl.value === 'Hablemos de YHWH') {
+                    artistModalEl.value = 'Semillas de Torah';
+                }
+            } else if (this.value === 'general') {
+                if (autoCheckEl) autoCheckEl.checked = true;
+                if (catModalEl && catModalEl.value === 'Infantil') catModalEl.value = 'Alabanza';
+            }
+        });
+    }
+
+    // Pause other preview players when one plays
+    document.querySelectorAll('#musicAdminTable audio').forEach(audioEl => {
+        audioEl.volume = 0.20;
+        audioEl.addEventListener('play', () => {
+            document.querySelectorAll('#musicAdminTable audio').forEach(other => {
+                if (other !== audioEl && !other.paused) other.pause();
+            });
+        });
+    });
+});
+</script>

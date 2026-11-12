@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('partials/head') %>
+
+<body class="musica-page">
+
+    <%- include('partials/header') %>
+
+    <main class="main position-relative overflow-hidden" style="background: radial-gradient(ellipse at 50% 15%, #23190f 0%, #110d09 55%, #090705 100%); min-height: 100vh; color: #f8f5f0;">
+
+        <!-- FONDO ANIMADO DE ONDAS SONORAS Y BARRAS DE DECIBELES (CANVAS FULLSCREEN) -->
+        <canvas id="musicaBgSpectrum" aria-hidden="true"></canvas>
+        <div class="musica-bg-glow-overlay" aria-hidden="true"></div>
+
+        <!-- Page Title -->
+        <div class="page-title dark-background position-relative" style="z-index: 2; padding: 44px 0 36px; background: linear-gradient(180deg, rgba(18,14,10,0.88) 0%, rgba(28,21,14,0.72) 100%); border-bottom: 1px solid rgba(212,168,83,0.4); backdrop-filter: blur(6px);">
+            <div class="container d-lg-flex justify-content-between align-items-center">
+                <div>
+                    <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-2" style="background: rgba(212,168,83,0.16); color: #f5cf7c; border: 1px solid rgba(212,168,83,0.45); font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">
+                        <span class="mini-eq-icon" aria-hidden="true">
+                            <span></span><span></span><span></span><span></span>
+                        </span>
+                        ALABANZAS, SHABAT & SEMILLAS DE TORAH
+                    </div>
+                    <h1 class="mb-1 text-white fw-bold" style="font-size: 2.3rem;">Música — Hablemos de YHWH</h1>
+                    <p class="text-white-50 mb-0">Escucha y descarga cánticos de alabanza, melodías de Shabat y canciones infantiles con sonido suave.</p>
+                </div>
+                <nav class="breadcrumbs mt-3 mt-lg-0">
+                    <ol>
+                        <li><a href="/">Inicio</a></li>
+                        <li class="current">Música</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <section class="section position-relative" style="z-index: 2; background: transparent; padding: 40px 0 80px;">
+            <div class="container">
+
+                <% const musicList = Array.isArray(tracks) ? tracks : []; %>
+
+                <% if (musicList.length === 0) { %>
+                    <div class="text-center py-5 rounded-4 border" style="background: rgba(20,15,10,0.78); border-color: rgba(212,184,149,0.25) !important; backdrop-filter: blur(10px);">
+                        <i class="bi bi-music-note-beamed fs-1 d-block mb-3" style="color: #d4b895;"></i>
+                        <h3 class="text-white fw-bold">Aún no hay canciones publicadas</h3>
+                        <p class="text-white-50 mb-0">Pronto compartiremos nuevos cánticos de alabanza aquí.</p>
+                    </div>
+                <% } else { %>
+
+                    <!-- REPRODUCTOR PRINCIPAL DESTACADO CON BARRAS DE DECIBELES EN VIVO -->
+                    <div class="card border-0 rounded-4 shadow-lg overflow-hidden mb-5 position-relative" style="background: linear-gradient(135deg, rgba(27,21,16,0.92) 0%, rgba(38,28,19,0.90) 55%, rgba(19,14,10,0.94) 100%); border: 1px solid rgba(212,168,83,0.45) !important; backdrop-filter: blur(14px);">
+                        <div class="card-body p-4 p-md-5 position-relative" style="z-index: 2;">
+                            <div class="row align-items-center g-4">
+                                <div class="col-md-4 col-lg-3 text-center">
+                                    <div class="position-relative d-inline-block">
+                                        <!-- Halo pulsante alrededor del disco -->
+                                        <div id="stageDiscPulse" class="stage-disc-pulse"></div>
+                                        <div id="musicStageCoverWrap" class="mx-auto rounded-circle d-flex align-items-center justify-content-center shadow-lg position-relative"
+                                             style="width: 184px; height: 184px; background: radial-gradient(circle, #33261a 0%, #14100c 70%); border: 3px solid #d4a853; overflow: hidden; z-index: 2;">
+                                            <img id="stageCoverImg" src="" alt="Portada" class="w-100 h-100 d-none" style="object-fit: cover;">
+                                            <div id="stageCoverFallback" class="d-flex flex-column align-items-center justify-content-center">
+                                                <i class="bi bi-disc-fill" style="font-size: 4.8rem; color: #d4a853;"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-8 col-lg-9">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                                        <div class="d-flex flex-wrap align-items-center gap-2">
+                                            <span class="badge rounded-pill px-3 py-1" id="stageCategoryBadge" style="background: rgba(212,168,83,0.22); color: #f5cf7c; border: 1px solid rgba(212,168,83,0.45);">
+                                                <%= musicList[0].category || 'Alabanza' %>
+                                            </span>
+                                            <span class="badge rounded-pill px-3 py-1" id="stageSectionBadge" style="background: rgba(56,189,248,0.15); color: #7dd3fc; border: 1px solid rgba(56,189,248,0.35);">
+                                                <%= (musicList[0].target_section === 'semillas') ? '🌱 Semillas de Torah' : '🌐 Web General' %>
+                                            </span>
+                                            <span class="text-white-50 small" id="stageTrackCounter">Pista 1 de <%= musicList.length %></span>
+                                        </div>
+
+                                        <!-- Indicador en vivo de Decibeles (dB) -->
+                                        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill" style="background: rgba(0,0,0,0.45); border: 1px solid rgba(212,168,83,0.3);">
+                                            <span class="db-led-dot" id="stageDbDot"></span>
+                                            <small class="fw-bold font-monospace" style="color: #f5cf7c; font-size: 0.78rem;" id="stageDbReadout">-24.0 dB • SUAVE</small>
+                                        </div>
+                                    </div>
+
+                                    <h2 class="fw-bold text-white mb-1" id="stageTitle"><%= musicList[0].title %></h2>
+                                    <p class="mb-2" style="color: #d4b895;" id="stageArtist"><%= musicList[0].artist || 'Hablemos de YHWH' %></p>
+                                    <p class="text-white-50 small mb-3" id="stageDescription"><%= musicList[0].description || '' %></p>
+
+                                    <!-- VISUALIZADOR DE BARRAS DE DECIBELES EN EL REPRODUCTOR -->
+                                    <div class="stage-db-bars-box rounded-3 px-3 py-2 mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <span class="text-uppercase fw-bold" style="font-size: 0.65rem; letter-spacing: 1.2px; color: #d4a853;">
+                                                <i class="bi bi-soundwave me-1"></i>Espectro Acústico / Decibeles (dB)
+                                            </span>
+                                            <span class="text-white-50 font-monospace" style="font-size: 0.65rem;">-48dB ─── -24dB ─── -12dB ─── 0dB</span>
+                                        </div>
+                                        <div class="stage-eq-bars" id="stageEqBars" aria-hidden="true">
+                                            <% for (let b = 0; b < 36; b++) { %>
+                                                <div class="stage-eq-bar-wrap">
+                                                    <div class="stage-eq-bar" style="height: <%= 18 + ((b * 13) % 45) %>%;"></div>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
+
+                                    <!-- Barra de progreso -->
+                                    <div class="d-flex align-items-center gap-3 mb-3">
+                                        <span id="stageCurrentTime" class="small text-white-50 font-monospace" style="min-width: 42px;">0:00</span>
+                                        <input type="range" id="stageSeek" class="form-range flex-grow-1" min="0" max="100" value="0" style="accent-color: #d4a853; cursor: pointer;">
+                                        <span id="stageDuration" class="small text-white-50 font-monospace" style="min-width: 42px;">0:00</span>
+                                    </div>
+
+                                    <!-- Controles principales + Botón Descargar MP3 -->
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                                        <div class="d-flex flex-wrap align-items-center gap-2">
+                                            <button type="button" id="stagePrevBtn" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;" title="Anterior">
+                                                <i class="bi bi-skip-backward-fill"></i>
+                                            </button>
+                                            <button type="button" id="stagePlayBtn" class="btn rounded-pill px-4 py-2 fw-bold text-dark d-inline-flex align-items-center gap-2 shadow" style="background: linear-gradient(135deg, #f5cf7c, #c5953c); border: none;">
+                                                <i class="bi bi-play-fill fs-5" id="stagePlayIcon"></i>
+                                                <span id="stagePlayText">Reproducir</span>
+                                            </button>
+                                            <button type="button" id="stageNextBtn" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;" title="Siguiente">
+                                                <i class="bi bi-skip-forward-fill"></i>
+                                            </button>
+                                            <button type="button" id="stageRepeatBtn" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" title="Repetir pista">
+                                                <i class="bi bi-repeat"></i>
+                                            </button>
+
+                                            <!-- BOTÓN DESCARGAR EN EL REPRODUCTOR PRINCIPAL -->
+                                            <a id="stageDownloadBtn"
+                                               href="/musica/download/<%= musicList[0].id %>"
+                                               class="btn btn-outline-warning rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-2 ms-1"
+                                               title="Descargar este tema en MP3">
+                                                <i class="bi bi-download"></i>
+                                                <span>Descargar MP3</span>
+                                            </a>
+                                        </div>
+
+                                        <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-pill" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);">
+                                            <i class="bi bi-volume-down-fill" style="color: #d4a853;"></i>
+                                            <input type="range" id="stageVolume" min="0" max="1" step="0.02" value="0.20" style="width: 95px; accent-color: #d4a853; cursor: pointer;" aria-label="Volumen">
+                                            <span id="stageVolumePct" class="small text-white-50 font-monospace" style="min-width: 36px;">20%</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Letra opcional -->
+                                    <div id="stageLyricsWrap" class="mt-3 d-none">
+                                        <button class="btn btn-sm btn-outline-warning rounded-pill px-3" type="button" data-bs-toggle="collapse" data-bs-target="#stageLyricsCollapse">
+                                            <i class="bi bi-file-text me-1"></i> Ver Letra del Cántico
+                                        </button>
+                                        <div class="collapse mt-2" id="stageLyricsCollapse">
+                                            <div id="stageLyricsBody" class="p-3 rounded-3 small text-light" style="background: rgba(0,0,0,0.45); border: 1px solid rgba(212,168,83,0.28); white-space: pre-line; line-height: 1.75; max-height: 240px; overflow-y: auto;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BUSCADOR Y FILTROS DE SECCIÓN / CATEGORÍA -->
+                    <div class="row g-3 align-items-center mb-4">
+                        <div class="col-lg-4">
+                            <div class="input-group">
+                                <span class="input-group-text border-secondary text-white-50" style="background: rgba(26,21,16,0.9);"><i class="bi bi-search"></i></span>
+                                <input type="text" id="musicSearchInput" class="form-control text-white border-secondary" style="background: rgba(26,21,16,0.9);" placeholder="Buscar canción, artista o letra...">
+                            </div>
+                        </div>
+                        <div class="col-lg-8 d-flex flex-wrap gap-2 justify-content-lg-end" id="musicCategoryFilters">
+                            <button type="button" class="btn btn-sm rounded-pill px-3 fw-semibold btn-warning text-dark music-filter-btn active" data-filter-type="all" data-val="">
+                                Todas (<%= musicList.length %>)
+                            </button>
+                            <button type="button" class="btn btn-sm rounded-pill px-3 fw-semibold btn-outline-light music-filter-btn" data-filter-type="section" data-val="general">
+                                🌐 Web General
+                            </button>
+                            <button type="button" class="btn btn-sm rounded-pill px-3 fw-semibold btn-outline-info music-filter-btn" data-filter-type="section" data-val="semillas">
+                                🌱 Semillas de Torah
+                            </button>
+                            <% const cats = [...new Set(musicList.map(t => t.category || 'Alabanza'))]; %>
+                            <% cats.forEach(c => { %>
+                                <button type="button" class="btn btn-sm rounded-pill px-3 fw-semibold btn-outline-secondary text-white-50 music-filter-btn" data-filter-type="cat" data-val="<%= c %>">
+                                    <%= c %>
+                                </button>
+                            <% }) %>
+                        </div>
+                    </div>
+
+                    <!-- LISTA DE CANCIONES -->
+                    <div class="row g-3" id="musicCardsGrid">
+                        <% musicList.forEach((track, index) => { 
+                            const sec = track.target_section || 'general';
+                        %>
+                            <div class="col-md-6 col-lg-4 music-card-col"
+                                 data-category="<%= track.category || 'Alabanza' %>"
+                                 data-section="<%= sec %>"
+                                 data-search="<%= (track.title + ' ' + (track.artist || '') + ' ' + (track.category || '') + ' ' + (track.description || '')).toLowerCase() %>">
+                                <div class="card h-100 border-0 rounded-4 shadow-sm music-track-card" data-index="<%= index %>" style="background: rgba(24,19,14,0.88); border: 1px solid rgba(212,168,83,0.25) !important; backdrop-filter: blur(10px); transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;">
+                                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+                                        <div>
+                                            <div class="d-flex align-items-start justify-content-between gap-2 mb-3">
+                                                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden position-relative" style="width: 56px; height: 56px; background: rgba(212,168,83,0.14); border: 1px solid rgba(212,168,83,0.35);">
+                                                    <% if (track.cover_image) { %>
+                                                        <img src="<%= track.cover_image %>" alt="<%= track.title %>" class="w-100 h-100" style="object-fit: cover;">
+                                                    <% } else { %>
+                                                        <i class="bi bi-music-note-beamed fs-3" style="color: #d4a853;"></i>
+                                                    <% } %>
+                                                </div>
+                                                <div class="d-flex flex-wrap gap-1 justify-content-end">
+                                                    <% if (sec === 'semillas') { %>
+                                                        <span class="badge rounded-pill px-2 py-1" style="background: rgba(56,189,248,0.16); color: #7dd3fc; font-size: 0.7rem; border: 1px solid rgba(56,189,248,0.35);">
+                                                            🌱 Semillas
+                                                        </span>
+                                                    <% } else if (sec === 'ambas') { %>
+                                                        <span class="badge rounded-pill px-2 py-1" style="background: rgba(168,85,247,0.18); color: #d8b4fe; font-size: 0.7rem; border: 1px solid rgba(168,85,247,0.35);">
+                                                            ✨ General + Semillas
+                                                        </span>
+                                                    <% } %>
+                                                    <span class="badge rounded-pill px-2 py-1" style="background: rgba(212,168,83,0.16); color: #f5cf7c; font-size: 0.72rem;">
+                                                        <%= track.category || 'Alabanza' %>
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <h5 class="fw-bold text-white mb-1"><%= track.title %></h5>
+                                            <div class="small mb-2" style="color: #d4b895;">
+                                                <i class="bi bi-mic me-1"></i><%= track.artist || 'Hablemos de YHWH' %>
+                                                <% if (track.duration_label) { %>
+                                                    • <i class="bi bi-clock ms-1"></i> <%= track.duration_label %>
+                                                <% } %>
+                                            </div>
+                                            <% if (track.description) { %>
+                                                <p class="small text-white-50 mb-3" style="line-height: 1.5;"><%= track.description %></p>
+                                            <% } %>
+                                        </div>
+
+                                        <div class="pt-3 border-top border-secondary border-opacity-25 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                            <div class="small text-white-50 d-flex align-items-center gap-2">
+                                                <span title="Reproducciones"><i class="bi bi-headphones me-1"></i><%= track.plays_count || 0 %></span>
+                                                <span title="Descargas"><i class="bi bi-download me-1"></i><%= track.downloads_count || 0 %></span>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <a href="/musica/download/<%= track.id %>"
+                                                   class="btn btn-sm btn-outline-warning rounded-pill px-3 fw-semibold download-card-btn"
+                                                   title="Descargar MP3"
+                                                   onclick="event.stopPropagation();">
+                                                    <i class="bi bi-download me-1"></i> Descargar
+                                                </a>
+                                                <button type="button" class="btn btn-sm rounded-pill px-3 fw-bold text-dark play-card-btn" style="background: #d4a853;">
+                                                    <i class="bi bi-play-fill me-1"></i> Escuchar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+
+                <% } %>
+            </div>
+        </section>
+
+        <audio id="stageAudioPlayer" preload="metadata" crossorigin="anonymous"></audio>
+    </main>
+
+    <style>
+        /* Canvas de espectro de decibeles en el fondo */
+        #musicaBgSpectrum {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.85;
+        }
+        .musica-bg-glow-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(212, 168, 83, 0.10) 0%, transparent 45%),
+                radial-gradient(circle at 80% 65%, rgba(245, 158, 11, 0.08) 0%, transparent 50%),
+                linear-gradient(180deg, rgba(10, 8, 6, 0.35) 0%, rgba(10, 8, 6, 0.55) 100%);
+        }
+
+        /* Icono ecualizador animado en el badge superior */
+        .mini-eq-icon {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 13px;
+        }
+        .mini-eq-icon span {
+            width: 3px;
+            background: #f5cf7c;
+            border-radius: 2px;
+            animation: miniEqBounce 0.9s ease-in-out infinite alternate;
+        }
+        .mini-eq-icon span:nth-child(1) { height: 45%; animation-delay: 0s; }
+        .mini-eq-icon span:nth-child(2) { height: 100%; animation-delay: 0.2s; }
+        .mini-eq-icon span:nth-child(3) { height: 65%; animation-delay: 0.4s; }
+        .mini-eq-icon span:nth-child(4) { height: 85%; animation-delay: 0.15s; }
+        @keyframes miniEqBounce {
+            0% { transform: scaleY(0.35); }
+            100% { transform: scaleY(1); }
+        }
+
+        /* Medidor de decibeles dentro del reproductor principal */
+        .stage-db-bars-box {
+            background: rgba(8, 6, 4, 0.65);
+            border: 1px solid rgba(212, 168, 83, 0.26);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.6);
+        }
+        .stage-eq-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 3px;
+            height: 52px;
+            padding-top: 4px;
+        }
+        .stage-eq-bar-wrap {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .stage-eq-bar {
+            width: 100%;
+            min-height: 8%;
+            border-radius: 3px 3px 0 0;
+            background: linear-gradient(180deg, #38bdf8 0%, #f5cf7c 30%, #d4a853 70%, #92611b 100%);
+            box-shadow: 0 0 8px rgba(212, 168, 83, 0.35);
+            transition: height 0.08s linear;
+        }
+
+        .db-led-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 8px #22c55e;
+            display: inline-block;
+        }
+        .db-led-dot.is-active {
+            animation: dbLedBlink 0.6s ease-in-out infinite alternate;
+        }
+        @keyframes dbLedBlink {
+            from { opacity: 0.45; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1.2); }
+        }
+
+        .stage-disc-pulse {
+            position: absolute;
+            inset: -10px;
+            border-radius: 50%;
+            border: 2px solid rgba(212, 168, 83, 0.35);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .stage-disc-pulse.is-playing {
+            animation: discPulseWave 2.2s ease-out infinite;
+        }
+        @keyframes discPulseWave {
+            0% { transform: scale(0.95); opacity: 0.75; }
+            100% { transform: scale(1.22); opacity: 0; }
+        }
+
+        .music-track-card {
+            cursor: pointer;
+        }
+        .music-track-card:hover {
+            transform: translateY(-4px);
+            border-color: #d4a853 !important;
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.45) !important;
+        }
+        .music-track-card.is-current {
+            background: linear-gradient(145deg, rgba(44, 33, 21, 0.94), rgba(24, 19, 14, 0.94)) !important;
+            border-color: #f5cf7c !important;
+            box-shadow: 0 0 24px rgba(212, 168, 83, 0.28) !important;
+        }
+        @keyframes spinDisc {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .music-disc-spinning {
+            animation: spinDisc 14s linear infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .music-disc-spinning, .stage-disc-pulse.is-playing { animation: none !important; }
+        }
+    </style>
+
+    <%- include('partials/footer') %>
+
+    <% if (musicList.length > 0) { %>
+    <script>
+    (function() {
+        const tracks = <%- JSON.stringify(musicList.map(t => ({
+            id: t.id,
+            title: t.title,
+            artist: t.artist || 'Hablemos de YHWH',
+            category: t.category || 'Alabanza',
+            section: t.target_section || 'general',
+            description: t.description || '',
+            lyrics: t.lyrics || '',
+            src: t.audio_url,
+            cover: t.cover_image || ''
+        }))) %>;
+
+        const audio = document.getElementById('stageAudioPlayer');
+        if (!audio || !tracks.length) return;
+
+        // Pausar el reproductor flotante global si estuviera sonando
+        const floatingAudio = document.getElementById('yhwhGlobalAudio');
+        if (floatingAudio && !floatingAudio.paused) {
+            try { floatingAudio.pause(); } catch (e) {}
+        }
+
+        const coverWrap = document.getElementById('musicStageCoverWrap');
+        const discPulse = document.getElementById('stageDiscPulse');
+        const coverImg = document.getElementById('stageCoverImg');
+        const coverFallback = document.getElementById('stageCoverFallback');
+        const catBadge = document.getElementById('stageCategoryBadge');
+        const secBadge = document.getElementById('stageSectionBadge');
+        const counterEl = document.getElementById('stageTrackCounter');
+        const titleEl = document.getElementById('stageTitle');
+        const artistEl = document.getElementById('stageArtist');
+        const descEl = document.getElementById('stageDescription');
+        const seekEl = document.getElementById('stageSeek');
+        const curEl = document.getElementById('stageCurrentTime');
+        const durEl = document.getElementById('stageDuration');
+        const playBtn = document.getElementById('stagePlayBtn');
+        const playIcon = document.getElementById('stagePlayIcon');
+        const playText = document.getElementById('stagePlayText');
+        const prevBtn = document.getElementById('stagePrevBtn');
+        const nextBtn = document.getElementById('stageNextBtn');
+        const repeatBtn = document.getElementById('stageRepeatBtn');
+        const downloadBtn = document.getElementById('stageDownloadBtn');
+        const volEl = document.getElementById('stageVolume');
+        const volPct = document.getElementById('stageVolumePct');
+        const lyricsWrap = document.getElementById('stageLyricsWrap');
+        const lyricsBody = document.getElementById('stageLyricsBody');
+        const dbReadout = document.getElementById('stageDbReadout');
+        const dbDot = document.getElementById('stageDbDot');
+        const eqBarEls = Array.from(document.querySelectorAll('#stageEqBars .stage-eq-bar'));
+
+        let activeIndex = 0;
+        let repeatOne = false;
+        let lastCountedId = null;
+
+        // Volumen suave por defecto (20% = 0.20)
+        const VOL_KEY = 'yhwh_music_vol_v3';
+        let initVol = 0.20;
+        try {
+            const v = localStorage.getItem(VOL_KEY);
+            if (v !== null && !isNaN(parseFloat(v))) {
+                initVol = Math.min(1, Math.max(0, parseFloat(v)));
+            }
+        } catch (e) {}
+        audio.volume = initVol;
+        if (volEl) volEl.value = String(initVol);
+        if (volPct) volPct.textContent = Math.round(initVol * 100) + '%';
+
+        function fmtTime(sec) {
+            if (!isFinite(sec) || sec < 0) return '0:00';
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
+            return m + ':' + (s < 10 ? '0' : '') + s;
+        }
+
+        function updatePlayUI(playing) {
+            if (playIcon) playIcon.className = playing ? 'bi bi-pause-fill fs-5' : 'bi bi-play-fill fs-5';
+            if (playText) playText.textContent = playing ? 'Pausar' : 'Reproducir';
+            if (coverWrap) coverWrap.classList.toggle('music-disc-spinning', playing);
+            if (discPulse) discPulse.classList.toggle('is-playing', playing);
+            if (dbDot) dbDot.classList.toggle('is-active', playing);
+
+            document.querySelectorAll('.music-track-card').forEach((card) => {
+                const idx = Number(card.dataset.index);
+                const isCurrent = idx === activeIndex;
+                card.classList.toggle('is-current', isCurrent);
+                const btn = card.querySelector('.play-card-btn');
+                if (btn) {
+                    btn.innerHTML = (isCurrent && playing)
+                        ? '<i class="bi bi-pause-fill me-1"></i> Sonando'
+                        : '<i class="bi bi-play-fill me-1"></i> Escuchar';
+                }
+            });
+        }
+
+        function loadStageTrack(idx, autoplay) {
+            activeIndex = ((idx % tracks.length) + tracks.length) % tracks.length;
+            const t = tracks[activeIndex];
+            audio.src = t.src;
+            if (titleEl) titleEl.textContent = t.title;
+            if (artistEl) artistEl.textContent = t.artist;
+            if (descEl) descEl.textContent = t.description || '';
+            if (catBadge) catBadge.textContent = t.category || 'Alabanza';
+            if (secBadge) {
+                secBadge.textContent = t.section === 'semillas'
+                    ? '🌱 Semillas de Torah'
+                    : (t.section === 'ambas' ? '✨ Web General + Semillas' : '🌐 Web General');
+            }
+            if (counterEl) counterEl.textContent = 'Pista ' + (activeIndex + 1) + ' de ' + tracks.length;
+            if (downloadBtn) downloadBtn.href = '/musica/download/' + t.id;
+
+            if (t.cover) {
+                coverImg.src = t.cover;
+                coverImg.classList.remove('d-none');
+                coverFallback.classList.add('d-none');
+            } else {
+                coverImg.classList.add('d-none');
+                coverFallback.classList.remove('d-none');
+            }
+
+            if (t.lyrics && t.lyrics.trim()) {
+                lyricsBody.textContent = t.lyrics;
+                lyricsWrap.classList.remove('d-none');
+            } else {
+                lyricsWrap.classList.add('d-none');
+            }
+
+            if (seekEl) seekEl.value = 0;
+            if (curEl) curEl.textContent = '0:00';
+            if (durEl) durEl.textContent = '0:00';
+
+            updatePlayUI(false);
+
+            if (autoplay) {
+                ensureAudioAnalyser();
+                audio.play().then(() => {
+                    updatePlayUI(true);
+                    reportPlay(t.id);
+                }).catch(() => {
+                    updatePlayUI(false);
+                });
+            }
+        }
+
+        function reportPlay(id) {
+            if (!id || lastCountedId === id) return;
+            lastCountedId = id;
+            fetch('/api/musica/' + id + '/play', { method: 'POST' }).catch(() => {});
+        }
+
+        playBtn.addEventListener('click', () => {
+            ensureAudioAnalyser();
+            if (audio.paused) {
+                audio.play().then(() => {
+                    updatePlayUI(true);
+                    reportPlay(tracks[activeIndex].id);
+                }).catch(() => {});
+            } else {
+                audio.pause();
+                updatePlayUI(false);
+            }
+        });
+
+        prevBtn.addEventListener('click', () => loadStageTrack(activeIndex - 1, true));
+        nextBtn.addEventListener('click', () => loadStageTrack(activeIndex + 1, true));
+
+        repeatBtn.addEventListener('click', () => {
+            repeatOne = !repeatOne;
+            audio.loop = repeatOne;
+            repeatBtn.classList.toggle('btn-warning', repeatOne);
+            repeatBtn.classList.toggle('text-dark', repeatOne);
+            repeatBtn.classList.toggle('btn-outline-secondary', !repeatOne);
+        });
+
+        volEl.addEventListener('input', () => {
+            const v = parseFloat(volEl.value);
+            audio.volume = v;
+            if (volPct) volPct.textContent = Math.round(v * 100) + '%';
+            try { localStorage.setItem(VOL_KEY, String(v)); } catch (e) {}
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            if (curEl) curEl.textContent = fmtTime(audio.currentTime);
+            if (durEl && isFinite(audio.duration)) durEl.textContent = fmtTime(audio.duration);
+            if (seekEl && isFinite(audio.duration) && audio.duration > 0) {
+                seekEl.value = String((audio.currentTime / audio.duration) * 100);
+            }
+        });
+
+        audio.addEventListener('loadedmetadata', () => {
+            if (durEl && isFinite(audio.duration)) durEl.textContent = fmtTime(audio.duration);
+        });
+
+        seekEl.addEventListener('input', () => {
+            if (isFinite(audio.duration) && audio.duration > 0) {
+                audio.currentTime = (parseFloat(seekEl.value) / 100) * audio.duration;
+            }
+        });
+
+        audio.addEventListener('ended', () => {
+            if (!repeatOne) loadStageTrack(activeIndex + 1, true);
+        });
+
+        document.querySelectorAll('.music-track-card').forEach((card) => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.download-card-btn')) return;
+                const idx = Number(card.dataset.index);
+                ensureAudioAnalyser();
+                if (idx === activeIndex && !audio.paused) {
+                    audio.pause();
+                    updatePlayUI(false);
+                } else if (idx === activeIndex && audio.paused) {
+                    audio.play().then(() => {
+                        updatePlayUI(true);
+                        reportPlay(tracks[activeIndex].id);
+                    }).catch(() => {});
+                } else {
+                    loadStageTrack(idx, true);
+                }
+            });
+        });
+
+        // Buscador y filtros por Sección / Categoría
+        const searchInput = document.getElementById('musicSearchInput');
+        const filterBtns = document.querySelectorAll('.music-filter-btn');
+        let activeFilterType = 'all';
+        let activeFilterVal = '';
+
+        function filterCards() {
+            const q = (searchInput ? searchInput.value : '').trim().toLowerCase();
+            document.querySelectorAll('.music-card-col').forEach((col) => {
+                const c = col.dataset.category || '';
+                const s = col.dataset.section || 'general';
+                const text = col.dataset.search || '';
+                let matchFilter = true;
+                if (activeFilterType === 'cat' && activeFilterVal) {
+                    matchFilter = (c === activeFilterVal);
+                } else if (activeFilterType === 'section' && activeFilterVal) {
+                    matchFilter = (s === activeFilterVal || s === 'ambas');
+                }
+                const matchSearch = !q || text.includes(q);
+                col.style.display = (matchFilter && matchSearch) ? '' : 'none';
+            });
+        }
+
+        if (searchInput) searchInput.addEventListener('input', filterCards);
+        filterBtns.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach((b) => {
+                    b.classList.remove('btn-warning', 'text-dark', 'active');
+                    if (!b.classList.contains('btn-outline-light') && !b.classList.contains('btn-outline-info')) {
+                        b.classList.add('btn-outline-secondary', 'text-white-50');
+                    }
+                });
+                btn.classList.remove('btn-outline-secondary', 'text-white-50');
+                btn.classList.add('btn-warning', 'text-dark', 'active');
+                activeFilterType = btn.dataset.filterType || 'all';
+                activeFilterVal = btn.dataset.val || '';
+                filterCards();
+            });
+        });
+
+        // =========================================================================
+        // MOTOR VISUALIZADOR DE DECIBELES Y ONDAS ACÚSTICAS (FONDO + REPRODUCTOR)
+        // =========================================================================
+        let audioCtx = null;
+        let analyser = null;
+        let freqData = null;
+
+        function ensureAudioAnalyser() {
+            if (analyser) {
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume().catch(() => {});
+                }
+                return;
+            }
+            try {
+                const Ctx = window.AudioContext || window.webkitAudioContext;
+                if (!Ctx) return;
+                audioCtx = new Ctx();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 128;
+                analyser.smoothingTimeConstant = 0.82;
+                const source = audioCtx.createMediaElementSource(audio);
+                source.connect(analyser);
+                analyser.connect(audioCtx.destination);
+                freqData = new Uint8Array(analyser.frequencyBinCount);
+            } catch (e) {
+                analyser = null;
+            }
+        }
+
+        const canvas = document.getElementById('musicaBgSpectrum');
+        const ctx = canvas ? canvas.getContext('2d') : null;
+        const NUM_BG_BARS = 56;
+        const peakHeights = new Array(NUM_BG_BARS).fill(0);
+        const notesPool = Array.from({ length: 16 }, (_, i) => ({
+            x: Math.random(),
+            y: Math.random(),
+            speed: 0.0004 + Math.random() * 0.0007,
+            drift: (Math.random() - 0.5) * 0.0005,
+            size: 13 + Math.floor(Math.random() * 14),
+            symbol: ['♪', '♫', '♬', '♩'][i % 4],
+            alpha: 0.12 + Math.random() * 0.22
+        }));
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        let tick = 0;
+        function renderSpectrumFrame() {
+            tick += 0.035;
+            const isPlaying = !audio.paused;
+
+            if (analyser && freqData && isPlaying) {
+                analyser.getByteFrequencyData(freqData);
+            }
+
+            // 1. Actualizar las 36 barras de decibeles dentro del reproductor principal
+            let sumLevel = 0;
+            for (let i = 0; i < eqBarEls.length; i++) {
+                let norm = 0;
+                if (analyser && freqData && isPlaying) {
+                    const bin = Math.min(freqData.length - 1, Math.floor((i / eqBarEls.length) * (freqData.length * 0.75)));
+                    norm = (freqData[bin] / 255) * (0.55 + audio.volume * 0.85);
+                } else if (isPlaying) {
+                    // Simulación rítmica si el navegador no expone FFT
+                    norm = (0.28 + 0.38 * Math.abs(Math.sin(tick * 2.1 + i * 0.45)) * Math.abs(Math.cos(tick * 1.3 - i * 0.2))) * (0.55 + audio.volume * 0.85);
+                } else {
+                    // Respiración acústica suave en reposo
+                    norm = 0.10 + 0.12 * Math.sin(tick * 0.9 + i * 0.35);
+                }
+                norm = Math.max(0.08, Math.min(0.98, norm));
+                sumLevel += norm;
+                eqBarEls[i].style.height = Math.round(norm * 100) + '%';
+            }
+
+            if (dbReadout) {
+                const avg = sumLevel / (eqBarEls.length || 1);
+                const dbVal = isPlaying
+                    ? (-36 + avg * 30 * (0.5 + audio.volume)).toFixed(1)
+                    : (-42 + avg * 12).toFixed(1);
+                dbReadout.textContent = `${dbVal} dB • ${isPlaying ? 'ACTIVO' : 'AMBIENTE'}`;
+            }
+
+            // 2. Dibujar fondo animado de Barras de Decibeles + Ondas Acústicas
+            if (ctx && canvas) {
+                const W = canvas.width;
+                const H = canvas.height;
+                ctx.clearRect(0, 0, W, H);
+
+                // Ondas acústicas sinusoidales en el horizonte
+                for (let w = 0; w < 3; w++) {
+                    ctx.beginPath();
+                    const baseY = H * (0.38 + w * 0.14);
+                    const amp = (isPlaying ? 34 : 16) * (1 + w * 0.3);
+                    for (let x = 0; x <= W; x += 12) {
+                        const y = baseY
+                            + Math.sin(x * 0.0045 + tick * (1.1 + w * 0.35)) * amp
+                            + Math.cos(x * 0.009 - tick * 0.8) * (amp * 0.45);
+                        if (x === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.strokeStyle = w === 0
+                        ? 'rgba(212, 168, 83, 0.18)'
+                        : (w === 1 ? 'rgba(245, 207, 124, 0.12)' : 'rgba(56, 189, 248, 0.10)');
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+
+                // Barras de decibeles estilo ecualizador LED en la base de la pantalla
+                const barSlot = W / NUM_BG_BARS;
+                const barW = Math.max(4, barSlot * 0.62);
+                const maxBarH = H * (isPlaying ? 0.42 : 0.22);
+
+                for (let i = 0; i < NUM_BG_BARS; i++) {
+                    let val = 0;
+                    if (analyser && freqData && isPlaying) {
+                        const bin = Math.min(freqData.length - 1, Math.floor((i / NUM_BG_BARS) * (freqData.length * 0.8)));
+                        val = (freqData[bin] / 255);
+                    } else {
+                        const wave1 = Math.abs(Math.sin(tick * (isPlaying ? 1.8 : 0.75) + i * 0.28));
+                        const wave2 = Math.abs(Math.cos(tick * (isPlaying ? 1.25 : 0.5) - i * 0.19));
+                        val = (0.18 + 0.65 * wave1 * wave2) * (isPlaying ? 1 : 0.55);
+                    }
+
+                    const h = Math.max(12, val * maxBarH);
+                    if (h > peakHeights[i]) {
+                        peakHeights[i] = h;
+                    } else {
+                        peakHeights[i] = Math.max(10, peakHeights[i] - 1.6);
+                    }
+
+                    const x = i * barSlot + (barSlot - barW) / 2;
+                    const y = H - h;
+
+                    const grad = ctx.createLinearGradient(x, H, x, y);
+                    grad.addColorStop(0, 'rgba(146, 97, 27, 0.12)');
+                    grad.addColorStop(0.55, 'rgba(212, 168, 83, 0.24)');
+                    grad.addColorStop(1, 'rgba(245, 207, 124, 0.42)');
+
+                    ctx.fillStyle = grad;
+                    ctx.fillRect(x, y, barW, h);
+
+                    // Indicador pico de decibeles (Peak Hold Cap)
+                    ctx.fillStyle = 'rgba(56, 189, 248, 0.48)';
+                    ctx.fillRect(x, H - peakHeights[i] - 4, barW, 3);
+                }
+
+                // Notas musicales flotantes sutiles
+                ctx.save();
+                notesPool.forEach((n) => {
+                    n.y -= n.speed * (isPlaying ? 1.7 : 1.0);
+                    n.x += n.drift;
+                    if (n.y < -0.05) {
+                        n.y = 1.05;
+                        n.x = Math.random();
+                    }
+                    ctx.font = `${n.size}px serif`;
+                    ctx.fillStyle = `rgba(245, 207, 124, ${n.alpha})`;
+                    ctx.fillText(n.symbol, n.x * W, n.y * H);
+                });
+                ctx.restore();
+            }
+
+            requestAnimationFrame(renderSpectrumFrame);
+        }
+
+        // Cargar primera pista y reproducir automáticamente con volumen suave (20%)
+        loadStageTrack(0, true);
+        requestAnimationFrame(renderSpectrumFrame);
+
+        // Si el navegador bloquea el autoplay inicial, iniciar al primer clic/toque en la página
+        const unlockStageAudio = (e) => {
+            if (e && e.target && e.target.closest('#stagePlayBtn, .music-track-card')) {
+                cleanupStageUnlock();
+                return;
+            }
+            if (audio.paused) {
+                ensureAudioAnalyser();
+                audio.play().then(() => {
+                    updatePlayUI(true);
+                    reportPlay(tracks[activeIndex].id);
+                }).catch(() => {});
+            }
+            cleanupStageUnlock();
+        };
+        function cleanupStageUnlock() {
+            document.removeEventListener('pointerdown', unlockStageAudio);
+            document.removeEventListener('keydown', unlockStageAudio);
+        }
+        document.addEventListener('pointerdown', unlockStageAudio, { passive: true });
+        document.addEventListener('keydown', unlockStageAudio, { passive: true });
+    })();
+    </script>
+    <% } %>
+
+</body>
+</html>

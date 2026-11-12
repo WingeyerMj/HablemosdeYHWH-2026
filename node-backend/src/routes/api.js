@@ -9,6 +9,7 @@ try {
 const db = require('../config/db');
 const Subscriber = require('../models/Subscriber');
 const TorahVivienteDownload = require('../models/TorahVivienteDownload');
+const MusicTrack = require('../models/MusicTrack');
 
 // Configurar transporte de Gmail
 const transporter = nodemailer ? nodemailer.createTransport({
@@ -612,6 +613,16 @@ router.get('/torah-viviente/descargar', async (req, res) => {
         // No bloquear la redirección aunque falle el registro
     }
     res.redirect(302, 'http://torahviviente.com');
+});
+
+// Registrar reproducción de música
+router.post('/musica/:id/play', async (req, res) => {
+    try {
+        await MusicTrack.incrementPlay(req.params.id);
+        res.json({ ok: true });
+    } catch (e) {
+        res.json({ ok: false });
+    }
 });
 
 module.exports = router;

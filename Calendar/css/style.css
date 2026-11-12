@@ -10,8 +10,6 @@
 html,
 body,
 .calendar-page,
-.calendar-page .main,
-.calendar-page .section,
 .calendar-page footer,
 .calendar-page .footer {
   font-family: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -19,6 +17,12 @@ body,
   background-image: none !important;
   color: var(--text);
   transition: background 0.3s ease, color 0.3s ease;
+}
+
+.calendar-page .main {
+  font-family: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: transparent !important;
+  color: var(--text);
 }
 
 /* Fondo del dashboard del calendario (oscuro por defecto y cálido en modo día) */
@@ -32,6 +36,7 @@ body:not(.calendar-page) {
   background-position: center center !important;
   background-repeat: no-repeat !important;
   background-attachment: fixed !important;
+  color: var(--text);
 }
 
 :root[data-theme="light"] .calendar-page .section,

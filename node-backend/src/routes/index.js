@@ -21,6 +21,8 @@ router.get('/ensenanzas/:id', homeController.ensenanzaDetail);
 router.get('/haftara', homeController.haftaraPage);
 router.get('/haftara/:id', homeController.haftaraDetail);
 router.get('/archivo-historico', homeController.archivoHistorico);
+router.get('/musica', homeController.musicaPage);
+router.get('/musica/download/:id', homeController.downloadMusicTrack);
 router.get('/semillas-de-torah', homeController.semillasTorah);
 router.get('/semillas-de-torah/parasha-infantil/:id/descargar', homeController.downloadParashaInfantil);
 router.get('/semillas-de-torah/manualidad/:id/descargar', homeController.downloadManualidad);

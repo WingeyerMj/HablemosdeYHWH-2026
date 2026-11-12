@@ -35,10 +35,11 @@ const storage = multer.diskStorage({
         let folder = 'general';
         const ext = path.extname(file.originalname).toLowerCase().replace('.', '');
         const isAudio = file.mimetype.startsWith('audio/') || 
-                        /mp3|m4a|wav|aac|ogg|oga|opus|wma|flac|webm/.test(ext) ||
+                        /mp3|mpeg|m4a|wav|aac|ogg|oga|opus|wma|flac|webm/.test(ext) ||
                         file.mimetype.includes('ogg') || 
                         file.mimetype.includes('opus') || 
-                        req.originalUrl.includes('/aliyot');
+                        req.originalUrl.includes('/aliyot') ||
+                        file.fieldname === 'audio_file';
 
         if (isAudio) {
             folder = 'audios';
@@ -85,7 +86,7 @@ const upload = multer({
     },
     fileFilter: (req, file, cb) => {
         const ext = path.extname(file.originalname).toLowerCase();
-        const imageFields = /^(image_file|seder_image|image|cover|thumbnail)$/i;
+        const imageFields = /^(image_file|seder_image|image|cover|cover_image_file|thumbnail)$/i;
         const allowedHere = allowed.has(ext) && (!imageFields.test(file.fieldname) || ['.jpg','.jpeg','.png','.webp','.gif'].includes(ext));
         if (!allowedHere) { const error = new Error('Formato de archivo no permitido.'); error.status = 400; return cb(error); }
         cb(null, true);

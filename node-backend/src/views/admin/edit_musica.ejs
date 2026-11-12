@@ -1,0 +1,159 @@
+<!-- Sidebar -->
+<%- include('partials/_sidebar') %>
+
+<main class="col-md-10 main-content">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h1 class="text-white"><i class="bi bi-pencil-square me-2 text-warning"></i>Editar Canción / Alabanza</h1>
+            <p class="text-white-50 mb-0">Música & Alabanzas • Editando: <strong class="text-warning"><%= item.title %></strong></p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/musica/download/<%= item.id %>" class="btn btn-outline-warning"><i class="bi bi-download"></i> Descargar MP3</a>
+            <a href="/musica" target="_blank" class="btn btn-outline-light"><i class="bi bi-eye"></i> Ver en la Web</a>
+            <a href="/admin/musica" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver a la lista</a>
+        </div>
+    </div>
+
+    <% if (typeof msg !== 'undefined' && msg) { %>
+        <div class="alert alert-success border border-success d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-check-circle-fill me-2"></i><%= msg %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger border border-danger d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-exclamation-triangle-fill me-2"></i><%= error %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <div class="glass-panel p-4 rounded-3 border border-secondary border-opacity-25">
+        <form action="/admin/musica/update" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="id" value="<%= item.id %>">
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Título de la canción *</label>
+                    <input type="text" name="title" class="form-control bg-dark text-white border-secondary" required value="<%= item.title %>">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Intérprete / Autor</label>
+                    <input type="text" name="artist" class="form-control bg-dark text-white border-secondary" value="<%= item.artist || 'Hablemos de YHWH' %>">
+                </div>
+
+                <!-- SECCIÓN Y LISTA AUTOMÁTICA -->
+                <div class="col-12">
+                    <div class="p-3 rounded-3 border border-warning border-opacity-50" style="background: rgba(212,168,83,0.08);">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-warning mb-1">
+                                    <i class="bi bi-diagram-3-fill me-1"></i> ¿A qué sección pertenece este tema? *
+                                </label>
+                                <% const itemSec = item.target_section || 'general'; %>
+                                <select name="target_section" class="form-select bg-dark text-white border-warning">
+                                    <option value="general" <%= itemSec === 'general' ? 'selected' : '' %>>🌐 Web en General (Sección Música y Alabanzas)</option>
+                                    <option value="semillas" <%= itemSec === 'semillas' ? 'selected' : '' %>>🌱 Semillas de Torah (Temas Infantiles)</option>
+                                    <option value="ambas" <%= itemSec === 'ambas' ? 'selected' : '' %>>✨ Ambas Secciones (Web General + Semillas de Torah)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-warning mb-1 d-block">
+                                    <i class="bi bi-broadcast-pin me-1"></i> Lista de Reproducción Automática
+                                </label>
+                                <% const isAuto = item.in_auto_playlist !== 0 && item.in_auto_playlist !== false; %>
+                                <div class="form-check form-switch pt-1">
+                                    <input class="form-check-input" type="checkbox" name="in_auto_playlist" value="1" id="editMusicAutoPlaylist" <%= isAuto ? 'checked' : '' %> style="transform: scale(1.25); cursor: pointer;">
+                                    <label class="form-check-label text-white ms-2 fw-semibold" for="editMusicAutoPlaylist" style="cursor: pointer;">
+                                        Incluir en la lista de reproducción automática al abrir la web
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Categoría</label>
+                    <select name="category" class="form-select bg-dark text-white border-secondary">
+                        <% const cats = ['Alabanza', 'Shabat', 'Reflexión', 'Infantil', 'Santas Convocaciones', 'Instrumental']; %>
+                        <% cats.forEach(c => { %>
+                            <option value="<%= c %>" <%= (item.category === c) ? 'selected' : '' %>><%= c %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Duración (opcional)</label>
+                    <input type="text" name="duration_label" class="form-control bg-dark text-white border-secondary" value="<%= item.duration_label || '' %>" placeholder="Ej: 4:15">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Orden de reproducción</label>
+                    <input type="number" name="sort_order" class="form-control bg-dark text-white border-secondary" value="<%= item.sort_order || 0 %>" min="0">
+                </div>
+
+                <div class="col-12">
+                    <div class="p-3 rounded-3 bg-dark bg-opacity-50 border border-secondary border-opacity-50">
+                        <label class="form-label fw-semibold text-warning mb-2"><i class="bi bi-volume-up me-1"></i> Audio Actual</label>
+                        <div class="d-flex align-items-center flex-wrap gap-3">
+                            <audio controls preload="metadata" style="max-width: 360px;" id="editMusicPreview">
+                                <source src="<%= item.audio_url %>" type="audio/mpeg">
+                            </audio>
+                            <code class="text-info small"><%= item.audio_url %></code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Reemplazar Archivo de Audio (Opcional)</label>
+                    <input type="file" name="audio_file" accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,.mp3,.mpeg" class="form-control bg-dark text-white border-secondary">
+                    <div class="form-text text-white-50">Si subes un archivo nuevo, reemplazará al audio actual.</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">URL del Audio</label>
+                    <input type="text" name="audio_url" class="form-control bg-dark text-white border-secondary" value="<%= item.audio_url %>">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Portada (Opcional)</label>
+                    <% if (item.cover_image) { %>
+                        <div class="mb-2 d-flex align-items-center gap-2">
+                            <img src="<%= item.cover_image %>" alt="Portada" class="rounded-2 border border-secondary" style="width: 56px; height: 56px; object-fit: cover;">
+                            <small class="text-white-50">Portada actual</small>
+                        </div>
+                    <% } %>
+                    <input type="file" name="cover_image_file" accept="image/*" class="form-control bg-dark text-white border-secondary">
+                    <input type="hidden" name="existing_cover_image" value="<%= item.cover_image || '' %>">
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" name="is_active" value="1" id="editMusicActive" <%= item.is_active ? 'checked' : '' %>>
+                        <label class="form-check-label text-white" for="editMusicActive">Canción activa y visible en la web</label>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label fw-semibold">Descripción breve</label>
+                    <textarea name="description" rows="2" class="form-control bg-dark text-white border-secondary"><%= item.description || '' %></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold">Letra del Cántico</label>
+                    <textarea name="lyrics" rows="6" class="form-control bg-dark text-white border-secondary"><%= item.lyrics || '' %></textarea>
+                </div>
+
+                <div class="col-12 pt-3 d-flex justify-content-end gap-2 border-top border-secondary border-opacity-25">
+                    <a href="/admin/musica" class="btn btn-outline-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-warning text-dark fw-bold px-4">
+                        <i class="bi bi-save2-fill me-1"></i> Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const p = document.getElementById('editMusicPreview');
+    if (p) p.volume = 0.20;
+});
+</script>

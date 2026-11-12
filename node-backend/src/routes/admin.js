@@ -71,6 +71,7 @@ router.use(async (req, res, next) => {
         else if (path.includes('/torah-viviente-descargas')) res.locals.activePage = 'torah-viviente-descargas';
         else if (path.includes('/parashot-infantiles')) res.locals.activePage = 'parashot-infantiles';
         else if (path.includes('/semillas-manualidades')) res.locals.activePage = 'semillas-manualidades';
+        else if (path.includes('/musica')) res.locals.activePage = 'musica';
 
         try {
             const Interaction = require('../models/Interaction');
@@ -281,6 +282,15 @@ router.get('/semillas-manualidades/edit/:id', isAuthenticated, adminController.e
 router.post('/semillas-manualidades/update', isAuthenticated, upload.any(), adminController.updateSemillasManualidad);
 router.post('/semillas-manualidades/delete/:id', isAuthenticated, adminController.deleteSemillasManualidad);
 router.post('/semillas-manualidades/toggle/:id', isAuthenticated, adminController.toggleSemillasManualidad);
+
+// Música & Alabanzas
+router.get('/musica', isAuthenticated, adminController.musicaPage);
+router.post('/musica/create', isAuthenticated, upload.any(), adminController.createMusicTrack);
+router.get('/musica/edit/:id', isAuthenticated, adminController.editMusicTrackPage);
+router.post('/musica/update', isAuthenticated, upload.any(), adminController.updateMusicTrack);
+router.post('/musica/toggle/:id', isAuthenticated, adminController.toggleMusicTrack);
+router.post('/musica/toggle-autoplay/:id', isAuthenticated, adminController.toggleMusicAutoPlaylist);
+router.post('/musica/delete/:id', isAuthenticated, adminController.deleteMusicTrack);
 
 module.exports = router;
 

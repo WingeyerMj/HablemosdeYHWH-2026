@@ -8,6 +8,7 @@ const initDB = require('./src/config/init-db');
 const DynamicSection = require('./src/models/DynamicSection');
 const FooterModel = require('./src/models/FooterModel');
 const SiteSettings = require('./src/models/SiteSettings');
+const MusicTrack = require('./src/models/MusicTrack');
 const { getIconBuffer, ensureCalendarPwaIconsOnDisk } = require('./src/utils/calendarPwaAssets');
 
 // Asegurar que los iconos PNG para la PWA del calendario existan en disco
@@ -121,6 +122,7 @@ app.use(async (req, res, next) => {
     res.locals.footerConfig = {};
     res.locals.footerLinks = {};
     res.locals.siteSettings = {};
+    res.locals.globalMusicTracks = [];
 
     // URL pública absoluta (para compartir en redes y etiquetas Open Graph)
     const reqHost = req.get('host') || '';
@@ -135,11 +137,13 @@ app.use(async (req, res, next) => {
         const footerConfig = await FooterModel.getFooterConfig().catch(() => ({}));
         const footerLinks = await FooterModel.getFooterLinks().catch(() => ({}));
         const siteSettings = await SiteSettings.getMap().catch(() => ({}));
+        const globalMusicTracks = await MusicTrack.getAutoPlaylist().catch(() => []);
         
         res.locals.navbarDynamicSections = navSections;
         res.locals.footerConfig = footerConfig;
         res.locals.footerLinks = footerLinks;
         res.locals.siteSettings = siteSettings;
+        res.locals.globalMusicTracks = globalMusicTracks;
     } catch (e) {
         console.warn('--- Error loading global data:', e.message);
     }

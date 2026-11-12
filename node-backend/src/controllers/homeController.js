@@ -676,6 +676,7 @@ const homeController = {
             const SemillasArticulo = require('../models/SemillasArticulo');
             const ParashaInfantil = require('../models/ParashaInfantil');
             const SemillasManualidad = require('../models/SemillasManualidad');
+            const MusicTrack = require('../models/MusicTrack');
             
             let items = [];
             let shorts = [];
@@ -685,6 +686,7 @@ const homeController = {
             let dibujosSemanales = [];
             let manualidadesFiestas = [];
             let sugerenciasEncargadas = [];
+            let cancionesInfantiles = [];
 
             try { items = await SemillasTorah.getPublished(); } catch(e) { items = []; }
             try { shorts = await SemillasShort.getPublished(); } catch(e) { shorts = []; }
@@ -694,6 +696,7 @@ const homeController = {
             try { dibujosSemanales = await SemillasManualidad.getWeeklyDrawings(); } catch(e) { dibujosSemanales = []; }
             try { manualidadesFiestas = await SemillasManualidad.getFeastCrafts(); } catch(e) { manualidadesFiestas = []; }
             try { sugerenciasEncargadas = await SemillasManualidad.getSuggestions(); } catch(e) { sugerenciasEncargadas = []; }
+            try { cancionesInfantiles = await MusicTrack.getBySection('semillas'); } catch(e) { cancionesInfantiles = []; }
 
             res.render('semillas_torah', {
                 title: 'Semillas de Torah - Ministerio Infantil - Hablemos de YHWH',
@@ -706,6 +709,7 @@ const homeController = {
                 dibujosSemanales,
                 manualidadesFiestas,
                 sugerenciasEncargadas,
+                cancionesInfantiles,
                 msg: req.query.msg || null,
                 error: req.query.error || null,
                 layout: false
@@ -947,6 +951,75 @@ const homeController = {
                 layout: false
             });
         } catch (error) {
+            next(error);
+        }
+    },
+
+    musicaPage: async (req, res, next) => {
+        try {
+            const MusicTrack = require('../models/MusicTrack');
+            const tracks = await MusicTrack.getActive();
+            res.render('musica', {
+                title: 'Música y Alabanzas - Hablemos de YHWH',
+                page: 'musica',
+                tracks,
+                layout: false
+            });
+        } catch (error) {
+            console.error('Error en musicaPage:', error);
+            next(error);
+        }
+    },
+
+    downloadMusicTrack: async (req, res, next) => {
+        try {
+            const fs = require('fs');
+            const path = require('path');
+            const MusicTrack = require('../models/MusicTrack');
+            const item = await MusicTrack.getById(req.params.id);
+            if (!item || !item.audio_url) {
+                return res.status(404).send('Canción no encontrada');
+            }
+
+            try {
+                await MusicTrack.incrementDownload(item.id);
+            } catch (e) {}
+
+            const urlPath = String(item.audio_url).trim();
+            if (/^https?:\/\//i.test(urlPath)) {
+                return res.redirect(urlPath);
+            }
+
+            const cleanRel = urlPath.replace(/^\/+/, '').replace(/\.\./g, '');
+            const candidates = [
+                path.join(__dirname, '../../../public', cleanRel),
+                path.join(__dirname, '../../public', cleanRel)
+            ];
+
+            let diskPath = null;
+            for (const candidate of candidates) {
+                if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+                    diskPath = candidate;
+                    break;
+                }
+            }
+
+            if (!diskPath) {
+                return res.redirect(urlPath);
+            }
+
+            const ext = path.extname(diskPath) || '.mp3';
+            const slugTitle = String(item.title || 'alabanza-yhwh')
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .slice(0, 60) || 'alabanza-yhwh';
+            const downloadFilename = `${slugTitle}-hablemos-de-yhwh${ext}`;
+
+            return res.download(diskPath, downloadFilename);
+        } catch (error) {
+            console.error('Error en downloadMusicTrack:', error);
             next(error);
         }
     }
