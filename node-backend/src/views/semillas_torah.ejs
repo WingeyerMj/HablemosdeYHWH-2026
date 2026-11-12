@@ -2857,28 +2857,28 @@
     // DATOS DE LAS 22 LETRAS DEL ALEF-BET HEBREO
     // ========================================================
     const alefbetLetras = [
-        { num: 1, hebrew: 'א', name: 'Alef', sound: 'Muda / Sonido de vocal', paleo: '🐮 Cabeza de Buey', meaning: 'Fuerza, Líder, Elohim el Creador', color: '#0284c7', bg: '#e0f2fe', exampleWord: 'אָב', translit: 'Av', meaningWord: 'Padre / Papá', verse: '“En el principio creó Elohim los cielos y la tierra.” — Génesis 1:1', kidStory: 'Alef es la primera letra. Como la cabeza de un buey fuerte, nos recuerda que nuestro Padre celestial es el primero en todo.' },
-        { num: 2, hebrew: 'ב', name: 'Bet / Vet', sound: 'B (con punto) / V (sin punto)', paleo: '⛺ Carpa / Casa', meaning: 'Hogar, Familia, Lugar de la presencia', color: '#7c3aed', bg: '#ede9fe', exampleWord: 'בַּיִת', translit: 'Báyit', meaningWord: 'Casa / Hogar', verse: '“Bereshit / En el principio...” — La Torá comienza con Bet.', kidStory: 'Bet tiene forma de una casita abierta hacia adelante para caminar. Nos enseña sobre el amor a la familia que Adonai nos dio.' },
-        { num: 3, hebrew: 'ג', name: 'Guímel', sound: 'G (como gato)', paleo: '🐪 Camello / Persona que camina', meaning: 'Caminar, Dar con generosidad, Recompensa', color: '#059669', bg: '#d1fae5', exampleWord: 'גָּמָל', translit: 'Gamal', meaningWord: 'Camello', verse: '“El que sacia al necesitado será bendecido.” — Proverbios 11:25', kidStory: 'Guímel parece una persona corriendo a hacer una buena obra (Guemilut Jasadim) para ayudar y compartir.' },
-        { num: 4, hebrew: 'ד', name: 'Dálet', sound: 'D', paleo: '🚪 Puerta de la carpa', meaning: 'Entrada, Apertura, Humildad de corazón', color: '#d97706', bg: '#fef3c7', exampleWord: 'דֶּלֶת', translit: 'Délet', meaningWord: 'Puerta', verse: '“Yo estoy a la puerta y llamo.” — Revelación 3:20', kidStory: 'Dálet es la puerta por donde entramos a aprender la Torá y abrir nuestro corazón con humildad y cariño.' },
-        { num: 5, hebrew: 'ה', name: 'Hei', sound: 'H (aspirada suave)', paleo: '🙋 Hombre con brazos alzados', meaning: 'Mirar, Aliento de vida, Revelación', color: '#dc2626', bg: '#fee2e2', exampleWord: 'הִלֵּל', translit: 'Hilel', meaningWord: 'Alabar / Alegría', verse: '“Todo lo que respira alabe a Yah.” — Salmo 150:6', kidStory: 'Hei tiene una ventanita de luz. Representa el aliento de vida (rúaj) que Adonai nos regala cada mañana.' },
-        { num: 6, hebrew: 'ו', name: 'Vav', sound: 'V / O / U', paleo: '🪝 Clavo / Estaca de la carpa', meaning: 'Conectar, Unir la tierra con el cielo', color: '#2563eb', bg: '#dbeafe', exampleWord: 'וָו', translit: 'Vav', meaningWord: 'Gancho / Clavo', verse: '“Uniendo lo alto y lo bajo con amor y obediencia.”', kidStory: 'Vav es como un gancho recto que une palabras (“y”). Nos enseña a estar unidos en hermandad y paz.' },
-        { num: 7, hebrew: 'ז', name: 'Záyin', sound: 'Z (zumbido)', paleo: '⚔️ Corona / Arado', meaning: 'Sustento, El día 7º de Shabat sagrado', color: '#9333ea', bg: '#f3e8ff', exampleWord: 'זַיִת', translit: 'Záyit', meaningWord: 'Olivo / Aceituna', verse: '“Acuérdate del día de Shabat para santificarlo.” — Éxodo 20:8', kidStory: 'Záyin lleva una coronita arriba. Es el número 7, recordándonos el hermoso Shabat donde descansamos y cantamos en familia.' },
-        { num: 8, hebrew: 'ח', name: 'Jet', sound: 'J (gutural suave)', paleo: '🧱 Cerca / Muralla protectora', meaning: 'Protección, Vida nueva (Jayim), Santidad', color: '#16a34a', bg: '#dcfce7', exampleWord: 'חַיִּים', translit: 'Jayim', meaningWord: 'Vida', verse: '“Escoge, pues, la vida, para que vivas tú y tus hijos.” — Deuteronomio 30:19', kidStory: 'Jet forma un puentecito protegido. Nos habla de Jayim (Vida), la vida hermosa que el Creador nos da cuando guardamos Sus mandamientos.' },
-        { num: 9, hebrew: 'ט', name: 'Tet', sound: 'T', paleo: '🧺 Cesta tejida', meaning: 'Bondad oculta, Lo bueno que florece', color: '#ea580c', bg: '#ffedd5', exampleWord: 'טוֹב', translit: 'Tov', meaningWord: 'Bueno / Hermoso', verse: '“Y vio Elohim que era bueno (Tov).” — Génesis 1:4', kidStory: 'Tet parece una vasija que guarda algo muy valioso. La primera vez que aparece en la Torá es en la palabra TOV (Bueno).' },
-        { num: 10, hebrew: 'י', name: 'Yud', sound: 'Y / I', paleo: '✋ Mano / Brazo', meaning: 'Acción, Creación, Lo más pequeño que es grande', color: '#4f46e5', bg: '#e0e7ff', exampleWord: 'יָד', translit: 'Yad', meaningWord: 'Mano', verse: '“Tus manos me hicieron y me formaron.” — Salmo 119:73', kidStory: 'Yud es la letra más chiquita del Alef-Bet, como una chispita en el cielo. Nos enseña que hasta los más pequeños somos valiosos para Elohim.' },
-        { num: 11, hebrew: 'כ / ך', name: 'Kaf', sound: 'K / J', paleo: '🤲 Palma de la mano abierta', meaning: 'Cubrir, Bendecir, Corona real', color: '#0891b2', bg: '#cffafe', exampleWord: 'כֶּתֶר', translit: 'Kéter', meaningWord: 'Corona', verse: '“Corona de honra es la sabiduría de Adonai.” — Proverbios 4:9', kidStory: 'Kaf tiene forma de una mano que abraza o bendice. Cuando los papás bendicen a sus hijos, ponen las manos con amor.' },
-        { num: 12, hebrew: 'ל', name: 'Lámed', sound: 'L', paleo: '🦯 Cayado del pastor', meaning: 'Guiar, Aprender, El corazón que se eleva', color: '#c026d3', bg: '#fae8ff', exampleWord: 'לֵב', translit: 'Lev', meaningWord: 'Corazón', verse: '“Amarás a YHWH tu Elohim con todo tu corazón (Lev).” — Deuteronomio 6:5', kidStory: 'Lámed es la letra más alta de todas, como una torre que mira al cielo. Simboliza aprender la Torá y ser guiados como ovejas por el Buen Pastor.' },
-        { num: 13, hebrew: 'מ / ם', name: 'Mem', sound: 'M', paleo: '🌊 Olas de agua', meaning: 'Agua viva, Sabiduría de la Torá', color: '#0284c7', bg: '#e0f2fe', exampleWord: 'מַיִם', translit: 'Mávim', meaningWord: 'Agua', verse: '“Como aguas refrescantes para el alma sedienta.” — Proverbios 25:25', kidStory: 'Mem representa el agua fresca. Así como las plantitas necesitan agua para crecer, los niños necesitamos la Torá para crecer felices.' },
-        { num: 14, hebrew: 'נ / ן', name: 'Nun', sound: 'N', paleo: '🐟 Pez en el agua / Semilla', meaning: 'Fidelidad, Vida continua, Herederos', color: '#059669', bg: '#d1fae5', exampleWord: 'נֵר', translit: 'Ner', meaningWord: 'Lámpara / Luz', verse: '“Lámpara (Ner) es a mis pies tu palabra, y lumbrera a mi camino.” — Salmo 119:105', kidStory: 'Nun es como una pequeña semilla que brota. Nos recuerda que cada niño es una semilla de Torá que dará frutos de bondad.' },
-        { num: 15, hebrew: 'ס', name: 'Sámej', sound: 'S', paleo: '🛡️ Bastón de apoyo / Escudo redondo', meaning: 'Sostén, Protección completa, Círculo de amor', color: '#ca8a04', bg: '#fef08a', exampleWord: 'סֻכָּה', translit: 'Sucá', meaningWord: 'Cabaña de Shabat y Sucot', verse: '“Sostiene YHWH a todos los que caen.” — Salmo 145:14', kidStory: 'Sámej es redonda como un abrazo sin fin. Nos recuerda que el Creador nos cuida y nos sostiene por todos lados sin descanso.' },
-        { num: 16, hebrew: 'ע', name: 'Áyin', sound: 'Sonido profundo del alma', paleo: '👁️ Ojo', meaning: 'Ver la verdad, Entendimiento, Mirar con bondad', color: '#475569', bg: '#f1f5f9', exampleWord: 'עַיִן', translit: 'Áyin', meaningWord: 'Ojo', verse: '“Los ojos de YHWH están sobre los justos.” — Salmo 34:15', kidStory: 'Áyin tiene dos ramitas que se unen en una base, como dos ojitos que miran lo bueno de las personas para ayudarlas.' },
-        { num: 17, hebrew: 'פ / ף', name: 'Pei / Fei', sound: 'P (con punto) / F (sin punto)', paleo: '👄 Boca', meaning: 'Palabra, Hablar bendición, Oración', color: '#e11d48', bg: '#ffe4e6', exampleWord: 'פֶּה', translit: 'Peh', meaningWord: 'Boca', verse: '“De la boca de los pequeños fundaste la alabanza.” — Salmo 8:2', kidStory: 'Pei parece una boca sonriendo. Nos enseña a usar nuestra boca para decir la verdad, orar y cantar alabanzas bonitas.' },
-        { num: 18, hebrew: 'צ / ץ', name: 'Tsádi', sound: 'Ts (como tsunami)', paleo: '🎣 Anzuelo / Persona arrodillada', meaning: 'Justicia, Rectitud, Caridad (Tzedaká)', color: '#d97706', bg: '#fef3c7', exampleWord: 'צַדִּיק', translit: 'Tzadik', meaningWord: 'Justo / Bondadoso', verse: '“El justo (Tzadik) florecerá como la palmera.” — Salmo 92:12', kidStory: 'Tsádi es la letra del Tzadik (el justo). Es humilde y siempre piensa en cómo hacer justicia y compartir con quienes no tienen.' },
-        { num: 19, hebrew: 'ק', name: 'Qof', sound: 'K / Q', paleo: '🌅 Sol en el horizonte', meaning: 'Santidad (Kadosh), Apartado para el bien', color: '#7c3aed', bg: '#ede9fe', exampleWord: 'קָדוֹשׁ', translit: 'Kadosh', meaningWord: 'Santo / Especial', verse: '“Santos seréis, porque santo soy Yo.” — Levítico 19:2', kidStory: 'Qof es la letra de Kadosh (Santo y especial). Nos enseña que cada uno de nosotros fuimos apartados para ser una luz en el mundo.' },
-        { num: 20, hebrew: 'ר', name: 'Reish', sound: 'R', paleo: '👤 Cabeza humana', meaning: 'Comienzo, Principal, Rosh Hashaná', color: '#0284c7', bg: '#e0f2fe', exampleWord: 'רֹאשׁ', translit: 'Rosh', meaningWord: 'Cabeza / Inicio', verse: '“El principio (Reshit) de la sabiduría es el temor reverente a YHWH.” — Salmo 111:10', kidStory: 'Reish parece una cabeza inclinada. Nos invita a llenar nuestra cabecita y pensamientos de cosas buenas, nobles y verdaderas.' },
-        { num: 21, hebrew: 'ש', name: 'Shin / Sin', sound: 'Sh (como silencio) / S', paleo: '🔥 Fuego consumidor / Dientes', meaning: 'Paz (Shalom), Nombre del Creador (Shaddai)', color: '#dc2626', bg: '#fee2e2', exampleWord: 'שָׁלוֹם', translit: 'Shalom', meaningWord: 'Paz / Bienestar completo', verse: '“YHWH alzará sobre ti Su rostro, y pondrá en ti Shalom.” — Números 6:26', kidStory: 'Shin tiene 3 llamas que suben hacia el cielo. Está esculpida en la mezuzá de nuestras puertas y nos recuerda la hermosa palabra SHALOM.' },
-        { num: 22, hebrew: 'ת', name: 'Tav', sound: 'T', paleo: '✝️ Marca / Sello / Dos palos cruzados', meaning: 'Firma, Alianza, Integridad, Emet (Verdad)', color: '#059669', bg: '#d1fae5', exampleWord: 'תּוֹרָה', translit: 'Torá', meaningWord: 'Instrucción / Enseñanza divina', verse: '“La Torá de YHWH es perfecta, que reconforta el alma.” — Salmo 19:7', kidStory: 'Tav es la última letra del Alef-Bet. Completa la palabra EMET (Verdad: Alef, Mem, Tav). Con ella cerramos el abecedario dando gracias a Elohim.' }
+        { num: 1, hebrew: 'א', pictoImg: '/assets/img/semillas/pictografico/01_alef.svg', paleoImg: '/assets/img/semillas/paleo/01_alef.svg', name: 'Alef', sound: 'Muda / Sonido de vocal', paleo: '🐮 Cabeza de Buey', meaning: 'Fuerza, Líder, Elohim el Creador', color: '#0284c7', bg: '#e0f2fe', exampleWord: 'אָב', translit: 'Av', meaningWord: 'Padre / Papá', verse: '“En el principio creó Elohim los cielos y la tierra.” — Génesis 1:1', kidStory: 'Alef es la primera letra. Como la cabeza de un buey fuerte, nos recuerda que nuestro Padre celestial es el primero en todo.' },
+        { num: 2, hebrew: 'ב', pictoImg: '/assets/img/semillas/pictografico/02_bet.svg', paleoImg: '/assets/img/semillas/paleo/02_bet.svg', name: 'Bet / Vet', sound: 'B (con punto) / V (sin punto)', paleo: '⛺ Carpa / Casa', meaning: 'Hogar, Familia, Lugar de la presencia', color: '#7c3aed', bg: '#ede9fe', exampleWord: 'בַּיִת', translit: 'Báyit', meaningWord: 'Casa / Hogar', verse: '“Bereshit / En el principio...” — La Torá comienza con Bet.', kidStory: 'Bet tiene forma de una casita abierta hacia adelante para caminar. Nos enseña sobre el amor a la familia que Adonai nos dio.' },
+        { num: 3, hebrew: 'ג', pictoImg: '/assets/img/semillas/pictografico/03_gimel.svg', paleoImg: '/assets/img/semillas/paleo/03_gimel.svg', name: 'Guímel', sound: 'G (como gato)', paleo: '🐪 Camello / Persona que camina', meaning: 'Caminar, Dar con generosidad, Recompensa', color: '#059669', bg: '#d1fae5', exampleWord: 'גָּמָל', translit: 'Gamal', meaningWord: 'Camello', verse: '“El que sacia al necesitado será bendecido.” — Proverbios 11:25', kidStory: 'Guímel parece una persona corriendo a hacer una buena obra (Guemilut Jasadim) para ayudar y compartir.' },
+        { num: 4, hebrew: 'ד', pictoImg: '/assets/img/semillas/pictografico/04_dalet.svg', paleoImg: '/assets/img/semillas/paleo/04_dalet.svg', name: 'Dálet', sound: 'D', paleo: '🚪 Puerta de la carpa', meaning: 'Entrada, Apertura, Humildad de corazón', color: '#d97706', bg: '#fef3c7', exampleWord: 'דֶּלֶת', translit: 'Délet', meaningWord: 'Puerta', verse: '“Yo estoy a la puerta y llamo.” — Revelación 3:20', kidStory: 'Dálet es la puerta por donde entramos a aprender la Torá y abrir nuestro corazón con humildad y cariño.' },
+        { num: 5, hebrew: 'ה', pictoImg: '/assets/img/semillas/pictografico/05_hei.svg', paleoImg: '/assets/img/semillas/paleo/05_hei.svg', name: 'Hei', sound: 'H (aspirada suave)', paleo: '🙋 Hombre con brazos alzados', meaning: 'Mirar, Aliento de vida, Revelación', color: '#dc2626', bg: '#fee2e2', exampleWord: 'הִלֵּל', translit: 'Hilel', meaningWord: 'Alabar / Alegría', verse: '“Todo lo que respira alabe a Yah.” — Salmo 150:6', kidStory: 'Hei tiene una ventanita de luz. Representa el aliento de vida (rúaj) que Adonai nos regala cada mañana.' },
+        { num: 6, hebrew: 'ו', pictoImg: '/assets/img/semillas/pictografico/06_vav.svg', paleoImg: '/assets/img/semillas/paleo/06_vav.svg', name: 'Vav', sound: 'V / O / U', paleo: '🪝 Clavo / Estaca de la carpa', meaning: 'Conectar, Unir la tierra con el cielo', color: '#2563eb', bg: '#dbeafe', exampleWord: 'וָו', translit: 'Vav', meaningWord: 'Gancho / Clavo', verse: '“Uniendo lo alto y lo bajo con amor y obediencia.”', kidStory: 'Vav es como un gancho recto que une palabras (“y”). Nos enseña a estar unidos en hermandad y paz.' },
+        { num: 7, hebrew: 'ז', pictoImg: '/assets/img/semillas/pictografico/07_zayin.svg', paleoImg: '/assets/img/semillas/paleo/07_zayin.svg', name: 'Záyin', sound: 'Z (zumbido)', paleo: '⚔️ Corona / Arado', meaning: 'Sustento, El día 7º de Shabat sagrado', color: '#9333ea', bg: '#f3e8ff', exampleWord: 'זַיִת', translit: 'Záyit', meaningWord: 'Olivo / Aceituna', verse: '“Acuérdate del día de Shabat para santificarlo.” — Éxodo 20:8', kidStory: 'Záyin lleva una coronita arriba. Es el número 7, recordándonos el hermoso Shabat donde descansamos y cantamos en familia.' },
+        { num: 8, hebrew: 'ח', pictoImg: '/assets/img/semillas/pictografico/08_jet.svg', paleoImg: '/assets/img/semillas/paleo/08_jet.svg', name: 'Jet', sound: 'J (gutural suave)', paleo: '🧱 Cerca / Muralla protectora', meaning: 'Protección, Vida nueva (Jayim), Santidad', color: '#16a34a', bg: '#dcfce7', exampleWord: 'חַיִּים', translit: 'Jayim', meaningWord: 'Vida', verse: '“Escoge, pues, la vida, para que vivas tú y tus hijos.” — Deuteronomio 30:19', kidStory: 'Jet forma un puentecito protegido. Nos habla de Jayim (Vida), la vida hermosa que el Creador nos da cuando guardamos Sus mandamientos.' },
+        { num: 9, hebrew: 'ט', pictoImg: '/assets/img/semillas/pictografico/09_tet.svg', paleoImg: '/assets/img/semillas/paleo/09_tet.svg', name: 'Tet', sound: 'T', paleo: '🧺 Cesta tejida', meaning: 'Bondad oculta, Lo bueno que florece', color: '#ea580c', bg: '#ffedd5', exampleWord: 'טוֹב', translit: 'Tov', meaningWord: 'Bueno / Hermoso', verse: '“Y vio Elohim que era bueno (Tov).” — Génesis 1:4', kidStory: 'Tet parece una vasija que guarda algo muy valioso. La primera vez que aparece en la Torá es en la palabra TOV (Bueno).' },
+        { num: 10, hebrew: 'י', pictoImg: '/assets/img/semillas/pictografico/10_yud.svg', paleoImg: '/assets/img/semillas/paleo/10_yud.svg', name: 'Yud', sound: 'Y / I', paleo: '✋ Mano / Brazo', meaning: 'Acción, Creación, Lo más pequeño que es grande', color: '#4f46e5', bg: '#e0e7ff', exampleWord: 'יָד', translit: 'Yad', meaningWord: 'Mano', verse: '“Tus manos me hicieron y me formaron.” — Salmo 119:73', kidStory: 'Yud es la letra más chiquita del Alef-Bet, como una chispita en el cielo. Nos enseña que hasta los más pequeños somos valiosos para Elohim.' },
+        { num: 11, hebrew: 'כ / ך', pictoImg: '/assets/img/semillas/pictografico/11_kaf.svg', paleoImg: '/assets/img/semillas/paleo/11_kaf.svg', name: 'Kaf', sound: 'K / J', paleo: '🤲 Palma de la mano abierta', meaning: 'Cubrir, Bendecir, Corona real', color: '#0891b2', bg: '#cffafe', exampleWord: 'כֶּתֶר', translit: 'Kéter', meaningWord: 'Corona', verse: '“Corona de honra es la sabiduría de Adonai.” — Proverbios 4:9', kidStory: 'Kaf tiene forma de una mano que abraza o bendice. Cuando los papás bendicen a sus hijos, ponen las manos con amor.' },
+        { num: 12, hebrew: 'ל', pictoImg: '/assets/img/semillas/pictografico/12_lamed.svg', paleoImg: '/assets/img/semillas/paleo/12_lamed.svg', name: 'Lámed', sound: 'L', paleo: '🦯 Cayado del pastor', meaning: 'Guiar, Aprender, El corazón que se eleva', color: '#c026d3', bg: '#fae8ff', exampleWord: 'לֵב', translit: 'Lev', meaningWord: 'Corazón', verse: '“Amarás a YHWH tu Elohim con todo tu corazón (Lev).” — Deuteronomio 6:5', kidStory: 'Lámed es la letra más alta de todas, como una torre que mira al cielo. Simboliza aprender la Torá y ser guiados como ovejas por el Buen Pastor.' },
+        { num: 13, hebrew: 'מ / ם', pictoImg: '/assets/img/semillas/pictografico/13_mem.svg', paleoImg: '/assets/img/semillas/paleo/13_mem.svg', name: 'Mem', sound: 'M', paleo: '🌊 Olas de agua', meaning: 'Agua viva, Sabiduría de la Torá', color: '#0284c7', bg: '#e0f2fe', exampleWord: 'מַיִם', translit: 'Mávim', meaningWord: 'Agua', verse: '“Como aguas refrescantes para el alma sedienta.” — Proverbios 25:25', kidStory: 'Mem representa el agua fresca. Así como las plantitas necesitan agua para crecer, los niños necesitamos la Torá para crecer felices.' },
+        { num: 14, hebrew: 'נ / ן', pictoImg: '/assets/img/semillas/pictografico/14_nun.svg', paleoImg: '/assets/img/semillas/paleo/14_nun.svg', name: 'Nun', sound: 'N', paleo: '🐟 Pez en el agua / Semilla', meaning: 'Fidelidad, Vida continua, Herederos', color: '#059669', bg: '#d1fae5', exampleWord: 'נֵר', translit: 'Ner', meaningWord: 'Lámpara / Luz', verse: '“Lámpara (Ner) es a mis pies tu palabra, y lumbrera a mi camino.” — Salmo 119:105', kidStory: 'Nun es como una pequeña semilla que brota. Nos recuerda que cada niño es una semilla de Torá que dará frutos de bondad.' },
+        { num: 15, hebrew: 'ס', pictoImg: '/assets/img/semillas/pictografico/15_samej.svg', paleoImg: '/assets/img/semillas/paleo/15_samej.svg', name: 'Sámej', sound: 'S', paleo: '🛡️ Bastón de apoyo / Escudo redondo', meaning: 'Sostén, Protección completa, Círculo de amor', color: '#ca8a04', bg: '#fef08a', exampleWord: 'סֻכָּה', translit: 'Sucá', meaningWord: 'Cabaña de Shabat y Sucot', verse: '“Sostiene YHWH a todos los que caen.” — Salmo 145:14', kidStory: 'Sámej es redonda como un abrazo sin fin. Nos recuerda que el Creador nos cuida y nos sostiene por todos lados sin descanso.' },
+        { num: 16, hebrew: 'ע', pictoImg: '/assets/img/semillas/pictografico/16_ayin.svg', paleoImg: '/assets/img/semillas/paleo/16_ayin.svg', name: 'Áyin', sound: 'Sonido profundo del alma', paleo: '👁️ Ojo', meaning: 'Ver la verdad, Entendimiento, Mirar con bondad', color: '#475569', bg: '#f1f5f9', exampleWord: 'עַיִן', translit: 'Áyin', meaningWord: 'Ojo', verse: '“Los ojos de YHWH están sobre los justos.” — Salmo 34:15', kidStory: 'Áyin tiene dos ramitas que se unen en una base, como dos ojitos que miran lo bueno de las personas para ayudarlas.' },
+        { num: 17, hebrew: 'פ / ף', pictoImg: '/assets/img/semillas/pictografico/17_pei.svg', paleoImg: '/assets/img/semillas/paleo/17_pei.svg', name: 'Pei / Fei', sound: 'P (con punto) / F (sin punto)', paleo: '👄 Boca', meaning: 'Palabra, Hablar bendición, Oración', color: '#e11d48', bg: '#ffe4e6', exampleWord: 'פֶּה', translit: 'Peh', meaningWord: 'Boca', verse: '“De la boca de los pequeños fundaste la alabanza.” — Salmo 8:2', kidStory: 'Pei parece una boca sonriendo. Nos enseña a usar nuestra boca para decir la verdad, orar y cantar alabanzas bonitas.' },
+        { num: 18, hebrew: 'צ / ץ', pictoImg: '/assets/img/semillas/pictografico/18_tsadi.svg', paleoImg: '/assets/img/semillas/paleo/18_tsadi.svg', name: 'Tsádi', sound: 'Ts (como tsunami)', paleo: '🎣 Anzuelo / Persona arrodillada', meaning: 'Justicia, Rectitud, Caridad (Tzedaká)', color: '#d97706', bg: '#fef3c7', exampleWord: 'צַדִּיק', translit: 'Tzadik', meaningWord: 'Justo / Bondadoso', verse: '“El justo (Tzadik) florecerá como la palmera.” — Salmo 92:12', kidStory: 'Tsádi es la letra del Tzadik (el justo). Es humilde y siempre piensa en cómo hacer justicia y compartir con quienes no tienen.' },
+        { num: 19, hebrew: 'ק', pictoImg: '/assets/img/semillas/pictografico/19_qof.svg', paleoImg: '/assets/img/semillas/paleo/19_qof.svg', name: 'Qof', sound: 'K / Q', paleo: '🌅 Sol en el horizonte', meaning: 'Santidad (Kadosh), Apartado para el bien', color: '#7c3aed', bg: '#ede9fe', exampleWord: 'קָדוֹשׁ', translit: 'Kadosh', meaningWord: 'Santo / Especial', verse: '“Santos seréis, porque santo soy Yo.” — Levítico 19:2', kidStory: 'Qof es la letra de Kadosh (Santo y especial). Nos enseña que cada uno de nosotros fuimos apartados para ser una luz en el mundo.' },
+        { num: 20, hebrew: 'ר', pictoImg: '/assets/img/semillas/pictografico/20_reish.svg', paleoImg: '/assets/img/semillas/paleo/20_reish.svg', name: 'Reish', sound: 'R', paleo: '👤 Cabeza humana', meaning: 'Comienzo, Principal, Rosh Hashaná', color: '#0284c7', bg: '#e0f2fe', exampleWord: 'רֹאשׁ', translit: 'Rosh', meaningWord: 'Cabeza / Inicio', verse: '“El principio (Reshit) de la sabiduría es el temor reverente a YHWH.” — Salmo 111:10', kidStory: 'Reish parece una cabeza inclinada. Nos invita a llenar nuestra cabecita y pensamientos de cosas buenas, nobles y verdaderas.' },
+        { num: 21, hebrew: 'ש', pictoImg: '/assets/img/semillas/pictografico/21_shin.svg', paleoImg: '/assets/img/semillas/paleo/21_shin.svg', name: 'Shin / Sin', sound: 'Sh (como silencio) / S', paleo: '🔥 Fuego consumidor / Dientes', meaning: 'Paz (Shalom), Nombre del Creador (Shaddai)', color: '#dc2626', bg: '#fee2e2', exampleWord: 'שָׁלוֹם', translit: 'Shalom', meaningWord: 'Paz / Bienestar completo', verse: '“YHWH alzará sobre ti Su rostro, y pondrá en ti Shalom.” — Números 6:26', kidStory: 'Shin tiene 3 llamas que suben hacia el cielo. Está esculpida en la mezuzá de nuestras puertas y nos recuerda la hermosa palabra SHALOM.' },
+        { num: 22, hebrew: 'ת', pictoImg: '/assets/img/semillas/pictografico/22_tav.svg', paleoImg: '/assets/img/semillas/paleo/22_tav.svg', name: 'Tav', sound: 'T', paleo: '✝️ Marca / Sello / Dos palos cruzados', meaning: 'Firma, Alianza, Integridad, Emet (Verdad)', color: '#059669', bg: '#d1fae5', exampleWord: 'תּוֹרָה', translit: 'Torá', meaningWord: 'Instrucción / Enseñanza divina', verse: '“La Torá de YHWH es perfecta, que reconforta el alma.” — Salmo 19:7', kidStory: 'Tav es la última letra del Alef-Bet. Completa la palabra EMET (Verdad: Alef, Mem, Tav). Con ella cerramos el abecedario dando gracias a Elohim.' }
     ];
 
     let letraActivaModal = 0;
@@ -2910,8 +2910,27 @@
                         <i class="bi bi-volume-up-fill" style="color: ${l.color}; font-size: 0.85rem;"></i>
                     </button>
 
-                    <div class="my-2" style="font-family: 'David', 'Times New Roman', serif; font-size: 3.5rem; line-height: 1; color: ${l.color};">
-                        ${l.hebrew}
+                    <div class="my-1 pt-2 text-center">
+                        <div style="font-family: 'David', 'Times New Roman', serif; font-size: 2.8rem; line-height: 1; color: ${l.color};">
+                            ${l.hebrew}
+                        </div>
+                        <span class="d-inline-block text-muted fw-semibold" style="font-size: 0.62rem;">Hebreo Moderno</span>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-center gap-2 my-2">
+                        <div class="text-center" title="Hebreo Pictográfico Original">
+                            <div class="d-flex align-items-center justify-content-center rounded-3 mx-auto" style="background: ${l.bg}; width: 44px; height: 44px; border: 1.5px solid ${l.color}35;">
+                                <img src="${l.pictoImg}" alt="Pictográfico ${l.name}" style="width: 32px; height: 32px; object-fit: contain;" />
+                            </div>
+                            <span class="d-block fw-semibold mt-1" style="color: #475569; font-size: 0.58rem;">Pictográfico</span>
+                        </div>
+                        <div class="text-muted opacity-25 fw-light" style="font-size: 1.1rem;">•</div>
+                        <div class="text-center" title="Escritura Paleohebrea">
+                            <div class="d-flex align-items-center justify-content-center rounded-3 mx-auto" style="background: ${l.bg}; width: 44px; height: 44px; border: 1.5px solid ${l.color}35;">
+                                <img src="${l.paleoImg}" alt="Paleohebreo ${l.name}" style="width: 32px; height: 32px; object-fit: contain;" />
+                            </div>
+                            <span class="d-block fw-semibold mt-1" style="color: ${l.color}; font-size: 0.58rem;">Paleohebreo</span>
+                        </div>
                     </div>
 
                     <h5 class="fw-bold mb-1 text-dark" style="font-size: 1.1rem;">
@@ -2946,6 +2965,10 @@
         const num = document.getElementById('modalLetraNumero');
         const tit = document.getElementById('modalLetraTitulo');
         const heb = document.getElementById('modalLetraHebreo');
+        const pictoImgEl = document.getElementById('modalLetraPictoImg');
+        const pictoBoxEl = document.getElementById('modalLetraPictoImgBox');
+        const paleoImgEl = document.getElementById('modalLetraPaleoImg');
+        const paleoBoxEl = document.getElementById('modalLetraPaleoImgBox');
         const nom = document.getElementById('modalLetraNombre');
         const son = document.getElementById('modalLetraSonido');
         const pal = document.getElementById('modalLetraPaleo');
@@ -2958,6 +2981,10 @@
         if (num) num.textContent = '#' + l.num;
         if (tit) tit.textContent = 'Letra ' + l.name + ' (' + l.hebrew + ')';
         if (heb) { heb.textContent = l.hebrew; heb.style.color = l.color; }
+        if (pictoImgEl) { pictoImgEl.src = l.pictoImg; pictoImgEl.alt = 'Pictográfico ' + l.name; }
+        if (pictoBoxEl) { pictoBoxEl.style.background = l.bg; pictoBoxEl.style.borderColor = l.color + '40'; }
+        if (paleoImgEl) { paleoImgEl.src = l.paleoImg; paleoImgEl.alt = 'Paleohebreo ' + l.name; }
+        if (paleoBoxEl) { paleoBoxEl.style.background = l.bg; paleoBoxEl.style.borderColor = l.color + '40'; }
         if (nom) nom.textContent = l.name;
         if (son) son.textContent = 'Sonido: ' + l.sound;
         if (pal) pal.textContent = l.paleo + ' — ' + l.meaning;
@@ -3235,7 +3262,17 @@
                     </div>
 
                     <div class="letra-box">
-                        <div class="letra-hebrea-delineada">${l.hebrew}</div>
+                        <div class="d-flex" style="display:flex; align-items:center; gap:20px;">
+                            <div class="letra-hebrea-delineada">${l.hebrew}</div>
+                            <div style="text-align:center;">
+                                <img src="${window.location.origin}${l.pictoImg}" alt="Pictográfico ${l.name}" style="width:95px; height:95px; object-fit:contain; border:2px dashed #0284c7; border-radius:16px; padding:8px; background:#f8fafc;">
+                                <div style="font-size:9.5pt; font-weight:bold; color:#475569; margin-top:4px;">Pictográfico</div>
+                            </div>
+                            <div style="text-align:center;">
+                                <img src="${window.location.origin}${l.paleoImg}" alt="Paleohebreo ${l.name}" style="width:95px; height:95px; object-fit:contain; border:2px dashed #0284c7; border-radius:16px; padding:8px; background:#f8fafc;">
+                                <div style="font-size:9.5pt; font-weight:bold; color:#0284c7; margin-top:4px;">Paleohebreo</div>
+                            </div>
+                        </div>
                         <div class="letra-info">
                             <h1>Letra ${l.name} (#${l.num})</h1>
                             <p class="sonido"><strong>Sonido:</strong> ${l.sound}</p>
@@ -3342,7 +3379,17 @@
                     </div>
 
                     <div class="letra-box">
-                        <div class="letra-hebrea-delineada">${l.hebrew}</div>
+                        <div class="d-flex" style="display:flex; align-items:center; gap:20px;">
+                            <div class="letra-hebrea-delineada">${l.hebrew}</div>
+                            <div style="text-align:center;">
+                                <img src="${window.location.origin}${l.pictoImg}" alt="Pictográfico ${l.name}" style="width:95px; height:95px; object-fit:contain; border:2px dashed #0284c7; border-radius:16px; padding:8px; background:#f8fafc;">
+                                <div style="font-size:9.5pt; font-weight:bold; color:#475569; margin-top:4px;">Pictográfico</div>
+                            </div>
+                            <div style="text-align:center;">
+                                <img src="${window.location.origin}${l.paleoImg}" alt="Paleohebreo ${l.name}" style="width:95px; height:95px; object-fit:contain; border:2px dashed #0284c7; border-radius:16px; padding:8px; background:#f8fafc;">
+                                <div style="font-size:9.5pt; font-weight:bold; color:#0284c7; margin-top:4px;">Paleohebreo</div>
+                            </div>
+                        </div>
                         <div class="letra-info">
                             <h1>Letra ${l.name}</h1>
                             <p><strong>Sonido:</strong> ${l.sound}</p>
@@ -3440,7 +3487,24 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4 text-center" style="background: #ffffff;">
-                    <div class="display-1 fw-bold mb-1" id="modalLetraHebreo" style="font-family: 'David', 'Times New Roman', serif; color: #0284c7; line-height: 1;">א</div>
+                    <div class="d-flex align-items-center justify-content-center gap-3 mb-2 flex-wrap">
+                        <div class="text-center p-2 rounded-4" style="background: #f8fafc; border: 1.5px solid #e2e8f0; min-width: 85px;">
+                            <div class="display-4 fw-bold mb-0" id="modalLetraHebreo" style="font-family: 'David', 'Times New Roman', serif; color: #0284c7; line-height: 1;">א</div>
+                            <span class="badge bg-white text-muted border rounded-pill px-2 py-0 mt-1" style="font-size: 0.68rem;">Moderna</span>
+                        </div>
+                        <div class="text-center p-2 rounded-4" id="modalLetraPictoImgBox" style="background: #e0f2fe; border: 1.5px solid #0284c740; min-width: 85px;">
+                            <div class="d-flex align-items-center justify-content-center mx-auto" style="width: 58px; height: 58px;">
+                                <img id="modalLetraPictoImg" src="/assets/img/semillas/pictografico/01_alef.svg" alt="Pictográfico Alef" style="width: 50px; height: 50px; object-fit: contain;" />
+                            </div>
+                            <span class="badge bg-white text-dark border rounded-pill px-2 py-0 mt-1" style="font-size: 0.68rem;">Pictográfico</span>
+                        </div>
+                        <div class="text-center p-2 rounded-4" id="modalLetraPaleoImgBox" style="background: #e0f2fe; border: 1.5px solid #0284c740; min-width: 85px;">
+                            <div class="d-flex align-items-center justify-content-center mx-auto" style="width: 58px; height: 58px;">
+                                <img id="modalLetraPaleoImg" src="/assets/img/semillas/paleo/01_alef.svg" alt="Paleohebreo Alef" style="width: 50px; height: 50px; object-fit: contain;" />
+                            </div>
+                            <span class="badge bg-white text-dark border rounded-pill px-2 py-0 mt-1" style="font-size: 0.68rem;">Paleohebreo</span>
+                        </div>
+                    </div>
                     <div class="fs-4 fw-bold text-dark mb-1" id="modalLetraNombre">Alef</div>
                     <div class="badge rounded-pill bg-light text-dark border px-3 py-1 mb-3" id="modalLetraSonido">Sonido: Muda / Vocal</div>
                     
