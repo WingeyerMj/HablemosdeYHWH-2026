@@ -250,7 +250,7 @@
                                                                         <% } %>
                                                                     </div>
                                                                 </div>
-                                                                <audio controls class="w-100" style="height: 34px;">
+                                                                <audio controls data-gain-db="<%= aud.gain_db || 0 %>" class="w-100" style="height: 34px;">
                                                                     <source src="<%= aud.url %>" type="audio/ogg">
                                                                     <source src="<%= aud.url %>" type="audio/mpeg">
                                                                     Tu navegador no soporta el audio.

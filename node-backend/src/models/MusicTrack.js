@@ -34,6 +34,7 @@ class MusicTrack {
                 try { await db.query(`ALTER TABLE music_tracks ADD COLUMN IF NOT EXISTS target_section VARCHAR(60) DEFAULT 'general'`); } catch (e) {}
                 try { await db.query(`ALTER TABLE music_tracks ADD COLUMN IF NOT EXISTS in_auto_playlist BOOLEAN DEFAULT TRUE`); } catch (e) {}
                 try { await db.query(`ALTER TABLE music_tracks ADD COLUMN IF NOT EXISTS downloads_count INT DEFAULT 0`); } catch (e) {}
+                try { await db.query(`ALTER TABLE music_tracks ADD COLUMN IF NOT EXISTS gain_db INT DEFAULT 0`); } catch (e) {}
             } else {
                 await db.query(`
                     CREATE TABLE IF NOT EXISTS music_tracks (
@@ -48,6 +49,7 @@ class MusicTrack {
                         audio_url VARCHAR(500) NOT NULL,
                         cover_image VARCHAR(500) DEFAULT NULL,
                         duration_label VARCHAR(40) DEFAULT NULL,
+                        gain_db INT DEFAULT 0,
                         sort_order INT DEFAULT 0,
                         is_active BOOLEAN DEFAULT TRUE,
                         plays_count INT DEFAULT 0,
@@ -61,6 +63,7 @@ class MusicTrack {
                 try { await db.query(`ALTER TABLE music_tracks ADD COLUMN target_section VARCHAR(60) DEFAULT 'general' AFTER category`); } catch (e) {}
                 try { await db.query(`ALTER TABLE music_tracks ADD COLUMN in_auto_playlist BOOLEAN DEFAULT TRUE AFTER target_section`); } catch (e) {}
                 try { await db.query(`ALTER TABLE music_tracks ADD COLUMN downloads_count INT DEFAULT 0 AFTER plays_count`); } catch (e) {}
+                try { await db.query(`ALTER TABLE music_tracks ADD COLUMN gain_db INT DEFAULT 0 AFTER duration_label`); } catch (e) {}
             }
 
             const [rows] = await db.query('SELECT COUNT(*) AS total FROM music_tracks');
@@ -210,6 +213,7 @@ class MusicTrack {
 
         const validSections = ['general', 'semillas', 'ambas'];
         const targetSection = validSections.includes(data.target_section) ? data.target_section : 'general';
+        const gainDb = Math.max(0, Math.min(24, Number(data.gain_db) || 0));
 
         const params = [
             data.title,
@@ -222,14 +226,15 @@ class MusicTrack {
             data.audio_url,
             data.cover_image || null,
             data.duration_label || null,
+            gainDb,
             Number.isFinite(Number(data.sort_order)) ? Number(data.sort_order) : 0,
             activeVal
         ];
 
         const sql = `
             INSERT INTO music_tracks
-                (title, artist, category, target_section, in_auto_playlist, description, lyrics, audio_url, cover_image, duration_label, sort_order, is_active)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (title, artist, category, target_section, in_auto_playlist, description, lyrics, audio_url, cover_image, duration_label, gain_db, sort_order, is_active)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         await db.query(sql, params);
     }
@@ -247,6 +252,7 @@ class MusicTrack {
 
         const validSections = ['general', 'semillas', 'ambas'];
         const targetSection = validSections.includes(data.target_section) ? data.target_section : 'general';
+        const gainDb = data.gain_db !== undefined ? Math.max(0, Math.min(24, Number(data.gain_db) || 0)) : 0;
 
         const params = [
             data.title,
@@ -259,6 +265,7 @@ class MusicTrack {
             data.audio_url,
             data.cover_image || null,
             data.duration_label || null,
+            gainDb,
             Number.isFinite(Number(data.sort_order)) ? Number(data.sort_order) : 0,
             activeVal,
             id
@@ -276,6 +283,7 @@ class MusicTrack {
                 audio_url = ?,
                 cover_image = ?,
                 duration_label = ?,
+                gain_db = ?,
                 sort_order = ?,
                 is_active = ?
             WHERE id = ?

@@ -1,6 +1,9 @@
 (function () {
   'use strict';
 
+  if (window.__audioGainBoosterLoaded) return;
+  window.__audioGainBoosterLoaded = true;
+
   var sharedAudioCtx = null;
   var connectedElements = new WeakMap();
 
@@ -158,6 +161,16 @@
     var presetBtns = container.querySelectorAll('.btn-gain-preset');
     var autoBtn = container.querySelector('.btn-gain-autolevel');
 
+    var urlInput = container.querySelector('input[name="audio_url"], .audio-url-input');
+
+    // Si ya existe audio cargado (por ejemplo, al editar una canción o haftará existente), inicializarlo
+    if (previewAudio) {
+      var initialSrc = previewAudio.currentSrc || (previewAudio.querySelector('source') && previewAudio.querySelector('source').src) || previewAudio.getAttribute('src');
+      if (initialSrc && initialSrc.trim()) {
+        previewAudio.classList.remove('d-none');
+      }
+    }
+
     var gainController = previewAudio ? attachAudioGain(previewAudio, slider ? slider.value : 0) : null;
     var currentObjectUrl = null;
 
@@ -212,9 +225,32 @@
             hint.textContent = 'Reproducí para probar el volumen en vivo';
           }
         } else {
-          previewAudio.pause();
-          previewAudio.removeAttribute('src');
-          previewAudio.classList.add('d-none');
+          // Si no hay archivo nuevo pero había una URL previa
+          var fallbackUrl = urlInput ? urlInput.value.trim() : '';
+          if (fallbackUrl) {
+            previewAudio.src = fallbackUrl;
+            previewAudio.classList.remove('d-none');
+          } else {
+            previewAudio.pause();
+            previewAudio.removeAttribute('src');
+            previewAudio.classList.add('d-none');
+          }
+        }
+      });
+    }
+
+    if (urlInput && previewAudio) {
+      urlInput.addEventListener('input', function () {
+        var val = this.value.trim();
+        if (val && (!fileInput || !fileInput.files || !fileInput.files.length)) {
+          previewAudio.src = val;
+          previewAudio.classList.remove('d-none');
+          if (!gainController) {
+            gainController = attachAudioGain(previewAudio, slider ? slider.value : 0);
+          }
+          if (hint) {
+            hint.textContent = 'URL detectada. Reproducí para probar volumen.';
+          }
         }
       });
     }
@@ -223,9 +259,12 @@
       autoBtn.addEventListener('click', async function () {
         var sourceFile = (fileInput && fileInput.files && fileInput.files[0]) ? fileInput.files[0] : null;
         var existingSrc = (!sourceFile && previewAudio) ? (previewAudio.currentSrc || (previewAudio.querySelector('source') && previewAudio.querySelector('source').src) || previewAudio.src) : null;
+        if (!sourceFile && !existingSrc && urlInput && urlInput.value.trim()) {
+          existingSrc = urlInput.value.trim();
+        }
         var target = sourceFile || existingSrc;
         if (!target) {
-          if (hint) hint.textContent = 'Primero seleccioná un archivo de audio';
+          if (hint) hint.textContent = 'Primero seleccioná un archivo de audio o URL';
           return;
         }
         var origHtml = autoBtn.innerHTML;
@@ -233,7 +272,7 @@
         autoBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Analizando...';
         try {
           var suggestedDb = await analyzeOptimalGainDb(target);
-          if (suggestedDb === 0) suggestedDb = 6; // Si ya tenía algún pico pero el usuario pidió nivelar, subir +6 dB
+          if (suggestedDb === 0) suggestedDb = 6; // Si ya tenía algún pico pero el usuario pidió nivelar, sugerir +6 dB
           updateUiDb(suggestedDb, 'Auto-nivelado sugerido: +' + suggestedDb + ' dB');
         } catch (err) {
           updateUiDb(10, 'Nivelado aplicado: +10 dB');
@@ -246,14 +285,22 @@
   }
 
   function initAllAudioPlayersAndBoosters() {
-    // 1. Inicializar filas del modal o formulario de edición
-    document.querySelectorAll('.audio-input-row, .existing-audio-card').forEach(function (row) {
+    // 1. Inicializar filas del modal o formulario de edición en cualquier sección
+    document.querySelectorAll('.audio-input-row, .existing-audio-card, .audio-booster-panel, .audio-booster-box, [data-audio-booster="1"]').forEach(function (row) {
       if (row.querySelector('.audio-gain-slider')) {
         initAudioRowBooster(row);
       }
     });
 
-    // 2. Inicializar todos los reproductores <audio data-gain-db="..."> en frontend y backend
+    // 2. Comprobar si hay sliders sueltos dentro de tarjetas o modales
+    document.querySelectorAll('.audio-gain-slider').forEach(function (slider) {
+      var box = slider.closest('.audio-booster-box') || slider.closest('.audio-booster-panel') || slider.closest('.modal-body') || slider.closest('form') || slider.parentElement;
+      if (box && !box.dataset.boosterInitialized) {
+        initAudioRowBooster(box);
+      }
+    });
+
+    // 3. Inicializar todos los reproductores <audio data-gain-db="..."> en frontend y backend
     document.querySelectorAll('audio[data-gain-db]').forEach(function (audioEl) {
       var db = Number(audioEl.getAttribute('data-gain-db')) || 0;
       if (db > 0) {
@@ -264,6 +311,12 @@
 
   window.initAudioRowBooster = initAudioRowBooster;
   window.attachAudioGain = attachAudioGain;
+  window.initAllAudioPlayersAndBoosters = initAllAudioPlayersAndBoosters;
+
+  // Reactivar automáticamente al abrir cualquier modal de Bootstrap
+  document.addEventListener('shown.bs.modal', function () {
+    setTimeout(initAllAudioPlayersAndBoosters, 100);
+  });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initAllAudioPlayersAndBoosters);

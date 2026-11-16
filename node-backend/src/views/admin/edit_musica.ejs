@@ -93,9 +93,14 @@
 
                 <div class="col-12">
                     <div class="p-3 rounded-3 bg-dark bg-opacity-50 border border-secondary border-opacity-50">
-                        <label class="form-label fw-semibold text-warning mb-2"><i class="bi bi-volume-up me-1"></i> Audio Actual</label>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <label class="form-label fw-semibold text-warning mb-0"><i class="bi bi-volume-up me-1"></i> Audio Actual</label>
+                            <% if (item.gain_db && item.gain_db > 0) { %>
+                                <span class="badge bg-success"><i class="bi bi-soundwave me-1"></i>Ganancia actual: +<%= item.gain_db %> dB</span>
+                            <% } %>
+                        </div>
                         <div class="d-flex align-items-center flex-wrap gap-3">
-                            <audio controls preload="metadata" style="max-width: 360px;" id="editMusicPreview">
+                            <audio controls preload="metadata" data-gain-db="<%= item.gain_db || 0 %>" style="max-width: 360px;" id="editMusicPreview" class="audio-live-preview">
                                 <source src="<%= item.audio_url %>" type="audio/mpeg">
                             </audio>
                             <code class="text-info small"><%= item.audio_url %></code>
@@ -111,6 +116,33 @@
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">URL del Audio</label>
                     <input type="text" name="audio_url" class="form-control bg-dark text-white border-secondary" value="<%= item.audio_url %>">
+                </div>
+
+                <!-- PANEL AMPLIFICADOR DE VOLUMEN (DECIBELES dB) -->
+                <div class="col-12">
+                    <div class="audio-booster-box p-3 rounded-3 border border-secondary border-opacity-50" style="background: rgba(0,0,0,0.35);">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                            <span class="fw-bold text-success d-flex align-items-center gap-1">
+                                <i class="bi bi-volume-up-fill fs-5"></i> Aumentar Volumen del Cántico (Decibeles dB):
+                            </span>
+                            <div class="d-flex align-items-center gap-2">
+                                <input type="range" name="gain_db" class="form-range audio-gain-slider" min="0" max="20" step="1" value="<%= item.gain_db || 0 %>" style="width: 140px;">
+                                <span class="badge bg-success audio-gain-badge" style="min-width: 60px;">+<%= item.gain_db || 0 %> dB</span>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-outline-secondary py-1 px-2 btn-gain-preset" data-db="0">0 dB</button>
+                                <button type="button" class="btn btn-outline-success py-1 px-2 btn-gain-preset" data-db="6">+6 dB</button>
+                                <button type="button" class="btn btn-outline-warning py-1 px-2 btn-gain-preset" data-db="12">+12 dB</button>
+                                <button type="button" class="btn btn-outline-danger py-1 px-2 btn-gain-preset" data-db="18">+18 dB</button>
+                                <button type="button" class="btn btn-outline-info py-1 px-2 btn-gain-autolevel" title="Detecta el nivel de la canción y calcula automáticamente la ganancia recomendada">
+                                    <i class="bi bi-magic me-1"></i> Auto-Nivelar
+                                </button>
+                            </div>
+                            <small class="text-white-50 audio-gain-hint">Modificá el deslizador o presets para escuchar la amplificación en el reproductor de arriba</small>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col-md-6">
@@ -157,3 +189,4 @@ document.addEventListener('DOMContentLoaded', function() {
     if (p) p.volume = 0.20;
 });
 </script>
+<script src="/assets/js/audio-gain-booster.js"></script>

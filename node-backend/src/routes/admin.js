@@ -151,9 +151,15 @@ router.post('/ensenanzas/update', isAuthenticated, isAdmin, upload.single('image
 router.post('/ensenanzas/delete/:id', isAuthenticated, isAdmin, adminController.deleteEnsenanza);
 
 // Haftará (Lecturas Proféticas - Solo Admin)
-router.post('/haftara/create', isAuthenticated, isAdmin, upload.single('image_file'), adminController.createHaftara);
+router.post('/haftara/create', isAuthenticated, isAdmin, upload.fields([
+    { name: 'image_file', maxCount: 1 },
+    { name: 'audio_file', maxCount: 1 }
+]), adminController.createHaftara);
 router.get('/haftara/edit/:id', isAuthenticated, isAdmin, adminController.editHaftaraPage);
-router.post('/haftara/update', isAuthenticated, isAdmin, upload.single('image_file'), adminController.updateHaftara);
+router.post('/haftara/update', isAuthenticated, isAdmin, upload.fields([
+    { name: 'image_file', maxCount: 1 },
+    { name: 'audio_file', maxCount: 1 }
+]), adminController.updateHaftara);
 router.post('/haftara/delete/:id', isAuthenticated, isAdmin, adminController.deleteHaftara);
 
 // Semillas de Torah (Infantil) - Admin y Editor

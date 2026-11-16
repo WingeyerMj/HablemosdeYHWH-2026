@@ -42,6 +42,20 @@ class Haftara {
             } catch (errPG) {}
         }
 
+        try {
+            const [colsGain] = await db.query("SHOW COLUMNS FROM haftarot LIKE 'gain_db'");
+            if (!colsGain || colsGain.length === 0) {
+                await db.query("ALTER TABLE haftarot ADD COLUMN gain_db INT DEFAULT 0 AFTER audio_url");
+                console.log('✅ Columna gain_db agregada a haftarot');
+            }
+            await db.query("UPDATE haftarot SET gain_db = 0 WHERE gain_db IS NULL");
+        } catch (e) {
+            try {
+                await db.query("ALTER TABLE haftarot ADD COLUMN IF NOT EXISTS gain_db INT DEFAULT 0");
+                await db.query("UPDATE haftarot SET gain_db = 0 WHERE gain_db IS NULL");
+            } catch (errPG) {}
+        }
+
         // Auto-link Haftarot to Parashot if unlinked
         await Haftara.autoLinkParashot();
 
@@ -413,10 +427,12 @@ class Haftara {
             } catch(e) {}
         }
 
+        const cleanGain = Math.max(0, Math.min(24, Number(data.gain_db) || 0));
+
         try {
             return await db.query(
-                `INSERT INTO haftarot (parasha_id, title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, author, author_role, author_img, authors, is_published, cycle_id, cycle_name) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO haftarot (parasha_id, title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, gain_db, author, author_role, author_img, authors, is_published, cycle_id, cycle_name) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     parsedParashaId,
                     title,
@@ -427,6 +443,7 @@ class Haftara {
                     image_url || '',
                     youtube_link || '',
                     audio_url || '',
+                    cleanGain,
                     primaryAuthor,
                     primaryRole,
                     primaryImg,
@@ -438,8 +455,8 @@ class Haftara {
             );
         } catch (err) {
             return await db.query(
-                `INSERT INTO haftarot (title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, author, author_role, author_img, is_published, cycle_id, cycle_name) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO haftarot (title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, gain_db, author, author_role, author_img, is_published, cycle_id, cycle_name) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     title,
                     subtitle || '',
@@ -449,6 +466,7 @@ class Haftara {
                     image_url || '',
                     youtube_link || '',
                     audio_url || '',
+                    cleanGain,
                     primaryAuthor,
                     primaryRole,
                     primaryImg,
@@ -488,6 +506,8 @@ class Haftara {
         const authorsJson = JSON.stringify(authorsList);
         const parsedParashaId = parasha_id ? parseInt(parasha_id) : null;
 
+        const cleanGain = data.gain_db !== undefined ? Math.max(0, Math.min(24, Number(data.gain_db) || 0)) : 0;
+
         try {
             return await db.query(
                 `UPDATE haftarot SET 
@@ -500,6 +520,7 @@ class Haftara {
                     image_url = ?, 
                     youtube_link = ?, 
                     audio_url = ?, 
+                    gain_db = ?, 
                     author = ?, 
                     author_role = ?, 
                     author_img = ?, 
@@ -517,6 +538,7 @@ class Haftara {
                     image_url || '',
                     youtube_link || '',
                     audio_url || '',
+                    cleanGain,
                     primaryAuthor,
                     primaryRole,
                     primaryImg,
@@ -536,6 +558,7 @@ class Haftara {
                     image_url = ?, 
                     youtube_link = ?, 
                     audio_url = ?, 
+                    gain_db = ?, 
                     author = ?, 
                     author_role = ?, 
                     author_img = ?, 
@@ -550,6 +573,7 @@ class Haftara {
                     image_url || '',
                     youtube_link || '',
                     audio_url || '',
+                    cleanGain,
                     primaryAuthor,
                     primaryRole,
                     primaryImg,

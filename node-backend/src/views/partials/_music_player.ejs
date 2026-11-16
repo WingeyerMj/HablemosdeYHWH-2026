@@ -5,12 +5,13 @@
             id: t.id,
             title: t.title,
             subtitle: (t.category || 'Alabanza') + ' • ' + (t.artist || 'Hablemos de YHWH'),
-            src: t.audio_url
+            src: t.audio_url,
+            gain_db: Number(t.gain_db) || 0
         }))
         : [
-            { id: 1, title: 'El Redil', subtitle: 'Alabanza • Hablemos de YHWH', src: '/assets/audio/musica/el-redil.mp3' },
-            { id: 2, title: 'Shabat', subtitle: 'Shabat • Hablemos de YHWH', src: '/assets/audio/musica/shabat.mp3' },
-            { id: 3, title: 'El Ruido', subtitle: 'Reflexión • Hablemos de YHWH', src: '/assets/audio/musica/el-ruido.mp3' }
+            { id: 1, title: 'El Redil', subtitle: 'Alabanza • Hablemos de YHWH', src: '/assets/audio/musica/el-redil.mp3', gain_db: 0 },
+            { id: 2, title: 'Shabat', subtitle: 'Shabat • Hablemos de YHWH', src: '/assets/audio/musica/shabat.mp3', gain_db: 0 },
+            { id: 3, title: 'El Ruido', subtitle: 'Reflexión • Hablemos de YHWH', src: '/assets/audio/musica/el-ruido.mp3', gain_db: 0 }
         ];
 %>
 <div id="yhwhMusicWidget" class="yhwh-music-widget" aria-label="Reproductor de Música">
@@ -444,6 +445,11 @@
         currentIndex = (idx + tracks.length) % tracks.length;
         const t = tracks[currentIndex];
         audio.src = t.src;
+        audio.setAttribute('data-gain-db', String(t.gain_db || 0));
+        if (window.attachAudioGain) {
+            const g = window.attachAudioGain(audio, t.gain_db || 0);
+            if (g) g.setDb(t.gain_db || 0);
+        }
         if (titleEl) titleEl.textContent = t.title;
         if (subEl) subEl.textContent = 'Pista ' + (currentIndex + 1) + ' de ' + tracks.length + ' • ' + t.subtitle;
         if (pillTitleEl) pillTitleEl.textContent = t.title;

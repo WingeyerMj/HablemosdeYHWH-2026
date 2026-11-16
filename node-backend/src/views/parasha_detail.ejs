@@ -313,7 +313,7 @@
                                                                                 <i class="bi bi-download me-1"></i> Descargar
                                                                             </a>
                                                                         </div>
-                                                                        <audio controls class="w-100 mt-1" style="height: 38px; border-radius: 8px;">
+                                                                        <audio controls data-gain-db="<%= aud.gain_db || 0 %>" class="w-100 mt-1" style="height: 38px; border-radius: 8px;">
                                                                             <source src="<%= aud.url %>" type="audio/mpeg">
                                                                             Tu navegador no soporta el reproductor de audio HTML5.
                                                                         </audio>

@@ -131,7 +131,7 @@
                                                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pb-2 mb-2 border-bottom border-secondary border-opacity-50">
                                                             <div class="d-flex align-items-center gap-2">
                                                                 <span class="badge" style="background: var(--primary-color, #d4b895); color: #000; font-weight: 700;">#<%= aIdx + 1 %></span>
-                                                                <audio controls style="height: 30px; max-width: 260px;">
+                                                                <audio controls data-gain-db="<%= audio.gain_db || 0 %>" style="height: 30px; max-width: 260px;">
                                                                     <source src="<%= audio.url %>" type="audio/mpeg">
                                                                 </audio>
                                                             </div>

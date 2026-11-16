@@ -22,6 +22,8 @@ const files = [
   'node-backend/src/models/TorahVivienteDownload.js',
   'node-backend/src/models/ParashaInfantil.js',
   'node-backend/src/models/SemillasManualidad.js',
+  'node-backend/src/models/MusicTrack.js',
+  'node-backend/src/models/Haftara.js',
   'node-backend/src/routes/api.js',
   'node-backend/src/routes/admin.js',
   'node-backend/src/routes/index.js',
@@ -33,15 +35,21 @@ const files = [
   'node-backend/src/views/partials/head.ejs',
   'node-backend/src/views/partials/header.ejs',
   'node-backend/src/views/partials/footer.ejs',
+  'node-backend/src/views/partials/_music_player.ejs',
   'node-backend/src/views/calendar.ejs',
   'node-backend/src/views/aliyot.ejs',
   'node-backend/src/views/haftara.ejs',
   'node-backend/src/views/parashot.ejs',
+  'node-backend/src/views/musica.ejs',
   'node-backend/src/views/haftara_detail.ejs',
   'node-backend/src/views/parasha_detail.ejs',
   'node-backend/src/views/archivo_historico.ejs',
   'node-backend/src/views/admin/partials/_sidebar.ejs',
   'node-backend/src/views/admin/layout.ejs',
+  'node-backend/src/views/admin/_modals.ejs',
+  'node-backend/src/views/admin/musica.ejs',
+  'node-backend/src/views/admin/edit_musica.ejs',
+  'node-backend/src/views/admin/edit_haftara.ejs',
   'node-backend/src/views/admin/pwa_installations.ejs',
   'node-backend/src/views/admin/torah_viviente_downloads.ejs',
   'node-backend/src/views/admin/parashot_infantiles.ejs',
@@ -190,7 +198,7 @@ client.on('ready', async () => {
 
     // 3. Reemplazo atómico, verificación de sintaxis y reinicio
     const moves = files.map(f => `mv '${project}/${f}.codex-upload' '${project}/${f}'`).join('; ');
-    const result = await run(`set -e; ${moves}; cd '${project}/node-backend'; node --check app.js; node -e "require('./src/utils/calendarPwaAssets')"; node -e "require('./src/models/SemillasManualidad').ensureTable().then(() => { console.log('MANUALIDADES_DB_OK'); process.exit(0); }).catch(e => { console.error(e); process.exit(1); })"; pm2 restart hablemos-web --update-env >/dev/null; sleep 3; curl -sS -o /dev/null -w 'SEMILLAS_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/semillas-de-torah'; curl -sS -o /dev/null -w 'AUDIO_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/assets/audio/alefato-hebreo.mp3'; curl -sS -o /dev/null -w 'CALENDAR_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/calendar'; echo DEPLOYMENT_SUCCESS`);
+    const result = await run(`set -e; ${moves}; cd '${project}/node-backend'; node --check app.js; node -e "require('./src/utils/calendarPwaAssets')"; node -e "Promise.all([require('./src/models/SemillasManualidad').ensureTable(), require('./src/models/MusicTrack').ensureTable(), require('./src/models/Haftara').ensureColumns()]).then(() => { console.log('TABLES_MIGRATION_OK'); process.exit(0); }).catch(e => { console.error(e); process.exit(1); })"; pm2 restart hablemos-web --update-env >/dev/null; sleep 3; curl -sS -o /dev/null -w 'SEMILLAS_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/semillas-de-torah'; curl -sS -o /dev/null -w 'AUDIO_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/assets/audio/alefato-hebreo.mp3'; curl -sS -o /dev/null -w 'CALENDAR_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/calendar'; echo DEPLOYMENT_SUCCESS`);
     console.log(result.trim());
   } catch (error) {
     console.error(`DEPLOYMENT_ERROR=${error.message}`);

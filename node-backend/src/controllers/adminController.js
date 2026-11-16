@@ -738,8 +738,15 @@ const adminController = {
     // ==================== HAFTARÁ ====================
     createHaftara: async (req, res) => {
         try {
-            let { parasha_id, title, subtitle, parasha_reference, description, content, youtube_link, audio_url, image_url, author, author_role, author_img, authors, authors_json } = req.body;
-            if (req.file) {
+            let { parasha_id, title, subtitle, parasha_reference, description, content, youtube_link, audio_url, image_url, author, author_role, author_img, authors, authors_json, gain_db } = req.body;
+            if (req.files) {
+                if (req.files['image_file'] && req.files['image_file'][0]) {
+                    image_url = '/uploads/haftara/' + req.files['image_file'][0].filename;
+                }
+                if (req.files['audio_file'] && req.files['audio_file'][0]) {
+                    audio_url = '/uploads/audios/' + req.files['audio_file'][0].filename;
+                }
+            } else if (req.file) {
                 image_url = '/uploads/haftara/' + req.file.filename;
             }
 
@@ -755,6 +762,8 @@ const adminController = {
                 })).filter(a => a.name);
             }
             
+            const cleanGain = Math.max(0, Math.min(24, Number(gain_db) || 0));
+
             const Haftara = require('../models/Haftara');
             await Haftara.create({
                 parasha_id: parasha_id ? parseInt(parasha_id) : null,
@@ -765,6 +774,7 @@ const adminController = {
                 content: content || '',
                 youtube_link: youtube_link || '',
                 audio_url: audio_url || '',
+                gain_db: cleanGain,
                 image_url: image_url || '',
                 author: author || 'Moréh Kaleb',
                 author_role: author_role || 'Moréh',
@@ -820,8 +830,15 @@ const adminController = {
 
     updateHaftara: async (req, res) => {
         try {
-            let { id, parasha_id, title, subtitle, parasha_reference, description, content, youtube_link, audio_url, image_url, author, author_role, author_img, authors, authors_json } = req.body;
-            if (req.file) {
+            let { id, parasha_id, title, subtitle, parasha_reference, description, content, youtube_link, audio_url, image_url, author, author_role, author_img, authors, authors_json, gain_db } = req.body;
+            if (req.files) {
+                if (req.files['image_file'] && req.files['image_file'][0]) {
+                    image_url = '/uploads/haftara/' + req.files['image_file'][0].filename;
+                }
+                if (req.files['audio_file'] && req.files['audio_file'][0]) {
+                    audio_url = '/uploads/audios/' + req.files['audio_file'][0].filename;
+                }
+            } else if (req.file) {
                 image_url = '/uploads/haftara/' + req.file.filename;
             }
 
@@ -837,6 +854,8 @@ const adminController = {
                 })).filter(a => a.name);
             }
             
+            const cleanGain = gain_db !== undefined ? Math.max(0, Math.min(24, Number(gain_db) || 0)) : 0;
+
             const Haftara = require('../models/Haftara');
             await Haftara.update(id, {
                 parasha_id: parasha_id ? parseInt(parasha_id) : null,
@@ -847,6 +866,7 @@ const adminController = {
                 content: content || '',
                 youtube_link: youtube_link || '',
                 audio_url: audio_url || '',
+                gain_db: cleanGain,
                 image_url: image_url || '',
                 author: author || 'Moréh Kaleb',
                 author_role: author_role || 'Moréh',
@@ -3609,7 +3629,8 @@ const adminController = {
                 cover_image,
                 duration_label,
                 sort_order,
-                is_active
+                is_active,
+                gain_db
             } = req.body;
 
             if (req.files && req.files.length > 0) {
@@ -3627,6 +3648,8 @@ const adminController = {
                 return res.redirect('/admin/musica?error=' + encodeURIComponent('Debes subir un archivo de audio MP3 o ingresar la URL del audio.'));
             }
 
+            const cleanGain = Math.max(0, Math.min(24, Number(gain_db) || 0));
+
             const MusicTrack = require('../models/MusicTrack');
             await MusicTrack.create({
                 title: title ? title.trim() : 'Alabanza sin título',
@@ -3639,6 +3662,7 @@ const adminController = {
                 audio_url: String(audio_url).trim(),
                 cover_image: cover_image ? String(cover_image).trim() : null,
                 duration_label: duration_label ? duration_label.trim() : null,
+                gain_db: cleanGain,
                 sort_order: sort_order ? parseInt(sort_order, 10) : 0,
                 is_active: is_active === '1' || is_active === true || is_active === 'on'
             });
@@ -3683,7 +3707,8 @@ const adminController = {
                 existing_cover_image,
                 duration_label,
                 sort_order,
-                is_active
+                is_active,
+                gain_db
             } = req.body;
 
             const MusicTrack = require('../models/MusicTrack');
@@ -3706,6 +3731,8 @@ const adminController = {
                 }
             }
 
+            const cleanGain = gain_db !== undefined ? Math.max(0, Math.min(24, Number(gain_db) || 0)) : (existing.gain_db || 0);
+
             await MusicTrack.update(id, {
                 title: title ? title.trim() : existing.title,
                 artist: artist ? artist.trim() : 'Hablemos de YHWH',
@@ -3717,6 +3744,7 @@ const adminController = {
                 audio_url,
                 cover_image,
                 duration_label: duration_label ? duration_label.trim() : null,
+                gain_db: cleanGain,
                 sort_order: sort_order !== undefined && sort_order !== '' ? parseInt(sort_order, 10) : 0,
                 is_active: is_active === '1' || is_active === true || is_active === 'on'
             });

@@ -414,7 +414,8 @@
             description: t.description || '',
             lyrics: t.lyrics || '',
             src: t.audio_url,
-            cover: t.cover_image || ''
+            cover: t.cover_image || '',
+            gain_db: Number(t.gain_db) || 0
         }))) %>;
 
         const audio = document.getElementById('stageAudioPlayer');
@@ -502,6 +503,11 @@
             activeIndex = ((idx % tracks.length) + tracks.length) % tracks.length;
             const t = tracks[activeIndex];
             audio.src = t.src;
+            audio.setAttribute('data-gain-db', String(t.gain_db || 0));
+            if (window.attachAudioGain) {
+                const g = window.attachAudioGain(audio, t.gain_db || 0);
+                if (g) g.setDb(t.gain_db || 0);
+            }
             if (titleEl) titleEl.textContent = t.title;
             if (artistEl) artistEl.textContent = t.artist;
             if (descEl) descEl.textContent = t.description || '';
