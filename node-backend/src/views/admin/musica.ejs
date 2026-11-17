@@ -213,8 +213,9 @@
                                             <span class="badge bg-secondary text-white-50">0 dB (Normal)</span>
                                         <% } %>
                                     </div>
-                                    <audio controls preload="none" data-gain-db="<%= track.gain_db || 0 %>" class="w-100" style="height: 34px; max-width: 240px;">
-                                        <source src="<%= track.audio_url %>" type="audio/mpeg">
+                                    <audio controls preload="none" src="<%= track.audio_url %>" data-gain-db="<%= track.gain_db || 0 %>" class="w-100" style="height: 34px; max-width: 240px;">
+                                        <source src="<%= track.audio_url %>" type="<%= (typeof getAudioMime === 'function' ? getAudioMime(track.audio_url) : 'audio/mpeg') %>">
+                                        <source src="<%= track.audio_url %>">
                                     </audio>
                                     <div class="small text-white-50 text-truncate mt-1" style="max-width: 240px;">
                                         <code><%= track.audio_url %></code>

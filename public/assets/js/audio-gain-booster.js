@@ -14,7 +14,7 @@
       sharedAudioCtx = new AudioCtx();
     }
     if (sharedAudioCtx.state === 'suspended') {
-      sharedAudioCtx.resume().catch(function () {});
+      sharedAudioCtx.resume().catch(function () { });
     }
     return sharedAudioCtx;
   }
@@ -49,7 +49,7 @@
           var lin = dbToLinear(state.db);
           state.gainNode.gain.setValueAtTime(lin, sharedAudioCtx.currentTime);
         } else if (state.db > 0 && !audioEl.paused) {
-          ensureGraph();
+          connectWhenRunning();
         }
       }
     };
@@ -62,8 +62,9 @@
         }
         return;
       }
+      if (state.db <= 0) return;
       var ctx = getAudioContext();
-      if (!ctx) return;
+      if (!ctx || ctx.state !== 'running') return;
       try {
         var source = ctx.createMediaElementSource(audioEl);
         var gainNode = ctx.createGain();
@@ -87,241 +88,272 @@
         state.compressor = compressor;
         state.connected = true;
       } catch (err) {
-        console.warn('No se pudo conectar amplificador WebAudio:', err);
+        console.warn('No se pudo conectar amplificador WebAudio (reproduciendo con volumen estándar):', err);
       }
     }
 
-    audioEl.addEventListener('play', function () {
-      var currentAttrDb = Number(audioEl.getAttribute('data-gain-db') || state.db) || 0;
-      state.db = currentAttrDb;
-      if (state.db > 0 || state.connected) {
+    // IMPORTANTE: solo enrutar el <audio> por WebAudio cuando el AudioContext está realmente
+    // en estado "running". Si se conecta con el contexto suspendido, Chrome deja el reproductor
+    // congelado en 0:00 sin sonido (y la conexión no se puede deshacer).
+    function connectWhenRunning() {
+      if (state.connected) { ensureGraph(); return; }
+      if (state.db <= 0) return;
+      var ctx = getAudioContext();
+      if (!ctx) return;
+      if (ctx.state === 'running') { ensureGraph(); return; }
+      ctx.resume().then(function () {
+      if (ctx.state === 'running' && !audioEl.paused && state.db > 0) {
         ensureGraph();
       }
+    }).catch (function (err) {
+      console.warn('AudioContext no disponible, reproducción nativa:', err);
     });
-
-    connectedElements.set(audioEl, state);
-    return state;
   }
+
+  audioEl.addEventListener('play', function () {
+    var currentAttrDb = Number(audioEl.getAttribute('data-gain-db') || state.db) || 0;
+    state.db = currentAttrDb;
+    if (state.db > 0 || state.connected) {
+      connectWhenRunning();
+    }
+  });
+
+  connectedElements.set(audioEl, state);
+  return state;
+}
 
   /**
    * Analiza un archivo de audio (File) o URL para detectar su pico máximo y sugerir cuántos dB subir
    * para llevar el volumen a un nivel óptimo (-1 dB pico).
    */
   async function analyzeOptimalGainDb(fileOrUrl) {
-    var AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) throw new Error('Navegador sin soporte de análisis de audio');
+  var AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) throw new Error('Navegador sin soporte de análisis de audio');
 
-    var arrayBuffer;
-    if (fileOrUrl instanceof Blob) {
-      arrayBuffer = await fileOrUrl.arrayBuffer();
-    } else if (typeof fileOrUrl === 'string') {
-      var resp = await fetch(fileOrUrl);
-      arrayBuffer = await resp.arrayBuffer();
-    } else {
-      throw new Error('Archivo no válido');
-    }
+  var arrayBuffer;
+  if (fileOrUrl instanceof Blob) {
+    arrayBuffer = await fileOrUrl.arrayBuffer();
+  } else if (typeof fileOrUrl === 'string') {
+    var resp = await fetch(fileOrUrl);
+    arrayBuffer = await resp.arrayBuffer();
+  } else {
+    throw new Error('Archivo no válido');
+  }
 
-    var tempCtx = new AudioCtx();
-    try {
-      var audioBuffer = await tempCtx.decodeAudioData(arrayBuffer);
-      var maxPeak = 0;
-      for (var ch = 0; ch < audioBuffer.numberOfChannels; ch++) {
-        var data = audioBuffer.getChannelData(ch);
-        // Muestreo rápido cada 8 samples
-        for (var i = 0; i < data.length; i += 8) {
-          var abs = Math.abs(data[i]);
-          if (abs > maxPeak) maxPeak = abs;
-        }
+  var tempCtx = new AudioCtx();
+  try {
+    var audioBuffer = await tempCtx.decodeAudioData(arrayBuffer);
+    var maxPeak = 0;
+    for (var ch = 0; ch < audioBuffer.numberOfChannels; ch++) {
+      var data = audioBuffer.getChannelData(ch);
+      // Muestreo rápido cada 8 samples
+      for (var i = 0; i < data.length; i += 8) {
+        var abs = Math.abs(data[i]);
+        if (abs > maxPeak) maxPeak = abs;
       }
-      if (maxPeak <= 0.0001) return 12;
-      var targetPeak = 0.89; // ~ -1 dB
-      var neededLinear = targetPeak / maxPeak;
-      var neededDb = Math.round(20 * Math.log10(neededLinear));
-      // Si incluso con pico alto la voz promedio es baja, sugerir al menos +4 dB si estaba en 0
-      if (neededDb < 0) neededDb = 0;
-      if (neededDb > 20) neededDb = 20;
-      return neededDb;
-    } finally {
-      if (tempCtx.close) tempCtx.close().catch(function () {});
+    }
+    if (maxPeak <= 0.0001) return 12;
+    var targetPeak = 0.89; // ~ -1 dB
+    var neededLinear = targetPeak / maxPeak;
+    var neededDb = Math.round(20 * Math.log10(neededLinear));
+    // Si incluso con pico alto la voz promedio es baja, sugerir al menos +4 dB si estaba en 0
+    if (neededDb < 0) neededDb = 0;
+    if (neededDb > 20) neededDb = 20;
+    return neededDb;
+  } finally {
+    if (tempCtx.close) tempCtx.close().catch(function () { });
+  }
+}
+
+/**
+ * Inicializa los controles de amplificación dB dentro de una fila de carga o tarjeta de edición
+ */
+function initAudioRowBooster(container) {
+  if (!container || container.dataset.boosterInitialized === '1') return;
+  container.dataset.boosterInitialized = '1';
+
+  var slider = container.querySelector('.audio-gain-slider');
+  var badge = container.querySelector('.audio-gain-badge');
+  var hint = container.querySelector('.audio-gain-hint');
+  var fileInput = container.querySelector('input[type="file"]');
+  var previewAudio = container.querySelector('.audio-live-preview') || container.querySelector('audio');
+  var presetBtns = container.querySelectorAll('.btn-gain-preset');
+  var autoBtn = container.querySelector('.btn-gain-autolevel');
+
+  var urlInput = container.querySelector('input[name="audio_url"], .audio-url-input');
+
+  // Si ya existe audio cargado (por ejemplo, al editar una canción o haftará existente), inicializarlo
+  if (previewAudio) {
+    var initialSrc = previewAudio.currentSrc || (previewAudio.querySelector('source') && previewAudio.querySelector('source').src) || previewAudio.getAttribute('src');
+    if (initialSrc && initialSrc.trim()) {
+      previewAudio.classList.remove('d-none');
     }
   }
 
-  /**
-   * Inicializa los controles de amplificación dB dentro de una fila de carga o tarjeta de edición
-   */
-  function initAudioRowBooster(container) {
-    if (!container || container.dataset.boosterInitialized === '1') return;
-    container.dataset.boosterInitialized = '1';
+  var gainController = previewAudio ? attachAudioGain(previewAudio, slider ? slider.value : 0) : null;
+  var currentObjectUrl = null;
 
-    var slider = container.querySelector('.audio-gain-slider');
-    var badge = container.querySelector('.audio-gain-badge');
-    var hint = container.querySelector('.audio-gain-hint');
-    var fileInput = container.querySelector('input[type="file"]');
-    var previewAudio = container.querySelector('.audio-live-preview') || container.querySelector('audio');
-    var presetBtns = container.querySelectorAll('.btn-gain-preset');
-    var autoBtn = container.querySelector('.btn-gain-autolevel');
-
-    var urlInput = container.querySelector('input[name="audio_url"], .audio-url-input');
-
-    // Si ya existe audio cargado (por ejemplo, al editar una canción o haftará existente), inicializarlo
-    if (previewAudio) {
-      var initialSrc = previewAudio.currentSrc || (previewAudio.querySelector('source') && previewAudio.querySelector('source').src) || previewAudio.getAttribute('src');
-      if (initialSrc && initialSrc.trim()) {
-        previewAudio.classList.remove('d-none');
-      }
+  function updateUiDb(dbVal, customNote) {
+    var clean = Math.max(0, Math.min(20, Math.round(Number(dbVal) || 0)));
+    if (slider) slider.value = String(clean);
+    if (badge) {
+      badge.textContent = '+' + clean + ' dB';
+      badge.className = 'badge audio-gain-badge ' + (clean === 0 ? 'bg-secondary' : (clean <= 8 ? 'bg-success' : (clean <= 14 ? 'bg-warning text-dark' : 'bg-danger')));
     }
-
-    var gainController = previewAudio ? attachAudioGain(previewAudio, slider ? slider.value : 0) : null;
-    var currentObjectUrl = null;
-
-    function updateUiDb(dbVal, customNote) {
-      var clean = Math.max(0, Math.min(20, Math.round(Number(dbVal) || 0)));
-      if (slider) slider.value = String(clean);
-      if (badge) {
-        badge.textContent = '+' + clean + ' dB';
-        badge.className = 'badge audio-gain-badge ' + (clean === 0 ? 'bg-secondary' : (clean <= 8 ? 'bg-success' : (clean <= 14 ? 'bg-warning text-dark' : 'bg-danger')));
-      }
-      if (gainController) {
-        gainController.setDb(clean);
-      }
-      if (hint && customNote) {
-        hint.textContent = customNote;
-      } else if (hint && clean > 0) {
-        var factor = dbToLinear(clean).toFixed(1);
-        hint.textContent = 'Volumen aumentado +' + clean + ' dB (×' + factor + ')';
-      } else if (hint && previewAudio && !previewAudio.classList.contains('d-none')) {
-        hint.textContent = 'Volumen original (0 dB)';
-      }
+    if (gainController) {
+      gainController.setDb(clean);
     }
-
-    if (slider) {
-      slider.addEventListener('input', function () {
-        updateUiDb(this.value);
-      });
-      updateUiDb(slider.value);
-    }
-
-    presetBtns.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var db = Number(this.getAttribute('data-db')) || 0;
-        updateUiDb(db);
-      });
-    });
-
-    if (fileInput && previewAudio) {
-      fileInput.addEventListener('change', function () {
-        if (currentObjectUrl) {
-          URL.revokeObjectURL(currentObjectUrl);
-          currentObjectUrl = null;
-        }
-        if (this.files && this.files[0]) {
-          currentObjectUrl = URL.createObjectURL(this.files[0]);
-          previewAudio.src = currentObjectUrl;
-          previewAudio.classList.remove('d-none');
-          if (!gainController) {
-            gainController = attachAudioGain(previewAudio, slider ? slider.value : 0);
-          }
-          if (hint) {
-            hint.textContent = 'Reproducí para probar el volumen en vivo';
-          }
-        } else {
-          // Si no hay archivo nuevo pero había una URL previa
-          var fallbackUrl = urlInput ? urlInput.value.trim() : '';
-          if (fallbackUrl) {
-            previewAudio.src = fallbackUrl;
-            previewAudio.classList.remove('d-none');
-          } else {
-            previewAudio.pause();
-            previewAudio.removeAttribute('src');
-            previewAudio.classList.add('d-none');
-          }
-        }
-      });
-    }
-
-    if (urlInput && previewAudio) {
-      urlInput.addEventListener('input', function () {
-        var val = this.value.trim();
-        if (val && (!fileInput || !fileInput.files || !fileInput.files.length)) {
-          previewAudio.src = val;
-          previewAudio.classList.remove('d-none');
-          if (!gainController) {
-            gainController = attachAudioGain(previewAudio, slider ? slider.value : 0);
-          }
-          if (hint) {
-            hint.textContent = 'URL detectada. Reproducí para probar volumen.';
-          }
-        }
-      });
-    }
-
-    if (autoBtn) {
-      autoBtn.addEventListener('click', async function () {
-        var sourceFile = (fileInput && fileInput.files && fileInput.files[0]) ? fileInput.files[0] : null;
-        var existingSrc = (!sourceFile && previewAudio) ? (previewAudio.currentSrc || (previewAudio.querySelector('source') && previewAudio.querySelector('source').src) || previewAudio.src) : null;
-        if (!sourceFile && !existingSrc && urlInput && urlInput.value.trim()) {
-          existingSrc = urlInput.value.trim();
-        }
-        var target = sourceFile || existingSrc;
-        if (!target) {
-          if (hint) hint.textContent = 'Primero seleccioná un archivo de audio o URL';
-          return;
-        }
-        var origHtml = autoBtn.innerHTML;
-        autoBtn.disabled = true;
-        autoBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Analizando...';
-        try {
-          var suggestedDb = await analyzeOptimalGainDb(target);
-          if (suggestedDb === 0) suggestedDb = 6; // Si ya tenía algún pico pero el usuario pidió nivelar, sugerir +6 dB
-          updateUiDb(suggestedDb, 'Auto-nivelado sugerido: +' + suggestedDb + ' dB');
-        } catch (err) {
-          updateUiDb(10, 'Nivelado aplicado: +10 dB');
-        } finally {
-          autoBtn.disabled = false;
-          autoBtn.innerHTML = origHtml;
-        }
-      });
+    if (hint && customNote) {
+      hint.textContent = customNote;
+    } else if (hint && clean > 0) {
+      var factor = dbToLinear(clean).toFixed(1);
+      hint.textContent = 'Volumen aumentado +' + clean + ' dB (×' + factor + ')';
+    } else if (hint && previewAudio && !previewAudio.classList.contains('d-none')) {
+      hint.textContent = 'Volumen original (0 dB)';
     }
   }
 
-  function initAllAudioPlayersAndBoosters() {
-    // 1. Inicializar filas del modal o formulario de edición en cualquier sección
-    document.querySelectorAll('.audio-input-row, .existing-audio-card, .audio-booster-panel, .audio-booster-box, [data-audio-booster="1"]').forEach(function (row) {
-      if (row.querySelector('.audio-gain-slider')) {
-        initAudioRowBooster(row);
-      }
+  if (slider) {
+    slider.addEventListener('input', function () {
+      updateUiDb(this.value);
     });
-
-    // 2. Comprobar si hay sliders sueltos dentro de tarjetas o modales
-    document.querySelectorAll('.audio-gain-slider').forEach(function (slider) {
-      var box = slider.closest('.audio-booster-box') || slider.closest('.audio-booster-panel') || slider.closest('.modal-body') || slider.closest('form') || slider.parentElement;
-      if (box && !box.dataset.boosterInitialized) {
-        initAudioRowBooster(box);
-      }
-    });
-
-    // 3. Inicializar todos los reproductores <audio data-gain-db="..."> en frontend y backend
-    document.querySelectorAll('audio[data-gain-db]').forEach(function (audioEl) {
-      var db = Number(audioEl.getAttribute('data-gain-db')) || 0;
-      if (db > 0) {
-        attachAudioGain(audioEl, db);
-      }
-    });
+    updateUiDb(slider.value);
   }
 
-  window.initAudioRowBooster = initAudioRowBooster;
-  window.attachAudioGain = attachAudioGain;
-  window.initAllAudioPlayersAndBoosters = initAllAudioPlayersAndBoosters;
-
-  // Reactivar automáticamente al abrir cualquier modal de Bootstrap
-  document.addEventListener('shown.bs.modal', function () {
-    setTimeout(initAllAudioPlayersAndBoosters, 100);
+  presetBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var db = Number(this.getAttribute('data-db')) || 0;
+      updateUiDb(db);
+    });
   });
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAllAudioPlayersAndBoosters);
-  } else {
-    initAllAudioPlayersAndBoosters();
+  if (fileInput && previewAudio) {
+    fileInput.addEventListener('change', function () {
+      if (currentObjectUrl) {
+        URL.revokeObjectURL(currentObjectUrl);
+        currentObjectUrl = null;
+      }
+      if (this.files && this.files[0]) {
+        currentObjectUrl = URL.createObjectURL(this.files[0]);
+        previewAudio.src = currentObjectUrl;
+        previewAudio.classList.remove('d-none');
+        if (!gainController) {
+          gainController = attachAudioGain(previewAudio, slider ? slider.value : 0);
+        }
+        if (hint) {
+          hint.textContent = 'Reproducí para probar el volumen en vivo';
+        }
+      } else {
+        // Si no hay archivo nuevo pero había una URL previa
+        var fallbackUrl = urlInput ? urlInput.value.trim() : '';
+        if (fallbackUrl) {
+          previewAudio.src = fallbackUrl;
+          previewAudio.classList.remove('d-none');
+        } else {
+          previewAudio.pause();
+          previewAudio.removeAttribute('src');
+          previewAudio.classList.add('d-none');
+        }
+      }
+    });
   }
-})();
+
+  if (urlInput && previewAudio) {
+    urlInput.addEventListener('input', function () {
+      var val = this.value.trim();
+      if (val && (!fileInput || !fileInput.files || !fileInput.files.length)) {
+        previewAudio.src = val;
+        previewAudio.classList.remove('d-none');
+        if (!gainController) {
+          gainController = attachAudioGain(previewAudio, slider ? slider.value : 0);
+        }
+        if (hint) {
+          hint.textContent = 'URL detectada. Reproducí para probar volumen.';
+        }
+      }
+    });
+  }
+
+  if (autoBtn) {
+    autoBtn.addEventListener('click', async function () {
+      var sourceFile = (fileInput && fileInput.files && fileInput.files[0]) ? fileInput.files[0] : null;
+      var existingSrc = (!sourceFile && previewAudio) ? (previewAudio.currentSrc || (previewAudio.querySelector('source') && previewAudio.querySelector('source').src) || previewAudio.src) : null;
+      if (!sourceFile && !existingSrc && urlInput && urlInput.value.trim()) {
+        existingSrc = urlInput.value.trim();
+      }
+      var target = sourceFile || existingSrc;
+      if (!target) {
+        if (hint) hint.textContent = 'Primero seleccioná un archivo de audio o URL';
+        return;
+      }
+      var origHtml = autoBtn.innerHTML;
+      autoBtn.disabled = true;
+      autoBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Analizando...';
+      try {
+        var suggestedDb = await analyzeOptimalGainDb(target);
+        if (suggestedDb === 0) suggestedDb = 6; // Si ya tenía algún pico pero el usuario pidió nivelar, sugerir +6 dB
+        updateUiDb(suggestedDb, 'Auto-nivelado sugerido: +' + suggestedDb + ' dB');
+      } catch (err) {
+        updateUiDb(10, 'Nivelado aplicado: +10 dB');
+      } finally {
+        autoBtn.disabled = false;
+        autoBtn.innerHTML = origHtml;
+      }
+    });
+  }
+}
+
+function initAllAudioPlayersAndBoosters() {
+  // 1. Inicializar filas del modal o formulario de edición en cualquier sección
+  document.querySelectorAll('.audio-input-row, .existing-audio-card, .audio-booster-panel, .audio-booster-box, [data-audio-booster="1"]').forEach(function (row) {
+    if (row.querySelector('.audio-gain-slider')) {
+      initAudioRowBooster(row);
+    }
+  });
+
+  // 2. Comprobar si hay sliders sueltos dentro de tarjetas o modales
+  document.querySelectorAll('.audio-gain-slider').forEach(function (slider) {
+    var box = slider.closest('.audio-booster-box') || slider.closest('.audio-booster-panel') || slider.closest('.modal-body') || slider.closest('form') || slider.parentElement;
+    if (box && !box.dataset.boosterInitialized) {
+      initAudioRowBooster(box);
+    }
+  });
+
+  // 3. Inicializar todos los reproductores <audio data-gain-db="..."> en frontend y backend
+  document.querySelectorAll('audio[data-gain-db]').forEach(function (audioEl) {
+    var db = Number(audioEl.getAttribute('data-gain-db')) || 0;
+    if (db > 0) {
+      attachAudioGain(audioEl, db);
+    }
+  });
+}
+
+window.initAudioRowBooster = initAudioRowBooster;
+window.attachAudioGain = attachAudioGain;
+window.initAllAudioPlayersAndBoosters = initAllAudioPlayersAndBoosters;
+
+// Despertar el AudioContext con el primer gesto del usuario (clic/toque/tecla)
+// para que el amplificador de dB esté listo antes de reproducir.
+function warmUpAudioContext() {
+    var ctx = getAudioContext();
+    if (ctx && ctx.state === 'suspended') {
+      ctx.resume().catch(function () { });
+    }
+  }
+    ['pointerdown', 'touchstart', 'click', 'keydown'].forEach(function (evt) {
+      window.addEventListener(evt, warmUpAudioContext, { capture: true, passive: true });
+      document.addEventListener(evt, warmUpAudioContext, { capture: true, passive: true });
+    });
+
+    // Reactivar automáticamente al abrir cualquier modal de Bootstrap
+    document.addEventListener('shown.bs.modal', function () {
+      setTimeout(initAllAudioPlayersAndBoosters, 100);
+    });
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAllAudioPlayersAndBoosters);
+    } else {
+      initAllAudioPlayersAndBoosters();
+    }
+  })();
 

@@ -34,52 +34,80 @@ const storage = multer.diskStorage({
         let base = '../../public/uploads/';
         let folder = 'general';
         const ext = path.extname(file.originalname).toLowerCase().replace('.', '');
-        const isAudio = file.mimetype.startsWith('audio/') || 
-                        /mp3|mpeg|m4a|wav|aac|ogg|oga|opus|wma|flac|webm/.test(ext) ||
-                        file.mimetype.includes('ogg') || 
-                        file.mimetype.includes('opus') || 
-                        req.originalUrl.includes('/aliyot') ||
-                        file.fieldname === 'audio_file';
+        const isAudio = file.mimetype.startsWith('audio/') ||
+            /mp3|mpeg|m4a|wav|aac|ogg|oga|opus|wma|flac|webm/.test(ext) ||
+            file.mimetype.includes('ogg') ||
+            file.mimetype.includes('opus') ||
+            req.originalUrl.includes('/aliyot') ||
+            file.fieldname === 'audio_file';
 
         if (isAudio) {
             folder = 'audios';
+            base = '../../public/uploads/';
+        } else if (file.mimetype === 'application/pdf' || ext === 'pdf' || file.fieldname === 'seder_pdf' || file.fieldname === 'pdf_file' || file.fieldname === 'pdf_upload') {
+            folder = 'pdf';
+            base = '../../public/uploads/';
+        } else if (req.originalUrl.includes('/parashot-infantiles')) {
+            folder = 'semillas';
+            base = '../../public/uploads/';
         } else if (req.originalUrl.includes('/parashot')) {
             folder = 'parashot';
             base = '../../public/assets/';
-        } else if (req.originalUrl.includes('/portfolio')) folder = 'portfolio';
-        else if (req.originalUrl.includes('/ensenanzas')) folder = 'ensenanzas';
-        else if (req.originalUrl.includes('/haftara')) folder = 'haftara';
-        else if (req.originalUrl.includes('/semillas')) folder = 'semillas';
-        else if (req.originalUrl.includes('/seder')) folder = 'seder';
-        else if (req.originalUrl.includes('/noticias')) folder = 'noticias';
-        else if (req.originalUrl.includes('/blog')) folder = 'blog';
-        else if (req.originalUrl.includes('/team')) folder = 'team';
-        else if (req.originalUrl.includes('/entity')) folder = 'entity';
+    } else if(req.originalUrl.includes('/portfolio')) {
+        folder = 'portfolio';
+base = '../../public/uploads/';
+        } else if (req.originalUrl.includes('/ensenanzas')) {
+    folder = 'ensenanzas';
+    base = '../../public/uploads/';
+} else if (req.originalUrl.includes('/haftara')) {
+    folder = 'haftara';
+    base = '../../public/uploads/';
+} else if (req.originalUrl.includes('/semillas')) {
+    folder = 'semillas';
+    base = '../../public/uploads/';
+} else if (req.originalUrl.includes('/seder')) {
+    folder = 'seder';
+    base = '../../public/uploads/';
+} else if (req.originalUrl.includes('/noticias')) {
+    folder = 'noticias';
+    base = '../../public/uploads/';
+} else if (req.originalUrl.includes('/blog')) {
+    folder = 'blog';
+    base = '../../public/uploads/';
+} else if (req.originalUrl.includes('/team')) {
+    folder = 'team';
+    base = '../../public/uploads/';
+} else if (req.originalUrl.includes('/entity')) {
+    folder = 'entity';
+    base = '../../public/uploads/';
+}
 
-        if (file.fieldname === 'seder_image') {
-            folder = 'seder';
-        } else if (file.mimetype === 'application/pdf' || ext === 'pdf' || file.fieldname === 'seder_pdf') {
-            folder = 'pdf';
-        }
+if (file.fieldname === 'seder_image') {
+    folder = 'seder';
+    base = '../../public/uploads/';
+}
 
-        // Si es video, va a la carpeta de videos
-        if (file.mimetype && file.mimetype.startsWith('video/')) folder = 'videos';
+// Si es video, va a la carpeta de videos
+if (file.mimetype && file.mimetype.startsWith('video/')) {
+    folder = 'videos';
+    base = '../../public/uploads/';
+}
 
-        const dest = path.join(__dirname, base, folder);
-        if (!fs.existsSync(dest)) {
-            fs.mkdirSync(dest, { recursive: true });
-        }
-        cb(null, dest);
+const dest = path.join(__dirname, base, folder);
+if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+}
+cb(null, dest);
     },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    }
+filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+}
 });
 
-const upload = multer({ 
+const upload = multer({
     storage: storage,
-    limits: { 
+    limits: {
         fileSize: 250 * 1024 * 1024, // Límite de 250MB para audios/videos/archivos
         files: 30, fields: 500, parts: 530,
         fieldSize: 50 * 1024 * 1024   // Límite de 50MB para campos de texto / contenido HTML / base64
@@ -87,7 +115,7 @@ const upload = multer({
     fileFilter: (req, file, cb) => {
         const ext = path.extname(file.originalname).toLowerCase();
         const imageFields = /^(image_file|seder_image|image|cover|cover_image_file|thumbnail)$/i;
-        const allowedHere = allowed.has(ext) && (!imageFields.test(file.fieldname) || ['.jpg','.jpeg','.png','.webp','.gif'].includes(ext));
+        const allowedHere = allowed.has(ext) && (!imageFields.test(file.fieldname) || ['.jpg', '.jpeg', '.png', '.webp', '.gif'].includes(ext));
         if (!allowedHere) { const error = new Error('Formato de archivo no permitido.'); error.status = 400; return cb(error); }
         cb(null, true);
     }
@@ -99,14 +127,14 @@ function protect(middleware) {
         const files = req.file ? [req.file] : Array.isArray(req.files) ? req.files : Object.values(req.files || {}).flat();
         try {
             if (error) throw error;
-            if (!validToken(req)) { const denied = new Error('Solicitud no válida. Recarga la página.'); denied.status=403; throw denied; }
+            if (!validToken(req)) { const denied = new Error('Solicitud no válida. Recarga la página.'); denied.status = 403; throw denied; }
             req.csrfValidated = true;
             delete req.body._csrf;
             for (const file of files) await validateFile(file);
             return next();
         } catch (failure) {
             await Promise.allSettled(files.map(file => fs.promises.unlink(file.path)));
-            if (failure.status===403) return res.status(403).send(failure.message);
+            if (failure.status === 403) return res.status(403).send(failure.message);
             next(failure);
         }
     });

@@ -127,8 +127,9 @@ select option:checked, select option:hover {
                                                         <% a.audios.forEach((aud, idx) => { %>
                                                             <div class="p-1 px-2 rounded bg-black bg-opacity-40 border border-secondary border-opacity-50 mb-1">
                                                                 <div class="d-flex align-items-center gap-1">
-                                                                    <audio controls data-gain-db="<%= aud.gain_db || 0 %>" style="height: 26px; max-width: 170px;">
-                                                                        <source src="<%= aud.url %>" type="audio/mpeg">
+                                                                    <audio controls preload="metadata" src="<%= aud.url %>" data-gain-db="<%= aud.gain_db || 0 %>" style="height: 26px; max-width: 170px;">
+                                                                        <source src="<%= aud.url %>" type="<%= (typeof getAudioMime === 'function' ? getAudioMime(aud.url) : 'audio/mpeg') %>">
+                                                                        <source src="<%= aud.url %>">
                                                                     </audio>
                                                                     <% if (aud.gain_db && Number(aud.gain_db) > 0) { %>
                                                                         <span class="badge bg-success" style="font-size: 0.65rem;" title="Volumen amplificado +<%= aud.gain_db %> dB">+<%= aud.gain_db %> dB</span>

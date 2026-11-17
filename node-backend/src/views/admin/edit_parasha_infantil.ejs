@@ -116,6 +116,7 @@
                             </a>
                             <span class="badge bg-secondary mt-2"><i class="bi bi-download me-1"></i><%= item.downloads_count || 0 %> descargas</span>
                         </div>
+                        <input type="hidden" name="pdf_file" value="<%= item.pdf_file %>">
                     <% } %>
                     <label class="form-label text-white-50 small">Subir Nuevo PDF (Reemplaza al actual)</label>
                     <input type="file" name="pdf_file" class="form-control bg-dark text-white border-secondary" accept="application/pdf,.pdf">
@@ -130,6 +131,7 @@
                         <div class="mb-3 text-center rounded-3 p-2 bg-black border border-secondary">
                             <img src="<%= item.cover_image %>" alt="<%= item.title %>" style="max-width: 100%; max-height: 180px; object-fit: contain;">
                         </div>
+                        <input type="hidden" name="cover_image" value="<%= item.cover_image %>">
                     <% } %>
                     <label class="form-label text-white-50 small">Reemplazar Imagen de Portada</label>
                     <input type="file" name="cover_image_file" class="form-control bg-dark text-white border-secondary" accept="image/*">

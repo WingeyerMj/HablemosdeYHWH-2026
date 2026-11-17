@@ -166,8 +166,9 @@
                                                     <i class="bi bi-download me-1"></i> Descargar
                                                 </a>
                                             </div>
-                                            <audio controls class="w-100" data-gain-db="<%= haftara.gain_db || 0 %>" style="height: 38px; border-radius: 8px;">
-                                                <source src="<%= haftara.audio_url %>" type="audio/mpeg">
+                                            <audio controls preload="metadata" src="<%= haftara.audio_url %>" class="w-100" data-gain-db="<%= haftara.gain_db || 0 %>" style="height: 38px; border-radius: 8px;">
+                                                <source src="<%= haftara.audio_url %>" type="<%= (typeof getAudioMime === 'function' ? getAudioMime(haftara.audio_url) : 'audio/mpeg') %>">
+                                                <source src="<%= haftara.audio_url %>">
                                             </audio>
                                         </div>
                                     <% } %>

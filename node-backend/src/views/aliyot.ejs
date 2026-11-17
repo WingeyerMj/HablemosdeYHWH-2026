@@ -365,8 +365,9 @@
                                                                     <i class="bi bi-download me-1"></i> Descargar
                                                                 </a>
                                                             </div>
-                                                            <audio controls preload="metadata" data-gain-db="<%= aud.gain_db || 0 %>" class="aliyah-audio d-block w-100 mt-1" style="min-width: 100%; height: 44px; border-radius: 8px;">
-                                                                <source src="<%= aud.url %>" type="audio/mpeg">
+                                                            <audio controls preload="metadata" src="<%= aud.url %>" data-gain-db="<%= aud.gain_db || 0 %>" class="aliyah-audio d-block w-100 mt-1" style="min-width: 100%; height: 44px; border-radius: 8px;">
+                                                                <source src="<%= aud.url %>" type="<%= (typeof getAudioMime === 'function' ? getAudioMime(aud.url) : 'audio/mpeg') %>">
+                                                                <source src="<%= aud.url %>">
                                                                 Tu navegador no soporta el reproductor de audio HTML5.
                                                             </audio>
                                                         </div>

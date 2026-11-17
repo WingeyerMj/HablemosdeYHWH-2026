@@ -123,6 +123,24 @@ app.use(async (req, res, next) => {
     res.locals.footerLinks = {};
     res.locals.siteSettings = {};
     res.locals.globalMusicTracks = [];
+    res.locals.getAudioMime = (url) => {
+        if (!url || typeof url !== 'string') return 'audio/mpeg';
+        const clean = url.split('?')[0].split('#')[0].toLowerCase();
+        const ext = clean.split('.').pop();
+        switch (ext) {
+            case 'aac': return 'audio/aac';
+            case 'm4a': return 'audio/mp4';
+            case 'mp4': return 'audio/mp4';
+            case 'wav': return 'audio/wav';
+            case 'ogg':
+            case 'oga':
+            case 'opus': return 'audio/ogg';
+            case 'webm':
+            case 'weba': return 'audio/webm';
+            case 'flac': return 'audio/flac';
+            default: return 'audio/mpeg';
+        }
+    };
 
     // URL pública absoluta (para compartir en redes y etiquetas Open Graph)
     const reqHost = req.get('host') || '';
