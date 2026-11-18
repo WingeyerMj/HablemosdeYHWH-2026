@@ -388,7 +388,7 @@
                                                                                                 Estudiar</span>
                                                                                         </a>
                                                                                         <button type="button"
-                                                                                            onclick="openPdfViewerModal('<%= destacada.pdf_file %>', '<%= destacada.title.replace(/'/g, &quot;\\'&quot;) %>')" class="btn
+                                                                                            onclick="openPdfViewerModal('<%= destacada.pdf_file %>', '<%= destacada.title.replace(/'/g, "\\'") %>')" class="btn
                                                                                             btn-lg btn-outline-dark px-4
                                                                                             py-3 rounded-pill fw-bold
                                                                                             d-inline-flex
@@ -497,8 +497,7 @@
                                                                                                     </a>
                                                                                                     <button
                                                                                                         type="button"
-                                                                                                        onclick="openPdfViewerModal('<%= pi.pdf_file %>', '<%= pi.title.replace(/'/g, "
-                                                                                                        \\'") %>')"
+                                                                                                        onclick="openPdfViewerModal('<%= pi.pdf_file %>', '<%= pi.title.replace(/'/g, "\\'") %>')"
                                                                                                         class="btn
                                                                                                         btn-sm
                                                                                                         btn-outline-secondary
@@ -2168,8 +2167,7 @@
                                                                                                         (art.main_image)
                                                                                                         { %>
                                                                                                         <div class="position-relative clickable-lightbox-img"
-                                                                                                            onclick="openImageLightbox('<%= art.main_image %>', '<%= art.title.replace(/'/g, "
-                                                                                                            \\'") %>')"
+                                                                                                            onclick="openImageLightbox('<%= art.main_image %>', '<%= art.title.replace(/'/g, "\\'") %>')"
                                                                                                             style="cursor:
                                                                                                             zoom-in;
                                                                                                             overflow:
@@ -2247,8 +2245,7 @@
                                                                                                                                 %>
                                                                                                                                 <div class="rounded-3 overflow-hidden shadow-sm border position-relative flex-shrink-0"
                                                                                                                                     style="width: 80px; height: 80px; cursor: zoom-in;"
-                                                                                                                                    onclick="openImageLightbox('<%= gImg %>', '<%= art.title.replace(/'/g, "
-                                                                                                                                    \\'")
+                                                                                                                                    onclick="openImageLightbox('<%= gImg %>', '<%= art.title.replace(/'/g, "\\'")
                                                                                                                                     %>
                                                                                                                                     -
                                                                                                                                     Ficha
@@ -2502,8 +2499,7 @@
                                                                                                         class="btn btn-sm rounded-circle p-0 d-inline-flex align-items-center justify-content-center js-share-open"
                                                                                                         style="width: 26px; height: 26px; background: rgba(0,0,0,0.72); color: #f5cf7c; border: 1px solid rgba(212,168,83,0.4);"
                                                                                                         data-share-url="/semillas-de-torah?short=<%= short.id %>"
-                                                                                                        data-share-title="<%= short.title.replace(/"
-                                                                                                        /g, '&quot;' )
+                                                                                                        data-share-title="<%= short.title.replace(/"/g, '&quot;')
                                                                                                         %>"
                                                                                                         data-share-text="
                                                                                                         <%= (short.category
@@ -2782,8 +2778,7 @@
                                                                                                         class="btn btn-sm rounded-circle p-0 d-inline-flex align-items-center justify-content-center js-share-open"
                                                                                                         style="width: 26px; height: 26px; background: rgba(0,0,0,0.72); color: #f5cf7c; border: 1px solid rgba(212,168,83,0.4);"
                                                                                                         data-share-url="/semillas-de-torah?short=<%= short.id %>"
-                                                                                                        data-share-title="<%= short.title.replace(/"
-                                                                                                        /g, '&quot;' )
+                                                                                                        data-share-title="<%= short.title.replace(/"/g, '&quot;')
                                                                                                         %>"
                                                                                                         data-share-text="
                                                                                                         <%= short.parasha_name
