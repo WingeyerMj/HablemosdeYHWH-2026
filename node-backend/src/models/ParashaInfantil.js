@@ -85,7 +85,7 @@ class ParashaInfantil {
                    p.subtitle AS parasha_subtitle_canonical
             FROM parashot_infantiles pi
             LEFT JOIN parashot p ON (pi.parasha_id = p.id OR (pi.parasha_number IS NOT NULL AND pi.parasha_number = p.parasha_number))
-            ORDER BY COALESCE(pi.parasha_number, p.parasha_number, 999) ASC, pi.id DESC
+            ORDER BY COALESCE(pi.parasha_number, p.parasha_number, 0) DESC, pi.created_at DESC, pi.id DESC
         `);
         return rows || [];
     }
@@ -99,7 +99,7 @@ class ParashaInfantil {
             FROM parashot_infantiles pi
             LEFT JOIN parashot p ON (pi.parasha_id = p.id OR (pi.parasha_number IS NOT NULL AND pi.parasha_number = p.parasha_number))
             WHERE pi.is_published = 1 OR pi.is_published = TRUE
-            ORDER BY COALESCE(pi.parasha_number, p.parasha_number, 999) ASC, pi.id DESC
+            ORDER BY COALESCE(pi.parasha_number, p.parasha_number, 0) DESC, pi.created_at DESC, pi.id DESC
         `);
         return rows || [];
     }

@@ -1220,24 +1220,12 @@
                                                                         </div>
 
                                                                         <!-- FILTROS DE CATEGORÍA INTERACTIVOS -->
-                                                                        <% const allMan=(typeof manualidades
-                                                                            !=='undefined' && manualidades) ?
-                                                                            manualidades : []; const drawSem=(typeof
-                                                                            dibujosSemanales !=='undefined' &&
-                                                                            dibujosSemanales) ? dibujosSemanales :
-                                                                            allMan.filter(x=> x.category === 'Porción
-                                                                            Semanal');
-                                                                            const craftsMoed = (typeof
-                                                                            manualidadesFiestas !== 'undefined' &&
-                                                                            manualidadesFiestas) ? manualidadesFiestas :
-                                                                            allMan.filter(x => x.category === 'Santas
-                                                                            Convocaciones');
-                                                                            const suggEnc = (typeof
-                                                                            sugerenciasEncargadas !== 'undefined' &&
-                                                                            sugerenciasEncargadas) ?
-                                                                            sugerenciasEncargadas : allMan.filter(x =>
-                                                                            x.category === 'Sugerencia de Encargadas');
-                                                                            %>
+                                                                        <% 
+                                                                            const allMan = (typeof manualidades !== 'undefined' && manualidades) ? manualidades : []; 
+                                                                            const drawSem = (typeof dibujosSemanales !== 'undefined' && dibujosSemanales) ? dibujosSemanales : allMan.filter(x => x.category === 'Porción Semanal');
+                                                                            const craftsMoed = (typeof manualidadesFiestas !== 'undefined' && manualidadesFiestas) ? manualidadesFiestas : allMan.filter(x => x.category === 'Santas Convocaciones');
+                                                                            const suggEnc = (typeof sugerenciasEncargadas !== 'undefined' && sugerenciasEncargadas) ? sugerenciasEncargadas : allMan.filter(x => x.category === 'Sugerencia de Encargadas');
+                                                                        %>
                                                                             <div
                                                                                 class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 p-3 bg-white rounded-4 shadow-sm border">
                                                                                 <div class="d-flex flex-wrap gap-2"
@@ -2113,7 +2101,7 @@
                                                             </div>
 
                                                             <div class="d-flex align-items-center gap-2 flex-wrap">
-                                                                <%- include(' partials/_share_buttons', { shareUrl: '/semillas-de-torah/articulo/'
+                                                                <%- include('partials/_share_buttons', { shareUrl: '/semillas-de-torah/articulo/'
                                                                                                                                 +
                                                                                                                                 art.id,
                                                                                                                                 shareTitle:
