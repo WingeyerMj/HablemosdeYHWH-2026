@@ -2616,6 +2616,92 @@ const adminController = {
         }
     },
 
+    reorderAliyot: async (req, res) => {
+        try {
+            const Aliyah = require('../models/Aliyah');
+            const { order } = req.body;
+            if (!order || !Array.isArray(order)) {
+                return res.status(400).json({ success: false, message: 'Lista de IDs no válida.' });
+            }
+            await Aliyah.updateSortOrder(order);
+            res.json({ success: true, message: 'Orden actualizado correctamente.' });
+        } catch (error) {
+            console.error('Error reorderAliyot:', error);
+            res.status(500).json({ success: false, message: error.message });
+        }
+    },
+
+    moveAliyahSingle: async (req, res) => {
+        try {
+            const Aliyah = require('../models/Aliyah');
+            const { id, direction } = req.body;
+            if (!id || !['up', 'down'].includes(direction)) {
+                return res.status(400).json({ success: false, message: 'Parámetros inválidos.' });
+            }
+            const ok = await Aliyah.moveSingle(id, direction);
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return res.json({ success: ok, message: ok ? 'Movido correctamente.' : 'No se pudo mover.' });
+            }
+            res.redirect('/admin/aliyot');
+        } catch (error) {
+            console.error('Error moveAliyahSingle:', error);
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return res.status(500).json({ success: false, message: error.message });
+            }
+            res.redirect('/admin/aliyot');
+        }
+    },
+
+    moveAliyahToPosition: async (req, res) => {
+        try {
+            const Aliyah = require('../models/Aliyah');
+            const { id, position } = req.body;
+            const targetPos = parseInt(position, 10);
+            if (!id || isNaN(targetPos) || targetPos < 1) {
+                return res.status(400).json({ success: false, message: 'Posición inválida.' });
+            }
+            const ok = await Aliyah.moveToPosition(id, targetPos);
+            res.json({ success: ok, message: ok ? `Movido a la posición #${targetPos}.` : 'Error al mover.' });
+        } catch (error) {
+            console.error('Error moveAliyahToPosition:', error);
+            res.status(500).json({ success: false, message: error.message });
+        }
+    },
+
+    autoOrganizeAliyot: async (req, res) => {
+        try {
+            const Aliyah = require('../models/Aliyah');
+            await Aliyah.autoOrganizeByParasha();
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return res.json({ success: true, message: 'Aliyot organizadas por Parashá y Día correctamente.' });
+            }
+            res.redirect('/admin/aliyot?organized=1');
+        } catch (error) {
+            console.error('Error autoOrganizeAliyot:', error);
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return res.status(500).json({ success: false, message: error.message });
+            }
+            res.redirect('/admin/aliyot');
+        }
+    },
+
+    resetAliyotToUploadOrder: async (req, res) => {
+        try {
+            const Aliyah = require('../models/Aliyah');
+            await Aliyah.resetToUploadOrder();
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return res.json({ success: true, message: 'Orden restablecido al orden original de subida.' });
+            }
+            res.redirect('/admin/aliyot?reset=1');
+        } catch (error) {
+            console.error('Error resetAliyotToUploadOrder:', error);
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return res.status(500).json({ success: false, message: error.message });
+            }
+            res.redirect('/admin/aliyot');
+        }
+    },
+
     editAliyotPage: async (req, res) => {
         try {
             const Parasha = require('../models/Parasha');

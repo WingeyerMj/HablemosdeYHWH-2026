@@ -373,9 +373,16 @@ const homeController = {
                 if (!selectedParashaId) {
                     try {
                         const [latestWithAudio] = await db.query(`
-                            SELECT parasha_id FROM aliyot 
-                            WHERE audio_url IS NOT NULL AND audio_url != '' AND audio_url != '[]' 
-                            ORDER BY id DESC LIMIT 1
+                            SELECT a.parasha_id 
+                            FROM aliyot a
+                            LEFT JOIN parashot p ON a.parasha_id = p.id
+                            WHERE a.audio_url IS NOT NULL AND a.audio_url != '' AND a.audio_url != '[]' 
+                            ORDER BY 
+                                (COALESCE(p.cycle_name, '') LIKE '%2026 - 2027%' OR COALESCE(p.cycle_name, '') LIKE '%2026%') DESC,
+                                COALESCE(p.parasha_number, 0) DESC,
+                                a.aliyah_number DESC,
+                                a.id DESC 
+                            LIMIT 1
                         `);
                         if (latestWithAudio && latestWithAudio.length > 0 && latestWithAudio[0].parasha_id) {
                             selectedParashaId = latestWithAudio[0].parasha_id;

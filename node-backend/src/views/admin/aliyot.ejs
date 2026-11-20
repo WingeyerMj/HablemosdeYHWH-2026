@@ -67,9 +67,33 @@ select option:checked, select option:hover {
         <div class="tab-pane fade show active" id="content-all-aliyot" role="tabpanel">
             <div class="card bg-dark text-white border-secondary shadow-sm mb-4" style="border-radius: 12px;">
                 <div class="card-header border-secondary bg-black bg-opacity-25 d-flex justify-content-between align-items-center py-3 flex-wrap gap-2">
-                    <h5 class="mb-0 text-white"><i class="bi bi-headphones me-2" style="color: var(--primary-color, #d4b895);"></i>Listado de Lecturas Diarias</h5>
-                    <div class="d-flex gap-2">
-                        <input type="text" id="filterAliyotInput" class="form-control form-control-sm bg-black bg-opacity-50 text-white border-secondary" placeholder="Filtrar por parashá o versículo..." style="min-width: 250px;">
+                    <div class="d-flex align-items-center gap-3">
+                        <h5 class="mb-0 text-white"><i class="bi bi-headphones me-2" style="color: var(--primary-color, #d4b895);"></i>Listado de Lecturas Diarias</h5>
+                        <span class="badge bg-dark border border-secondary text-white-50" id="aliyotTotalCounter"><%= (typeof allAliyot !== 'undefined') ? allAliyot.length : 0 %> cargadas</span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <!-- Botón Restablecer a Orden de Subida -->
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="btnResetUploadOrder" title="Restablecer la lista exactamente al orden cronológico en que las subiste">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Orden de Subida
+                        </button>
+
+                        <!-- Botón Auto-Organizar por Parashá y Día -->
+                        <button type="button" class="btn btn-sm btn-outline-warning" id="btnAutoOrganizeParashot" title="Agrupa y ordena automáticamente todas las cargas según el orden canónico de la Torá (Parashá y Día 1 al 7)">
+                            <i class="bi bi-diagram-3 me-1"></i> Auto-Agrupar por Parashá (Torá)
+                        </button>
+
+                        <!-- Filtro Rápido por Parashá -->
+                        <select id="filterParashaSelect" class="form-select form-select-sm bg-black bg-opacity-50 text-white border-secondary" style="max-width: 200px;">
+                            <option value="">Todas las Parashot</option>
+                            <% if (typeof parashot !== 'undefined') { %>
+                                <% parashot.forEach(p => { %>
+                                    <option value="<%= p.title.toLowerCase() %>"><%= p.title %></option>
+                                <% }) %>
+                            <% } %>
+                        </select>
+
+                        <!-- Buscador de texto -->
+                        <input type="text" id="filterAliyotInput" class="form-control form-control-sm bg-black bg-opacity-50 text-white border-secondary" placeholder="Filtrar por parashá o versículo..." style="min-width: 220px;">
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -77,7 +101,8 @@ select option:checked, select option:hover {
                         <table class="table table-dark table-hover align-middle mb-0" id="aliyotTable">
                             <thead class="table-black border-secondary" style="border-bottom: 2px solid rgba(255,255,255,0.1);">
                                 <tr>
-                                    <th style="width: 100px;">Día</th>
+                                    <th style="width: 110px;" class="text-center">Mover</th>
+                                    <th style="width: 90px;">Día</th>
                                     <th>Parashá</th>
                                     <th>Título & Cita</th>
                                     <th>Audio</th>
@@ -85,12 +110,32 @@ select option:checked, select option:hover {
                                     <th class="text-end" style="min-width: 220px;">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="aliyotTableBody">
                                 <% if (typeof allAliyot !== 'undefined' && allAliyot.length > 0) { %>
-                                    <% allAliyot.forEach(a => { 
+                                    <% allAliyot.forEach((a, idx) => { 
                                         const defaultDays = ['1ª Aliyá (Dom)', '2ª Aliyá (Lun)', '3ª Aliyá (Mar)', '4ª Aliyá (Mié)', '5ª Aliyá (Jue)', '6ª Aliyá (Vie)', '7ª Aliyá (Shab)'];
                                     %>
-                                        <tr class="aliyah-table-row" data-search="<%= (a.title + ' ' + (a.parasha_title || 'sin parashá') + ' ' + (a.verses_reference || '')).toLowerCase() %>">
+                                        <tr class="aliyah-table-row" data-id="<%= a.id %>" data-pos="<%= idx + 1 %>" data-parasha="<%= (a.parasha_title || '').toLowerCase() %>" data-search="<%= (a.title + ' ' + (a.parasha_title || 'sin parashá') + ' ' + (a.verses_reference || '')).toLowerCase() %>">
+                                            <td class="text-center align-middle order-controls-cell" style="white-space: nowrap;">
+                                                <div class="d-inline-flex align-items-center gap-1">
+                                                    <!-- Manija de arrastre -->
+                                                    <span class="drag-handle text-secondary p-1" style="cursor: grab;" title="Arrastrar para mover">
+                                                        <i class="bi bi-grip-vertical fs-5"></i>
+                                                    </span>
+                                                    <!-- Botón Subir -->
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1 btn-move-aliyah" data-id="<%= a.id %>" data-dir="up" title="Mover arriba">
+                                                        <i class="bi bi-chevron-up"></i>
+                                                    </button>
+                                                    <!-- Botón Bajar -->
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1 btn-move-aliyah" data-id="<%= a.id %>" data-dir="down" title="Mover abajo">
+                                                        <i class="bi bi-chevron-down"></i>
+                                                    </button>
+                                                    <!-- Badge Posición / Clic para mover directo -->
+                                                    <button type="button" class="badge bg-black border border-secondary text-warning px-1 py-1 btn-move-to-pos" data-id="<%= a.id %>" data-pos="<%= idx + 1 %>" style="font-size: 0.68rem; cursor: pointer;" title="Posición #<%= idx + 1 %> (Clic para mover a otra posición)">
+                                                        #<%= idx + 1 %>
+                                                    </button>
+                                                </div>
+                                            </td>
                                             <td>
                                                 <span class="badge" style="background: var(--primary-color, #d4b895); color: #000; font-weight: 700;">
                                                     <%= a.aliyah_number %>ª Aliyá
@@ -197,7 +242,7 @@ select option:checked, select option:hover {
                                     <% }) %>
                                 <% } else { %>
                                     <tr>
-                                        <td colspan="6" class="text-center py-5 text-white-50">
+                                        <td colspan="7" class="text-center py-5 text-white-50">
                                             <i class="bi bi-mic fs-1 d-block mb-2 text-warning"></i>
                                             <p class="mb-2">No hay Aliyot cargadas individualmente todavía.</p>
                                             <button type="button" class="btn btn-sm btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#createAliyahModal">
@@ -874,19 +919,288 @@ document.addEventListener('DOMContentLoaded', function() {
         btnAutoFetchFromRefModal.addEventListener('click', function() { loadVersesFromRefModal(this); });
     }
 
-    // 2. Filtro en vivo para la tabla
+    // 2. Filtro en vivo para la tabla (Texto y Parashá)
     const filterInput = document.getElementById('filterAliyotInput');
-    if (filterInput) {
-        filterInput.addEventListener('input', function() {
-            const query = this.value.toLowerCase().trim();
-            document.querySelectorAll('.aliyah-table-row').forEach(row => {
-                const searchData = row.getAttribute('data-search') || '';
-                if (searchData.includes(query)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+    const filterParashaSelect = document.getElementById('filterParashaSelect');
+
+    function applyAliyotFilters() {
+        const textQuery = (filterInput ? filterInput.value : '').toLowerCase().trim();
+        const parashaQuery = (filterParashaSelect ? filterParashaSelect.value : '').toLowerCase().trim();
+        let visibleCount = 0;
+
+        document.querySelectorAll('.aliyah-table-row').forEach(row => {
+            const searchData = row.getAttribute('data-search') || '';
+            const rowParasha = row.getAttribute('data-parasha') || '';
+
+            const matchesText = !textQuery || searchData.includes(textQuery);
+            const matchesParasha = !parashaQuery || rowParasha.includes(parashaQuery);
+
+            if (matchesText && matchesParasha) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const counter = document.getElementById('aliyotTotalCounter');
+        if (counter) {
+            counter.innerText = `${visibleCount} visible${visibleCount === 1 ? '' : 's'}`;
+        }
+    }
+
+    if (filterInput) filterInput.addEventListener('input', applyAliyotFilters);
+    if (filterParashaSelect) filterParashaSelect.addEventListener('change', applyAliyotFilters);
+
+    // Sistema de Notificación Rápida (Toast)
+    function showOrderToast(msg, isSuccess = true) {
+        let toast = document.getElementById('aliyahOrderToast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'aliyahOrderToast';
+            toast.style.cssText = 'position: fixed; bottom: 25px; right: 25px; z-index: 1090; min-width: 280px; transition: all 0.3s ease;';
+            document.body.appendChild(toast);
+        }
+        toast.innerHTML = `
+            <div class="alert ${isSuccess ? 'alert-success border-success' : 'alert-danger border-danger'} shadow-lg d-flex align-items-center gap-2 mb-0 py-2 px-3 text-white" style="border-radius: 8px; background: ${isSuccess ? '#198754' : '#dc3545'}; font-weight: 500;">
+                <i class="bi ${isSuccess ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'} fs-5"></i>
+                <div class="flex-grow-1">${msg}</div>
+            </div>
+        `;
+        toast.style.display = 'block';
+        toast.style.opacity = '1';
+        clearTimeout(toast._timeout);
+        toast._timeout = setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => { toast.style.display = 'none'; }, 300);
+        }, 2500);
+    }
+
+    // Actualizar badges numéricos de posición (#1, #2, #3...)
+    function updateRowPositionBadges() {
+        const rows = document.querySelectorAll('#aliyotTableBody .aliyah-table-row');
+        rows.forEach((row, i) => {
+            const pos = i + 1;
+            row.setAttribute('data-pos', pos);
+            const btnPos = row.querySelector('.btn-move-to-pos');
+            if (btnPos) {
+                btnPos.innerText = `#${pos}`;
+                btnPos.setAttribute('data-pos', pos);
+                btnPos.title = `Posición actual #${pos} (Haz clic para mover directamente a otra posición)`;
+            }
+        });
+    }
+
+    // Guardar orden secuencial en el servidor
+    let isSavingOrder = false;
+    async function persistAliyotOrder() {
+        if (isSavingOrder) return;
+        const rows = document.querySelectorAll('#aliyotTableBody .aliyah-table-row');
+        const orderedIds = Array.from(rows).map(r => r.getAttribute('data-id')).filter(Boolean);
+        if (orderedIds.length === 0) return;
+
+        isSavingOrder = true;
+        try {
+            const res = await fetch('/admin/aliyot/reorder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'CSRF-Token': '<%= csrfToken %>'
+                },
+                body: JSON.stringify({
+                    _csrf: '<%= csrfToken %>',
+                    order: orderedIds
+                })
             });
+            const data = await res.json();
+            if (data.success) {
+                showOrderToast('✓ ¡Orden guardado correctamente!');
+            } else {
+                showOrderToast(data.message || 'Error al guardar orden', false);
+            }
+        } catch (err) {
+            console.error('Error persistAliyotOrder:', err);
+            showOrderToast('Error al comunicar con el servidor', false);
+        } finally {
+            isSavingOrder = false;
+        }
+    }
+
+    // Mover fila individualmente con botones Subir / Bajar
+    document.addEventListener('click', function(e) {
+        const moveBtn = e.target.closest('.btn-move-aliyah');
+        if (!moveBtn) return;
+        e.preventDefault();
+
+        const row = moveBtn.closest('.aliyah-table-row');
+        if (!row) return;
+
+        const direction = moveBtn.getAttribute('data-dir');
+        const tbody = document.getElementById('aliyotTableBody');
+        if (!tbody) return;
+
+        if (direction === 'up') {
+            const prev = row.previousElementSibling;
+            if (prev && prev.classList.contains('aliyah-table-row')) {
+                tbody.insertBefore(row, prev);
+                updateRowPositionBadges();
+                persistAliyotOrder();
+            }
+        } else if (direction === 'down') {
+            const next = row.nextElementSibling;
+            if (next && next.classList.contains('aliyah-table-row')) {
+                tbody.insertBefore(next, row);
+                updateRowPositionBadges();
+                persistAliyotOrder();
+            }
+        }
+    });
+
+    // Mover fila directamente a una posición específica
+    document.addEventListener('click', function(e) {
+        const posBtn = e.target.closest('.btn-move-to-pos');
+        if (!posBtn) return;
+        e.preventDefault();
+
+        const row = posBtn.closest('.aliyah-table-row');
+        if (!row) return;
+
+        const rows = Array.from(document.querySelectorAll('#aliyotTableBody .aliyah-table-row'));
+        const totalRows = rows.length;
+        const currentPos = parseInt(row.getAttribute('data-pos') || '1', 10);
+
+        const targetInput = prompt(`Mover esta carga de la posición #${currentPos} a la posición: (1 al ${totalRows})`, currentPos);
+        if (!targetInput) return;
+
+        const targetPos = parseInt(targetInput, 10);
+        if (isNaN(targetPos) || targetPos < 1 || targetPos > totalRows || targetPos === currentPos) return;
+
+        const tbody = document.getElementById('aliyotTableBody');
+        if (!tbody) return;
+
+        const targetIndex = targetPos - 1;
+        if (targetIndex >= rows.length - 1) {
+            tbody.appendChild(row);
+        } else if (targetPos < currentPos) {
+            tbody.insertBefore(row, rows[targetIndex]);
+        } else {
+            tbody.insertBefore(row, rows[targetIndex].nextElementSibling);
+        }
+
+        updateRowPositionBadges();
+        persistAliyotOrder();
+    });
+
+    // Drag and Drop HTML5 para filas de Aliyot
+    let draggedRow = null;
+    const tableBody = document.getElementById('aliyotTableBody');
+    if (tableBody) {
+        tableBody.addEventListener('dragstart', function(e) {
+            const row = e.target.closest('.aliyah-table-row');
+            if (!row) return;
+            draggedRow = row;
+            row.classList.add('opacity-50', 'bg-warning', 'text-dark');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', row.getAttribute('data-id') || '');
+        });
+
+        tableBody.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const targetRow = e.target.closest('.aliyah-table-row');
+            if (targetRow && targetRow !== draggedRow) {
+                const rect = targetRow.getBoundingClientRect();
+                const next = (e.clientY - rect.top) / (rect.bottom - rect.top) > 0.5;
+                tableBody.insertBefore(draggedRow, next ? targetRow.nextElementSibling : targetRow);
+            }
+        });
+
+        tableBody.addEventListener('dragend', function() {
+            if (draggedRow) {
+                draggedRow.classList.remove('opacity-50', 'bg-warning', 'text-dark');
+                draggedRow = null;
+                updateRowPositionBadges();
+                persistAliyotOrder();
+            }
+        });
+    }
+
+    // Botón Restablecer al Orden Original de Subida
+    const btnResetOrder = document.getElementById('btnResetUploadOrder');
+    if (btnResetOrder) {
+        btnResetOrder.addEventListener('click', async function() {
+            if (!confirm('¿Deseas restablecer la lista al orden original en que las subiste (más recientes primero)?\\n\\nLuego podrás mover manualmente cualquier carga a la posición que desees.')) {
+                return;
+            }
+
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Restableciendo...';
+
+            try {
+                const res = await fetch('/admin/aliyot/reset-order', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'CSRF-Token': '<%= csrfToken %>'
+                    },
+                    body: JSON.stringify({ _csrf: '<%= csrfToken %>' })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showOrderToast('✓ ¡Lista restablecida al orden de subida!');
+                    setTimeout(() => { window.location.reload(); }, 600);
+                } else {
+                    alert('Error: ' + (data.message || 'No se pudo restablecer.'));
+                    this.disabled = false;
+                    this.innerHTML = '<i class="bi bi-arrow-counterclockwise me-1"></i> Orden de Subida';
+                }
+            } catch (err) {
+                console.error('Error reset-order:', err);
+                alert('Error al comunicar con el servidor.');
+                this.disabled = false;
+                this.innerHTML = '<i class="bi bi-arrow-counterclockwise me-1"></i> Orden de Subida';
+            }
+        });
+    }
+
+    // Botón Auto-Organizar por Parashá y Día (Torá)
+    const btnAutoOrg = document.getElementById('btnAutoOrganizeParashot');
+    if (btnAutoOrg) {
+        btnAutoOrg.addEventListener('click', async function() {
+            if (!confirm('¿Deseas agrupar y ordenar automáticamente todas las lecturas según el ciclo y orden canónico de la Torá (Parashá y Día 1 a 7)?\\n\\nEsto colocará todas las Aliyot de la misma Parashá juntas de la 1ª a la 7ª.')) {
+                return;
+            }
+
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Organizando...';
+
+            try {
+                const res = await fetch('/admin/aliyot/auto-organize', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'CSRF-Token': '<%= csrfToken %>'
+                    },
+                    body: JSON.stringify({ _csrf: '<%= csrfToken %>' })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showOrderToast('✓ ¡Aliyot organizadas por Torá!');
+                    setTimeout(() => { window.location.reload(); }, 600);
+                } else {
+                    alert('Error: ' + (data.message || 'No se pudo auto-organizar.'));
+                    this.disabled = false;
+                    this.innerHTML = '<i class="bi bi-diagram-3 me-1"></i> Auto-Agrupar por Parashá (Torá)';
+                }
+            } catch (err) {
+                console.error('Error auto-organize:', err);
+                alert('Error al comunicar con el servidor.');
+                this.disabled = false;
+                this.innerHTML = '<i class="bi bi-diagram-3 me-1"></i> Auto-Agrupar por Parashá (Torá)';
+            }
         });
     }
 
