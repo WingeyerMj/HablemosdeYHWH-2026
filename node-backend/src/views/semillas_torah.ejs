@@ -2442,8 +2442,23 @@
                                                                                     %>
                                                                                     <div class="frontend-short-item">
                                                                                         <div class="card border-0 shadow-sm rounded-4 overflow-hidden short-card position-relative h-100"
-                                                                                            onclick="openShortModal(<%= globalIdx %>)"
+                                                                                            id="shortCard_<%= short.id %>"
+                                                                                            onclick="playShortInline('<%= short.id %>', event)"
                                                                                             style="cursor: pointer; background: #000; border: 2px solid transparent; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); aspect-ratio: 9 / 16; max-height: 480px;">
+
+                                                                                            <!-- Inline Video Player Container (reproducción en el mismo lugar) -->
+                                                                                            <div class="short-inline-player position-absolute top-0 start-0 w-100 h-100" 
+                                                                                                 id="shortPlayer_<%= short.id %>" 
+                                                                                                 style="display: none; z-index: 10; background: #000;">
+                                                                                                <button type="button" 
+                                                                                                        class="btn btn-sm btn-dark rounded-circle position-absolute top-0 end-0 m-2 z-3 d-flex align-items-center justify-content-center short-close-btn"
+                                                                                                        onclick="event.stopPropagation(); closeShortInline('<%= short.id %>')"
+                                                                                                        title="Cerrar video"
+                                                                                                        style="width: 32px; height: 32px; background: rgba(0,0,0,0.75); border: 1px solid rgba(255,255,255,0.3); color: #fff;">
+                                                                                                    <i class="bi bi-x-lg"></i>
+                                                                                                </button>
+                                                                                                <div class="short-media-target w-100 h-100" id="shortMedia_<%= short.id %>"></div>
+                                                                                            </div>
 
                                                                                             <img src="<%= short.thumbnail_url || '/assets/img/pagina/semillas_torah_banner.png' %>"
                                                                                                 alt="<%= short.title %>"
@@ -2534,7 +2549,8 @@
 
                                                                                             <!-- Play Button Overlay -->
                                                                                             <div class="position-absolute top-50 start-50 translate-middle play-btn-overlay z-2 text-center"
-                                                                                                style="transition: all 0.3s ease;">
+                                                                                                id="shortPlayOverlay_<%= short.id %>"
+                                                                                                style="transition: all 0.3s ease; pointer-events: none;">
                                                                                                 <div class="rounded-circle d-flex align-items-center justify-content-center shadow-lg"
                                                                                                     style="width: 58px; height: 58px; background: rgba(255,255,255,0.92); color: #6b21a8; font-size: 1.6rem; backdrop-filter: blur(4px); transition: transform 0.3s ease;">
                                                                                                     <i
@@ -2711,8 +2727,23 @@
                                                                                     %>
                                                                                     <div class="frontend-short-item">
                                                                                         <div class="card border-0 shadow-sm rounded-4 overflow-hidden short-card position-relative h-100"
-                                                                                            onclick="openShortModal(<%= globalIdx %>)"
+                                                                                            id="shortCard_<%= short.id %>"
+                                                                                            onclick="playShortInline('<%= short.id %>', event)"
                                                                                             style="cursor: pointer; background: #000; border: 2px solid transparent; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); aspect-ratio: 9 / 16; max-height: 480px;">
+
+                                                                                            <!-- Inline Video Player Container (reproducción en el mismo lugar) -->
+                                                                                            <div class="short-inline-player position-absolute top-0 start-0 w-100 h-100" 
+                                                                                                 id="shortPlayer_<%= short.id %>" 
+                                                                                                 style="display: none; z-index: 10; background: #000;">
+                                                                                                <button type="button" 
+                                                                                                        class="btn btn-sm btn-dark rounded-circle position-absolute top-0 end-0 m-2 z-3 d-flex align-items-center justify-content-center short-close-btn"
+                                                                                                        onclick="event.stopPropagation(); closeShortInline('<%= short.id %>')"
+                                                                                                        title="Cerrar video"
+                                                                                                        style="width: 32px; height: 32px; background: rgba(0,0,0,0.75); border: 1px solid rgba(255,255,255,0.3); color: #fff;">
+                                                                                                    <i class="bi bi-x-lg"></i>
+                                                                                                </button>
+                                                                                                <div class="short-media-target w-100 h-100" id="shortMedia_<%= short.id %>"></div>
+                                                                                            </div>
 
                                                                                             <img src="<%= short.thumbnail_url || '/assets/img/pagina/semillas_torah_banner.png' %>"
                                                                                                 alt="<%= short.title %>"
@@ -2821,7 +2852,8 @@
 
                                                                                             <!-- Play Button Overlay -->
                                                                                             <div class="position-absolute top-50 start-50 translate-middle play-btn-overlay z-2 text-center"
-                                                                                                style="transition: all 0.3s ease;">
+                                                                                                id="shortPlayOverlay_<%= short.id %>"
+                                                                                                style="transition: all 0.3s ease; pointer-events: none;">
                                                                                                 <div class="rounded-circle d-flex align-items-center justify-content-center shadow-lg"
                                                                                                     style="width: 58px; height: 58px; background: rgba(255,255,255,0.92); color: #0284c7; font-size: 1.6rem; backdrop-filter: blur(4px); transition: transform 0.3s ease;">
                                                                                                     <i
@@ -3634,16 +3666,105 @@
                     return url;
                 }
 
-                function openShortModal(index) {
-                    if (!SHORTS_DATA || SHORTS_DATA.length === 0) return;
-                    currentShortIndex = index;
-                    renderCurrentShort();
+                let currentActiveInlineShortId = null;
 
-                    const modalEl = document.getElementById('shortsModalViewer');
-                    if (!shortsModalInstance) {
-                        shortsModalInstance = new bootstrap.Modal(modalEl);
+                function playShortInline(shortId, event) {
+                    if (event) {
+                        if (event.target.closest('.js-share-open') || event.target.closest('.short-close-btn') || event.target.closest('video') || event.target.closest('iframe')) {
+                            return;
+                        }
                     }
-                    shortsModalInstance.show();
+
+                    const playerEl = document.getElementById(`shortPlayer_${shortId}`);
+                    const mediaTarget = document.getElementById(`shortMedia_${shortId}`);
+                    if (!playerEl || !mediaTarget) return;
+
+                    // Si ya está reproduciendo este mismo, no reiniciar
+                    if (playerEl.style.display !== 'none' && currentActiveInlineShortId == shortId) {
+                        return;
+                    }
+
+                    // Detener cualquier otro video que esté reproduciéndose actualmente
+                    if (currentActiveInlineShortId && currentActiveInlineShortId != shortId) {
+                        closeShortInline(currentActiveInlineShortId);
+                    }
+
+                    const shortObj = SHORTS_DATA.find(s => s.id == shortId);
+                    if (!shortObj) return;
+
+                    // Registrar vista
+                    registerShortView(shortObj.id);
+
+                    // Preparar reproductor en el lugar exacto de la tarjeta
+                    mediaTarget.innerHTML = '';
+
+                    if (shortObj.video_url && shortObj.video_url.trim() !== '') {
+                        const vid = document.createElement('video');
+                        vid.className = 'w-100 h-100';
+                        vid.style.objectFit = 'cover';
+                        vid.playsInline = true;
+                        vid.controls = true;
+                        vid.autoplay = true;
+                        vid.src = shortObj.video_url;
+                        vid.addEventListener('ended', () => {
+                            closeShortInline(shortId);
+                        });
+                        mediaTarget.appendChild(vid);
+                        vid.play().catch(e => console.log('Autoplay prevent:', e));
+                    } else if (shortObj.youtube_short_url && shortObj.youtube_short_url.trim() !== '') {
+                        const ifr = document.createElement('iframe');
+                        ifr.className = 'w-100 h-100';
+                        ifr.style.border = 'none';
+                        ifr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                        ifr.allowFullscreen = true;
+                        ifr.src = getEmbedUrl(shortObj.youtube_short_url);
+                        mediaTarget.appendChild(ifr);
+                    } else {
+                        mediaTarget.innerHTML = `
+                            <div class="text-center p-4 text-white d-flex flex-column align-items-center justify-content-center h-100">
+                                <i class="bi bi-camera-reels text-warning fs-1 mb-2"></i>
+                                <p class="small mb-0">Video no disponible por el momento</p>
+                            </div>
+                        `;
+                    }
+
+                    playerEl.style.display = 'block';
+                    const overlay = document.getElementById(`shortPlayOverlay_${shortId}`);
+                    if (overlay) overlay.style.display = 'none';
+
+                    currentActiveInlineShortId = shortId;
+                }
+
+                function closeShortInline(shortId) {
+                    const playerEl = document.getElementById(`shortPlayer_${shortId}`);
+                    const mediaTarget = document.getElementById(`shortMedia_${shortId}`);
+                    if (mediaTarget) {
+                        const vid = mediaTarget.querySelector('video');
+                        if (vid) {
+                            vid.pause();
+                            vid.src = '';
+                        }
+                        const ifr = mediaTarget.querySelector('iframe');
+                        if (ifr) {
+                            ifr.src = '';
+                        }
+                        mediaTarget.innerHTML = '';
+                    }
+                    if (playerEl) {
+                        playerEl.style.display = 'none';
+                    }
+                    const overlay = document.getElementById(`shortPlayOverlay_${shortId}`);
+                    if (overlay) {
+                        overlay.style.display = 'block';
+                    }
+                    if (currentActiveInlineShortId == shortId) {
+                        currentActiveInlineShortId = null;
+                    }
+                }
+
+                function openShortModal(index) {
+                    if (!SHORTS_DATA || !SHORTS_DATA[index]) return;
+                    playShortInline(SHORTS_DATA[index].id);
                 }
 
                 const viewedShortsSession = new Set();
