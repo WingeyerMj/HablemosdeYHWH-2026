@@ -155,7 +155,23 @@
                                     </span>
                                 </button>
                             </li>
-                            <!-- Tab 2: Alef-Bet Hebreo Infantil -->
+                            <!-- Tab 2: Canciones y Alabanzas Infantiles (SECCIÓN INDIVIDUAL) -->
+                            <li class="nav-item" role="presentation">
+                                <button
+                                    class="nav-link px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn"
+                                    id="tab-canciones-semillas" data-bs-toggle="pill"
+                                    data-bs-target="#pane-canciones-semillas" type="button" role="tab"
+                                    style="border-radius: 16px; border: 2px solid #f59e0b; background: linear-gradient(135deg, rgba(254,243,199,0.5), rgba(253,230,138,0.3)); font-size: 1rem; transition: all 0.3s ease;">
+                                    <i class="bi bi-music-note-beamed fs-5 text-warning"></i>
+                                    Canciones Infantiles
+                                    <span class="badge rounded-pill"
+                                        style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 0.75rem;">
+                                        <%= (typeof cancionesInfantiles !=='undefined' && cancionesInfantiles) ?
+                                            cancionesInfantiles.length : 0 %> 🎶 Cantos & Letras
+                                    </span>
+                                </button>
+                            </li>
+                            <!-- Tab 3: Alef-Bet Hebreo Infantil -->
                             <li class="nav-item" role="presentation">
                                 <button
                                     class="nav-link px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn"
@@ -170,7 +186,7 @@
                                     </span>
                                 </button>
                             </li>
-                            <!-- Tab 3: Dibujos y Manualidades -->
+                            <!-- Tab 4: Dibujos y Manualidades -->
                             <li class="nav-item" role="presentation">
                                 <button
                                     class="nav-link px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn"
@@ -186,7 +202,7 @@
                                     </span>
                                 </button>
                             </li>
-                            <!-- Tab 2: Shorts / Novedades -->
+                            <!-- Tab 5: Shorts / Novedades -->
                             <li class="nav-item" role="presentation">
                                 <button
                                     class="nav-link px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn"
@@ -201,7 +217,7 @@
                                     </span>
                                 </button>
                             </li>
-                            <!-- Tab 3: Enseñanzas Infantiles -->
+                            <!-- Tab 6: Enseñanzas Infantiles -->
                             <li class="nav-item" role="presentation">
                                 <button
                                     class="nav-link px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn"
@@ -216,7 +232,7 @@
                                     </span>
                                 </button>
                             </li>
-                            <!-- Tab 4: Noticias & Resúmenes de Parashá con Imágenes -->
+                            <!-- Tab 7: Noticias & Resúmenes de Parashá con Imágenes -->
                             <li class="nav-item" role="presentation">
                                 <button
                                     class="nav-link px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn"
@@ -228,22 +244,6 @@
                                     <span class="badge rounded-pill"
                                         style="background: linear-gradient(135deg, #16a34a, #15803d); color: #fff; font-size: 0.75rem;">
                                         <%= (typeof articulos !=='undefined' && articulos) ? articulos.length : 0 %>
-                                    </span>
-                                </button>
-                            </li>
-                            <!-- Tab 5: Canciones y Alabanzas Infantiles -->
-                            <li class="nav-item" role="presentation">
-                                <button
-                                    class="nav-link px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn"
-                                    id="tab-canciones-semillas" data-bs-toggle="pill"
-                                    data-bs-target="#pane-canciones-semillas" type="button" role="tab"
-                                    style="border-radius: 16px; border: 2px solid #fbbf24; font-size: 1rem; transition: all 0.3s ease;">
-                                    <i class="bi bi-music-note-beamed fs-5 text-warning"></i>
-                                    Canciones Infantiles
-                                    <span class="badge rounded-pill"
-                                        style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 0.75rem;">
-                                        <%= (typeof cancionesInfantiles !=='undefined' && cancionesInfantiles) ?
-                                            cancionesInfantiles.length : 0 %> 🎶 Cantos
                                     </span>
                                 </button>
                             </li>
@@ -665,6 +665,22 @@
                                                         </div>
 
                                                         <!-- 2. SECCIÓN DE CANTOS Y ALABANZAS DEL ALEF-BET -->
+                                                        <div class="mb-4 p-3 rounded-4 d-flex align-items-center justify-content-between flex-wrap gap-3 shadow-sm"
+                                                            style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 2px solid #f59e0b;">
+                                                            <div class="d-flex align-items-center gap-3">
+                                                                <div class="rounded-circle p-2 bg-warning bg-opacity-25 text-warning d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                                                                    <i class="bi bi-music-note-beamed fs-4 text-dark"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <h6 class="fw-bold mb-0 text-dark">¿Quieres escuchar todos los cantos infantiles con su letra visible?</h6>
+                                                                    <small class="text-muted">Explora nuestra sección dedicada con reproductores, letras y descargas MP3.</small>
+                                                                </div>
+                                                            </div>
+                                                            <button type="button" class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm"
+                                                                onclick="activarTabCancionesSemillas()">
+                                                                <i class="bi bi-music-note me-1"></i> Ir a la Sección Canciones Infantiles
+                                                            </button>
+                                                        </div>
                                                         <div id="seccion-cantos-alefbet" class="mb-5 pt-3">
                                                             <div class="p-4 rounded-4 shadow-sm border-0 mb-4"
                                                                 style="background: linear-gradient(135deg, #fef9c3 0%, #fef08a 50%, #fff7ed 100%); border-left: 5px solid #eab308 !important;">
@@ -3108,200 +3124,284 @@
                                                     <!-- ============================================================ -->
                                                     <!-- PESTAÑA: CANCIONES Y ALABANZAS INFANTILES (SEMILLAS DE TORAH) -->
                                                     <!-- ============================================================ -->
-                                                    <div class="tab-pane fade" id="pane-canciones-semillas"
-                                                        role="tabpanel">
-                                                        <div class="p-4 mb-4 rounded-4 shadow-sm border-0 d-flex align-items-center justify-content-between flex-wrap gap-3"
-                                                            style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fdf4ff 100%); border-left: 5px solid #f59e0b !important;">
-                                                            <div class="d-flex align-items-center gap-3">
-                                                                <div class="rounded-circle p-3 d-flex align-items-center justify-content-center flex-shrink-0"
-                                                                    style="background: rgba(245,158,11,0.22); width: 58px; height: 58px; color: #b45309;">
-                                                                    <i class="bi bi-music-note-beamed fs-2"></i>
+                                                    <div class="tab-pane fade" id="pane-canciones-semillas" role="tabpanel">
+                                                        <!-- Banner Principal Canciones Infantiles -->
+                                                        <div class="p-4 p-md-5 mb-4 rounded-4 shadow-sm border-0 position-relative overflow-hidden"
+                                                            style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 45%, #fdf4ff 100%); border-left: 6px solid #f59e0b !important;">
+                                                            <div class="row align-items-center g-4">
+                                                                <div class="col-lg-8">
+                                                                    <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+                                                                        <span class="badge rounded-pill px-3 py-1 shadow-sm"
+                                                                            style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 0.85rem; font-weight: 700;">
+                                                                            <i class="bi bi-music-note-beamed me-1"></i> Ministerio Infantil Semillas de Torah
+                                                                        </span>
+                                                                        <span class="badge rounded-pill bg-white text-dark border px-3 py-1 fw-bold" style="font-size: 0.82rem;">
+                                                                            🎶 Cantos con Letra y Música para Niños
+                                                                        </span>
+                                                                        <span class="badge rounded-pill bg-warning bg-opacity-25 text-dark border border-warning px-3 py-1 fw-semibold" style="font-size: 0.82rem;">
+                                                                            <i class="bi bi-volume-up-fill me-1 text-warning"></i> Sonido Suave Acondicionado (20%)
+                                                                        </span>
+                                                                    </div>
+                                                                    <h2 class="fw-bold mb-2" style="color: #78350f; font-size: 2.2rem; line-height: 1.25;">
+                                                                        Canciones y Alabanzas Infantiles
+                                                                    </h2>
+                                                                    <p class="text-muted mb-4" style="font-size: 1.05rem; line-height: 1.7; max-width: 680px;">
+                                                                        Canta en familia estas alegres melodías bíblicas para memorizar las Escrituras, aprender las letras hebreas y sembrar la Torá en el corazón de los más pequeños. Cada cántico incluye su reproductor de audio, letra completa visible para cantar juntos y descarga directa en MP3.
+                                                                    </p>
+                                                                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                                                                        <button type="button" class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2"
+                                                                            onclick="activarTabAlefBet()">
+                                                                            <i class="bi bi-translate"></i> Ver Letras del Alef-Bet
+                                                                        </button>
+                                                                        <button type="button" class="btn btn-outline-dark fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2"
+                                                                            onclick="activarTabParashaInfantil()">
+                                                                            <i class="bi bi-file-earmark-pdf-fill text-warning"></i> Parashot Infantiles (PDF)
+                                                                        </button>
+                                                                    </div>
                                                                 </div>
-                                                                <div>
-                                                                    <h3 class="fw-bold mb-1" style="color: #78350f;">
-                                                                        Canciones y Alabanzas Infantiles</h3>
-                                                                    <p class="text-muted mb-0">Melodías alegres para
-                                                                        cantar con los niños en casa, aprender las
-                                                                        Escrituras y descargar en MP3.</p>
+                                                                <div class="col-lg-4 text-center">
+                                                                    <div class="p-3 bg-white rounded-4 shadow-sm d-inline-block border border-2 border-warning"
+                                                                        style="transform: rotate(-1.5deg); max-width: 270px;">
+                                                                        <div class="display-3 mb-1" style="line-height: 1;">🎵</div>
+                                                                        <div class="fw-bold text-dark mt-2" style="font-size: 1.15rem;">¡Cantar y Aprender!</div>
+                                                                        <div class="small text-muted">Melodías alegres que edifican la fe infantil</div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                            <button type="button"
-                                                                class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm"
-                                                                onclick="activarTabAlefBet()">
-                                                                <i class="bi bi-translate me-1"></i> Ir al Canto del
-                                                                Alef-Bet
-                                                            </button>
                                                         </div>
 
-                                                        <% const listaCancionesSemillas=(typeof cancionesInfantiles
-                                                            !=='undefined' && Array.isArray(cancionesInfantiles)) ?
-                                                            cancionesInfantiles : []; %>
-                                                            <% if (listaCancionesSemillas.length===0) { %>
-                                                                <div class="text-center py-5 bg-light rounded-4 border">
-                                                                    <i
-                                                                        class="bi bi-music-note-list fs-1 text-warning d-block mb-2"></i>
-                                                                    <h5 class="fw-bold text-dark">Pronto subiremos más
-                                                                        cantos infantiles</h5>
-                                                                    <p class="text-muted mb-0">Mientras tanto, puedes
-                                                                        escuchar el Canto del Alef-Bet en la pestaña
-                                                                        Alef-Bet Hebreo Infantil.</p>
+                                                        <!-- Galería de Canciones Infantiles -->
+                                                        <% const listaCancionesSemillas = (typeof cancionesInfantiles !== 'undefined' && Array.isArray(cancionesInfantiles)) ? cancionesInfantiles : []; %>
+
+                                                        <div class="row g-4 mb-4">
+                                                            <% if (listaCancionesSemillas.length === 0) { %>
+                                                                <div class="col-12">
+                                                                    <div class="text-center py-5 bg-white rounded-4 border p-4 shadow-sm">
+                                                                        <i class="bi bi-music-note-list fs-1 text-warning d-block mb-3"></i>
+                                                                        <h4 class="fw-bold text-dark">Próximamente más canciones infantiles</h4>
+                                                                        <p class="text-muted mb-3">Estamos preparando nuevos cánticos de alabanza para las porciones y festividades bíblicas.</p>
+                                                                        <button type="button" class="btn btn-warning rounded-pill px-4 py-2 fw-bold" onclick="activarTabAlefBet()">
+                                                                            Ir al Canto del Alef-Bet
+                                                                        </button>
+                                                                    </div>
                                                                 </div>
-                                                                <% } else { %>
-                                                                    <div class="row g-4">
-                                                                        <% listaCancionesSemillas.forEach((canto)=> { %>
-                                                                            <div class="col-md-6 col-lg-4">
-                                                                                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden"
-                                                                                    style="background: #ffffff; border: 2px solid #fde68a !important;">
-                                                                                    <div class="card-header border-0 py-3 px-4 d-flex align-items-center justify-content-between"
-                                                                                        style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff;">
-                                                                                        <span
-                                                                                            class="badge bg-white text-dark rounded-pill px-3 py-1 fw-bold">
-                                                                                            <i
-                                                                                                class="bi bi-music-note me-1 text-warning"></i>
-                                                                                            <%= canto.category
-                                                                                                || 'Infantil' %>
-                                                                                        </span>
-                                                                                        <% if (canto.duration_label) {
-                                                                                            %>
-                                                                                            <span
-                                                                                                class="small fw-semibold"><i
-                                                                                                    class="bi bi-clock me-1"></i>
-                                                                                                <%= canto.duration_label
-                                                                                                    %>
+                                                            <% } else { %>
+                                                                <% listaCancionesSemillas.forEach((canto) => { 
+                                                                    const isAlef = canto.title && canto.title.toLowerCase().includes('alef');
+                                                                    const isVayetze = canto.title && canto.title.toLowerCase().includes('vayetze');
+                                                                %>
+                                                                    <div class="col-lg-6">
+                                                                        <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white"
+                                                                            style="border: 2px solid <%= isAlef ? '#bae6fd' : '#fde68a' %> !important;">
+                                                                            
+                                                                            <!-- Header del Canto -->
+                                                                            <div class="card-header border-0 py-3 px-4 d-flex align-items-center justify-content-between"
+                                                                                style="background: <%= isAlef ? 'linear-gradient(135deg, #0284c7, #0369a1)' : 'linear-gradient(135deg, #f59e0b, #d97706)' %>; color: #fff;">
+                                                                                <div class="d-flex align-items-center gap-2">
+                                                                                    <i class="bi bi-disc-fill fs-5"></i>
+                                                                                    <h5 class="fw-bold mb-0 text-white"><%= canto.title %></h5>
+                                                                                </div>
+                                                                                <span class="badge bg-white text-dark rounded-pill px-3 py-1 fw-bold shadow-sm" style="font-size: 0.8rem;">
+                                                                                    <%= canto.category || 'Alabanza Infantil' %>
+                                                                                </span>
+                                                                            </div>
+
+                                                                            <!-- Cuerpo del Canto -->
+                                                                            <div class="card-body p-4 d-flex flex-column justify-content-between">
+                                                                                <div>
+                                                                                    <!-- Metadatos de Autor/Voz -->
+                                                                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3 pb-2 border-bottom">
+                                                                                        <div class="d-flex align-items-center gap-2 text-muted small">
+                                                                                            <i class="bi bi-mic-fill text-warning fs-6"></i>
+                                                                                            <span><strong>Voz / Enfoque:</strong> <%= canto.artist || 'Semillas de Torah' %></span>
+                                                                                        </div>
+                                                                                        <% if (canto.duration_label) { %>
+                                                                                            <span class="badge bg-light text-dark border rounded-pill px-2 py-1 small">
+                                                                                                <i class="bi bi-clock me-1 text-muted"></i><%= canto.duration_label %>
                                                                                             </span>
-                                                                                            <% } %>
+                                                                                        <% } %>
                                                                                     </div>
-                                                                                    <div
-                                                                                        class="card-body p-4 d-flex flex-column justify-content-between">
-                                                                                        <div>
-                                                                                            <div
-                                                                                                class="d-flex align-items-center gap-3 mb-3">
-                                                                                                <% if
-                                                                                                    (canto.cover_image)
-                                                                                                    { %>
-                                                                                                    <img src="<%= canto.cover_image %>"
-                                                                                                        alt="<%= canto.title %>"
-                                                                                                        class="rounded-3 shadow-sm flex-shrink-0"
-                                                                                                        style="width: 60px; height: 60px; object-fit: cover;">
-                                                                                                    <% } else { %>
-                                                                                                        <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 shadow-sm"
-                                                                                                            style="width: 60px; height: 60px; background: #fef3c7; color: #d97706; font-size: 1.8rem;">
-                                                                                                            <i
-                                                                                                                class="bi bi-disc-fill"></i>
-                                                                                                        </div>
-                                                                                                        <% } %>
-                                                                                                            <div>
-                                                                                                                <h5 class="fw-bold mb-1"
-                                                                                                                    style="color: #78350f;">
-                                                                                                                    <%= canto.title
-                                                                                                                        %>
-                                                                                                                </h5>
-                                                                                                                <div
-                                                                                                                    class="small text-muted">
-                                                                                                                    <i
-                                                                                                                        class="bi bi-mic me-1"></i>
-                                                                                                                    <%= canto.artist
-                                                                                                                        || 'Semillas de Torah'
-                                                                                                                        %>
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                            </div>
 
-                                                                                            <% if (canto.description) {
-                                                                                                %>
-                                                                                                <p
-                                                                                                    class="small text-muted mb-3">
-                                                                                                    <%= canto.description
-                                                                                                        %>
-                                                                                                </p>
-                                                                                                <% } %>
+                                                                                    <!-- Cuadro Reproductor Especial Infantil -->
+                                                                                    <div class="p-3 mb-3 rounded-4"
+                                                                                        style="background: <%= isAlef ? '#f0f9ff' : '#fffbeb' %>; border: 2px dashed <%= isAlef ? '#38bdf8' : '#f59e0b' %>;">
+                                                                                        
+                                                                                        <div class="text-center mb-3">
+                                                                                            <% if (isAlef) { %>
+                                                                                                <div class="display-6 fw-bold text-primary mb-1" style="font-family: serif;">
+                                                                                                    אָלֶף־בֵּית
+                                                                                                </div>
+                                                                                                <p class="small text-muted mb-2">¡Canta las 22 letras hebreas de principio a fin!</p>
+                                                                                            <% } else if (isVayetze) { %>
+                                                                                                <div class="display-6 fw-bold text-warning mb-1" style="font-family: serif; color: #b45309 !important;">
+                                                                                                    וַיֵּצֵא · Vayetze
+                                                                                                </div>
+                                                                                                <p class="small text-muted mb-2">Porción semanal infantil: El sueño de Jacob en Bet-El</p>
+                                                                                            <% } else { %>
+                                                                                                <div class="display-6 fw-bold text-warning mb-1" style="font-family: serif; color: #b45309 !important;">
+                                                                                                    שִׁיר יְלָדִים
+                                                                                                </div>
+                                                                                                <p class="small text-muted mb-2"><%= canto.description || 'Cántico infantil de alabanza y edificación' %></p>
+                                                                                            <% } %>
 
-                                                                                                    <div class="p-2 rounded-3 mb-3"
-                                                                                                        style="background: #fffbeb; border: 1px dashed #f59e0b;">
-                                                                                                        <audio controls
-                                                                                                            preload="metadata"
-                                                                                                            class="w-100 semillas-kid-audio"
-                                                                                                            data-track-id="<%= canto.id %>"
-                                                                                                            data-gain-db="<%= canto.gain_db || 0 %>"
-                                                                                                            style="height: 38px;">
-                                                                                                            <source
-                                                                                                                src="<%= canto.audio_url %>"
-                                                                                                                type="audio/mpeg">
-                                                                                                            <audio
-                                                                                                                controls
-                                                                                                                preload="metadata"
-                                                                                                                src="<%= canto.audio_url %>"
-                                                                                                                class="w-100 semillas-kid-audio"
-                                                                                                                data-track-id="<%= canto.id %>"
-                                                                                                                data-gain-db="<%= canto.gain_db || 0 %>"
-                                                                                                                style="height: 38px;">
-                                                                                                                <source
-                                                                                                                    src="<%= canto.audio_url %>"
-                                                                                                                    type="<%= (typeof getAudioMime === 'function' ? getAudioMime(canto.audio_url) : 'audio/mpeg') %>">
-                                                                                                                <source
-                                                                                                                    src="<%= canto.audio_url %>">
-                                                                                                            </audio>
-                                                                                                    </div>
-
-                                                                                                    <% if (canto.lyrics
-                                                                                                        &&
-                                                                                                        canto.lyrics.trim())
-                                                                                                        { %>
-                                                                                                        <div
-                                                                                                            class="mb-3">
-                                                                                                            <button
-                                                                                                                class="btn btn-sm btn-outline-warning text-dark rounded-pill px-3 fw-semibold"
-                                                                                                                type="button"
-                                                                                                                data-bs-toggle="collapse"
-                                                                                                                data-bs-target="#letraSemillasCanto<%= canto.id %>">
-                                                                                                                <i
-                                                                                                                    class="bi bi-card-text me-1"></i>
-                                                                                                                Ver
-                                                                                                                Letra
-                                                                                                                para
-                                                                                                                Cantar
-                                                                                                            </button>
-                                                                                                            <div class="collapse mt-2"
-                                                                                                                id="letraSemillasCanto<%= canto.id %>">
-                                                                                                                <div class="p-3 rounded-3 small"
-                                                                                                                    style="background: #f8fafc; white-space: pre-line; line-height: 1.7; color: #334155; max-height: 200px; overflow-y: auto;">
-                                                                                                                    <%= canto.lyrics
-                                                                                                                        %>
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <% } %>
+                                                                                            <!-- Botón Grande de Reproducción -->
+                                                                                            <button type="button"
+                                                                                                class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2"
+                                                                                                id="btnCantoPlay<%= canto.id %>"
+                                                                                                onclick="togglePlayCanto('<%= canto.id %>')">
+                                                                                                <i class="bi bi-play-circle-fill fs-5" id="iconCantoPlay<%= canto.id %>"></i>
+                                                                                                <span id="txtCantoPlay<%= canto.id %>">Escuchar <%= canto.title %></span>
+                                                                                            </button>
                                                                                         </div>
 
-                                                                                        <div
-                                                                                            class="pt-3 border-top d-flex align-items-center justify-content-between">
-                                                                                            <span
-                                                                                                class="small text-muted">
-                                                                                                <i
-                                                                                                    class="bi bi-headphones me-1"></i>
-                                                                                                <%= canto.plays_count ||
-                                                                                                    0 %> •
-                                                                                                    <i
-                                                                                                        class="bi bi-download me-1"></i>
-                                                                                                    <%= canto.downloads_count
-                                                                                                        || 0 %>
+                                                                                        <!-- Reproductor HTML5 nativo -->
+                                                                                        <audio controls preload="metadata"
+                                                                                            class="w-100 semillas-kid-audio mt-2 rounded-pill"
+                                                                                            id="audioKidCanto<%= canto.id %>"
+                                                                                            data-track-id="<%= canto.id %>"
+                                                                                            data-gain-db="<%= canto.gain_db || 0 %>"
+                                                                                            style="height: 42px;">
+                                                                                            <source src="<%= canto.audio_url %>" type="<%= (canto.audio_url && (canto.audio_url.endsWith('.mpeg') || canto.audio_url.endsWith('.mp3'))) ? 'audio/mpeg' : 'audio/mp4' %>">
+                                                                                            <source src="<%= canto.audio_url %>">
+                                                                                            Tu navegador no soporta el reproductor de audio.
+                                                                                        </audio>
+                                                                                    </div>
+
+                                                                                    <!-- SECCIÓN DE LETRA DIRECTAMENTE VISIBLE -->
+                                                                                    <div class="mt-3 p-3 p-md-4 rounded-4 shadow-sm"
+                                                                                        style="background: #ffffff; border: 2px solid <%= isAlef ? '#e0f2fe' : '#fef3c7' %>;">
+                                                                                        <div class="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom">
+                                                                                            <h6 class="fw-bold mb-0" style="color: #1e293b;">
+                                                                                                <i class="bi bi-card-text me-1 text-warning"></i> Letra para cantar juntos:
+                                                                                            </h6>
+                                                                                            <span class="badge bg-warning bg-opacity-25 text-dark border border-warning rounded-pill px-2 py-1 small fw-bold">
+                                                                                                📜 Letra Completa
                                                                                             </span>
-                                                                                            <a href="/musica/download/<%= canto.id %>"
-                                                                                                class="btn btn-sm btn-warning text-dark fw-bold rounded-pill px-3 shadow-sm">
-                                                                                                <i
-                                                                                                    class="bi bi-download me-1"></i>
-                                                                                                Descargar MP3
-                                                                                            </a>
+                                                                                        </div>
+
+                                                                                        <div class="canto-lyrics-box small"
+                                                                                            id="letraCantoScroll<%= canto.id %>"
+                                                                                            style="white-space: pre-line; line-height: 1.85; color: #334155; font-size: 0.95rem; max-height: 340px; overflow-y: auto; padding-right: 6px;">
+                                                                                            <%= canto.lyrics || 'Canta con alegría este hermoso cántico infantil.' %>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
+
+                                                                                <!-- Footer con Descarga MP3 y Estadísticas -->
+                                                                                <div class="pt-3 mt-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                                                                    <span class="small text-muted">
+                                                                                        <i class="bi bi-headphones me-1 text-warning"></i> <%= canto.plays_count || 0 %> reproducciones
+                                                                                    </span>
+                                                                                    <div class="d-flex align-items-center gap-2">
+                                                                                        <a href="<%= canto.audio_url %>" download="<%= canto.title %>.mp3"
+                                                                                            class="btn btn-sm btn-outline-warning text-dark fw-bold rounded-pill px-3 shadow-sm">
+                                                                                            <i class="bi bi-download me-1"></i> Descargar Audio (MP3)
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </div>
                                                                             </div>
-                                                                            <% }); %>
+                                                                        </div>
                                                                     </div>
-                                                                    <% } %>
+                                                                <% }); %>
+
+                                                                <!-- Canción fija adicional: Las Letras de la Creación (Bereshit para Niños) -->
+                                                                <div class="col-lg-6">
+                                                                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white"
+                                                                        style="border: 2px solid #e9d5ff !important;">
+                                                                        <div class="card-header border-0 py-3 px-4 d-flex align-items-center justify-content-between"
+                                                                            style="background: linear-gradient(135deg, #7c3aed, #6d28d9); color: #fff;">
+                                                                            <div class="d-flex align-items-center gap-2">
+                                                                                <i class="bi bi-stars fs-5"></i>
+                                                                                <h5 class="fw-bold mb-0 text-white">Las Letras de la Creación</h5>
+                                                                            </div>
+                                                                            <span class="badge bg-white rounded-pill px-3 py-1 fw-bold shadow-sm" style="color: #7c3aed; font-size: 0.8rem;">
+                                                                                Bereshit para Niños
+                                                                            </span>
+                                                                        </div>
+
+                                                                        <div class="card-body p-4 d-flex flex-column justify-content-between">
+                                                                            <div>
+                                                                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3 pb-2 border-bottom">
+                                                                                    <div class="d-flex align-items-center gap-2 text-muted small">
+                                                                                        <i class="bi bi-person-fill fs-6" style="color: #7c3aed;"></i>
+                                                                                        <span><strong>Voz / Enfoque:</strong> Semillas de Torah · Creación</span>
+                                                                                    </div>
+                                                                                    <span class="badge bg-light text-dark border rounded-pill px-2 py-1 small">
+                                                                                        <i class="bi bi-book me-1"></i> Génesis 1:1
+                                                                                    </span>
+                                                                                </div>
+
+                                                                                <div class="p-3 mb-3 rounded-4 text-center"
+                                                                                    style="background: #faf5ff; border: 2px dashed #c084fc;">
+                                                                                    <div class="display-6 fw-bold mb-1" style="color: #7c3aed; font-family: serif;">
+                                                                                        בְּרֵאשִׁית בָּרָא
+                                                                                    </div>
+                                                                                    <p class="small text-muted mb-3">Con las 22 letras, el Creador dio forma a los cielos y la tierra:</p>
+
+                                                                                    <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 mb-2">
+                                                                                        <button type="button"
+                                                                                            class="btn rounded-pill px-4 py-2 fw-bold text-white shadow-sm d-inline-flex align-items-center justify-content-center gap-2"
+                                                                                            style="background: linear-gradient(135deg, #7c3aed, #6d28d9);"
+                                                                                            onclick="reproducirCanticoModal('rfRwuOSsw68', 'Las Letras de la Creación (Bereshit)')">
+                                                                                            <i class="bi bi-play-circle-fill fs-5"></i>
+                                                                                            Reproducir Melodía Creación
+                                                                                        </button>
+                                                                                    </div>
+                                                                                    <button type="button" class="btn btn-sm btn-link text-decoration-none text-muted"
+                                                                                        onclick="reproducirMelodiaCreacionSynth()">
+                                                                                        <i class="bi bi-soundwave me-1"></i> Tonalidad por notas
+                                                                                    </button>
+                                                                                </div>
+
+                                                                                <div class="mt-3 p-3 p-md-4 rounded-4 shadow-sm"
+                                                                                    style="background: #ffffff; border: 2px solid #f3e8ff;">
+                                                                                    <div class="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom">
+                                                                                        <h6 class="fw-bold mb-0" style="color: #4c1d95;">
+                                                                                            <i class="bi bi-card-text me-1" style="color: #7c3aed;"></i> Estribillo y Versos para Memorizar:
+                                                                                        </h6>
+                                                                                        <span class="badge bg-purple bg-opacity-10 rounded-pill px-2 py-1 small fw-bold" style="background: #f3e8ff; color: #7c3aed;">
+                                                                                            📜 Letra
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <div class="small"
+                                                                                        style="white-space: pre-line; line-height: 1.85; color: #334155; font-size: 0.95rem; max-height: 340px; overflow-y: auto;">
+«Con Su palabra dijo: ¡Hágase la luz!
+Y cada letrita brilló con plenitud.
+De Alef hasta Tav, toda la creación,
+Alaba al Creador con el corazón.» ✨
+
+En el principio, Bereshit Bará,
+los cielos y la tierra Él formará.
+Luz en las tinieblas, orden y primor,
+toda la alabanza sea al Creador.
+
+¡Alef, Bet, Guímel, Dálet,
+Hei, Vav, Záyin, Jet,
+Tet, Yod, Kaf, Lámed,
+Mem, Nun, Sámej, Áyin,
+Pei, Tsadi, Qof, Reish,
+Shin y Tav! 🌟
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="pt-3 mt-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                                                                <span class="small text-muted">
+                                                                                    <i class="bi bi-music-note-beamed me-1" style="color: #7c3aed;"></i> Cántico de Bereshit
+                                                                                </span>
+                                                                                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold"
+                                                                                    onclick="reproducirCanticoModal('rfRwuOSsw68', 'Las Letras de la Creación (Bereshit)')">
+                                                                                    <i class="bi bi-youtube me-1"></i> Ver Video / Escuchar
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            <% } %>
+                                                        </div>
                                                     </div>
 
-                                                </div><!-- End Tab Content -->
+                                                    </div><!-- End Tab Content -->
 
                             </div>
                 </section>
@@ -5053,6 +5153,7 @@
                     renderizarAlefBetGrid();
                     cargarPreguntaJuego();
                     inicializarReproductorAlefBet();
+                    inicializarReproductoresCancionesSemillas();
 
                     if (window.location.hash === '#parasha-infantil' || window.location.hash === '#pane-parasha-infantil') {
                         activarTabParashaInfantil();
@@ -5083,6 +5184,57 @@
                         });
                     });
                 });
+
+                function togglePlayCanto(id) {
+                    const audio = document.getElementById('audioKidCanto' + id);
+                    if (!audio) return;
+                    if (audio.paused) {
+                        audio.play().catch(function (e) { console.warn(e); });
+                    } else {
+                        audio.pause();
+                    }
+                }
+
+                function inicializarReproductoresCancionesSemillas() {
+                    document.querySelectorAll('.semillas-kid-audio').forEach(function (aud) {
+                        aud.volume = 0.20;
+                        const tid = aud.getAttribute('data-track-id');
+                        const icon = document.getElementById('iconCantoPlay' + tid);
+                        const txt = document.getElementById('txtCantoPlay' + tid);
+
+                        aud.addEventListener('play', function () {
+                            document.querySelectorAll('.semillas-kid-audio').forEach(function (other) {
+                                if (other !== aud && !other.paused) other.pause();
+                            });
+                            const globalAud = document.getElementById('yhwhGlobalMusicAudio');
+                            if (globalAud && !globalAud.paused) {
+                                try { globalAud.pause(); } catch (e) { }
+                            }
+                            const alefAud = document.getElementById('audioAlefBetServer');
+                            if (alefAud && !alefAud.paused) {
+                                try { alefAud.pause(); } catch (e) { }
+                            }
+
+                            if (icon) icon.className = 'bi bi-pause-circle-fill fs-5 text-dark';
+                            if (txt) txt.textContent = 'Pausar Canción';
+
+                            if (tid && !aud._countedPlay) {
+                                aud._countedPlay = true;
+                                fetch('/api/musica/' + tid + '/play', { method: 'POST' }).catch(function () { });
+                            }
+                        });
+
+                        aud.addEventListener('pause', function () {
+                            if (icon) icon.className = 'bi bi-play-circle-fill fs-5 text-dark';
+                            if (txt) txt.textContent = 'Escuchar Canción';
+                        });
+
+                        aud.addEventListener('ended', function () {
+                            if (icon) icon.className = 'bi bi-play-circle-fill fs-5 text-dark';
+                            if (txt) txt.textContent = 'Escuchar Canción';
+                        });
+                    });
+                }
 
                 function activarTabCancionesSemillas() {
                     const tabBtn = document.getElementById('tab-canciones-semillas');
