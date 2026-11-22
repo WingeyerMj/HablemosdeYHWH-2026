@@ -917,65 +917,106 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <!-- Canto 2 -->
+                                                                <!-- Canto 2: Parashá Vayetze Infantil -->
                                                                 <div class="col-lg-6">
-                                                                    <div
-                                                                        class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white">
-                                                                        <div class="card-header border-0 py-3 px-4"
-                                                                            style="background: linear-gradient(135deg, #7c3aed, #6d28d9); color: #fff;">
-                                                                            <div
-                                                                                class="d-flex align-items-center justify-content-between">
-                                                                                <h5 class="fw-bold mb-0"><i
-                                                                                        class="bi bi-stars me-2"></i>Las
-                                                                                    Letras de la Creación</h5>
-                                                                                <span
-                                                                                    class="badge bg-white text-purple rounded-pill px-2 py-1 small"
-                                                                                    style="color: #7c3aed;">Bereshit
-                                                                                    para Niños</span>
+                                                                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white"
+                                                                        style="border: 2px solid #fde68a !important;">
+                                                                        <div class="card-header border-0 py-3 px-4 d-flex align-items-center justify-content-between"
+                                                                            style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff;">
+                                                                            <div class="d-flex align-items-center gap-2">
+                                                                                <i class="bi bi-disc-fill fs-5"></i>
+                                                                                <h5 class="fw-bold mb-0 text-white">Parashá Vayetze</h5>
                                                                             </div>
+                                                                            <span class="badge bg-white text-dark rounded-pill px-3 py-1 fw-bold shadow-sm" style="font-size: 0.8rem;">
+                                                                                Alabanza Infantil
+                                                                            </span>
                                                                         </div>
-                                                                        <div class="card-body p-4">
-                                                                            <div class="text-center p-3 mb-3 rounded-4"
-                                                                                style="background: #faf5ff; border: 2px dashed #c084fc;">
-                                                                                <div class="display-6 fw-bold mb-1"
-                                                                                    style="color: #7c3aed; font-family: serif;">
-                                                                                    בְּרֵאשִׁית בָּרָא
-                                                                                </div>
-                                                                                <p class="small text-muted mb-3">Con las
-                                                                                    22 letras, el Creador dio forma a
-                                                                                    los cielos y la tierra:</p>
+                                                                        <div class="card-body p-4 d-flex flex-column justify-content-between">
+                                                                            <div>
+                                                                                <div class="text-center p-3 mb-3 rounded-4"
+                                                                                    style="background: #fffbeb; border: 2px dashed #f59e0b;">
+                                                                                    <div class="display-6 fw-bold mb-1"
+                                                                                        style="color: #b45309; font-family: serif;">
+                                                                                        וַיֵּצֵא · Vayetze
+                                                                                    </div>
+                                                                                    <p class="small text-muted mb-3">
+                                                                                        El sueño de la escalera de Jacob y la promesa eterna de YHWH:
+                                                                                    </p>
 
-                                                                                <div
-                                                                                    class="d-flex flex-column flex-sm-row justify-content-center gap-2 mb-2">
-                                                                                    <button type="button"
-                                                                                        class="btn rounded-pill px-4 py-2 fw-bold text-white shadow-sm d-inline-flex align-items-center justify-content-center gap-2"
-                                                                                        style="background: linear-gradient(135deg, #7c3aed, #6d28d9);"
-                                                                                        onclick="reproducirCanticoModal('rfRwuOSsw68', 'Las Letras de la Creación (Bereshit)')">
-                                                                                        <i
-                                                                                            class="bi bi-play-circle-fill fs-5"></i>
-                                                                                        Reproducir Melodía Creación
-                                                                                    </button>
+                                                                                    <div class="d-flex flex-column align-items-center justify-content-center gap-2 mb-2">
+                                                                                        <button type="button"
+                                                                                            id="btnPlayVayetzeAudio"
+                                                                                            class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2"
+                                                                                            onclick="toggleAudioVayetze()">
+                                                                                            <i class="bi bi-play-circle-fill fs-5 text-dark"
+                                                                                                id="iconPlayVayetzeAudio"></i>
+                                                                                            <span id="txtPlayVayetzeAudio">Escuchar Canto Vayetze</span>
+                                                                                        </button>
+                                                                                        <audio id="audioVayetzeServer"
+                                                                                            src="/uploads/audios/1795325844510-789160532.mpeg"
+                                                                                            preload="metadata" controls
+                                                                                            class="w-100 mt-2 rounded-pill semillas-kid-audio"
+                                                                                            data-track-id="6"
+                                                                                            style="max-width: 420px; height: 40px;">
+                                                                                            <source src="/uploads/audios/1795325844510-789160532.mpeg" type="audio/mpeg">
+                                                                                            <source src="/uploads/audios/1795325844510-789160532.mpeg">
+                                                                                        </audio>
+                                                                                    </div>
+                                                                                    <a href="/uploads/audios/1795325844510-789160532.mpeg" download="Parasha-Vayetze.mp3"
+                                                                                        class="btn btn-sm btn-link text-decoration-none text-muted">
+                                                                                        <i class="bi bi-download me-1"></i> Descargar MP3
+                                                                                    </a>
                                                                                 </div>
-                                                                                <button type="button"
-                                                                                    class="btn btn-sm btn-link text-decoration-none text-muted"
-                                                                                    onclick="reproducirMelodiaCreacionSynth()">
-                                                                                    <i class="bi bi-soundwave me-1"></i>
-                                                                                    Tonalidad por notas
-                                                                                </button>
+
+                                                                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                                                                    <h6 class="fw-bold text-dark mb-0">
+                                                                                        <i class="bi bi-card-text me-1 text-warning"></i> Letra para cantar juntos:
+                                                                                    </h6>
+                                                                                    <span class="badge bg-warning bg-opacity-25 text-dark border border-warning rounded-pill px-2 py-1 small fw-bold">
+                                                                                        Canción completa
+                                                                                    </span>
+                                                                                </div>
+                                                                                <div id="letraVayetzeContainer"
+                                                                                    class="p-3 rounded-3 small"
+                                                                                    style="background: #f8fafc; line-height: 1.85; color: #334155; max-height: 380px; overflow-y: auto; border: 1px solid #e2e8f0;">
+                                                                                    <div class="mb-3 pb-2 border-bottom border-secondary border-opacity-10">
+                                                                                        <span class="badge bg-warning text-dark mb-1">Porción Semanal</span><br>
+                                                                                        <strong>Génesis 28:10 - 32:3</strong><br>
+                                                                                        «Y salió Jacob hacia Harán...»
+                                                                                    </div>
+                                                                                    <div class="mb-3 pb-2 border-bottom border-secondary border-opacity-10">
+                                                                                        <span class="badge bg-primary mb-1">Estrofa 1 · El Sueño en Bet-El</span><br>
+                                                                                        Y Jacob durmió en Bet-El,<br>
+                                                                                        soñó una escalera hasta el cielo ver.<br>
+                                                                                        Ángeles subían, ángeles bajaban,<br>
+                                                                                        y la voz del Eterno a Jacob le hablaba.
+                                                                                    </div>
+                                                                                    <div class="mb-3 p-2 rounded-3"
+                                                                                        style="background: #fef3c7; border-left: 3px solid #f59e0b;">
+                                                                                        <span class="badge bg-warning text-dark mb-1">Coro · La Promesa de YHWH</span><br>
+                                                                                        <em>«Yo estaré contigo a donde vayas tú,<br>
+                                                                                        guardaré tus pasos en Mi gran luz».</em><br>
+                                                                                        Jacob despertó con reverencia y paz:<br>
+                                                                                        <strong>«¡Ciertamente YHWH está en este lugar!»</strong> ✨
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <span class="badge bg-primary mb-1">Estrofa 2 · La Bendición de la Familia</span><br>
+                                                                                        En la casa de Labán con amor trabajó,<br>
+                                                                                        con Raquel y con Lea su familia creció.<br>
+                                                                                        Los doce hijos nacieron en bendición,<br>
+                                                                                        ¡el pueblo de Israel canta con devoción! 🐑🌾
+                                                                                    </div>
+                                                                                </div>
                                                                             </div>
 
-                                                                            <h6 class="fw-bold text-dark mb-2"><i
-                                                                                    class="bi bi-card-text me-1 text-primary"></i>Estribillo
-                                                                                para memorizar:</h6>
-                                                                            <div class="p-3 rounded-3 small"
-                                                                                style="background: #faf5ff; line-height: 1.8; color: #581c87;">
-                                                                                “Con Su palabra dijo: <strong>¡Hágase la
-                                                                                    luz!</strong><br>
-                                                                                Y cada letrita brilló con plenitud.<br>
-                                                                                De <strong>Alef</strong> hasta
-                                                                                <strong>Tav</strong>, toda la
-                                                                                creación,<br>
-                                                                                Alaba al Creador con el corazón.” ✨
+                                                                            <div class="pt-3 mt-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                                                                <span class="small text-muted">
+                                                                                    <i class="bi bi-mic me-1"></i> Semillas de Torah
+                                                                                </span>
+                                                                                <a href="/uploads/audios/1795325844510-789160532.mpeg" download="Parasha-Vayetze.mp3"
+                                                                                    class="btn btn-sm btn-outline-warning text-dark fw-bold rounded-pill px-3 shadow-sm">
+                                                                                    <i class="bi bi-download me-1"></i> Descargar MP3
+                                                                                </a>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -3304,100 +3345,7 @@
                                                                     </div>
                                                                 <% }); %>
 
-                                                                <!-- Canción fija adicional: Las Letras de la Creación (Bereshit para Niños) -->
-                                                                <div class="col-lg-6">
-                                                                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white"
-                                                                        style="border: 2px solid #e9d5ff !important;">
-                                                                        <div class="card-header border-0 py-3 px-4 d-flex align-items-center justify-content-between"
-                                                                            style="background: linear-gradient(135deg, #7c3aed, #6d28d9); color: #fff;">
-                                                                            <div class="d-flex align-items-center gap-2">
-                                                                                <i class="bi bi-stars fs-5"></i>
-                                                                                <h5 class="fw-bold mb-0 text-white">Las Letras de la Creación</h5>
-                                                                            </div>
-                                                                            <span class="badge bg-white rounded-pill px-3 py-1 fw-bold shadow-sm" style="color: #7c3aed; font-size: 0.8rem;">
-                                                                                Bereshit para Niños
-                                                                            </span>
-                                                                        </div>
-
-                                                                        <div class="card-body p-4 d-flex flex-column justify-content-between">
-                                                                            <div>
-                                                                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3 pb-2 border-bottom">
-                                                                                    <div class="d-flex align-items-center gap-2 text-muted small">
-                                                                                        <i class="bi bi-person-fill fs-6" style="color: #7c3aed;"></i>
-                                                                                        <span><strong>Voz / Enfoque:</strong> Semillas de Torah · Creación</span>
-                                                                                    </div>
-                                                                                    <span class="badge bg-light text-dark border rounded-pill px-2 py-1 small">
-                                                                                        <i class="bi bi-book me-1"></i> Génesis 1:1
-                                                                                    </span>
-                                                                                </div>
-
-                                                                                <div class="p-3 mb-3 rounded-4 text-center"
-                                                                                    style="background: #faf5ff; border: 2px dashed #c084fc;">
-                                                                                    <div class="display-6 fw-bold mb-1" style="color: #7c3aed; font-family: serif;">
-                                                                                        בְּרֵאשִׁית בָּרָא
-                                                                                    </div>
-                                                                                    <p class="small text-muted mb-3">Con las 22 letras, el Creador dio forma a los cielos y la tierra:</p>
-
-                                                                                    <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 mb-2">
-                                                                                        <button type="button"
-                                                                                            class="btn rounded-pill px-4 py-2 fw-bold text-white shadow-sm d-inline-flex align-items-center justify-content-center gap-2"
-                                                                                            style="background: linear-gradient(135deg, #7c3aed, #6d28d9);"
-                                                                                            onclick="reproducirCanticoModal('rfRwuOSsw68', 'Las Letras de la Creación (Bereshit)')">
-                                                                                            <i class="bi bi-play-circle-fill fs-5"></i>
-                                                                                            Reproducir Melodía Creación
-                                                                                        </button>
-                                                                                    </div>
-                                                                                    <button type="button" class="btn btn-sm btn-link text-decoration-none text-muted"
-                                                                                        onclick="reproducirMelodiaCreacionSynth()">
-                                                                                        <i class="bi bi-soundwave me-1"></i> Tonalidad por notas
-                                                                                    </button>
-                                                                                </div>
-
-                                                                                <div class="mt-3 p-3 p-md-4 rounded-4 shadow-sm"
-                                                                                    style="background: #ffffff; border: 2px solid #f3e8ff;">
-                                                                                    <div class="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom">
-                                                                                        <h6 class="fw-bold mb-0" style="color: #4c1d95;">
-                                                                                            <i class="bi bi-card-text me-1" style="color: #7c3aed;"></i> Estribillo y Versos para Memorizar:
-                                                                                        </h6>
-                                                                                        <span class="badge bg-purple bg-opacity-10 rounded-pill px-2 py-1 small fw-bold" style="background: #f3e8ff; color: #7c3aed;">
-                                                                                            📜 Letra
-                                                                                        </span>
-                                                                                    </div>
-                                                                                    <div class="small"
-                                                                                        style="white-space: pre-line; line-height: 1.85; color: #334155; font-size: 0.95rem; max-height: 340px; overflow-y: auto;">
-«Con Su palabra dijo: ¡Hágase la luz!
-Y cada letrita brilló con plenitud.
-De Alef hasta Tav, toda la creación,
-Alaba al Creador con el corazón.» ✨
-
-En el principio, Bereshit Bará,
-los cielos y la tierra Él formará.
-Luz en las tinieblas, orden y primor,
-toda la alabanza sea al Creador.
-
-¡Alef, Bet, Guímel, Dálet,
-Hei, Vav, Záyin, Jet,
-Tet, Yod, Kaf, Lámed,
-Mem, Nun, Sámej, Áyin,
-Pei, Tsadi, Qof, Reish,
-Shin y Tav! 🌟
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-
-                                                                            <div class="pt-3 mt-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-2">
-                                                                                <span class="small text-muted">
-                                                                                    <i class="bi bi-music-note-beamed me-1" style="color: #7c3aed;"></i> Cántico de Bereshit
-                                                                                </span>
-                                                                                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold"
-                                                                                    onclick="reproducirCanticoModal('rfRwuOSsw68', 'Las Letras de la Creación (Bereshit)')">
-                                                                                    <i class="bi bi-youtube me-1"></i> Ver Video / Escuchar
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            <% } %>
+                                                                <% } %>
                                                         </div>
                                                     </div>
 
@@ -4774,6 +4722,59 @@ Shin y Tav! 🌟
                     }
                 }
 
+                function toggleAudioVayetze() {
+                    const audio = document.getElementById('audioVayetzeServer');
+                    if (!audio) return;
+                    if (audio.paused) {
+                        audio.play().catch(function () { });
+                    } else {
+                        audio.pause();
+                    }
+                }
+
+                function inicializarReproductorVayetze() {
+                    const audio = document.getElementById('audioVayetzeServer');
+                    const icon = document.getElementById('iconPlayVayetzeAudio');
+                    const txt = document.getElementById('txtPlayVayetzeAudio');
+                    if (!audio) return;
+
+                    audio.volume = 0.20;
+
+                    function actualizarEstadoBoton(reproduciendo) {
+                        if (icon) {
+                            icon.className = reproduciendo
+                                ? 'bi bi-pause-circle-fill fs-5 text-dark'
+                                : 'bi bi-play-circle-fill fs-5 text-dark';
+                        }
+                        if (txt) {
+                            txt.textContent = reproduciendo
+                                ? 'Pausar Canto Vayetze'
+                                : 'Escuchar Canto Vayetze';
+                        }
+                    }
+
+                    audio.addEventListener('play', function () {
+                        actualizarEstadoBoton(true);
+                        const alefAud = document.getElementById('audioAlefBetServer');
+                        if (alefAud && !alefAud.paused) {
+                            try { alefAud.pause(); } catch (e) { }
+                        }
+                        document.querySelectorAll('.semillas-kid-audio').forEach(function (other) {
+                            if (other !== audio && !other.paused) other.pause();
+                        });
+                        const globalAud = document.getElementById('yhwhGlobalMusicAudio');
+                        if (globalAud && !globalAud.paused) {
+                            try { globalAud.pause(); } catch (e) { }
+                        }
+                    });
+                    audio.addEventListener('pause', function () {
+                        actualizarEstadoBoton(false);
+                    });
+                    audio.addEventListener('ended', function () {
+                        actualizarEstadoBoton(false);
+                    });
+                }
+
                 function toggleAudioAlefBet() {
                     const audio = document.getElementById('audioAlefBetServer');
                     if (!audio) return;
@@ -5153,6 +5154,7 @@ Shin y Tav! 🌟
                     renderizarAlefBetGrid();
                     cargarPreguntaJuego();
                     inicializarReproductorAlefBet();
+                    inicializarReproductorVayetze();
                     inicializarReproductoresCancionesSemillas();
 
                     if (window.location.hash === '#parasha-infantil' || window.location.hash === '#pane-parasha-infantil') {
