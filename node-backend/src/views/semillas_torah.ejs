@@ -3616,7 +3616,7 @@
 
             <!-- Data Injection for JS Shorts Viewer -->
             <script>
-                const SHORTS_DATA = <% - JSON.stringify(typeof shorts !== 'undefined' ? shorts : []) %>;
+                const SHORTS_DATA = <%- JSON.stringify(typeof shorts !== 'undefined' ? shorts : []) %>;
                 let currentShortIndex = 0;
                 let shortsModalInstance = null;
 
