@@ -2354,9 +2354,9 @@
                                                     </div>
 
                                                     <!-- ============================================== -->
-                                                    <!-- PESTAÑA 1: SHORTS · ALIYOT CON NIÑOS Y TEMAS DIVERSOS -->
+                                                    <!-- PESTAÑA: SHORTS · ALIYOT CON NIÑOS Y TEMAS DIVERSOS -->
                                                     <!-- ============================================== -->
-                                                    <div class="tab-pane fade show active" id="pane-shorts"
+                                                    <div class="tab-pane fade" id="pane-shorts"
                                                         role="tabpanel">
 
                                                         <!-- Banner Explicativo Novedades -->
@@ -5159,12 +5159,14 @@
 
                     if (window.location.hash === '#parasha-infantil' || window.location.hash === '#pane-parasha-infantil') {
                         activarTabParashaInfantil();
-                    } else if (window.location.hash === '#alef-bet' || window.location.hash === '#alefbet' || window.location.hash === '#pane-alefbet') {
+                    } else if (window.location.hash === '#alef-bet' || window.location.hash === '#alefbet' || window.location.hash === '#pane-alefbet' || window.location.hash === '#seccion-cantos-alefbet') {
                         activarTabAlefBet();
                     } else if (window.location.hash === '#manualidades' || window.location.hash === '#dibujos' || window.location.hash === '#pane-manualidades') {
                         activarTabManualidades();
                     } else if (window.location.hash === '#canciones' || window.location.hash === '#pane-canciones-semillas') {
                         activarTabCancionesSemillas();
+                    } else if (window.location.hash === '#shorts' || window.location.hash === '#pane-shorts' || window.location.hash === '#aliyot-shorts') {
+                        activarTabShorts();
                     }
 
                     // Volumen suave (20%) y exclusividad de reproducción en los reproductores de Canciones Infantiles
@@ -5240,6 +5242,18 @@
 
                 function activarTabCancionesSemillas() {
                     const tabBtn = document.getElementById('tab-canciones-semillas');
+                    if (tabBtn && typeof bootstrap !== 'undefined') {
+                        const tab = new bootstrap.Tab(tabBtn);
+                        tab.show();
+                    } else if (tabBtn) {
+                        tabBtn.click();
+                    }
+                    const seccion = document.getElementById('actividades-seccion');
+                    if (seccion) seccion.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+
+                function activarTabShorts() {
+                    const tabBtn = document.getElementById('tab-shorts');
                     if (tabBtn && typeof bootstrap !== 'undefined') {
                         const tab = new bootstrap.Tab(tabBtn);
                         tab.show();
