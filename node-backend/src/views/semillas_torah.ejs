@@ -120,6 +120,54 @@
                     </div>
                 </section>
 
+                <!-- Estilos para pestañas en móvil: todos los botones del mismo tamaño uniforme -->
+                <style>
+                    @media (max-width: 768px) {
+                        #semillasTabs {
+                            display: flex !important;
+                            flex-direction: column !important;
+                            gap: 10px !important;
+                            width: 100% !important;
+                        }
+                        #semillasTabs .nav-item {
+                            width: 100% !important;
+                            margin: 0 !important;
+                        }
+                        #semillasTabs .semillas-tab-btn {
+                            width: 100% !important;
+                            height: 58px !important;
+                            min-height: 58px !important;
+                            max-height: 58px !important;
+                            display: flex !important;
+                            flex-direction: row !important;
+                            align-items: center !important;
+                            justify-content: space-between !important;
+                            padding: 0 16px !important;
+                            border-radius: 16px !important;
+                            font-size: 0.90rem !important;
+                            box-sizing: border-box !important;
+                        }
+                        #semillasTabs .semillas-tab-btn .tab-btn-title {
+                            display: flex !important;
+                            align-items: center !important;
+                            gap: 8px !important;
+                            white-space: nowrap !important;
+                            overflow: hidden !important;
+                            text-overflow: ellipsis !important;
+                            flex: 1 1 auto !important;
+                            min-width: 0 !important;
+                            font-size: 0.90rem !important;
+                        }
+                        #semillasTabs .semillas-tab-btn .badge {
+                            flex-shrink: 0 !important;
+                            white-space: nowrap !important;
+                            font-size: 0.72rem !important;
+                            margin-left: 8px !important;
+                            padding: 5px 9px !important;
+                        }
+                    }
+                </style>
+
                 <!-- SECCIÓN PRINCIPAL CON PESTAÑAS: SHORTS / ENSEÑANZAS / ALIYOT -->
                 <section id="actividades-seccion" class="section py-5" style="background-color: #ffffff;">
                     <div class="container">
@@ -146,8 +194,10 @@
                                     id="tab-parasha-infantil" data-bs-toggle="pill"
                                     data-bs-target="#pane-parasha-infantil" type="button" role="tab"
                                     style="border-radius: 16px; border: 2px solid #fde047; font-size: 1rem; transition: all 0.3s ease;">
-                                    <i class="bi bi-file-earmark-pdf-fill fs-5 text-warning"></i>
-                                    Parashá Semanal Infantil (PDF)
+                                    <span class="tab-btn-title">
+                                        <i class="bi bi-file-earmark-pdf-fill fs-5 text-warning"></i>
+                                        Parashá Semanal Infantil (PDF)
+                                    </span>
                                     <span class="badge rounded-pill"
                                         style="background: linear-gradient(135deg, #d97706, #b45309); color: #fff; font-size: 0.75rem;">
                                         <%= (typeof parashotInfantiles !=='undefined' && parashotInfantiles) ?
@@ -162,8 +212,10 @@
                                     id="tab-canciones-semillas" data-bs-toggle="pill"
                                     data-bs-target="#pane-canciones-semillas" type="button" role="tab"
                                     style="border-radius: 16px; border: 2px solid #f59e0b; background: linear-gradient(135deg, rgba(254,243,199,0.5), rgba(253,230,138,0.3)); font-size: 1rem; transition: all 0.3s ease;">
-                                    <i class="bi bi-music-note-beamed fs-5 text-warning"></i>
-                                    Canciones Infantiles
+                                    <span class="tab-btn-title">
+                                        <i class="bi bi-music-note-beamed fs-5 text-warning"></i>
+                                        Canciones Infantiles
+                                    </span>
                                     <span class="badge rounded-pill"
                                         style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 0.75rem;">
                                         <%= (typeof cancionesInfantiles !=='undefined' && cancionesInfantiles) ?
@@ -178,8 +230,10 @@
                                     id="tab-alefbet" data-bs-toggle="pill" data-bs-target="#pane-alefbet" type="button"
                                     role="tab"
                                     style="border-radius: 16px; border: 2px solid #38bdf8; font-size: 1rem; transition: all 0.3s ease;">
-                                    <i class="bi bi-translate fs-5 text-primary"></i>
-                                    Alef-Bet Hebreo Infantil
+                                    <span class="tab-btn-title">
+                                        <i class="bi bi-translate fs-5 text-primary"></i>
+                                        Alef-Bet Hebreo Infantil
+                                    </span>
                                     <span class="badge rounded-pill"
                                         style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; font-size: 0.75rem;">
                                         ✨ 22 Letras · Cantos · Juegos
@@ -193,8 +247,10 @@
                                     id="tab-manualidades" data-bs-toggle="pill" data-bs-target="#pane-manualidades"
                                     type="button" role="tab"
                                     style="border-radius: 16px; border: 2px solid #c084fc; font-size: 1rem; transition: all 0.3s ease;">
-                                    <i class="bi bi-palette-fill fs-5" style="color: #9333ea;"></i>
-                                    Dibujos y Manualidades
+                                    <span class="tab-btn-title">
+                                        <i class="bi bi-palette-fill fs-5" style="color: #9333ea;"></i>
+                                        Dibujos y Manualidades
+                                    </span>
                                     <span class="badge rounded-pill"
                                         style="background: linear-gradient(135deg, #9333ea, #7e22ce); color: #fff; font-size: 0.75rem;">
                                         <%= (typeof manualidades !=='undefined' && manualidades) ? manualidades.length :
@@ -209,8 +265,10 @@
                                     id="tab-shorts" data-bs-toggle="pill" data-bs-target="#pane-shorts" type="button"
                                     role="tab"
                                     style="border-radius: 16px; border: 2px solid #bae6fd; font-size: 1rem; transition: all 0.3s ease;">
-                                    <i class="bi bi-camera-reels-fill fs-5 text-info"></i>
-                                    Aliyot con Niños · Shorts
+                                    <span class="tab-btn-title">
+                                        <i class="bi bi-camera-reels-fill fs-5 text-info"></i>
+                                        Aliyot con Niños · Shorts
+                                    </span>
                                     <span class="badge rounded-pill"
                                         style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; font-size: 0.75rem;">
                                         <%= (typeof shorts !=='undefined' && shorts) ? shorts.length : 0 %>
@@ -224,8 +282,10 @@
                                     id="tab-ensenanzas" data-bs-toggle="pill" data-bs-target="#pane-ensenanzas"
                                     type="button" role="tab"
                                     style="border-radius: 16px; border: 2px solid #e9d5ff; font-size: 1rem; transition: all 0.3s ease;">
-                                    <i class="bi bi-collection-play fs-5"></i>
-                                    Enseñanzas Infantiles
+                                    <span class="tab-btn-title">
+                                        <i class="bi bi-collection-play fs-5"></i>
+                                        Enseñanzas Infantiles
+                                    </span>
                                     <span class="badge rounded-pill"
                                         style="background: rgba(107,33,168,0.15); color: #6b21a8; font-size: 0.75rem;">
                                         <%= (typeof items !=='undefined' && items) ? items.length : 0 %>
@@ -239,8 +299,10 @@
                                     id="tab-articulos" data-bs-toggle="pill" data-bs-target="#pane-articulos"
                                     type="button" role="tab"
                                     style="border-radius: 16px; border: 2px solid #86efac; font-size: 1rem; transition: all 0.3s ease;">
-                                    <i class="bi bi-newspaper fs-5 text-success"></i>
-                                    Noticias & Resúmenes Ilustrados
+                                    <span class="tab-btn-title">
+                                        <i class="bi bi-newspaper fs-5 text-success"></i>
+                                        Noticias & Resúmenes Ilustrados
+                                    </span>
                                     <span class="badge rounded-pill"
                                         style="background: linear-gradient(135deg, #16a34a, #15803d); color: #fff; font-size: 0.75rem;">
                                         <%= (typeof articulos !=='undefined' && articulos) ? articulos.length : 0 %>
@@ -1021,7 +1083,7 @@
                                                                                         <strong>Yaakov salió... (¡salió!)<br>
                                                                                         Y Dios en sueños lo cuidó.</strong> ✨
                                                                                     </div>
-                                                                                </div></div>
+                                                                                </div>
                                                                             </div>
 
                                                                             <div class="pt-3 mt-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-2">
@@ -3245,10 +3307,11 @@
                                                                 <% listaCancionesSemillas.forEach((canto) => { 
                                                                     const isAlef = canto.title && canto.title.toLowerCase().includes('alef');
                                                                     const isVayetze = canto.title && canto.title.toLowerCase().includes('vayetze');
+                                                                    const isVayishlaj = canto.title && canto.title.toLowerCase().includes('vayishlaj');
                                                                 %>
                                                                     <div class="col-lg-6">
                                                                         <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white"
-                                                                            style="border: 2px solid <%= isAlef ? '#bae6fd' : '#fde68a' %> !important;">
+                                                                            style="border: 2px solid <%= isAlef ? '#bae6fd' : (isVayishlaj ? '#f59e0b' : '#fde68a') %> !important;">
                                                                             
                                                                             <!-- Header del Canto -->
                                                                             <div class="card-header border-0 py-3 px-4 d-flex align-items-center justify-content-between"
@@ -3293,6 +3356,11 @@
                                                                                                     וַיֵּצֵא · Vayetze
                                                                                                 </div>
                                                                                                 <p class="small text-muted mb-2">Porción semanal infantil: El sueño de Jacob en Bet-El</p>
+                                                                                            <% } else if (isVayishlaj) { %>
+                                                                                                <div class="display-6 fw-bold text-warning mb-1" style="font-family: serif; color: #b45309 !important;">
+                                                                                                    וַיִּשְׁלַח · Vayishlaj
+                                                                                                </div>
+                                                                                                <p class="small text-muted mb-2">Porción semanal infantil: El encuentro de Jacob y Esaú y el nuevo nombre Israel</p>
                                                                                             <% } else { %>
                                                                                                 <div class="display-6 fw-bold text-warning mb-1" style="font-family: serif; color: #b45309 !important;">
                                                                                                     שִׁיר יְלָדִים
@@ -3359,11 +3427,9 @@
                                                                         </div>
                                                                     </div>
                                                                 <% }); %>
-
-                                                                <% } %>
+                                                            <% } %>
                                                         </div>
                                                     </div>
-
                                                     </div><!-- End Tab Content -->
 
                             </div>

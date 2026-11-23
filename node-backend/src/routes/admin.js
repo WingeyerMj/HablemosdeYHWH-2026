@@ -153,12 +153,14 @@ router.post('/ensenanzas/delete/:id', isAuthenticated, isAdmin, adminController.
 // Haftará (Lecturas Proféticas - Solo Admin)
 router.post('/haftara/create', isAuthenticated, isAdmin, upload.fields([
     { name: 'image_file', maxCount: 1 },
-    { name: 'audio_file', maxCount: 1 }
+    { name: 'audio_file', maxCount: 1 },
+    { name: 'pdf_file', maxCount: 1 }
 ]), adminController.createHaftara);
 router.get('/haftara/edit/:id', isAuthenticated, isAdmin, adminController.editHaftaraPage);
 router.post('/haftara/update', isAuthenticated, isAdmin, upload.fields([
     { name: 'image_file', maxCount: 1 },
-    { name: 'audio_file', maxCount: 1 }
+    { name: 'audio_file', maxCount: 1 },
+    { name: 'pdf_file', maxCount: 1 }
 ]), adminController.updateHaftara);
 router.post('/haftara/delete/:id', isAuthenticated, isAdmin, adminController.deleteHaftara);
 

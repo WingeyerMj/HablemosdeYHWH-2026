@@ -738,13 +738,19 @@ const adminController = {
     // ==================== HAFTARÁ ====================
     createHaftara: async (req, res) => {
         try {
-            let { parasha_id, title, subtitle, parasha_reference, description, content, youtube_link, audio_url, image_url, author, author_role, author_img, authors, authors_json, gain_db } = req.body;
+            let { parasha_id, title, subtitle, parasha_reference, description, content, youtube_link, audio_url, image_url, pdf_url, author, author_role, author_img, authors, authors_json, gain_db } = req.body;
             if (req.files) {
                 if (req.files['image_file'] && req.files['image_file'][0]) {
                     image_url = '/uploads/haftara/' + req.files['image_file'][0].filename;
                 }
                 if (req.files['audio_file'] && req.files['audio_file'][0]) {
                     audio_url = '/uploads/audios/' + req.files['audio_file'][0].filename;
+                }
+                if (req.files['pdf_file'] && req.files['pdf_file'][0]) {
+                    pdf_url = '/uploads/pdf/' + req.files['pdf_file'][0].filename;
+                }
+                if (req.files['pdf_file'] && req.files['pdf_file'][0]) {
+                    pdf_url = '/uploads/pdf/' + req.files['pdf_file'][0].filename;
                 }
             } else if (req.file) {
                 image_url = '/uploads/haftara/' + req.file.filename;
@@ -774,6 +780,7 @@ const adminController = {
                 content: content || '',
                 youtube_link: youtube_link || '',
                 audio_url: audio_url || '',
+                pdf_url: pdf_url || null,
                 gain_db: cleanGain,
                 image_url: image_url || '',
                 author: author || 'Moréh Kaleb',
@@ -830,7 +837,7 @@ const adminController = {
 
     updateHaftara: async (req, res) => {
         try {
-            let { id, parasha_id, title, subtitle, parasha_reference, description, content, youtube_link, audio_url, image_url, author, author_role, author_img, authors, authors_json, gain_db } = req.body;
+            let { id, parasha_id, title, subtitle, parasha_reference, description, content, youtube_link, audio_url, image_url, pdf_url, author, author_role, author_img, authors, authors_json, gain_db } = req.body;
             if (req.files) {
                 if (req.files['image_file'] && req.files['image_file'][0]) {
                     image_url = '/uploads/haftara/' + req.files['image_file'][0].filename;
@@ -866,6 +873,7 @@ const adminController = {
                 content: content || '',
                 youtube_link: youtube_link || '',
                 audio_url: audio_url || '',
+                pdf_url: pdf_url || null,
                 gain_db: cleanGain,
                 image_url: image_url || '',
                 author: author || 'Moréh Kaleb',

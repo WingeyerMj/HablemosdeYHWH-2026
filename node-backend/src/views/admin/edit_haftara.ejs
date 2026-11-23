@@ -107,6 +107,28 @@
                 </div>
             </div>
 
+            <!-- PRESENTACIÓN EN PDF -->
+            <div class="col-md-6">
+                <label class="form-label small text-danger fw-semibold">
+                    <i class="bi bi-file-earmark-pdf-fill me-1"></i> Subir Presentación en PDF
+                </label>
+                <input type="file" name="pdf_file" accept="application/pdf,.pdf" class="form-control">
+                <div class="form-text text-white-50">Sube la presentación en PDF para esta Haftará.</div>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label small text-white-50">O URL de Archivo PDF</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-file-pdf text-danger"></i></span>
+                    <input type="text" name="pdf_url" class="form-control" value="<%= haftara.pdf_url || '' %>" placeholder="https://... o /uploads/pdf/...">
+                    <% if (haftara.pdf_url) { %>
+                        <a href="<%= haftara.pdf_url %>" target="_blank" class="btn btn-outline-danger" title="Ver PDF actual">
+                            <i class="bi bi-eye"></i> Ver PDF
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+
             <!-- PANEL AMPLIFICADOR DE VOLUMEN (DECIBELES dB) -->
             <div class="col-12">
                 <div class="audio-booster-box p-3 rounded-3 border border-secondary border-opacity-50" style="background: rgba(0,0,0,0.35);">

@@ -57,6 +57,19 @@ class Haftara {
         }
 
         // Auto-link Haftarot to Parashot if unlinked
+        
+        try {
+            const [colsPdf] = await db.query("SHOW COLUMNS FROM haftarot LIKE 'pdf_url'");
+            if (!colsPdf || colsPdf.length === 0) {
+                await db.query("ALTER TABLE haftarot ADD COLUMN pdf_url VARCHAR(255) DEFAULT NULL AFTER audio_url");
+                console.log('✅ Columna pdf_url agregada a haftarot');
+            }
+        } catch (e) {
+            try {
+                await db.query("ALTER TABLE haftarot ADD COLUMN IF NOT EXISTS pdf_url VARCHAR(255) DEFAULT NULL");
+            } catch (errPG) {}
+        }
+    
         await Haftara.autoLinkParashot();
 
         // Auto-limpiar imágenes de personas que se hubieran guardado como portada de Haftará
@@ -389,7 +402,7 @@ class Haftara {
 
     static async create(data) {
         await Haftara.ensureColumns();
-        const { parasha_id, title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, author, author_role, author_img, authors, is_published } = data;
+        const { parasha_id, title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, pdf_url, author, author_role, author_img, authors, is_published } = data;
 
         let authorsList = [];
         if (authors) {
@@ -431,7 +444,7 @@ class Haftara {
 
         try {
             return await db.query(
-                `INSERT INTO haftarot (parasha_id, title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, gain_db, author, author_role, author_img, authors, is_published, cycle_id, cycle_name) 
+                `INSERT INTO haftarot (parasha_id, title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, pdf_url, gain_db, author, author_role, author_img, authors, is_published, cycle_id, cycle_name) 
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     parsedParashaId,
@@ -443,6 +456,7 @@ class Haftara {
                     image_url || '',
                     youtube_link || '',
                     audio_url || '',
+                    pdf_url || null,
                     cleanGain,
                     primaryAuthor,
                     primaryRole,
@@ -466,6 +480,7 @@ class Haftara {
                     image_url || '',
                     youtube_link || '',
                     audio_url || '',
+                    pdf_url || null,
                     cleanGain,
                     primaryAuthor,
                     primaryRole,
@@ -480,7 +495,7 @@ class Haftara {
 
     static async update(id, data) {
         await Haftara.ensureColumns();
-        const { parasha_id, title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, author, author_role, author_img, authors, is_published } = data;
+        const { parasha_id, title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, pdf_url, author, author_role, author_img, authors, is_published } = data;
 
         let authorsList = [];
         if (authors) {
@@ -520,6 +535,7 @@ class Haftara {
                     image_url = ?, 
                     youtube_link = ?, 
                     audio_url = ?, 
+                    pdf_url = ?, 
                     gain_db = ?, 
                     author = ?, 
                     author_role = ?, 
