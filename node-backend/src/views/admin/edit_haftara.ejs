@@ -86,11 +86,12 @@
             </div>
 
             <div class="col-md-6">
-                <label class="form-label small text-white-50">Link de YouTube (Video)</label>
+                <label class="form-label small text-white-50"><i class="bi bi-play-btn me-1"></i>Link de Video (YouTube o Facebook)</label>
                 <div class="input-group">
-                    <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-youtube text-danger"></i></span>
-                    <input type="text" name="youtube_link" class="form-control" value="<%= haftara.youtube_link || '' %>" placeholder="https://www.youtube.com/watch?v=...">
+                    <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-camera-video text-danger"></i></span>
+                    <input type="text" name="youtube_link" class="form-control" value="<%= haftara.youtube_link || '' %>" placeholder="https://www.youtube.com/... o https://www.facebook.com/.../videos/...">
                 </div>
+                <div class="form-text text-white-50">Acepta enlaces de YouTube o videos de Facebook.</div>
             </div>
 
             <div class="col-md-6">
@@ -160,8 +161,14 @@
             </div>
 
             <div class="col-md-4">
-                <label class="form-label small text-white-50">Subir Nueva Imagen</label>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label class="form-label small text-white-50 mb-0">Subir Nueva Imagen</label>
+                    <button type="button" class="btn btn-outline-warning py-0 px-2 rounded-pill" id="btn-use-parasha-img" style="font-size: 0.72rem;" title="Usar la imagen oficial de la Parashá vinculada si no tienes portada propia">
+                        <i class="bi bi-image me-1"></i>Usar portada de Parashá
+                    </button>
+                </div>
                 <input type="file" name="image_file" id="edit_page_image_file" class="form-control" accept="image/*">
+                <div class="form-text text-white-50">Opcional: Si no tienes imagen, se usará automáticamente la portada de la Parashá vinculada.</div>
             </div>
             <div class="col-md-4">
                 <label class="form-label small text-white-50">O URL de Imagen</label>

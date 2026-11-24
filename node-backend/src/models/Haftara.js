@@ -440,6 +440,17 @@ class Haftara {
             } catch(e) {}
         }
 
+        // Si no se proporcionó portada, heredar automáticamente la portada de la Parashá vinculada
+        let finalImageUrl = (image_url || '').trim();
+        if (!finalImageUrl && parsedParashaId) {
+            try {
+                const [pImgRow] = await db.query('SELECT image_url FROM parashot WHERE id = ?', [parsedParashaId]);
+                if (pImgRow && pImgRow[0] && pImgRow[0].image_url) {
+                    finalImageUrl = pImgRow[0].image_url;
+                }
+            } catch(e) {}
+        }
+
         const cleanGain = Math.max(0, Math.min(24, Number(data.gain_db) || 0));
 
         try {
@@ -453,7 +464,7 @@ class Haftara {
                     parasha_reference || '',
                     description || '',
                     content || '',
-                    image_url || '',
+                    finalImageUrl,
                     youtube_link || '',
                     audio_url || '',
                     pdf_url || null,
@@ -524,6 +535,25 @@ class Haftara {
 
         const cleanGain = data.gain_db !== undefined ? Math.max(0, Math.min(24, Number(data.gain_db) || 0)) : 0;
 
+        // Si no se proporcionó imagen, heredar la de la Parashá vinculada o mantener la existente
+        let finalImageUrl = (image_url || '').trim();
+        if (!finalImageUrl && parsedParashaId) {
+            try {
+                const [pImgRow] = await db.query('SELECT image_url FROM parashot WHERE id = ?', [parsedParashaId]);
+                if (pImgRow && pImgRow[0] && pImgRow[0].image_url) {
+                    finalImageUrl = pImgRow[0].image_url;
+                }
+            } catch(e) {}
+        }
+        if (!finalImageUrl) {
+            try {
+                const [currHaf] = await db.query('SELECT image_url FROM haftarot WHERE id = ?', [id]);
+                if (currHaf && currHaf[0] && currHaf[0].image_url) {
+                    finalImageUrl = currHaf[0].image_url;
+                }
+            } catch(e) {}
+        }
+
         try {
             return await db.query(
                 `UPDATE haftarot SET 
@@ -552,7 +582,7 @@ class Haftara {
                     parasha_reference || '',
                     description || '',
                     content || '',
-                    image_url || '',
+                    finalImageUrl,
                     youtube_link || '',
                     audio_url || '',
                     pdf_url || null,

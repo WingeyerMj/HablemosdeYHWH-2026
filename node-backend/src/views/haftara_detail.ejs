@@ -127,27 +127,40 @@
                                         }) %>
                                     </div>
 
-                                    <!-- Video de YouTube si existe -->
-                                    <% if (haftara.youtube_link && haftara.youtube_link.trim() !== '') { 
+                                    <!-- Video de YouTube o Facebook si existe -->
+                                    <% 
+                                        const rawVideoLink = (haftara.youtube_link || '').trim();
+                                        const isFbVideo = rawVideoLink.includes('facebook.com') || rawVideoLink.includes('fb.watch');
                                         let videoId = '';
-                                        const yLink = haftara.youtube_link;
-                                        if (yLink.includes('watch?v=')) {
-                                            videoId = yLink.split('watch?v=')[1].split('&')[0];
-                                        } else if (yLink.includes('youtu.be/')) {
-                                            videoId = yLink.split('youtu.be/')[1].split('?')[0];
-                                        } else if (yLink.includes('embed/')) {
-                                            videoId = yLink.split('embed/')[1].split('?')[0];
+                                        let fbEmbedSrc = '';
+
+                                        if (isFbVideo) {
+                                            fbEmbedSrc = 'https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(rawVideoLink) + '&show_text=false&allowfullscreen=true&width=auto';
+                                        } else if (rawVideoLink) {
+                                            if (rawVideoLink.includes('watch?v=')) {
+                                                videoId = rawVideoLink.split('watch?v=')[1].split('&')[0];
+                                            } else if (rawVideoLink.includes('youtu.be/')) {
+                                                videoId = rawVideoLink.split('youtu.be/')[1].split('?')[0];
+                                            } else if (rawVideoLink.includes('embed/')) {
+                                                videoId = rawVideoLink.split('embed/')[1].split('?')[0];
+                                            }
                                         }
                                     %>
-                                        <div class="youtube-box mb-4 no-print" style="background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.08); border: 1px solid #eee;">
-                                            <% if (videoId) { %>
-                                                <div class="ratio ratio-16x9">
+                                    <% if (isFbVideo || videoId) { %>
+                                        <div class="video-box mb-4 no-print" style="background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.08); border: 1px solid #eee;">
+                                            <div class="ratio ratio-16x9">
+                                                <% if (isFbVideo) { %>
+                                                    <iframe src="<%= fbEmbedSrc %>" title="<%= haftara.title %>" style="border:none;overflow:hidden;width:100%;height:100%;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+                                                <% } else { %>
                                                     <iframe src="https://www.youtube.com/embed/<%= videoId %>" title="<%= haftara.title %>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                                </div>
-                                            <% } %>
+                                                <% } %>
+                                            </div>
                                             <div class="p-3 text-center bg-light border-top d-flex justify-content-between align-items-center flex-wrap gap-2">
                                                 <div class="d-flex align-items-center gap-2 flex-wrap">
-                                                    <span class="fw-semibold text-dark"><i class="bi bi-youtube text-danger me-1"></i> Video de la Haftará</span>
+                                                    <span class="fw-semibold text-dark">
+                                                        <i class="bi <%= isFbVideo ? 'bi-facebook text-primary' : 'bi-youtube text-danger' %> me-1"></i>
+                                                        Video de la Haftará (<%= isFbVideo ? 'Facebook' : 'YouTube' %>)
+                                                    </span>
                                                     <% if (haftara.pdf_url && haftara.pdf_url.trim() !== '') { %>
                                                         <a href="<%= haftara.pdf_url %>" download class="btn btn-sm btn-danger rounded-pill px-3 py-1 fw-bold d-inline-flex align-items-center gap-1 shadow-sm" style="background-color: #dc2626; border: none;">
                                                             <i class="bi bi-file-earmark-pdf-fill"></i> Descargar Diapositivas (PDF)
@@ -157,8 +170,8 @@
                                                         </a>
                                                     <% } %>
                                                 </div>
-                                                <a href="<%= haftara.youtube_link %>" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-danger rounded-pill px-4 py-2 fw-bold d-inline-flex align-items-center gap-2" style="background-color: #ff0000; border: none;">
-                                                    <i class="bi bi-box-arrow-up-right"></i> Abrir en YouTube
+                                                <a href="<%= rawVideoLink %>" target="_blank" rel="noopener noreferrer" class="btn btn-sm <%= isFbVideo ? 'btn-primary' : 'btn-danger' %> rounded-pill px-4 py-2 fw-bold d-inline-flex align-items-center gap-2" style="<%= isFbVideo ? 'background-color: #1877F2; border: none;' : 'background-color: #ff0000; border: none;' %>">
+                                                    <i class="bi bi-box-arrow-up-right"></i> Abrir en <%= isFbVideo ? 'Facebook' : 'YouTube' %>
                                                 </a>
                                             </div>
                                         </div>
@@ -330,8 +343,8 @@
                                             </div>
                                         <% } %>
 
-                                        <!-- Portada de la Haftará -->
-                                        <% const hafDetailImg = haftara.image_url || haftara.youtube_thumbnail; %>
+                                        <!-- Portada de la Haftará (usa imagen propia, miniatura o portada de la Parashá) -->
+                                        <% const hafDetailImg = haftara.image_url || haftara.youtube_thumbnail || (typeof parasha !== 'undefined' && parasha && parasha.image_url ? parasha.image_url : ''); %>
                                         <% if (hafDetailImg && hafDetailImg.trim() !== '') { %>
                                             <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4" style="background: #fff; border: 1px solid #ede8df;">
                                                 <img src="<%= hafDetailImg %>" alt="<%= haftara.title %>" class="img-fluid" style="width: 100%; height: auto; max-height: 320px; object-fit: cover;" onerror="this.parentElement.style.display='none'">
