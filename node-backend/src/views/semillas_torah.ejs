@@ -637,6 +637,185 @@
                                                     <!-- FIN PESTAÑA: PARASHÁ SEMANAL INFANTIL (PDFs) -->
 
                                                     <!-- ============================================================ -->
+                                                    <!-- PESTAÑA: REUNIONES DE NIÑOS DE SHABAT (CLASES & DIAPOSITIVAS)-->
+                                                    <!-- ============================================================ -->
+                                                    <div class="tab-pane fade" id="pane-reuniones-shabat" role="tabpanel">
+
+                                                        <!-- Banner Principal Reuniones de Shabat -->
+                                                        <div class="p-4 p-md-5 mb-4 rounded-4 shadow-sm border-0 position-relative overflow-hidden"
+                                                            style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 45%, #fef3c7 100%); border-left: 6px solid #f97316 !important;">
+                                                            <div class="row align-items-center g-4">
+                                                                <div class="col-lg-8">
+                                                                    <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+                                                                        <span class="badge rounded-pill px-3 py-1 shadow-sm"
+                                                                            style="background: linear-gradient(135deg, #ea580c, #c2410c); color: #fff; font-size: 0.85rem; font-weight: 700;">
+                                                                            <i class="bi bi-camera-video-fill me-1"></i> Ministerio Infantil Semillas de Torah
+                                                                        </span>
+                                                                        <span class="badge rounded-pill bg-white text-dark border px-3 py-1 fw-bold" style="font-size: 0.82rem;">
+                                                                            🏫 Clases de los Días de Shabat
+                                                                        </span>
+                                                                        <span class="badge rounded-pill bg-warning text-dark border px-3 py-1 fw-bold" style="font-size: 0.82rem;">
+                                                                            <i class="bi bi-file-earmark-pdf-fill me-1 text-danger"></i> Diapositivas en PDF Vinculadas
+                                                                        </span>
+                                                                    </div>
+                                                                    <h2 class="fw-bold mb-2" style="color: #7c2d12; font-size: 2.2rem; line-height: 1.25;">
+                                                                        Reuniones de Niños de los Días de Shabat
+                                                                    </h2>
+                                                                    <p class="text-muted mb-4" style="font-size: 1.05rem; line-height: 1.7; max-width: 680px;">
+                                                                        Aquí compartimos las clases de cada Shabat donde enseñamos las porciones de la Torá adaptadas para los pequeños. Puedes ver el video de la reunión y acceder directamente a las <strong>diapositivas y fichas en PDF</strong> utilizadas en la clase para repasar y profundizar en familia.
+                                                                    </p>
+                                                                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                                                                        <button type="button" class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2"
+                                                                            onclick="activarTabParashaInfantil()">
+                                                                            <i class="bi bi-file-earmark-pdf-fill text-danger"></i> Ver Fichas PDF de Parashá
+                                                                        </button>
+                                                                        <button type="button" class="btn btn-outline-dark fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2"
+                                                                            onclick="activarTabCancionesSemillas()">
+                                                                            <i class="bi bi-music-note-beamed text-warning"></i> Canciones Infantiles
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-4 text-center">
+                                                                    <div class="p-3 bg-white rounded-4 shadow-sm d-inline-block border border-2 border-warning"
+                                                                        style="transform: rotate(1.5deg); max-width: 270px;">
+                                                                        <div class="display-3 mb-1" style="line-height: 1;">🏫</div>
+                                                                        <div class="fw-bold text-dark mt-2" style="font-size: 1.15rem;">¡Aprender en Shabat!</div>
+                                                                        <div class="small text-muted">Clases en video y diapositivas PDF de cada porción semanal</div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- LISTA DE REUNIONES -->
+                                                        <% const listaReuniones = (typeof reunionesShabat !== 'undefined' && Array.isArray(reunionesShabat)) ? reunionesShabat : []; %>
+
+                                                        <% if (listaReuniones.length === 0) { %>
+                                                            <div class="card border-0 rounded-4 shadow-sm p-5 text-center bg-white my-4">
+                                                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center p-4 mb-3 mx-auto"
+                                                                    style="width: 80px; height: 80px; background: rgba(249, 115, 22, 0.15); color: #ea580c;">
+                                                                    <i class="bi bi-camera-video fs-1"></i>
+                                                                </div>
+                                                                <h4 class="fw-bold text-dark mb-2">Próximamente Clases de Shabat</h4>
+                                                                <p class="text-muted mx-auto mb-4" style="max-width: 550px;">
+                                                                    Muy pronto subiremos las grabaciones de las reuniones de niños de los días de Shabat junto a sus diapositivas en PDF. Mientras tanto, puedes explorar las fichas descargables de la Parashá y las canciones infantiles.
+                                                                </p>
+                                                                <div class="d-flex justify-content-center gap-2">
+                                                                    <button type="button" class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2" onclick="activarTabParashaInfantil()">
+                                                                        <i class="bi bi-file-earmark-pdf-fill me-1"></i> Ver Parashot en PDF
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        <% } else { %>
+                                                            <div class="row g-4 mb-5">
+                                                                <% listaReuniones.forEach((reunion) => { 
+                                                                    const pdfLink = reunion.pdf_file || reunion.parasha_infantil_pdf;
+                                                                    const ytMatch = reunion.youtube_link ? reunion.youtube_link.match(/(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\/shorts\/)([^#\&\?]*)/) : null;
+                                                                    const ytId = ytMatch && ytMatch[1] && ytMatch[1].length === 11 ? ytMatch[1] : null;
+                                                                %>
+                                                                    <div class="col-lg-6">
+                                                                        <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white"
+                                                                            style="border: 2px solid #fed7aa !important;">
+                                                                            
+                                                                            <!-- Header de la Tarjeta -->
+                                                                            <div class="card-header border-0 py-3 px-4 d-flex align-items-center justify-content-between flex-wrap gap-2"
+                                                                                style="background: linear-gradient(135deg, #f97316, #ea580c); color: #fff;">
+                                                                                <div class="d-flex align-items-center gap-2">
+                                                                                    <i class="bi bi-camera-video-fill fs-5"></i>
+                                                                                    <span class="fw-bold text-white">Reunión de Niños de Shabat</span>
+                                                                                </div>
+                                                                                <% if (reunion.meeting_date) { %>
+                                                                                    <span class="badge bg-white text-dark rounded-pill px-3 py-1 fw-bold shadow-sm" style="font-size: 0.8rem;">
+                                                                                        <i class="bi bi-calendar3 me-1 text-warning"></i>
+                                                                                        <%= new Date(reunion.meeting_date).toLocaleDateString('es-ES', { timeZone: 'UTC', year: 'numeric', month: 'short', day: 'numeric' }) %>
+                                                                                    </span>
+                                                                                <% } %>
+                                                                            </div>
+
+                                                                            <!-- Reproductor de Video (16:9) -->
+                                                                            <div class="bg-black position-relative" style="aspect-ratio: 16/9; overflow: hidden;">
+                                                                                <% if (ytId) { %>
+                                                                                    <iframe src="https://www.youtube-nocookie.com/embed/<%= ytId %>?rel=0" 
+                                                                                        class="w-100 h-100 border-0" 
+                                                                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                                                                        allowfullscreen
+                                                                                        title="<%= reunion.title %>"></iframe>
+                                                                                <% } else if (reunion.video_file) { %>
+                                                                                    <video controls class="w-100 h-100" style="object-fit: cover;" preload="metadata">
+                                                                                        <source src="<%= reunion.video_file %>">
+                                                                                        Tu navegador no soporta reproducción de video.
+                                                                                    </video>
+                                                                                <% } else { %>
+                                                                                    <div class="d-flex flex-column align-items-center justify-content-center h-100 text-white-50 p-4 text-center">
+                                                                                        <i class="bi bi-camera-video-off fs-1 text-warning mb-2"></i>
+                                                                                        <span class="fw-bold text-white">Grabación disponible próximamente</span>
+                                                                                        <small class="text-white-50 mt-1">Puedes consultar las diapositivas en PDF a continuación.</small>
+                                                                                    </div>
+                                                                                <% } %>
+                                                                            </div>
+
+                                                                            <!-- Cuerpo de la Tarjeta -->
+                                                                            <div class="card-body p-4 d-flex flex-column justify-content-between">
+                                                                                <div>
+                                                                                    <!-- Badges de Parashá y Ciclo -->
+                                                                                    <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+                                                                                        <% if (reunion.parasha_title || reunion.parasha_name) { %>
+                                                                                            <span class="badge rounded-pill px-3 py-1 fw-bold"
+                                                                                                style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a;">
+                                                                                                <i class="bi bi-bookmark-fill me-1"></i>
+                                                                                                Parashá #<%= reunion.parasha_number || '' %> <%= reunion.parasha_title || reunion.parasha_name %>
+                                                                                            </span>
+                                                                                        <% } %>
+                                                                                        <% if (reunion.cycle_name) { %>
+                                                                                            <span class="badge bg-light text-muted border rounded-pill px-2 py-1 small">
+                                                                                                <%= reunion.cycle_name %>
+                                                                                            </span>
+                                                                                        <% } %>
+                                                                                        <% if (reunion.teachers) { %>
+                                                                                            <span class="badge rounded-pill px-2 py-1" style="background: #ede9fe; color: #6b21a8;">
+                                                                                                <i class="bi bi-person-fill me-1"></i> <%= reunion.teachers %>
+                                                                                            </span>
+                                                                                        <% } %>
+                                                                                    </div>
+
+                                                                                    <h4 class="fw-bold text-dark mb-2" style="font-size: 1.25rem; line-height: 1.35;">
+                                                                                        <%= reunion.title %>
+                                                                                    </h4>
+
+                                                                                    <% if (reunion.description) { %>
+                                                                                        <p class="text-muted small mb-3" style="line-height: 1.6; white-space: pre-line;">
+                                                                                            <%= reunion.description %>
+                                                                                        </p>
+                                                                                    <% } %>
+                                                                                </div>
+
+                                                                                <!-- Botón de Diapositivas PDF y Compartir -->
+                                                                                <div class="pt-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-2 mt-2">
+                                                                                    <% if (pdfLink) { %>
+                                                                                        <a href="<%= pdfLink %>" target="_blank" download class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2">
+                                                                                            <i class="bi bi-file-earmark-pdf-fill fs-5 text-danger"></i>
+                                                                                            <span>Ver Diapositivas de la Clase (PDF)</span>
+                                                                                        </a>
+                                                                                    <% } else { %>
+                                                                                        <span class="badge bg-light text-muted border rounded-pill px-3 py-2 small">
+                                                                                            <i class="bi bi-info-circle me-1"></i> Diapositivas en preparación
+                                                                                        </span>
+                                                                                    <% } %>
+
+                                                                                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-1"
+                                                                                        onclick="compartirReunionShabat('<%= reunion.title.replace(/'/g, "\\'") %>', window.location.href)">
+                                                                                        <i class="bi bi-share-fill"></i> Compartir
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                <% }) %>
+                                                            </div>
+                                                        <% } %>
+                                                    </div>
+                                                    <!-- FIN PESTAÑA: REUNIONES DE NIÑOS DE SHABAT -->
+
+                                                    <!-- ============================================================ -->
                                                     <!-- PESTAÑA: ALEF-BET HEBREO INFANTIL (LETRAS, CANTOS, JUEGOS)   -->
                                                     <!-- ============================================================ -->
                                                     <div class="tab-pane fade" id="pane-alefbet" role="tabpanel">
@@ -744,48 +923,13 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- 2. SECCIÓN DE CANTOS Y ALABANZAS DEL ALEF-BET -->
-                                                        <div class="mb-4 p-3 rounded-4 d-flex align-items-center justify-content-between flex-wrap gap-3 shadow-sm"
-                                                            style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 2px solid #f59e0b;">
-                                                            <div class="d-flex align-items-center gap-3">
-                                                                <div class="rounded-circle p-2 bg-warning bg-opacity-25 text-warning d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
-                                                                    <i class="bi bi-music-note-beamed fs-4 text-dark"></i>
-                                                                </div>
-                                                                <div>
-                                                                    <h6 class="fw-bold mb-0 text-dark">¿Quieres escuchar todos los cantos infantiles con su letra visible?</h6>
-                                                                    <small class="text-muted">Explora nuestra sección dedicada con reproductores, letras y descargas MP3.</small>
-                                                                </div>
-                                                            </div>
-                                                            <button type="button" class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm"
-                                                                onclick="activarTabCancionesSemillas()">
-                                                                <i class="bi bi-music-note me-1"></i> Ir a la Sección Canciones Infantiles
-                                                            </button>
-                                                        </div>
-                                                        <div id="seccion-cantos-alefbet" class="mb-5 pt-3">
-                                                            <div class="p-4 rounded-4 shadow-sm border-0 mb-4"
-                                                                style="background: linear-gradient(135deg, #fef9c3 0%, #fef08a 50%, #fff7ed 100%); border-left: 5px solid #eab308 !important;">
-                                                                <div class="d-flex align-items-center gap-3">
-                                                                    <div class="rounded-circle p-3 d-flex align-items-center justify-content-center"
-                                                                        style="background: rgba(234,179,8,0.25); color: #854d0e; width: 55px; height: 55px;">
-                                                                        <i class="bi bi-music-note-list fs-2"></i>
-                                                                    </div>
-                                                                    <div>
-                                                                        <h4 class="fw-bold mb-1"
-                                                                            style="color: #713f12;">Canciones y Melodías
-                                                                            del Alef-Bet</h4>
-                                                                        <p class="text-muted small mb-0">¡Aprender
-                                                                            cantando es mucho más divertido! Canta con
-                                                                            tus hijos estas alegres canciones para
-                                                                            memorizar el abecedario hebreo.</p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
+                                                        <!-- 2. CANCIÓN DEL ALEF-BET HEBREO -->
+                                                        <div id="seccion-canto-alefbet" class="mb-5 pt-3">
                                                             <div class="row g-4">
-                                                                <!-- Canto 1 -->
-                                                                <div class="col-lg-6">
+                                                                <!-- Canto del Alef-Bet -->
+                                                                <div class="col-12">
                                                                     <div
-                                                                        class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                                                                        class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white" style="border: 2px solid #bae6fd !important;">
                                                                         <div class="card-header border-0 py-3 px-4"
                                                                             style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff;">
                                                                             <div
@@ -798,52 +942,55 @@
                                                                                     las 22 letras</span>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="card-body p-4">
-                                                                            <div class="text-center p-3 mb-3 rounded-4"
-                                                                                style="background: #f0f9ff; border: 2px dashed #38bdf8;">
-                                                                                <div class="display-6 fw-bold text-primary mb-1"
-                                                                                    style="font-family: serif;">
-                                                                                    אָלֶף־בֵּית
-                                                                                </div>
-                                                                                <p class="small text-muted mb-3">
-                                                                                    Presiona el botón para reproducir la
-                                                                                    canción rítmica del Alef-Bet:</p>
+                                                                        <div class="card-body p-4 p-md-5">
+                                                                            <div class="row g-4 align-items-center">
+                                                                                <div class="col-lg-5">
+                                                                                    <div class="text-center p-4 rounded-4"
+                                                                                        style="background: #f0f9ff; border: 2px dashed #38bdf8;">
+                                                                                        <div class="display-6 fw-bold text-primary mb-1"
+                                                                                            style="font-family: serif;">
+                                                                                            אָלֶף־בֵּית
+                                                                                        </div>
+                                                                                        <p class="small text-muted mb-3">
+                                                                                            Presiona el botón para reproducir la canción rítmica del Alef-Bet:
+                                                                                        </p>
 
-                                                                                <div
-                                                                                    class="d-flex flex-column align-items-center justify-content-center gap-2 mb-2">
-                                                                                    <button type="button"
-                                                                                        id="btnPlayAlefBetAudio"
-                                                                                        class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2"
-                                                                                        onclick="toggleAudioAlefBet()">
-                                                                                        <i class="bi bi-play-circle-fill fs-5 text-dark"
-                                                                                            id="iconPlayAlefBetAudio"></i>
-                                                                                        <span
-                                                                                            id="txtPlayAlefBetAudio">Escuchar
-                                                                                            Canto del Alef-Bet</span>
-                                                                                    </button>
-                                                                                    <audio id="audioAlefBetServer"
-                                                                                        src="/assets/audio/alefato-hebreo.mp3"
-                                                                                        preload="metadata" controls
-                                                                                        class="w-100 mt-2 rounded-pill"
-                                                                                        style="max-width: 420px; height: 40px;"></audio>
+                                                                                        <div class="d-flex flex-column align-items-center justify-content-center gap-2 mb-3">
+                                                                                            <button type="button"
+                                                                                                id="btnPlayAlefBetAudio"
+                                                                                                class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2"
+                                                                                                onclick="toggleAudioAlefBet()">
+                                                                                                <i class="bi bi-play-circle-fill fs-5 text-dark"
+                                                                                                    id="iconPlayAlefBetAudio"></i>
+                                                                                                <span id="txtPlayAlefBetAudio">Escuchar Canción del Alef-Bet</span>
+                                                                                            </button>
+                                                                                            <audio id="audioAlefBetServer"
+                                                                                                src="/assets/audio/alefato-hebreo.mp3"
+                                                                                                preload="metadata" controls
+                                                                                                class="w-100 mt-2 rounded-pill"
+                                                                                                style="max-width: 420px; height: 40px;"></audio>
+                                                                                        </div>
+                                                                                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                                                                                            <button type="button"
+                                                                                                class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1"
+                                                                                                onclick="cantarAlefBetSynth()">
+                                                                                                <i class="bi bi-soundwave me-1"></i>
+                                                                                                Pronunciación por voz
+                                                                                            </button>
+                                                                                            <a href="/assets/audio/alefato-hebreo.mp3" download="Alefato-Hebreo.mp3"
+                                                                                                class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1">
+                                                                                                <i class="bi bi-download me-1"></i> Descargar MP3
+                                                                                            </a>
+                                                                                        </div>
+                                                                                    </div>
                                                                                 </div>
-                                                                                <button type="button"
-                                                                                    class="btn btn-sm btn-link text-decoration-none text-muted"
-                                                                                    onclick="cantarAlefBetSynth()">
-                                                                                    <i class="bi bi-soundwave me-1"></i>
-                                                                                    Escuchar pronunciación por voz
-                                                                                </button>
-                                                                            </div>
 
-                                                                            <div
-                                                                                class="d-flex align-items-center justify-content-between mb-2">
-                                                                                <h6 class="fw-bold text-dark mb-0"><i
-                                                                                        class="bi bi-card-text me-1 text-primary"></i>Letra
-                                                                                    para cantar juntos:</h6>
-                                                                                <span
-                                                                                    class="badge bg-info bg-opacity-10 text-primary border border-info border-opacity-25 rounded-pill px-2 py-1 small">Canción
-                                                                                    completa</span>
-                                                                            </div>
+                                                                                <div class="col-lg-7">
+                                                                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                                                                        <h6 class="fw-bold text-dark mb-0"><i
+                                                                                                class="bi bi-card-text me-1 text-primary"></i>Letra para cantar juntos:</h6>
+                                                                                        <span class="badge bg-info bg-opacity-10 text-primary border border-info border-opacity-25 rounded-pill px-2 py-1 small">Canción completa</span>
+                                                                                    </div>
                                                                             <div id="letraAlefBetContainer"
                                                                                 class="p-3 rounded-3 small"
                                                                                 style="background: #f1f5f9; line-height: 1.75; color: #334155; max-height: 380px; overflow-y: auto;">
@@ -996,128 +1143,9 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-
-                                                                <!-- Canto 2: Parashá Vayetze Infantil -->
-                                                                <div class="col-lg-6">
-                                                                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white"
-                                                                        style="border: 2px solid #fde68a !important;">
-                                                                        <div class="card-header border-0 py-3 px-4 d-flex align-items-center justify-content-between"
-                                                                            style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff;">
-                                                                            <div class="d-flex align-items-center gap-2">
-                                                                                <i class="bi bi-disc-fill fs-5"></i>
-                                                                                <h5 class="fw-bold mb-0 text-white">Parashá Vayetze</h5>
-                                                                            </div>
-                                                                            <span class="badge bg-white text-dark rounded-pill px-3 py-1 fw-bold shadow-sm" style="font-size: 0.8rem;">
-                                                                                Alabanza Infantil
-                                                                            </span>
-                                                                        </div>
-                                                                        <div class="card-body p-4 d-flex flex-column justify-content-between">
-                                                                            <div>
-                                                                                <div class="text-center p-3 mb-3 rounded-4"
-                                                                                    style="background: #fffbeb; border: 2px dashed #f59e0b;">
-                                                                                    <div class="display-6 fw-bold mb-1"
-                                                                                        style="color: #b45309; font-family: serif;">
-                                                                                        וַיֵּצֵא · Vayetze
-                                                                                    </div>
-                                                                                    <p class="small text-muted mb-3">
-                                                                                        El sueño de la escalera de Jacob y la promesa eterna de YHWH:
-                                                                                    </p>
-
-                                                                                    <div class="d-flex flex-column align-items-center justify-content-center gap-2 mb-2">
-                                                                                        <button type="button"
-                                                                                            id="btnPlayVayetzeAudio"
-                                                                                            class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2"
-                                                                                            onclick="toggleAudioVayetze()">
-                                                                                            <i class="bi bi-play-circle-fill fs-5 text-dark"
-                                                                                                id="iconPlayVayetzeAudio"></i>
-                                                                                            <span id="txtPlayVayetzeAudio">Escuchar Canto Vayetze</span>
-                                                                                        </button>
-                                                                                        <audio id="audioVayetzeServer"
-                                                                                            src="/uploads/audios/1795325844510-789160532.mpeg"
-                                                                                            preload="metadata" controls
-                                                                                            class="w-100 mt-2 rounded-pill semillas-kid-audio"
-                                                                                            data-track-id="6"
-                                                                                            style="max-width: 420px; height: 40px;">
-                                                                                            <source src="/uploads/audios/1795325844510-789160532.mpeg" type="audio/mpeg">
-                                                                                            <source src="/uploads/audios/1795325844510-789160532.mpeg">
-                                                                                        </audio>
-                                                                                    </div>
-                                                                                    <a href="/uploads/audios/1795325844510-789160532.mpeg" download="Parasha-Vayetze.mp3"
-                                                                                        class="btn btn-sm btn-link text-decoration-none text-muted">
-                                                                                        <i class="bi bi-download me-1"></i> Descargar MP3
-                                                                                    </a>
-                                                                                </div>
-
-                                                                                <div class="d-flex align-items-center justify-content-between mb-2">
-                                                                                    <h6 class="fw-bold text-dark mb-0">
-                                                                                        <i class="bi bi-card-text me-1 text-warning"></i> Letra para cantar juntos:
-                                                                                    </h6>
-                                                                                    <span class="badge bg-warning bg-opacity-25 text-dark border border-warning rounded-pill px-2 py-1 small fw-bold">
-                                                                                        Canción completa
-                                                                                    </span>
-                                                                                </div>
-                                                                                <div id="letraVayetzeContainer"
-                                                                                    class="p-3 rounded-3 small"
-                                                                                    style="background: #f8fafc; line-height: 1.85; color: #334155; max-height: 380px; overflow-y: auto; border: 1px solid #e2e8f0;">
-                                                                                    <div class="mb-3 pb-2 border-bottom border-secondary border-opacity-10">
-                                                                                        <span class="badge bg-warning text-dark mb-1">Porción Semanal Vayetze</span><br>
-                                                                                        <strong>Génesis 28:10 - 32:3</strong> · Letra Original del Cántico Infantil
-                                                                                    </div>
-                                                                                    <div class="mb-3 pb-2 border-bottom border-secondary border-opacity-10">
-                                                                                        <span class="badge bg-primary mb-1">Estrofa 1 · El Sueño de la Escalera</span><br>
-                                                                                        Yaakov salió de viaje con su bastón,<br>
-                                                                                        buscó una piedrita y allí se durmió,<br>
-                                                                                        soñó una escalera muy alta al cielo y<br>
-                                                                                        ángeles subiendo con mucho esplendor.
-                                                                                    </div>
-                                                                                    <div class="mb-3 p-2 rounded-3"
-                                                                                        style="background: #fef3c7; border-left: 3px solid #f59e0b;">
-                                                                                        <span class="badge bg-warning text-dark mb-1">Coro</span><br>
-                                                                                        <strong>¡Vayeitzei! Yaakov salió,<br>
-                                                                                        y Dios en sueños lo cuidó.<br>
-                                                                                        Suben y bajan, ¡qué gran emoción!<br>
-                                                                                        con mucha alegría en el corazón.</strong> 🎶
-                                                                                    </div>
-                                                                                    <div class="mb-3 pb-2 border-bottom border-secondary border-opacity-10">
-                                                                                        <span class="badge bg-primary mb-1">Estrofa 2 · En el Pozo con Rajel y Lea</span><br>
-                                                                                        Llegó hasta el pozo, la piedra movió,<br>
-                                                                                        conoció a Rajel y también a Lea,<br>
-                                                                                        trabajó con ganas, con fe y con amor,<br>
-                                                                                        y una gran familia Dios le regaló.
-                                                                                    </div>
-                                                                                    <div class="mb-3 p-2 rounded-3"
-                                                                                        style="background: #fef3c7; border-left: 3px solid #f59e0b;">
-                                                                                        <span class="badge bg-warning text-dark mb-1">Coro</span><br>
-                                                                                        <strong>¡Vayeitzei! Yaakov salió,<br>
-                                                                                        y Dios en sueños lo cuidó.<br>
-                                                                                        Suben y bajan, ¡qué gran emoción!<br>
-                                                                                        con mucha alegría en el corazón.</strong> 🎶
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <span class="badge bg-success mb-1">Estrofa 3 · Regreso en Bendición</span><br>
-                                                                                        Con hijos y ovejas volvió a su hogar,<br>
-                                                                                        dando muchas gracias sin parar de cantar.<br>
-                                                                                        <em>¡Semillas de Torah te invita a estudiar!</em> 🐑🌾<br><br>
-                                                                                        <strong>Yaakov salió... (¡salió!)<br>
-                                                                                        Y Dios en sueños lo cuidó.</strong> ✨
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-
-                                                                            <div class="pt-3 mt-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-2">
-                                                                                <span class="small text-muted">
-                                                                                    <i class="bi bi-mic me-1"></i> Semillas de Torah
-                                                                                </span>
-                                                                                <a href="/uploads/audios/1795325844510-789160532.mpeg" download="Parasha-Vayetze.mp3"
-                                                                                    class="btn btn-sm btn-outline-warning text-dark fw-bold rounded-pill px-3 shadow-sm">
-                                                                                    <i class="bi bi-download me-1"></i> Descargar MP3
-                                                                                </a>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
                                                             </div>
                                                         </div>
+                                                    </div>
 
                                                         <!-- 3. MINI-JUEGO INTERACTIVO: "¿QUÉ LETRA ES?" -->
                                                         <div id="seccion-juego-alefbet" class="mb-5 pt-3">
@@ -5258,7 +5286,9 @@
 
                     if (window.location.hash === '#parasha-infantil' || window.location.hash === '#pane-parasha-infantil') {
                         activarTabParashaInfantil();
-                    } else if (window.location.hash === '#alef-bet' || window.location.hash === '#alefbet' || window.location.hash === '#pane-alefbet' || window.location.hash === '#seccion-cantos-alefbet') {
+                    } else if (window.location.hash === '#reuniones-shabat' || window.location.hash === '#reuniones' || window.location.hash === '#pane-reuniones-shabat') {
+                        activarTabReunionesShabat();
+                    } else if (window.location.hash === '#alef-bet' || window.location.hash === '#alefbet' || window.location.hash === '#pane-alefbet' || window.location.hash === '#seccion-cantos-alefbet' || window.location.hash === '#seccion-canto-alefbet') {
                         activarTabAlefBet();
                     } else if (window.location.hash === '#manualidades' || window.location.hash === '#dibujos' || window.location.hash === '#pane-manualidades') {
                         activarTabManualidades();
@@ -5361,6 +5391,28 @@
                     }
                     const seccion = document.getElementById('actividades-seccion');
                     if (seccion) seccion.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+
+                function activarTabReunionesShabat() {
+                    const tabBtn = document.getElementById('tab-reuniones-shabat');
+                    if (tabBtn && typeof bootstrap !== 'undefined') {
+                        const tab = new bootstrap.Tab(tabBtn);
+                        tab.show();
+                    } else if (tabBtn) {
+                        tabBtn.click();
+                    }
+                    const seccion = document.getElementById('actividades-seccion');
+                    if (seccion) seccion.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+
+                function compartirReunionShabat(titulo, url) {
+                    const texto = '🏫 ¡Mira esta Reunión de Niños de Shabat en Semillas de Torah: ' + titulo + '!';
+                    if (navigator.share) {
+                        navigator.share({ title: titulo, text: texto, url: url }).catch(function () { });
+                    } else {
+                        const waUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(texto + ' ' + url);
+                        window.open(waUrl, '_blank');
+                    }
                 }
             </script>
 
