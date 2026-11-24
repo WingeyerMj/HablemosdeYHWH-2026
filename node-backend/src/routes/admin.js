@@ -71,6 +71,7 @@ router.use(async (req, res, next) => {
         else if (path.includes('/torah-viviente-descargas')) res.locals.activePage = 'torah-viviente-descargas';
         else if (path.includes('/parashot-infantiles')) res.locals.activePage = 'parashot-infantiles';
         else if (path.includes('/semillas-manualidades')) res.locals.activePage = 'semillas-manualidades';
+        else if (path.includes('/reuniones-shabat-ninos')) res.locals.activePage = 'reuniones-shabat-ninos';
         else if (path.includes('/musica')) res.locals.activePage = 'musica';
 
         try {
@@ -304,6 +305,14 @@ router.post('/musica/update', isAuthenticated, upload.any(), adminController.upd
 router.post('/musica/toggle/:id', isAuthenticated, adminController.toggleMusicTrack);
 router.post('/musica/toggle-autoplay/:id', isAuthenticated, adminController.toggleMusicAutoPlaylist);
 router.post('/musica/delete/:id', isAuthenticated, adminController.deleteMusicTrack);
+
+// Reuniones de Shabat con Niños (Semillas de Torah)
+router.get('/reuniones-shabat-ninos', isAuthenticated, adminController.reunionesShabatNinosPage);
+router.post('/reuniones-shabat-ninos/create', isAuthenticated, upload.any(), adminController.createReunionShabatNinos);
+router.get('/reuniones-shabat-ninos/edit/:id', isAuthenticated, adminController.editReunionShabatNinosPage);
+router.post('/reuniones-shabat-ninos/update', isAuthenticated, upload.any(), adminController.updateReunionShabatNinos);
+router.post('/reuniones-shabat-ninos/toggle/:id', isAuthenticated, adminController.toggleReunionShabatNinos);
+router.post('/reuniones-shabat-ninos/delete/:id', isAuthenticated, adminController.deleteReunionShabatNinos);
 
 module.exports = router;
 

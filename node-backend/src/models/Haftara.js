@@ -290,8 +290,8 @@ class Haftara {
             )
             WHERE h.is_published = TRUE 
             ORDER BY 
-                (COALESCE(h.cycle_name, p.cycle_name, p_match.cycle_name, '') LIKE '%2026 - 2027%' OR COALESCE(p.parasha_number, p_match.parasha_number, 0) = 1) DESC,
-                h.updated_at DESC, 
+                (COALESCE(h.cycle_name, p.cycle_name, p_match.cycle_name, '') LIKE '%2026 - 2027%') DESC,
+                h.created_at DESC, 
                 h.id DESC 
             LIMIT ?
         `, [limit]);

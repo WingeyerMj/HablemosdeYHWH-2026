@@ -3881,6 +3881,191 @@ const adminController = {
             console.error('Error deleteMusicTrack:', error);
             res.redirect('/admin/musica?error=' + encodeURIComponent(error.message));
         }
+    },
+
+    reunionesShabatNinosPage: async (req, res) => {
+        try {
+            const ReunionShabatNinos = require('../models/ReunionShabatNinos');
+            const Parasha = require('../models/Parasha');
+            const ParashaInfantil = require('../models/ParashaInfantil');
+
+            const items = await ReunionShabatNinos.getAll();
+            const parashot = await Parasha.getAllAsc();
+            const parashotInfantiles = await ParashaInfantil.getAll();
+
+            res.render('admin/reuniones_shabat_ninos', {
+                layout: 'admin/layout',
+                activePage: 'reuniones-shabat-ninos',
+                items,
+                parashot,
+                parashotInfantiles,
+                msg: req.query.msg || null,
+                error: req.query.error || null
+            });
+        } catch (error) {
+            console.error('Error reunionesShabatNinosPage:', error);
+            res.status(500).send('Error interno cargando Reuniones de Shabat: ' + error.message);
+        }
+    },
+
+    createReunionShabatNinos: async (req, res) => {
+        try {
+            let {
+                parasha_id,
+                parasha_infantil_id,
+                title,
+                meeting_date,
+                cycle_name,
+                youtube_link,
+                video_file,
+                pdf_file,
+                cover_image,
+                teachers,
+                description,
+                is_published
+            } = req.body;
+
+            if (req.files && req.files.length > 0) {
+                const filesList = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
+                for (const f of filesList) {
+                    if (f.fieldname === 'video_file' || (f.mimetype && f.mimetype.startsWith('video/'))) {
+                        video_file = '/uploads/videos/' + f.filename;
+                    } else if (f.fieldname === 'pdf_file' || f.fieldname === 'pdf_upload' || f.mimetype === 'application/pdf' || /\.pdf$/i.test(f.originalname || '')) {
+                        pdf_file = '/uploads/pdf/' + f.filename;
+                    } else if (f.fieldname === 'cover_image_file' || (f.mimetype && f.mimetype.startsWith('image/'))) {
+                        cover_image = '/uploads/semillas/' + f.filename;
+                    }
+                }
+            }
+
+            if (!title || !title.trim()) {
+                return res.redirect('/admin/reuniones-shabat-ninos?error=' + encodeURIComponent('El título de la reunión es obligatorio.'));
+            }
+
+            const ReunionShabatNinos = require('../models/ReunionShabatNinos');
+            await ReunionShabatNinos.create({
+                parasha_id: parasha_id ? parseInt(parasha_id, 10) : null,
+                parasha_infantil_id: parasha_infantil_id ? parseInt(parasha_infantil_id, 10) : null,
+                title: title.trim(),
+                meeting_date: meeting_date || null,
+                cycle_name: cycle_name || 'Ciclo 2026 - 2027',
+                youtube_link: youtube_link ? youtube_link.trim() : null,
+                video_file: video_file || null,
+                pdf_file: pdf_file || null,
+                cover_image: cover_image || null,
+                teachers: teachers ? teachers.trim() : null,
+                description: description ? description.trim() : null,
+                is_published: is_published === '1' || is_published === true || is_published === 'on'
+            });
+
+            res.redirect('/admin/reuniones-shabat-ninos?msg=' + encodeURIComponent('Reunión de Shabat para niños cargada exitosamente.'));
+        } catch (error) {
+            console.error('Error createReunionShabatNinos:', error);
+            res.redirect('/admin/reuniones-shabat-ninos?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    editReunionShabatNinosPage: async (req, res) => {
+        try {
+            const ReunionShabatNinos = require('../models/ReunionShabatNinos');
+            const Parasha = require('../models/Parasha');
+            const ParashaInfantil = require('../models/ParashaInfantil');
+
+            const item = await ReunionShabatNinos.getById(req.params.id);
+            if (!item) return res.redirect('/admin/reuniones-shabat-ninos');
+
+            const parashot = await Parasha.getAllAsc();
+            const parashotInfantiles = await ParashaInfantil.getAll();
+
+            res.render('admin/edit_reunion_shabat_ninos', {
+                layout: 'admin/layout',
+                activePage: 'reuniones-shabat-ninos',
+                item,
+                parashot,
+                parashotInfantiles,
+                msg: req.query.msg || null,
+                error: req.query.error || null
+            });
+        } catch (error) {
+            console.error('Error editReunionShabatNinosPage:', error);
+            res.redirect('/admin/reuniones-shabat-ninos');
+        }
+    },
+
+    updateReunionShabatNinos: async (req, res) => {
+        try {
+            let {
+                id,
+                parasha_id,
+                parasha_infantil_id,
+                title,
+                meeting_date,
+                cycle_name,
+                youtube_link,
+                video_file,
+                pdf_file,
+                cover_image,
+                teachers,
+                description,
+                is_published
+            } = req.body;
+
+            if (req.files && req.files.length > 0) {
+                const filesList = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
+                for (const f of filesList) {
+                    if (f.fieldname === 'video_file' || (f.mimetype && f.mimetype.startsWith('video/'))) {
+                        video_file = '/uploads/videos/' + f.filename;
+                    } else if (f.fieldname === 'pdf_file' || f.fieldname === 'pdf_upload' || f.mimetype === 'application/pdf' || /\.pdf$/i.test(f.originalname || '')) {
+                        pdf_file = '/uploads/pdf/' + f.filename;
+                    } else if (f.fieldname === 'cover_image_file' || (f.mimetype && f.mimetype.startsWith('image/'))) {
+                        cover_image = '/uploads/semillas/' + f.filename;
+                    }
+                }
+            }
+
+            const ReunionShabatNinos = require('../models/ReunionShabatNinos');
+            await ReunionShabatNinos.update(id, {
+                parasha_id: parasha_id ? parseInt(parasha_id, 10) : null,
+                parasha_infantil_id: parasha_infantil_id ? parseInt(parasha_infantil_id, 10) : null,
+                title: title.trim(),
+                meeting_date: meeting_date || null,
+                cycle_name: cycle_name || 'Ciclo 2026 - 2027',
+                youtube_link: youtube_link ? youtube_link.trim() : null,
+                video_file: video_file || null,
+                pdf_file: pdf_file || null,
+                cover_image: cover_image || null,
+                teachers: teachers ? teachers.trim() : null,
+                description: description ? description.trim() : null,
+                is_published: is_published === '1' || is_published === true || is_published === 'on'
+            });
+
+            res.redirect('/admin/reuniones-shabat-ninos?msg=' + encodeURIComponent('Reunión de Shabat actualizada exitosamente.'));
+        } catch (error) {
+            console.error('Error updateReunionShabatNinos:', error);
+            res.redirect('/admin/reuniones-shabat-ninos?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    toggleReunionShabatNinos: async (req, res) => {
+        try {
+            const ReunionShabatNinos = require('../models/ReunionShabatNinos');
+            await ReunionShabatNinos.togglePublish(req.params.id);
+            res.redirect('/admin/reuniones-shabat-ninos?msg=' + encodeURIComponent('Estado de publicación actualizado.'));
+        } catch (error) {
+            console.error('Error toggleReunionShabatNinos:', error);
+            res.redirect('/admin/reuniones-shabat-ninos?error=' + encodeURIComponent(error.message));
+        }
+    },
+
+    deleteReunionShabatNinos: async (req, res) => {
+        try {
+            const ReunionShabatNinos = require('../models/ReunionShabatNinos');
+            await ReunionShabatNinos.delete(req.params.id);
+            res.redirect('/admin/reuniones-shabat-ninos?msg=' + encodeURIComponent('Reunión eliminada correctamente.'));
+        } catch (error) {
+            console.error('Error deleteReunionShabatNinos:', error);
+            res.redirect('/admin/reuniones-shabat-ninos?error=' + encodeURIComponent(error.message));
+        }
     }
 };
 

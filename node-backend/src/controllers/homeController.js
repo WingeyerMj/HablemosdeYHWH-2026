@@ -684,6 +684,7 @@ const homeController = {
             const ParashaInfantil = require('../models/ParashaInfantil');
             const SemillasManualidad = require('../models/SemillasManualidad');
             const MusicTrack = require('../models/MusicTrack');
+            const ReunionShabatNinos = require('../models/ReunionShabatNinos');
             
             let items = [];
             let shorts = [];
@@ -694,6 +695,7 @@ const homeController = {
             let manualidadesFiestas = [];
             let sugerenciasEncargadas = [];
             let cancionesInfantiles = [];
+            let reunionesShabat = [];
 
             try { items = await SemillasTorah.getPublished(); } catch(e) { items = []; }
             try { shorts = await SemillasShort.getPublished(); } catch(e) { shorts = []; }
@@ -704,6 +706,7 @@ const homeController = {
             try { manualidadesFiestas = await SemillasManualidad.getFeastCrafts(); } catch(e) { manualidadesFiestas = []; }
             try { sugerenciasEncargadas = await SemillasManualidad.getSuggestions(); } catch(e) { sugerenciasEncargadas = []; }
             try { cancionesInfantiles = await MusicTrack.getBySection('semillas'); } catch(e) { cancionesInfantiles = []; }
+            try { reunionesShabat = await ReunionShabatNinos.getPublished(); } catch(e) { reunionesShabat = []; }
 
             res.render('semillas_torah', {
                 title: 'Semillas de Torah - Ministerio Infantil - Hablemos de YHWH',
@@ -717,6 +720,7 @@ const homeController = {
                 manualidadesFiestas,
                 sugerenciasEncargadas,
                 cancionesInfantiles,
+                reunionesShabat,
                 msg: req.query.msg || null,
                 error: req.query.error || null,
                 layout: false

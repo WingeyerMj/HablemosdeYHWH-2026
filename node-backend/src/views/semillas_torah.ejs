@@ -205,6 +205,24 @@
                                     </span>
                                 </button>
                             </li>
+                            <!-- Tab: Reuniones de Niños de Shabat (Clases & Diapositivas) -->
+                            <li class="nav-item" role="presentation">
+                                <button
+                                    class="nav-link px-4 py-3 fw-bold d-flex align-items-center gap-2 shadow-sm semillas-tab-btn"
+                                    id="tab-reuniones-shabat" data-bs-toggle="pill"
+                                    data-bs-target="#pane-reuniones-shabat" type="button" role="tab"
+                                    style="border-radius: 16px; border: 2px solid #f97316; font-size: 1rem; transition: all 0.3s ease;">
+                                    <span class="tab-btn-title">
+                                        <i class="bi bi-camera-video-fill fs-5 text-warning"></i>
+                                        Reuniones de Shabat con Niños
+                                    </span>
+                                    <span class="badge rounded-pill"
+                                        style="background: linear-gradient(135deg, #ea580c, #c2410c); color: #fff; font-size: 0.75rem;">
+                                        <%= (typeof reunionesShabat !=='undefined' && reunionesShabat) ?
+                                            reunionesShabat.length : 0 %> 🏫 Clases & Diapositivas
+                                    </span>
+                                </button>
+                            </li>
                             <!-- Tab 2: Canciones y Alabanzas Infantiles (SECCIÓN INDIVIDUAL) -->
                             <li class="nav-item" role="presentation">
                                 <button
@@ -236,7 +254,7 @@
                                     </span>
                                     <span class="badge rounded-pill"
                                         style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; font-size: 0.75rem;">
-                                        ✨ 22 Letras · Cantos · Juegos
+                                        ✨ 22 Letras · Canción del Alefato · Juegos
                                     </span>
                                 </button>
                             </li>
@@ -663,10 +681,10 @@
                                                                             <i class="bi bi-grid-3x3-gap-fill"></i>
                                                                             Explorar las 22 Letras
                                                                         </a>
-                                                                        <a href="#seccion-cantos-alefbet"
+                                                                        <a href="#seccion-canto-alefbet"
                                                                             class="btn btn-warning text-dark rounded-pill px-4 py-2 fw-bold d-inline-flex align-items-center gap-2 shadow-sm">
                                                                             <i class="bi bi-music-note-beamed"></i>
-                                                                            Cantos Infantiles
+                                                                            Canción del Alefato
                                                                         </a>
                                                                         <a href="#seccion-juego-alefbet"
                                                                             class="btn btn-success text-white rounded-pill px-4 py-2 fw-bold d-inline-flex align-items-center gap-2 shadow-sm">

@@ -1,0 +1,172 @@
+<!-- Sidebar -->
+<%- include('partials/_sidebar') %>
+
+<main class="col-md-10 main-content">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h1 class="text-white fw-bold mb-1">
+                <i class="bi bi-pencil-square me-2 text-warning"></i>Editar Reunión de Shabat (Niños)
+            </h1>
+            <p class="text-white-50 mb-0">Modifica los detalles, video o diapositivas vinculadas de esta reunión.</p>
+        </div>
+        <div>
+            <a href="/admin/reuniones-shabat-ninos" class="btn btn-outline-light">
+                <i class="bi bi-arrow-left me-1"></i> Volver a la Lista
+            </a>
+        </div>
+    </div>
+
+    <% if (typeof msg !== 'undefined' && msg) { %>
+        <div class="alert alert-success border border-success d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-check-circle-fill me-2"></i><%= msg %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger border border-danger d-flex align-items-center justify-content-between mb-4">
+            <div><i class="bi bi-exclamation-triangle-fill me-2"></i><%= error %></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <div class="card bg-dark border-secondary rounded-4 shadow-sm p-4 p-md-5">
+        <form action="/admin/reuniones-shabat-ninos/update" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="id" value="<%= item.id %>">
+            
+            <div class="row g-4">
+                <!-- Título -->
+                <div class="col-12">
+                    <label class="form-label text-warning fw-bold">Título de la Reunión / Clase *</label>
+                    <input type="text" name="title" class="form-control bg-dark text-white border-secondary" value="<%= item.title %>" required>
+                </div>
+
+                <!-- Fecha y Ciclo -->
+                <div class="col-md-6">
+                    <label class="form-label text-white fw-bold">Fecha del Shabat</label>
+                    <% 
+                        let formattedDate = '';
+                        if (item.meeting_date) {
+                            const d = new Date(item.meeting_date);
+                            formattedDate = d.toISOString().split('T')[0];
+                        }
+                    %>
+                    <input type="date" name="meeting_date" class="form-control bg-dark text-white border-secondary" value="<%= formattedDate %>">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-white fw-bold">Ciclo de Torá</label>
+                    <input type="text" name="cycle_name" class="form-control bg-dark text-white border-secondary" value="<%= item.cycle_name || 'Ciclo 2026 - 2027' %>">
+                </div>
+
+                <!-- Vinculación con Parashá -->
+                <div class="col-md-6">
+                    <label class="form-label text-warning fw-bold">
+                        <i class="bi bi-bookmark-fill me-1"></i>Vincular con Parashá de la Semana
+                    </label>
+                    <select name="parasha_id" class="form-select bg-dark text-white border-secondary">
+                        <option value="">-- Sin vincular a Parashá (Opcional) --</option>
+                        <% if (typeof parashot !== 'undefined' && parashot) { %>
+                            <% parashot.forEach(p => { %>
+                                <option value="<%= p.id %>" <%= item.parasha_id === p.id ? 'selected' : '' %>>
+                                    #<%= p.parasha_number %> - <%= p.title %> (<%= p.subtitle || '' %>)
+                                </option>
+                            <% }) %>
+                        <% } %>
+                    </select>
+                </div>
+
+                <!-- Vinculación con Diapositivas (Parashá Infantil PDF) -->
+                <div class="col-md-6">
+                    <label class="form-label text-warning fw-bold">
+                        <i class="bi bi-file-earmark-pdf-fill me-1 text-danger"></i>Vincular Diapositivas de la Clase (PDF)
+                    </label>
+                    <select name="parasha_infantil_id" class="form-select bg-dark text-white border-secondary">
+                        <option value="">-- Vincular automáticamente por Parashá --</option>
+                        <% if (typeof parashotInfantiles !== 'undefined' && parashotInfantiles) { %>
+                            <% parashotInfantiles.forEach(pi => { %>
+                                <option value="<%= pi.id %>" <%= item.parasha_infantil_id === pi.id ? 'selected' : '' %>>
+                                    📄 <%= pi.title %> (#<%= pi.parasha_number || '' %>)
+                                </option>
+                            <% }) %>
+                        <% } %>
+                    </select>
+                </div>
+
+                <!-- Video YouTube -->
+                <div class="col-md-7">
+                    <label class="form-label text-white fw-bold">
+                        <i class="bi bi-youtube me-1 text-danger"></i>Enlace de YouTube de la Reunión
+                    </label>
+                    <input type="url" name="youtube_link" class="form-control bg-dark text-white border-secondary" value="<%= item.youtube_link || '' %>" placeholder="https://www.youtube.com/watch?v=...">
+                    <% if (item.youtube_link) { %>
+                        <div class="mt-2">
+                            <a href="<%= item.youtube_link %>" target="_blank" class="small text-info text-decoration-none">
+                                <i class="bi bi-box-arrow-up-right me-1"></i> Probar enlace de YouTube
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- O subir video MP4 -->
+                <div class="col-md-5">
+                    <label class="form-label text-white fw-bold">O subir nuevo archivo de video (MP4/WebM)</label>
+                    <input type="file" name="video_file" class="form-control bg-dark text-white border-secondary" accept="video/*">
+                    <% if (item.video_file) { %>
+                        <div class="mt-2 small text-success">
+                            <i class="bi bi-check-circle-fill me-1"></i> Video actual: <%= item.video_file %>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- O subir PDF propio de diapositivas -->
+                <div class="col-md-6">
+                    <label class="form-label text-white fw-bold">
+                        <i class="bi bi-cloud-arrow-up-fill me-1 text-info"></i>O subir archivo PDF propio de Diapositivas
+                    </label>
+                    <input type="file" name="pdf_file" class="form-control bg-dark text-white border-secondary" accept=".pdf">
+                    <% if (item.pdf_file) { %>
+                        <div class="mt-2">
+                            <a href="<%= item.pdf_file %>" target="_blank" class="small text-warning text-decoration-none">
+                                <i class="bi bi-file-earmark-pdf-fill me-1"></i> Ver PDF personalizado actual
+                            </a>
+                        </div>
+                    <% } else if (item.parasha_infantil_pdf) { %>
+                        <div class="mt-2">
+                            <a href="<%= item.parasha_infantil_pdf %>" target="_blank" class="small text-warning text-decoration-none">
+                                <i class="bi bi-file-earmark-pdf-fill me-1"></i> Ver Diapositivas vinculadas de la Parashá
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Maestras / Expositores -->
+                <div class="col-md-6">
+                    <label class="form-label text-white fw-bold">Maestras / Expositores</label>
+                    <input type="text" name="teachers" class="form-control bg-dark text-white border-secondary" value="<%= item.teachers || '' %>" placeholder="Ej: Marcela Wingeyer / Equipo Semillas">
+                </div>
+
+                <!-- Descripción -->
+                <div class="col-12">
+                    <label class="form-label text-white fw-bold">Descripción / Temas de la Clase</label>
+                    <textarea name="description" rows="4" class="form-control bg-dark text-white border-secondary"><%= item.description || '' %></textarea>
+                </div>
+
+                <!-- Estado publicado -->
+                <div class="col-12">
+                    <div class="form-check form-switch mt-2">
+                        <input class="form-check-input" type="checkbox" name="is_published" id="editIsPublished" value="1" <%= item.is_published ? 'checked' : '' %>>
+                        <label class="form-check-label text-white fw-bold" for="editIsPublished">Publicar en Semillas de Torah</label>
+                    </div>
+                </div>
+
+                <!-- Botones de guardar -->
+                <div class="col-12 d-flex justify-content-end gap-2 pt-3 border-top border-secondary">
+                    <a href="/admin/reuniones-shabat-ninos" class="btn btn-outline-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-warning text-dark fw-bold px-4">
+                        <i class="bi bi-check-circle-fill me-1"></i> Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>

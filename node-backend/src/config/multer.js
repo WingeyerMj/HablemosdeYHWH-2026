@@ -80,6 +80,9 @@ base = '../../public/uploads/';
 } else if (req.originalUrl.includes('/entity')) {
     folder = 'entity';
     base = '../../public/uploads/';
+} else if (req.originalUrl.includes('/reuniones-shabat-ninos')) {
+    folder = 'semillas';
+    base = '../../public/uploads/';
 }
 
 if (file.fieldname === 'seder_image') {
