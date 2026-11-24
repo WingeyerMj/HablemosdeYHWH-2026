@@ -845,6 +845,9 @@ const adminController = {
                 if (req.files['audio_file'] && req.files['audio_file'][0]) {
                     audio_url = '/uploads/audios/' + req.files['audio_file'][0].filename;
                 }
+                if (req.files['pdf_file'] && req.files['pdf_file'][0]) {
+                    pdf_url = '/uploads/pdf/' + req.files['pdf_file'][0].filename;
+                }
             } else if (req.file) {
                 image_url = '/uploads/haftara/' + req.file.filename;
             }

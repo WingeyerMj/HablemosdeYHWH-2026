@@ -146,7 +146,17 @@
                                                 </div>
                                             <% } %>
                                             <div class="p-3 text-center bg-light border-top d-flex justify-content-between align-items-center flex-wrap gap-2">
-                                                <span class="fw-semibold text-dark"><i class="bi bi-youtube text-danger me-1"></i> Video de la Haftará</span>
+                                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                    <span class="fw-semibold text-dark"><i class="bi bi-youtube text-danger me-1"></i> Video de la Haftará</span>
+                                                    <% if (haftara.pdf_url && haftara.pdf_url.trim() !== '') { %>
+                                                        <a href="<%= haftara.pdf_url %>" download class="btn btn-sm btn-danger rounded-pill px-3 py-1 fw-bold d-inline-flex align-items-center gap-1 shadow-sm" style="background-color: #dc2626; border: none;">
+                                                            <i class="bi bi-file-earmark-pdf-fill"></i> Descargar Diapositivas (PDF)
+                                                        </a>
+                                                        <a href="<%= haftara.pdf_url %>" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1 fw-bold d-inline-flex align-items-center gap-1">
+                                                            <i class="bi bi-eye"></i> Ver PDF
+                                                        </a>
+                                                    <% } %>
+                                                </div>
                                                 <a href="<%= haftara.youtube_link %>" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-danger rounded-pill px-4 py-2 fw-bold d-inline-flex align-items-center gap-2" style="background-color: #ff0000; border: none;">
                                                     <i class="bi bi-box-arrow-up-right"></i> Abrir en YouTube
                                                 </a>
@@ -185,21 +195,21 @@
                                                     </div>
                                                     <div>
                                                         <div class="d-flex align-items-center gap-2 mb-1">
-                                                            <h5 class="fw-bold mb-0" style="color: #991b1b;">Presentación del Estudio en PDF</h5>
-                                                            <span class="badge bg-danger rounded-pill px-2 py-1 small fw-bold">Diapositivas</span>
+                                                            <h5 class="fw-bold mb-0" style="color: #991b1b;">Presentación y Diapositivas del Estudio en PDF</h5>
+                                                            <span class="badge bg-danger rounded-pill px-2 py-1 small fw-bold">Diapositivas Oficiales</span>
                                                         </div>
-                                                        <p class="mb-0 text-muted small">Estudia las notas, bosquejos y diapositivas oficiales de esta porción profética.</p>
+                                                        <p class="mb-0 text-muted small">Descarga o visualiza las diapositivas y bosquejos oficiales de esta porción profética.</p>
                                                     </div>
                                                 </div>
                                                 <div class="d-flex flex-wrap gap-2">
-                                                    <a href="<%= haftara.pdf_url %>" target="_blank" rel="noopener noreferrer" 
+                                                    <a href="<%= haftara.pdf_url %>" download 
                                                        class="btn btn-danger rounded-pill px-4 py-2 fw-bold d-inline-flex align-items-center gap-2 shadow-sm"
                                                        style="background: #dc2626; border: none;">
-                                                        <i class="bi bi-eye-fill"></i> Ver PDF en Pantalla
+                                                        <i class="bi bi-download"></i> Descargar Diapositivas en PDF
                                                     </a>
-                                                    <a href="<%= haftara.pdf_url %>" download 
+                                                    <a href="<%= haftara.pdf_url %>" target="_blank" rel="noopener noreferrer" 
                                                        class="btn btn-outline-danger rounded-pill px-4 py-2 fw-bold d-inline-flex align-items-center gap-2 shadow-sm">
-                                                        <i class="bi bi-download"></i> Descargar PDF
+                                                        <i class="bi bi-eye-fill"></i> Ver en Pantalla
                                                     </a>
                                                 </div>
                                             </div>
@@ -296,6 +306,27 @@
                                                         <i class="bi bi-scroll text-warning me-1"></i> Servidor y expositor bíblico en la congregación.
                                                     </p>
                                                 </div>
+                                            </div>
+                                        <% } %>
+
+                                        <!-- Diapositivas en PDF en Sidebar -->
+                                        <% if (haftara.pdf_url && haftara.pdf_url.trim() !== '') { %>
+                                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 p-3 no-print" style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border-left: 5px solid #dc2626 !important; border: 1px solid #fca5a5;">
+                                                <div class="d-flex align-items-center gap-3 mb-3">
+                                                    <div class="rounded-circle p-2 d-flex align-items-center justify-content-center flex-shrink-0" style="background: #fee2e2; width: 44px; height: 44px;">
+                                                        <i class="bi bi-file-earmark-pdf-fill fs-3 text-danger"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="fw-bold mb-0 text-danger">Diapositivas de la Haftará</h6>
+                                                        <small class="text-muted">Presentación en PDF</small>
+                                                    </div>
+                                                </div>
+                                                <a href="<%= haftara.pdf_url %>" download class="btn btn-danger btn-sm rounded-pill fw-bold w-100 mb-2 shadow-sm" style="background: #dc2626; border: none;">
+                                                    <i class="bi bi-download me-1"></i> Descargar Diapositivas (PDF)
+                                                </a>
+                                                <a href="<%= haftara.pdf_url %>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-danger btn-sm rounded-pill fw-bold w-100">
+                                                    <i class="bi bi-eye me-1"></i> Ver en Pantalla
+                                                </a>
                                             </div>
                                         <% } %>
 
