@@ -445,7 +445,7 @@ class Haftara {
         try {
             return await db.query(
                 `INSERT INTO haftarot (parasha_id, title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, pdf_url, gain_db, author, author_role, author_img, authors, is_published, cycle_id, cycle_name) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     parsedParashaId,
                     title,
@@ -468,9 +468,10 @@ class Haftara {
                 ]
             );
         } catch (err) {
+            console.error('Error en INSERT completo de haftarot, intentando fallback:', err.message);
             return await db.query(
-                `INSERT INTO haftarot (title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, gain_db, author, author_role, author_img, is_published, cycle_id, cycle_name) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO haftarot (title, subtitle, parasha_reference, description, content, image_url, youtube_link, audio_url, pdf_url, gain_db, author, author_role, author_img, is_published, cycle_id, cycle_name) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     title,
                     subtitle || '',
@@ -554,6 +555,7 @@ class Haftara {
                     image_url || '',
                     youtube_link || '',
                     audio_url || '',
+                    pdf_url || null,
                     cleanGain,
                     primaryAuthor,
                     primaryRole,
@@ -564,6 +566,7 @@ class Haftara {
                 ]
             );
         } catch (err) {
+            console.error('Error en UPDATE completo de haftarot, intentando fallback:', err.message);
             return await db.query(
                 `UPDATE haftarot SET 
                     title = ?, 
@@ -574,6 +577,7 @@ class Haftara {
                     image_url = ?, 
                     youtube_link = ?, 
                     audio_url = ?, 
+                    pdf_url = ?, 
                     gain_db = ?, 
                     author = ?, 
                     author_role = ?, 
@@ -589,6 +593,7 @@ class Haftara {
                     image_url || '',
                     youtube_link || '',
                     audio_url || '',
+                    pdf_url || null,
                     cleanGain,
                     primaryAuthor,
                     primaryRole,

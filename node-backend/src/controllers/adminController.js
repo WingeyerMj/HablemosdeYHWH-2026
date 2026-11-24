@@ -803,10 +803,10 @@ const adminController = {
                 }).catch(e => console.warn('Aviso en notificación Haftará:', e.message));
             } catch(e) {}
 
-            res.redirect('/admin/dashboard#pills-haftara');
+            res.redirect('/admin/dashboard?msg=' + encodeURIComponent('Haftará guardada exitosamente.') + '#pills-haftara');
         } catch (error) {
             console.error('Error createHaftara:', error);
-            res.redirect('/admin/dashboard#pills-haftara');
+            res.redirect('/admin/dashboard?error=' + encodeURIComponent('Error al guardar Haftará: ' + error.message) + '#pills-haftara');
         }
     },
 
@@ -896,10 +896,10 @@ const adminController = {
                 }).catch(e => console.warn('Aviso en notificación Haftará (update):', e.message));
             } catch(e) {}
 
-            res.redirect('/admin/dashboard#pills-haftara');
+            res.redirect('/admin/dashboard?msg=' + encodeURIComponent('Haftará actualizada exitosamente.') + '#pills-haftara');
         } catch (error) {
             console.error('Error updateHaftara:', error);
-            res.redirect('/admin/dashboard#pills-haftara');
+            res.redirect('/admin/dashboard?error=' + encodeURIComponent('Error al actualizar Haftará: ' + error.message) + '#pills-haftara');
         }
     },
 

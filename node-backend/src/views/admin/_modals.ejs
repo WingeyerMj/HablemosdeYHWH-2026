@@ -2334,16 +2334,20 @@ const sederTitleEl = document.getElementById('edit_port_seder_title');
     };
     const cHafForm = document.getElementById('createHaftaraForm');
     if (cHafForm) cHafForm.onsubmit = function() {
-        serializeAuthors('create-haf-authors-container', 'create_haf_authors_json');
-        const inp = document.getElementById('createHaftaraContentInput');
-        if (inp && qHafCreate) inp.value = qHafCreate.root.innerHTML;
+        try { serializeAuthors('create-haf-authors-container', 'create_haf_authors_json'); } catch(e) { console.warn(e); }
+        try {
+            const inp = document.getElementById('createHaftaraContentInput');
+            if (inp && qHafCreate && qHafCreate.root) inp.value = qHafCreate.root.innerHTML;
+        } catch(e) { console.warn(e); }
         return true;
     };
     const eHafForm = document.getElementById('editHaftaraForm');
     if (eHafForm) eHafForm.onsubmit = function() {
-        serializeAuthors('edit-haf-authors-container', 'edit_haf_authors_json');
-        const inp = document.getElementById('editHaftaraContentInput');
-        if (inp && qHafEdit) inp.value = qHafEdit.root.innerHTML;
+        try { serializeAuthors('edit-haf-authors-container', 'edit_haf_authors_json'); } catch(e) { console.warn(e); }
+        try {
+            const inp = document.getElementById('editHaftaraContentInput');
+            if (inp && qHafEdit && qHafEdit.root) inp.value = qHafEdit.root.innerHTML;
+        } catch(e) { console.warn(e); }
         return true;
     };
     const cNoticiaForm = document.getElementById('createNoticiaForm');
