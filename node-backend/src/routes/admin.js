@@ -127,6 +127,11 @@ router.post('/aliyot/update_item', isAuthenticated, isAdmin, upload.fields([
     { name: 'audio_files', maxCount: 20 }
 ]), adminController.updateAliyahSingle);
 router.post('/aliyot/link', isAuthenticated, isAdmin, adminController.linkAliyahToParasha);
+router.post('/aliyot/reorder', isAuthenticated, isAdmin, adminController.reorderAliyot);
+router.post('/aliyot/move-single', isAuthenticated, isAdmin, adminController.moveAliyahSingle);
+router.post('/aliyot/move-to-position', isAuthenticated, isAdmin, adminController.moveAliyahToPosition);
+router.post('/aliyot/auto-organize', isAuthenticated, isAdmin, adminController.autoOrganizeAliyot);
+router.post('/aliyot/reset-order', isAuthenticated, isAdmin, adminController.resetAliyotToUploadOrder);
 router.post('/aliyot/delete-item/:id', isAuthenticated, isAdmin, adminController.deleteAliyahSingle);
 router.get('/aliyot/edit/:parashaId', isAuthenticated, isAdmin, adminController.editAliyotPage);
 router.post('/aliyot/save', isAuthenticated, isAdmin, upload.fields([

@@ -395,6 +395,7 @@ CREATE TABLE IF NOT EXISTS aliyot (
 
 ALTER TABLE aliyot ADD COLUMN IF NOT EXISTS content_hebrew LONGTEXT AFTER content;
 ALTER TABLE aliyot ADD COLUMN IF NOT EXISTS content_phonetic LONGTEXT AFTER content_hebrew;
+ALTER TABLE aliyot ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
 
 -- Asegurar índice único para las 54 Parashot del ciclo anual
 ALTER TABLE parashot ADD UNIQUE INDEX IF NOT EXISTS unique_parasha_num (parasha_number);

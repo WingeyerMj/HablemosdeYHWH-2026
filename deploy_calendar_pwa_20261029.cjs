@@ -15,6 +15,7 @@ if (!password) throw new Error('No se encontró la credencial SSH local configur
 
 const project = '/var/www/hablemos_yhwh';
 const files = [
+  'database.sql',
   'node-backend/app.js',
   'node-backend/src/models/PwaInstallation.js',
   'node-backend/src/models/Aliyah.js',
@@ -198,7 +199,7 @@ client.on('ready', async () => {
 
     // 3. Reemplazo atómico, verificación de sintaxis y reinicio
     const moves = files.map(f => `mv '${project}/${f}.codex-upload' '${project}/${f}'`).join('; ');
-    const result = await run(`set -e; ${moves}; cd '${project}/node-backend'; node --check app.js; node -e "require('./src/utils/calendarPwaAssets')"; node -e "Promise.all([require('./src/models/SemillasManualidad').ensureTable(), require('./src/models/MusicTrack').ensureTable(), require('./src/models/Haftara').ensureColumns()]).then(() => { console.log('TABLES_MIGRATION_OK'); process.exit(0); }).catch(e => { console.error(e); process.exit(1); })"; pm2 restart hablemos-web --update-env >/dev/null; sleep 3; curl -sS -o /dev/null -w 'SEMILLAS_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/semillas-de-torah'; curl -sS -o /dev/null -w 'AUDIO_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/assets/audio/alefato-hebreo.mp3'; curl -sS -o /dev/null -w 'CALENDAR_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/calendar'; echo DEPLOYMENT_SUCCESS`);
+    const result = await run(`set -e; ${moves}; cd '${project}/node-backend'; node --check app.js; node -e "require('./src/utils/calendarPwaAssets')"; node -e "Promise.all([require('./src/models/SemillasManualidad').ensureTable(), require('./src/models/MusicTrack').ensureTable(), require('./src/models/Haftara').ensureColumns(), require('./src/models/Aliyah').resetToUploadOrder()]).then(() => { console.log('TABLES_MIGRATION_OK'); process.exit(0); }).catch(e => { console.error(e); process.exit(1); })"; pm2 restart hablemos-web --update-env >/dev/null; sleep 3; curl -sS -o /dev/null -w 'SEMILLAS_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/semillas-de-torah'; curl -sS -o /dev/null -w 'AUDIO_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/assets/audio/alefato-hebreo.mp3'; curl -sS -o /dev/null -w 'CALENDAR_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/calendar'; curl -sS -o /dev/null -w 'ALIYOT_HTTP=%{http_code}\\n' 'https://hablemosdeyhwh.com/aliyot'; echo DEPLOYMENT_SUCCESS`);
     console.log(result.trim());
   } catch (error) {
     console.error(`DEPLOYMENT_ERROR=${error.message}`);

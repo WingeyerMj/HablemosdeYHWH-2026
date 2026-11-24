@@ -84,6 +84,127 @@ class Aliyah {
     }
 
     /**
+     * Asegurar que la columna sort_order exista y se encuentre inicializada
+     */
+    static async ensureColumns() {
+        try {
+            await db.query(`ALTER TABLE aliyot ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0`);
+            const [check] = await db.query('SELECT COUNT(*) as cnt FROM aliyot WHERE sort_order > 0');
+            if (check && check[0] && Number(check[0].cnt) === 0) {
+                await Aliyah.resetToUploadOrder();
+            }
+        } catch (e) {
+            console.warn('Aviso ensureColumns Aliyah:', e.message);
+        }
+    }
+
+    /**
+     * Restablecer el orden al orden cronológico original de subida (más recientes primero)
+     */
+    static async resetToUploadOrder() {
+        try {
+            const [rows] = await db.query('SELECT id FROM aliyot ORDER BY created_at DESC, id DESC');
+            if (rows && rows.length > 0) {
+                for (let i = 0; i < rows.length; i++) {
+                    await db.query('UPDATE aliyot SET sort_order = ? WHERE id = ?', [i + 1, rows[i].id]);
+                }
+            }
+            return true;
+        } catch (e) {
+            console.error('Error resetToUploadOrder:', e);
+            return false;
+        }
+    }
+
+    /**
+     * Reorganizar automáticamente todas las Aliyot agrupadas por Parashá y Día (1 a 7)
+     */
+    static async autoOrganizeByParasha() {
+        try {
+            const sql = `
+                SELECT a.id, a.aliyah_number, p.parasha_number, p.cycle_name
+                FROM aliyot a
+                LEFT JOIN parashot p ON a.parasha_id = p.id
+                ORDER BY 
+                    (COALESCE(p.cycle_name, '') LIKE '%2026 - 2027%' OR COALESCE(p.cycle_name, '') LIKE '%2026%') DESC,
+                    COALESCE(p.parasha_number, 0) DESC,
+                    a.aliyah_number ASC,
+                    a.id ASC
+            `;
+            const [rows] = await db.query(sql);
+            if (rows && rows.length > 0) {
+                for (let i = 0; i < rows.length; i++) {
+                    await db.query('UPDATE aliyot SET sort_order = ? WHERE id = ?', [i + 1, rows[i].id]);
+                }
+            }
+            return true;
+        } catch (e) {
+            console.error('Error autoOrganizeByParasha:', e);
+            return false;
+        }
+    }
+
+    /**
+     * Actualizar el orden secuencial (sort_order) a partir de una lista ordenada de IDs
+     */
+    static async updateSortOrder(orderedIds) {
+        if (!Array.isArray(orderedIds) || orderedIds.length === 0) return false;
+        for (let i = 0; i < orderedIds.length; i++) {
+            const id = parseInt(orderedIds[i], 10);
+            if (id) {
+                await db.query('UPDATE aliyot SET sort_order = ? WHERE id = ?', [i + 1, id]);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Mover una Aliyá individual hacia arriba o hacia abajo en la lista
+     */
+    static async moveSingle(aliyahId, direction) {
+        const id = parseInt(aliyahId, 10);
+        if (!id) return false;
+
+        const aliyot = await Aliyah.getAllWithParasha();
+        const index = aliyot.findIndex(a => a.id === id);
+        if (index === -1) return false;
+
+        const targetIndex = direction === 'up' ? index - 1 : index + 1;
+        if (targetIndex < 0 || targetIndex >= aliyot.length) return false;
+
+        // Intercambiar posiciones
+        const temp = aliyot[index];
+        aliyot[index] = aliyot[targetIndex];
+        aliyot[targetIndex] = temp;
+
+        const orderedIds = aliyot.map(a => a.id);
+        return await Aliyah.updateSortOrder(orderedIds);
+    }
+
+    /**
+     * Mover una Aliyá directamente a una posición numérica específica (1-based)
+     */
+    static async moveToPosition(aliyahId, targetPosition) {
+        const id = parseInt(aliyahId, 10);
+        let target = parseInt(targetPosition, 10) - 1;
+        if (!id || isNaN(target)) return false;
+
+        const aliyot = await Aliyah.getAllWithParasha();
+        const currentIndex = aliyot.findIndex(a => a.id === id);
+        if (currentIndex === -1) return false;
+
+        if (target < 0) target = 0;
+        if (target >= aliyot.length) target = aliyot.length - 1;
+        if (currentIndex === target) return true;
+
+        const [item] = aliyot.splice(currentIndex, 1);
+        aliyot.splice(target, 0, item);
+
+        const orderedIds = aliyot.map(a => a.id);
+        return await Aliyah.updateSortOrder(orderedIds);
+    }
+
+    /**
      * Obtener todas las Aliyot con datos de la Parashá y audios parseados
      */
     static async getAllWithParasha() {
@@ -97,7 +218,13 @@ class Aliyah {
                 COALESCE(p.cycle_name, 'Ciclo 2025 - 2026') as cycle_name
             FROM aliyot a
             LEFT JOIN parashot p ON a.parasha_id = p.id
-            ORDER BY a.created_at DESC, a.aliyah_number ASC
+            ORDER BY 
+                CASE 
+                    WHEN a.sort_order IS NOT NULL AND a.sort_order > 0 THEN a.sort_order 
+                    ELSE 999999 
+                END ASC,
+                a.created_at DESC, 
+                a.aliyah_number ASC
         `;
         const [rows] = await db.query(sql);
         return rows.map(r => ({
@@ -215,9 +342,15 @@ class Aliyah {
         const pub = (is_published !== undefined && is_published !== null) ? Boolean(is_published) : true;
         const rDate = reading_date || null;
 
+        let initialSortOrder = 0;
+        try {
+            const [maxOrder] = await db.query('SELECT MAX(sort_order) as max_ord FROM aliyot');
+            initialSortOrder = (maxOrder && maxOrder[0] && maxOrder[0].max_ord) ? (Number(maxOrder[0].max_ord) + 1) : 1;
+        } catch (e) {}
+
         const sql = `
-            INSERT INTO aliyot (parasha_id, aliyah_number, title, verses_reference, content, content_hebrew, content_phonetic, audio_url, reading_date, is_published)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO aliyot (parasha_id, aliyah_number, title, verses_reference, content, content_hebrew, content_phonetic, audio_url, reading_date, is_published, sort_order)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         return await db.query(sql, [
             pId, 
@@ -229,7 +362,8 @@ class Aliyah {
             content_phonetic || '', 
             audio_url || '', 
             rDate, 
-            pub
+            pub,
+            initialSortOrder
         ]);
     }
 
