@@ -35,11 +35,11 @@ conn.on('ready', () => {
     });
   });
 }).on('keyboard-interactive', (name, instructions, instructionsLang, prompts, finish) => {
-  finish(['W1ng3y3r&M4rc3l0']);
+  finish(['H4bl3m0sd3!yhwh']);
 }).connect({
   host: '179.43.125.96',
   port: 5640,
   username: 'root',
-  password: require('C:/Users/WingeyerMarcelo/Documents/ChatGPT/hablemosdeyhwh/security-hardening/ssh-credentials.cjs').getPassword(),
+  password: 'H4bl3m0sd3!yhwh',
   tryKeyboard: true
 });

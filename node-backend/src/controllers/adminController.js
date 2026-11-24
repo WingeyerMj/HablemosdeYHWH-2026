@@ -4027,6 +4027,17 @@ const adminController = {
             }
 
             const ReunionShabatNinos = require('../models/ReunionShabatNinos');
+            const current = await ReunionShabatNinos.getById(id);
+            if ((!cover_image || !cover_image.trim()) && current && current.cover_image) {
+                cover_image = current.cover_image;
+            }
+            if ((!video_file || !video_file.trim()) && current && current.video_file) {
+                video_file = current.video_file;
+            }
+            if ((!pdf_file || !pdf_file.trim()) && current && current.pdf_file) {
+                pdf_file = current.pdf_file;
+            }
+
             await ReunionShabatNinos.update(id, {
                 parasha_id: parasha_id ? parseInt(parasha_id, 10) : null,
                 parasha_infantil_id: parasha_infantil_id ? parseInt(parasha_infantil_id, 10) : null,

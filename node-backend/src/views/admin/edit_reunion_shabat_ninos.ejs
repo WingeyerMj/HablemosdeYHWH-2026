@@ -159,6 +159,68 @@
                     <input type="text" name="teachers" class="form-control bg-dark text-white border-secondary" value="<%= item.teachers || '' %>" placeholder="Ej: Marcela Wingeyer / Equipo Semillas">
                 </div>
 
+                <!-- Portada / Imagen de la Reunión -->
+                <div class="col-12">
+                    <div class="card bg-secondary bg-opacity-10 border-secondary rounded-4 p-3 p-md-4" style="border: 1px dashed rgba(255,255,255,0.2) !important;">
+                        <div class="row align-items-center g-3">
+                            <div class="col-md-7">
+                                <label class="form-label text-warning fw-bold d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                    <span><i class="bi bi-image me-1"></i>Portada / Imagen de la Reunión</span>
+                                    <% 
+                                        const parashaCover = item.parasha_infantil_cover || item.parasha_image_url || '';
+                                        const currentCover = item.cover_image || '';
+                                    %>
+                                    <% if (currentCover) { %>
+                                        <span class="badge bg-success text-white small"><i class="bi bi-check-circle-fill me-1"></i>Portada personalizada cargada</span>
+                                    <% } else if (parashaCover) { %>
+                                        <span class="badge text-dark bg-warning small"><i class="bi bi-magic me-1"></i>Heredando portada de Parashá</span>
+                                    <% } else { %>
+                                        <span class="badge bg-secondary text-white-50 small">Sin portada</span>
+                                    <% } %>
+                                </label>
+
+                                <div class="mb-2">
+                                    <label class="form-label small text-white-50 mb-1">Subir archivo de imagen (JPG, PNG, WebP):</label>
+                                    <input type="file" name="cover_image_file" id="coverImageFileInput" class="form-control bg-dark text-white border-secondary" accept="image/*" onchange="previewSelectedCover(this)">
+                                </div>
+
+                                <div class="mb-2">
+                                    <label class="form-label small text-white-50 mb-1">O pegar URL / ruta de imagen:</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-link-45deg"></i></span>
+                                        <input type="text" name="cover_image" id="coverImageUrlInput" class="form-control bg-dark text-white border-secondary" value="<%= item.cover_image || '' %>" placeholder="Ej: /uploads/semillas/... o URL externa" oninput="updateCoverPreviewFromInput(this.value)">
+                                    </div>
+                                </div>
+
+                                <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
+                                    <% if (parashaCover) { %>
+                                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3 py-1 fw-semibold" onclick="useParashaCover('<%= parashaCover %>')">
+                                            <i class="bi bi-magic me-1"></i> Usar portada de Parashá
+                                        </button>
+                                    <% } %>
+                                    <% if (currentCover) { %>
+                                        <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1" onclick="clearCover()">
+                                            <i class="bi bi-trash me-1"></i> Quitar portada
+                                        </button>
+                                    <% } %>
+                                    <small class="text-white-50">Se muestra en la tarjeta de reunión y reproductor.</small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5 text-center">
+                                <label class="form-label small text-white-50 mb-1 d-block text-center">Vista Previa de la Portada:</label>
+                                <div class="position-relative d-inline-block rounded-3 overflow-hidden border border-secondary shadow" style="width: 100%; max-width: 280px; aspect-ratio: 16/9; background: #000;">
+                                    <% const displayCover = currentCover || parashaCover; %>
+                                    <img id="coverPreviewImg" src="<%= displayCover || '/assets/img/pagina/semillas_torah_logo.png' %>" alt="Portada de la Reunión" class="w-100 h-100" style="object-fit: cover; <%= displayCover ? '' : 'opacity: 0.45; filter: grayscale(80%);' %>">
+                                </div>
+                                <div id="coverPreviewLabel" class="small mt-1 text-white-50">
+                                    <%= currentCover ? 'Portada personalizada' : (parashaCover ? 'Heredada de Parashá' : 'Sin imagen asignada') %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Descripción -->
                 <div class="col-12">
                     <label class="form-label text-white fw-bold">Descripción / Temas de la Clase</label>
@@ -202,5 +264,65 @@ function detectEditVideoType(url) {
     } else {
         el.innerHTML = '<span class="text-warning small"><i class="bi bi-link-45deg me-1"></i> Enlace: ' + clean + '</span>';
     }
+}
+
+function previewSelectedCover(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.getElementById('coverPreviewImg');
+            if (img) {
+                img.src = e.target.result;
+                img.style.opacity = '1';
+                img.style.filter = 'none';
+            }
+            const label = document.getElementById('coverPreviewLabel');
+            if (label) label.innerText = 'Nueva imagen seleccionada (pendiente de guardar)';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function updateCoverPreviewFromInput(val) {
+    const clean = (val || '').trim();
+    const img = document.getElementById('coverPreviewImg');
+    const label = document.getElementById('coverPreviewLabel');
+    if (clean && img) {
+        img.src = clean;
+        img.style.opacity = '1';
+        img.style.filter = 'none';
+        if (label) label.innerText = 'URL ingresada';
+    }
+}
+
+function useParashaCover(url) {
+    if (!url) return;
+    const input = document.getElementById('coverImageUrlInput');
+    const fileInput = document.getElementById('coverImageFileInput');
+    if (input) input.value = url;
+    if (fileInput) fileInput.value = '';
+    const img = document.getElementById('coverPreviewImg');
+    const label = document.getElementById('coverPreviewLabel');
+    if (img) {
+        img.src = url;
+        img.style.opacity = '1';
+        img.style.filter = 'none';
+    }
+    if (label) label.innerText = 'Portada de Parashá asignada';
+}
+
+function clearCover() {
+    const input = document.getElementById('coverImageUrlInput');
+    const fileInput = document.getElementById('coverImageFileInput');
+    if (input) input.value = '';
+    if (fileInput) fileInput.value = '';
+    const img = document.getElementById('coverPreviewImg');
+    const label = document.getElementById('coverPreviewLabel');
+    if (img) {
+        img.src = '/assets/img/pagina/semillas_torah_logo.png';
+        img.style.opacity = '0.45';
+        img.style.filter = 'grayscale(80%)';
+    }
+    if (label) label.innerText = 'Portada eliminada (se guardará sin portada propia)';
 }
 </script>

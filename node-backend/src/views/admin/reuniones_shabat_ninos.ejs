@@ -157,13 +157,29 @@
                                     <% } %>
                                 </td>
                                 <td data-label="Título & Expositores">
-                                    <div class="fw-bold text-white"><%= item.title %></div>
-                                    <% if (item.teachers) { %>
-                                        <div class="small text-info"><i class="bi bi-person-badge me-1"></i><%= item.teachers %></div>
-                                    <% } %>
-                                    <% if (item.description) { %>
-                                        <div class="small text-white-50 text-truncate" style="max-width: 320px;"><%= item.description %></div>
-                                    <% } %>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <% 
+                                            const itemCover = item.cover_image || item.parasha_infantil_cover || item.parasha_image_url || '';
+                                        %>
+                                        <div class="rounded-3 overflow-hidden border border-secondary shadow-sm flex-shrink-0" style="width: 58px; height: 38px; background: #111;">
+                                            <% if (itemCover) { %>
+                                                <img src="<%= itemCover %>" alt="<%= item.title %>" class="w-100 h-100" style="object-fit: cover;">
+                                            <% } else { %>
+                                                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white-50" style="font-size: 0.8rem;">
+                                                    <i class="bi bi-image"></i>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-white"><%= item.title %></div>
+                                            <% if (item.teachers) { %>
+                                                <div class="small text-info"><i class="bi bi-person-badge me-1"></i><%= item.teachers %></div>
+                                            <% } %>
+                                            <% if (item.description) { %>
+                                                <div class="small text-white-50 text-truncate" style="max-width: 300px;"><%= item.description %></div>
+                                            <% } %>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td data-label="Video" class="text-center">
                                     <% if (item.youtube_link) { 
@@ -330,6 +346,22 @@
                         <div class="col-md-6">
                             <label class="form-label text-white fw-bold">Maestras / Expositores</label>
                             <input type="text" name="teachers" class="form-control bg-dark text-white border-secondary" placeholder="Ej: Marcela Wingeyer / Equipo Semillas">
+                        </div>
+
+                        <!-- Portada / Imagen de la Reunión -->
+                        <div class="col-12">
+                            <label class="form-label text-warning fw-bold">
+                                <i class="bi bi-image me-1"></i>Portada / Imagen de la Reunión (Opcional)
+                            </label>
+                            <div class="row g-2 align-items-center">
+                                <div class="col-md-6">
+                                    <input type="file" name="cover_image_file" class="form-control bg-dark text-white border-secondary" accept="image/*">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="cover_image" class="form-control bg-dark text-white border-secondary" placeholder="O pegar URL/ruta de la imagen">
+                                </div>
+                            </div>
+                            <small class="text-white-50">Si no subes una imagen, heredará automáticamente la portada de la Parashá seleccionada.</small>
                         </div>
 
                         <!-- Descripción / Resumen -->
