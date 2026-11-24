@@ -473,40 +473,6 @@ const homeController = {
         }
     },
 
-    semillasTorah: async (req, res, next) => {
-        try {
-            const SemillasTorah = require('../models/SemillasTorah');
-            const SemillasShort = require('../models/SemillasShort');
-            const SemillasArticulo = require('../models/SemillasArticulo');
-            const ParashaInfantil = require('../models/ParashaInfantil');
-            const Aliyah = require('../models/Aliyah');
-            let items = [], categories = [], siteSettings = {}, shorts = [];
-            let articulos = [], parashotInfantiles = [];
-            let recentAliyot = [], parashotOverview = [], parashot = [];
-
-            try { items = await SemillasTorah.getPublished(); } catch (e) { items = []; }
-            try { shorts = await SemillasShort.getPublished(); } catch (e) { shorts = []; }
-            try { articulos = await SemillasArticulo.getPublished(); } catch (e) { articulos = []; }
-            try { parashotInfantiles = await ParashaInfantil.getPublished(); } catch (e) { parashotInfantiles = []; }
-            try { categories = await SemillasTorah.getCategories(); } catch (e) { categories = []; }
-            try { siteSettings = await SiteSettings.getMap(); } catch (e) { siteSettings = {}; }
-
-            res.render('semillas_torah', {
-                title: 'Semillas de Torah - Enseñanza Bíblica Infantil',
-                page: 'semillas-torah',
-                items,
-                shorts,
-                articulos,
-                parashotInfantiles,
-                categories,
-                siteSettings,
-                layout: false
-            });
-        } catch (error) {
-            next(error);
-        }
-    },
-
     semillasDetail: async (req, res, next) => {
         try {
             const SemillasTorah = require('../models/SemillasTorah');

@@ -92,19 +92,33 @@
                     </select>
                 </div>
 
-                <!-- Video YouTube -->
+                <!-- Video (Facebook o YouTube) -->
                 <div class="col-md-7">
-                    <label class="form-label text-white fw-bold">
-                        <i class="bi bi-youtube me-1 text-danger"></i>Enlace de YouTube de la Reunión
+                    <% 
+                        const rawVideo = (item.youtube_link || '').trim();
+                        const isFb = rawVideo.includes('facebook.com') || rawVideo.includes('fb.watch');
+                    %>
+                    <label class="form-label text-white fw-bold d-flex align-items-center justify-content-between flex-wrap gap-1">
+                        <span><i class="bi bi-camera-video-fill me-1 text-warning"></i>Enlace de Video (Facebook o YouTube)</span>
+                        <span class="d-flex align-items-center gap-1">
+                            <span class="badge text-white" style="background-color: #1877f2; font-size: 0.72rem;"><i class="bi bi-facebook me-1"></i>Facebook</span>
+                            <span class="badge bg-danger text-white" style="font-size: 0.72rem;"><i class="bi bi-youtube me-1"></i>YouTube</span>
+                        </span>
                     </label>
-                    <input type="url" name="youtube_link" class="form-control bg-dark text-white border-secondary" value="<%= item.youtube_link || '' %>" placeholder="https://www.youtube.com/watch?v=...">
-                    <% if (item.youtube_link) { %>
-                        <div class="mt-2">
-                            <a href="<%= item.youtube_link %>" target="_blank" class="small text-info text-decoration-none">
-                                <i class="bi bi-box-arrow-up-right me-1"></i> Probar enlace de YouTube
-                            </a>
-                        </div>
-                    <% } %>
+                    <input type="url" name="youtube_link" id="inputEditVideoLink" class="form-control bg-dark text-white border-secondary" value="<%= item.youtube_link || '' %>" placeholder="https://www.facebook.com/... o https://www.youtube.com/watch?v=..." oninput="detectEditVideoType(this.value)">
+                    <div id="editVideoLiveIndicator" class="mt-2">
+                        <% if (item.youtube_link) { %>
+                            <% if (isFb) { %>
+                                <a href="<%= item.youtube_link %>" target="_blank" class="btn btn-sm text-white fw-bold shadow-sm d-inline-flex align-items-center gap-1" style="background-color: #1877f2; border: none;">
+                                    <i class="bi bi-facebook"></i> Probar enlace de Facebook (Botón azul)
+                                </a>
+                            <% } else { %>
+                                <a href="<%= item.youtube_link %>" target="_blank" class="btn btn-sm btn-danger text-white fw-bold shadow-sm d-inline-flex align-items-center gap-1">
+                                    <i class="bi bi-youtube"></i> Probar enlace de YouTube (Botón rojo)
+                                </a>
+                            <% } %>
+                        <% } %>
+                    </div>
                 </div>
 
                 <!-- O subir video MP4 -->
@@ -170,3 +184,23 @@
         </form>
     </div>
 </main>
+
+<script>
+function detectEditVideoType(url) {
+    const el = document.getElementById('editVideoLiveIndicator');
+    if (!el) return;
+    const clean = (url || '').trim();
+    if (!clean) {
+        el.innerHTML = '';
+        return;
+    }
+    const lower = clean.toLowerCase();
+    if (lower.includes('facebook.com') || lower.includes('fb.watch')) {
+        el.innerHTML = '<a href="' + clean + '" target="_blank" class="btn btn-sm text-white fw-bold shadow-sm d-inline-flex align-items-center gap-1" style="background-color: #1877f2; border: none;"><i class="bi bi-facebook"></i> Probar enlace de Facebook (Botón azul)</a>';
+    } else if (lower.includes('youtube.com') || lower.includes('youtu.be')) {
+        el.innerHTML = '<a href="' + clean + '" target="_blank" class="btn btn-sm btn-danger text-white fw-bold shadow-sm d-inline-flex align-items-center gap-1"><i class="bi bi-youtube"></i> Probar enlace de YouTube (Botón rojo)</a>';
+    } else {
+        el.innerHTML = '<span class="text-warning small"><i class="bi bi-link-45deg me-1"></i> Enlace: ' + clean + '</span>';
+    }
+}
+</script>

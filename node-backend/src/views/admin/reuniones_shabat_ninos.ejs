@@ -166,10 +166,19 @@
                                     <% } %>
                                 </td>
                                 <td data-label="Video" class="text-center">
-                                    <% if (item.youtube_link) { %>
-                                        <a href="<%= item.youtube_link %>" target="_blank" class="btn btn-sm btn-outline-danger" title="Ver en YouTube">
-                                            <i class="bi bi-youtube me-1"></i> YouTube
-                                        </a>
+                                    <% if (item.youtube_link) { 
+                                        const rawLink = (item.youtube_link || '').trim();
+                                        const isFb = rawLink.includes('facebook.com') || rawLink.includes('fb.watch');
+                                    %>
+                                        <% if (isFb) { %>
+                                            <a href="<%= item.youtube_link %>" target="_blank" class="btn btn-sm text-white fw-bold shadow-sm" style="background-color: #1877f2; border-color: #1877f2;" title="Ver Video en Facebook">
+                                                <i class="bi bi-facebook me-1"></i> Facebook
+                                            </a>
+                                        <% } else { %>
+                                            <a href="<%= item.youtube_link %>" target="_blank" class="btn btn-sm btn-danger text-white fw-bold shadow-sm" title="Ver Video en YouTube">
+                                                <i class="bi bi-youtube me-1"></i> YouTube
+                                            </a>
+                                        <% } %>
                                     <% } else if (item.video_file) { %>
                                         <a href="<%= item.video_file %>" target="_blank" class="btn btn-sm btn-outline-info" title="Ver Video MP4">
                                             <i class="bi bi-play-circle me-1"></i> Video
@@ -287,12 +296,19 @@
                             <small class="text-white-50">Las diapositivas corresponden a las fichas PDF de la reunión.</small>
                         </div>
 
-                        <!-- Video YouTube -->
+                        <!-- Video (Facebook o YouTube) -->
                         <div class="col-md-7">
-                            <label class="form-label text-white fw-bold">
-                                <i class="bi bi-youtube me-1 text-danger"></i>Enlace de YouTube de la Reunión
+                            <label class="form-label text-white fw-bold d-flex align-items-center justify-content-between flex-wrap gap-1">
+                                <span><i class="bi bi-camera-video-fill me-1 text-warning"></i>Enlace de Video (Facebook o YouTube)</span>
+                                <span class="d-flex align-items-center gap-1">
+                                    <span class="badge text-white" style="background-color: #1877f2; font-size: 0.72rem;"><i class="bi bi-facebook me-1"></i>Facebook</span>
+                                    <span class="badge bg-danger text-white" style="font-size: 0.72rem;"><i class="bi bi-youtube me-1"></i>YouTube</span>
+                                </span>
                             </label>
-                            <input type="url" name="youtube_link" class="form-control bg-dark text-white border-secondary" placeholder="https://www.youtube.com/watch?v=... o https://youtu.be/...">
+                            <input type="url" name="youtube_link" id="inputCreateVideoLink" class="form-control bg-dark text-white border-secondary" placeholder="https://www.facebook.com/... o https://www.youtube.com/watch?v=..." oninput="detectVideoType(this.value, 'createVideoHelp')">
+                            <div id="createVideoHelp" class="small mt-1 text-white-50">
+                                Puedes pegar enlace de video de Facebook (reels, watch, share) o YouTube.
+                            </div>
                         </div>
 
                         <!-- O subir video MP4 -->
@@ -370,6 +386,27 @@ function autoSelectParashaInfantil(parashaId) {
             select.selectedIndex = i;
             break;
         }
+    }
+}
+
+function detectVideoType(url, targetId) {
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    const clean = (url || '').trim().toLowerCase();
+    if (!clean) {
+        el.innerHTML = 'Puedes pegar enlace de video de Facebook (reels, watch, share) o YouTube.';
+        el.className = 'small mt-1 text-white-50';
+        return;
+    }
+    if (clean.includes('facebook.com') || clean.includes('fb.watch')) {
+        el.innerHTML = '<span class="text-white fw-bold px-2 py-1 rounded" style="background-color: #1877f2;"><i class="bi bi-facebook me-1"></i> Video de Facebook detectado (botón azul)</span>';
+        el.className = 'small mt-1';
+    } else if (clean.includes('youtube.com') || clean.includes('youtu.be')) {
+        el.innerHTML = '<span class="text-white fw-bold px-2 py-1 rounded bg-danger"><i class="bi bi-youtube me-1"></i> Video de YouTube detectado (botón rojo)</span>';
+        el.className = 'small mt-1';
+    } else {
+        el.innerHTML = '<span class="text-warning"><i class="bi bi-link-45deg me-1"></i> Enlace web ingresado</span>';
+        el.className = 'small mt-1';
     }
 }
 </script>

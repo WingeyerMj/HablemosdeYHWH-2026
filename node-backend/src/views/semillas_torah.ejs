@@ -709,8 +709,11 @@
                                                             <div class="row g-4 mb-5">
                                                                 <% listaReuniones.forEach((reunion) => { 
                                                                     const pdfLink = reunion.pdf_file || reunion.parasha_infantil_pdf;
-                                                                    const ytMatch = reunion.youtube_link ? reunion.youtube_link.match(/(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\/shorts\/)([^#\&\?]*)/) : null;
+                                                                    const rawVideo = (reunion.youtube_link || '').trim();
+                                                                    const isFb = rawVideo.includes('facebook.com') || rawVideo.includes('fb.watch');
+                                                                    const ytMatch = (!isFb && rawVideo) ? rawVideo.match(/(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\/shorts\/)([^#\&\?]*)/) : null;
                                                                     const ytId = ytMatch && ytMatch[1] && ytMatch[1].length === 11 ? ytMatch[1] : null;
+                                                                    const fbEmbedSrc = isFb ? ('https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(rawVideo) + '&show_text=false&allowfullscreen=true&width=auto') : '';
                                                                 %>
                                                                     <div class="col-lg-6">
                                                                         <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white"
@@ -723,17 +726,36 @@
                                                                                     <i class="bi bi-camera-video-fill fs-5"></i>
                                                                                     <span class="fw-bold text-white">Reunión de Niños de Shabat</span>
                                                                                 </div>
-                                                                                <% if (reunion.meeting_date) { %>
-                                                                                    <span class="badge bg-white text-dark rounded-pill px-3 py-1 fw-bold shadow-sm" style="font-size: 0.8rem;">
-                                                                                        <i class="bi bi-calendar3 me-1 text-warning"></i>
-                                                                                        <%= new Date(reunion.meeting_date).toLocaleDateString('es-ES', { timeZone: 'UTC', year: 'numeric', month: 'short', day: 'numeric' }) %>
-                                                                                    </span>
-                                                                                <% } %>
+                                                                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                                                    <% if (isFb) { %>
+                                                                                        <span class="badge text-white rounded-pill px-3 py-1 fw-bold shadow-sm" style="background-color: #1877f2; font-size: 0.8rem;">
+                                                                                            <i class="bi bi-facebook me-1"></i> Facebook
+                                                                                        </span>
+                                                                                    <% } else if (ytId) { %>
+                                                                                        <span class="badge bg-danger text-white rounded-pill px-3 py-1 fw-bold shadow-sm" style="font-size: 0.8rem;">
+                                                                                            <i class="bi bi-youtube me-1"></i> YouTube
+                                                                                        </span>
+                                                                                    <% } %>
+                                                                                    <% if (reunion.meeting_date) { %>
+                                                                                        <span class="badge bg-white text-dark rounded-pill px-3 py-1 fw-bold shadow-sm" style="font-size: 0.8rem;">
+                                                                                            <i class="bi bi-calendar3 me-1 text-warning"></i>
+                                                                                            <%= new Date(reunion.meeting_date).toLocaleDateString('es-ES', { timeZone: 'UTC', year: 'numeric', month: 'short', day: 'numeric' }) %>
+                                                                                        </span>
+                                                                                    <% } %>
+                                                                                </div>
                                                                             </div>
 
                                                                             <!-- Reproductor de Video (16:9) -->
                                                                             <div class="bg-black position-relative" style="aspect-ratio: 16/9; overflow: hidden;">
-                                                                                <% if (ytId) { %>
+                                                                                <% if (isFb) { %>
+                                                                                    <iframe src="<%= fbEmbedSrc %>" 
+                                                                                        class="w-100 h-100 border-0" 
+                                                                                        scrolling="no" 
+                                                                                        frameborder="0" 
+                                                                                        allowfullscreen="true" 
+                                                                                        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" 
+                                                                                        title="<%= reunion.title %>"></iframe>
+                                                                                <% } else if (ytId) { %>
                                                                                     <iframe src="https://www.youtube-nocookie.com/embed/<%= ytId %>?rel=0" 
                                                                                         class="w-100 h-100 border-0" 
                                                                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -788,18 +810,34 @@
                                                                                     <% } %>
                                                                                 </div>
 
-                                                                                <!-- Botón de Diapositivas PDF y Compartir -->
+                                                                                <!-- Botón de Diapositivas PDF y Video Externo -->
                                                                                 <div class="pt-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-2 mt-2">
-                                                                                    <% if (pdfLink) { %>
-                                                                                        <a href="<%= pdfLink %>" target="_blank" download class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2">
-                                                                                            <i class="bi bi-file-earmark-pdf-fill fs-5 text-danger"></i>
-                                                                                            <span>Ver Diapositivas de la Clase (PDF)</span>
-                                                                                        </a>
-                                                                                    <% } else { %>
-                                                                                        <span class="badge bg-light text-muted border rounded-pill px-3 py-2 small">
-                                                                                            <i class="bi bi-info-circle me-1"></i> Diapositivas en preparación
-                                                                                        </span>
-                                                                                    <% } %>
+                                                                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                                                        <% if (pdfLink) { %>
+                                                                                            <a href="<%= pdfLink %>" target="_blank" download class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2">
+                                                                                                <i class="bi bi-file-earmark-pdf-fill fs-5 text-danger"></i>
+                                                                                                <span>Ver Diapositivas (PDF)</span>
+                                                                                            </a>
+                                                                                        <% } else { %>
+                                                                                            <span class="badge bg-light text-muted border rounded-pill px-3 py-2 small">
+                                                                                                <i class="bi bi-info-circle me-1"></i> Diapositivas en preparación
+                                                                                            </span>
+                                                                                        <% } %>
+
+                                                                                        <% if (rawVideo) { %>
+                                                                                            <% if (isFb) { %>
+                                                                                                <a href="<%= rawVideo %>" target="_blank" rel="noopener noreferrer" class="btn btn-sm text-white fw-bold rounded-pill px-3 py-2 shadow-sm d-inline-flex align-items-center gap-1" style="background-color: #1877f2; border: none;">
+                                                                                                    <i class="bi bi-facebook"></i>
+                                                                                                    <span>Ver en Facebook</span>
+                                                                                                </a>
+                                                                                            <% } else if (ytId) { %>
+                                                                                                <a href="<%= rawVideo %>" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-danger text-white fw-bold rounded-pill px-3 py-2 shadow-sm d-inline-flex align-items-center gap-1">
+                                                                                                    <i class="bi bi-youtube"></i>
+                                                                                                    <span>Ver en YouTube</span>
+                                                                                                </a>
+                                                                                            <% } %>
+                                                                                        <% } %>
+                                                                                    </div>
 
                                                                                     <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-1"
                                                                                         onclick="compartirReunionShabat('<%= reunion.title.replace(/'/g, "\\'") %>', window.location.href)">
