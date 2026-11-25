@@ -227,6 +227,16 @@
                     <textarea name="description" rows="4" class="form-control bg-dark text-white border-secondary"><%= item.description || '' %></textarea>
                 </div>
 
+                <!-- Palabras Clave / Etiquetas de Búsqueda (Indexación) -->
+                <div class="col-12">
+                    <label class="form-label text-warning fw-bold d-flex align-items-center justify-content-between flex-wrap gap-1">
+                        <span><i class="bi bi-tags-fill me-1"></i>Palabras Clave / Etiquetas (Indexación para Búsquedas)</span>
+                        <span class="badge bg-secondary text-white-50" style="font-size: 0.72rem;">Buscadores e Indexación</span>
+                    </label>
+                    <input type="text" name="keywords" class="form-control bg-dark text-white border-secondary" value="<%= item.keywords || '' %>" placeholder="Ej: Lej Lejá, Abraham, Sara, fe, obediencia, Génesis 12, #Torah #Biblia #Semillas">
+                    <small class="text-white-50">Ingresa palabras o hashtags separados por comas o espacios. Se utilizarán para búsquedas e indexación en la web.</small>
+                </div>
+
                 <!-- Estado publicado -->
                 <div class="col-12">
                     <div class="form-check form-switch mt-2">

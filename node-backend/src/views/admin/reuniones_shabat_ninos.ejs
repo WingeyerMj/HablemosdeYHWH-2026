@@ -95,7 +95,7 @@
             <div class="col-md-8">
                 <div class="input-group">
                     <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-search"></i></span>
-                    <input type="text" id="rsnSearchInput" class="form-control bg-dark text-white border-secondary" placeholder="Buscar por título, parashá o maestras..." onkeyup="filterReunionesTable()">
+                    <input type="text" id="rsnSearchInput" class="form-control bg-dark text-white border-secondary" placeholder="Buscar por título, parashá, maestras o palabras clave..." onkeyup="filterReunionesTable()">
                 </div>
             </div>
             <div class="col-md-4 text-md-end text-white-50 small">
@@ -132,7 +132,7 @@
                         <% allItems.forEach(item => { 
                             const pdfTarget = item.pdf_file || item.parasha_infantil_pdf;
                         %>
-                            <tr class="reunion-row">
+                            <tr class="reunion-row" data-keywords="<%= (item.keywords || '').toLowerCase() %>">
                                 <td data-label="Fecha / Ciclo">
                                     <div class="fw-bold text-white">
                                         <% if (item.meeting_date) { %>
@@ -177,6 +177,13 @@
                                             <% } %>
                                             <% if (item.description) { %>
                                                 <div class="small text-white-50 text-truncate" style="max-width: 300px;"><%= item.description %></div>
+                                            <% } %>
+                                            <% if (item.keywords) { %>
+                                                <div class="mt-1 d-flex flex-wrap gap-1">
+                                                    <% item.keywords.split(/[,#\s]+/).filter(Boolean).slice(0, 4).forEach(k => { %>
+                                                        <span class="badge bg-dark border border-secondary text-warning px-2 py-0" style="font-size: 0.7rem;">#<%= k.replace(/^#/, '') %></span>
+                                                    <% }) %>
+                                                </div>
                                             <% } %>
                                         </div>
                                     </div>
@@ -370,6 +377,16 @@
                             <textarea name="description" rows="3" class="form-control bg-dark text-white border-secondary" placeholder="Resumen de los temas enseñados a los niños, versículos clave y actividades realizadas..."></textarea>
                         </div>
 
+                        <!-- Palabras Clave / Etiquetas de Búsqueda (Indexación) -->
+                        <div class="col-12">
+                            <label class="form-label text-warning fw-bold d-flex align-items-center justify-content-between flex-wrap gap-1">
+                                <span><i class="bi bi-tags-fill me-1"></i>Palabras Clave / Etiquetas (Indexación para Búsquedas)</span>
+                                <span class="badge bg-secondary text-white-50" style="font-size: 0.72rem;">Buscadores e Indexación</span>
+                            </label>
+                            <input type="text" name="keywords" class="form-control bg-dark text-white border-secondary" placeholder="Ej: Lej Lejá, Abraham, Sara, fe, obediencia, Génesis 12, #Torah #Biblia #Semillas">
+                            <small class="text-white-50">Ingresa términos o hashtags separados por comas o espacios. Se indexarán para el buscador y motores de búsqueda.</small>
+                        </div>
+
                         <!-- Estado publicado -->
                         <div class="col-12">
                             <div class="form-check form-switch mt-2">
@@ -397,7 +414,8 @@ function filterReunionesTable() {
     let count = 0;
     rows.forEach(r => {
         const text = r.innerText.toLowerCase();
-        if (!q || text.includes(q)) {
+        const keywords = (r.getAttribute('data-keywords') || '').toLowerCase();
+        if (!q || text.includes(q) || keywords.includes(q)) {
             r.style.display = '';
             count++;
         } else {

@@ -3925,6 +3925,7 @@ const adminController = {
                 cover_image,
                 teachers,
                 description,
+                keywords,
                 is_published
             } = req.body;
 
@@ -3958,6 +3959,7 @@ const adminController = {
                 cover_image: cover_image || null,
                 teachers: teachers ? teachers.trim() : null,
                 description: description ? description.trim() : null,
+                keywords: keywords ? keywords.trim() : null,
                 is_published: is_published === '1' || is_published === true || is_published === 'on'
             });
 
@@ -4010,6 +4012,7 @@ const adminController = {
                 cover_image,
                 teachers,
                 description,
+                keywords,
                 is_published
             } = req.body;
 
@@ -4050,6 +4053,7 @@ const adminController = {
                 cover_image: cover_image || null,
                 teachers: teachers ? teachers.trim() : null,
                 description: description ? description.trim() : null,
+                keywords: keywords ? keywords.trim() : null,
                 is_published: is_published === '1' || is_published === true || is_published === 'on'
             });
 

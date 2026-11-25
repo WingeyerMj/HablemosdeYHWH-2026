@@ -706,7 +706,28 @@
                                                                 </div>
                                                             </div>
                                                         <% } else { %>
-                                                            <div class="row g-4 mb-5">
+                                                            <!-- Buscador / Filtro de Clases de Shabat e Indexación de Palabras Clave -->
+                                                            <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white" style="border: 1px solid #fed7aa !important;">
+                                                                <div class="row g-2 align-items-center">
+                                                                    <div class="col-md-8">
+                                                                        <div class="input-group">
+                                                                            <span class="input-group-text bg-light border-0 text-warning fs-5">
+                                                                                <i class="bi bi-search"></i>
+                                                                            </span>
+                                                                            <input type="text" id="filtroReunionesShabat" class="form-control border-0 bg-light py-2"
+                                                                                placeholder="Buscar clase por título, parashá, expositor o palabras clave (#Torah, #Biblia)..."
+                                                                                oninput="filtrarReunionesShabatPublico()">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4 text-md-end text-muted small">
+                                                                        <span id="contadorReunionesPublico" class="fw-semibold">
+                                                                            Mostrando <%= listaReuniones.length %> <%= listaReuniones.length === 1 ? 'clase' : 'clases' %>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row g-4 mb-5" id="gridReunionesShabat">
                                                                 <% listaReuniones.forEach((reunion) => { 
                                                                     const pdfLink = reunion.pdf_file || reunion.parasha_infantil_pdf;
                                                                     const rawVideo = (reunion.youtube_link || '').trim();
@@ -715,7 +736,12 @@
                                                                     const ytId = ytMatch && ytMatch[1] && ytMatch[1].length === 11 ? ytMatch[1] : null;
                                                                     const fbEmbedSrc = isFb ? ('https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(rawVideo) + '&show_text=false&allowfullscreen=true&width=auto') : '';
                                                                 %>
-                                                                    <div class="col-lg-6">
+                                                                    <div class="col-lg-6 col-reunion-item"
+                                                                        data-keywords="<%= (reunion.keywords || '').toLowerCase() %>"
+                                                                        data-title="<%= (reunion.title || '').toLowerCase() %>"
+                                                                        data-parasha="<%= (reunion.parasha_title || reunion.parasha_name || '').toLowerCase() %>"
+                                                                        data-teachers="<%= (reunion.teachers || '').toLowerCase() %>"
+                                                                        data-desc="<%= (reunion.description || '').toLowerCase() %>">
                                                                         <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white"
                                                                             style="border: 2px solid #fed7aa !important;">
                                                                             
@@ -864,6 +890,16 @@
                                                                                         <p class="text-muted small mb-3" style="line-height: 1.6; white-space: pre-line;">
                                                                                             <%= reunion.description %>
                                                                                         </p>
+                                                                                    <% } %>
+
+                                                                                    <% if (reunion.keywords) { %>
+                                                                                        <div class="mb-3 d-flex flex-wrap gap-1">
+                                                                                            <% reunion.keywords.split(/[,#\s]+/).filter(Boolean).forEach(function(k) { %>
+                                                                                                <span class="badge rounded-pill bg-light text-muted border px-2 py-1 small fw-semibold" style="font-size: 0.75rem;">
+                                                                                                    <i class="bi bi-tag-fill me-1 text-warning opacity-75"></i>#<%= k.replace(/^#/, '') %>
+                                                                                                </span>
+                                                                                            <% }); %>
+                                                                                        </div>
                                                                                     <% } %>
                                                                                 </div>
 
@@ -5519,6 +5555,31 @@
                         iframe.src = embedSrc;
                         facade.classList.add('d-none');
                         box.classList.remove('d-none');
+                    }
+                }
+
+                function filtrarReunionesShabatPublico() {
+                    const input = document.getElementById('filtroReunionesShabat');
+                    if (!input) return;
+                    const q = input.value.toLowerCase().trim();
+                    const items = document.querySelectorAll('.col-reunion-item');
+                    let visible = 0;
+                    items.forEach(el => {
+                        const text = (el.getAttribute('data-title') || '') + ' ' + 
+                                     (el.getAttribute('data-keywords') || '') + ' ' + 
+                                     (el.getAttribute('data-parasha') || '') + ' ' + 
+                                     (el.getAttribute('data-teachers') || '') + ' ' +
+                                     (el.getAttribute('data-desc') || '');
+                        if (!q || text.includes(q)) {
+                            el.style.display = '';
+                            visible++;
+                        } else {
+                            el.style.display = 'none';
+                        }
+                    });
+                    const contador = document.getElementById('contadorReunionesPublico');
+                    if (contador) {
+                        contador.textContent = 'Mostrando ' + visible + ' de ' + items.length + (items.length === 1 ? ' clase' : ' clases');
                     }
                 }
             </script>

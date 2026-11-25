@@ -18,6 +18,7 @@ class ReunionShabatNinos {
                     cover_image VARCHAR(500) DEFAULT NULL,
                     teachers VARCHAR(255) DEFAULT NULL,
                     description TEXT DEFAULT NULL,
+                    keywords TEXT DEFAULT NULL,
                     is_published BOOLEAN DEFAULT TRUE,
                     views_count INT DEFAULT 0,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -42,6 +43,7 @@ class ReunionShabatNinos {
                     cover_image VARCHAR(500) NULL,
                     teachers VARCHAR(255) NULL,
                     description TEXT NULL,
+                    keywords TEXT NULL,
                     is_published BOOLEAN DEFAULT TRUE,
                     views_count INT DEFAULT 0,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -139,6 +141,7 @@ class ReunionShabatNinos {
             cover_image,
             teachers,
             description,
+            keywords,
             is_published
         } = data;
 
@@ -155,8 +158,9 @@ class ReunionShabatNinos {
                 cover_image,
                 teachers,
                 description,
+                keywords,
                 is_published
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `, [
             parasha_id || null,
             parasha_infantil_id || null,
@@ -169,6 +173,7 @@ class ReunionShabatNinos {
             cover_image || null,
             teachers || null,
             description || null,
+            keywords ? keywords.trim() : null,
             is_published !== undefined ? (is_published ? 1 : 0) : 1
         ]);
         return result.insertId;
@@ -188,6 +193,7 @@ class ReunionShabatNinos {
             cover_image,
             teachers,
             description,
+            keywords,
             is_published
         } = data;
 
@@ -204,6 +210,7 @@ class ReunionShabatNinos {
                 cover_image = ?,
                 teachers = ?,
                 description = ?,
+                keywords = ?,
                 is_published = ?
             WHERE id = ?
         `, [
@@ -218,6 +225,7 @@ class ReunionShabatNinos {
             cover_image || null,
             teachers || null,
             description || null,
+            keywords ? keywords.trim() : null,
             is_published !== undefined ? (is_published ? 1 : 0) : 1,
             id
         ]);
