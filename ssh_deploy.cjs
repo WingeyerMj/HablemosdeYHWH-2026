@@ -5,9 +5,9 @@ conn.on('ready', () => {
   console.log('Conectado al servidor - Forzando deploy...');
   
   const commands = [
-    // Stash local changes and clean untracked files
+    // Stash tracked changes safely without touching uploaded media files
     'cd /var/www/hablemos_yhwh',
-    'git stash --include-untracked 2>&1',
+    'git stash 2>&1',
     'git checkout main 2>&1',
     'git pull origin main 2>&1',
     'echo "=== GIT PULL COMPLETADO ==="',

@@ -24,3 +24,7 @@ Homestead.yaml
 Thumbs.db
 node-backend/node_modules
 node-backend/public/uploads
+node-backend/public/assets/parashot/*
+!node-backend/public/assets/parashot/.gitkeep
+public/assets/parashot/*
+!public/assets/parashot/.gitkeep
