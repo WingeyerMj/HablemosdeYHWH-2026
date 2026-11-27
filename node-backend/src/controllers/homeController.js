@@ -52,7 +52,7 @@ const homeController = {
 
                 // 2. Cargar otros datos dinámicos
                 allDynamicSections = await DynamicSection.getAll();
-                latestParashot = await Parasha.getLatest(6);
+                latestParashot = await Parasha.getLatest(8);
                 portfolio = await Portfolio.getLatest(4);
                 try { latestEnsenanzas = await Ensenanza.getLatest(4); } catch(e) { latestEnsenanzas = []; }
                 try { latestHaftarot = await Haftara.getLatest(4); } catch(e) { latestHaftarot = []; }

@@ -1,28 +1,52 @@
 const db = require('../config/db');
 
 class Parasha {
-    static async getLatest(limit = 6) {
+    static async getLatest(limit = 8) {
         await this.ensureColumns();
-        const [rows] = await db.query(`
+        try {
+            const TorahCycle = require('./TorahCycle');
+            const currentCycle = await TorahCycle.getCurrentCycle().catch(() => null);
+            const cycleName = (currentCycle && currentCycle.name) ? currentCycle.name : 'Ciclo 2026 - 2027';
+            const cleanCycle = cycleName.replace('Ciclo ', '').trim();
+
+            // Parashot del ciclo activo actual ordenadas canónicamente por número o sort_order
+            const [rows] = await db.query(`
+                SELECT * FROM parashot 
+                WHERE (cycle_name LIKE ? OR (cycle_id IS NOT NULL AND cycle_id = ?))
+                ORDER BY 
+                    CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC,
+                    parasha_number ASC, 
+                    id ASC
+            `, [`%${cleanCycle}%`, (currentCycle ? currentCycle.id : 0)]);
+
+            if (rows && rows.length > 0) {
+                return (limit && rows.length > limit) ? rows.slice(0, limit) : rows;
+            }
+        } catch (e) {
+            console.warn('Aviso getLatest parashot ciclo activo:', e.message);
+        }
+
+        // Fallback general ordenado por número de parashá
+        const [fallback] = await db.query(`
             SELECT * FROM parashot 
             ORDER BY 
-                (cycle_name LIKE '%2026 - 2027%' OR parasha_number = 1) DESC,
-                updated_at DESC, 
-                id DESC 
+                CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC,
+                parasha_number ASC, 
+                id ASC 
             LIMIT ?
-        `, [limit]);
-        return rows;
+        `, [limit || 8]);
+        return fallback;
     }
 
     static async getAll() {
         await this.ensureColumns();
-        const [rows] = await db.query('SELECT * FROM parashot ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, parasha_number DESC, id DESC');
+        const [rows] = await db.query('SELECT * FROM parashot ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, parasha_number ASC, id ASC');
         return rows;
     }
 
     static async getAllAsc() {
         await this.ensureColumns();
-        const [rows] = await db.query('SELECT * FROM parashot ORDER BY parasha_number ASC, id ASC');
+        const [rows] = await db.query('SELECT * FROM parashot ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, parasha_number ASC, id ASC');
         return rows;
     }
 
@@ -117,7 +141,7 @@ class Parasha {
 
     static async incrementViews(id) {
         try {
-            await db.query('UPDATE parashot SET views = COALESCE(views, 0) + 1 WHERE id = ?', [id]);
+            await db.query('UPDATE parashot SET views = COALESCE(views, 0) + 1, updated_at = updated_at WHERE id = ?', [id]);
         } catch (e) {
             console.warn('Aviso incrementViews parashot:', e.message);
         }
