@@ -1092,39 +1092,47 @@ document.addEventListener('DOMContentLoaded', function() {
         persistAliyotOrder();
     });
 
-    // Drag and Drop HTML5 para filas de Aliyot
-    let draggedRow = null;
+    // Drag and Drop (SortableJS): tomar desde la manija ⋮⋮ y soltar en el lugar deseado
     const tableBody = document.getElementById('aliyotTableBody');
-    if (tableBody) {
-        tableBody.addEventListener('dragstart', function(e) {
-            const row = e.target.closest('.aliyah-table-row');
-            if (!row) return;
-            draggedRow = row;
-            row.classList.add('opacity-50', 'bg-warning', 'text-dark');
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', row.getAttribute('data-id') || '');
-        });
-
-        tableBody.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            const targetRow = e.target.closest('.aliyah-table-row');
-            if (targetRow && targetRow !== draggedRow) {
-                const rect = targetRow.getBoundingClientRect();
-                const next = (e.clientY - rect.top) / (rect.bottom - rect.top) > 0.5;
-                tableBody.insertBefore(draggedRow, next ? targetRow.nextElementSibling : targetRow);
-            }
-        });
-
-        tableBody.addEventListener('dragend', function() {
-            if (draggedRow) {
-                draggedRow.classList.remove('opacity-50', 'bg-warning', 'text-dark');
-                draggedRow = null;
+    function initAliyotSortable() {
+        if (!tableBody || typeof Sortable === 'undefined') return;
+        Sortable.create(tableBody, {
+            handle: '.drag-handle',
+            draggable: '.aliyah-table-row',
+            animation: 180,
+            ghostClass: 'aliyah-drag-ghost',
+            chosenClass: 'aliyah-drag-chosen',
+            dragClass: 'aliyah-drag-active',
+            forceFallback: true,          // arrastre consistente con mouse y táctil
+            fallbackOnBody: true,
+            scroll: true,
+            scrollSensitivity: 120,       // auto-scroll al acercarse al borde de la pantalla
+            scrollSpeed: 18,
+            bubbleScroll: true,
+            onEnd: function(evt) {
+                if (evt.oldIndex === evt.newIndex) return;
                 updateRowPositionBadges();
                 persistAliyotOrder();
             }
         });
     }
+    if (typeof Sortable !== 'undefined') {
+        initAliyotSortable();
+    } else {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js';
+        s.onload = initAliyotSortable;
+        document.head.appendChild(s);
+    }
+    const dragStyle = document.createElement('style');
+    dragStyle.textContent = `
+        #aliyotTableBody .drag-handle { cursor: grab; touch-action: none; }
+        #aliyotTableBody .drag-handle:hover { color: #ffc107 !important; }
+        .aliyah-drag-ghost { opacity: 0.35; background: rgba(255,193,7,0.18) !important; outline: 2px dashed #ffc107; }
+        .aliyah-drag-ghost td { background: transparent !important; }
+        .aliyah-drag-active, .aliyah-drag-active td { background: #2b2b2b !important; box-shadow: 0 8px 24px rgba(0,0,0,0.6); cursor: grabbing !important; }
+    `;
+    document.head.appendChild(dragStyle);
 
     // Botón Restablecer al Orden Original de Subida
     const btnResetOrder = document.getElementById('btnResetUploadOrder');
