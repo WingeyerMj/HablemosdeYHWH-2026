@@ -120,7 +120,7 @@
                         <th class="text-end" style="min-width: 130px;">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody data-sortable-table="parashot-infantiles">
                     <% if (allItems.length === 0) { %>
                         <tr>
                             <td colspan="8" class="text-center py-5 text-white-50">
@@ -132,7 +132,7 @@
                     <% } %>
 
                     <% allItems.forEach((item) => { %>
-                        <tr class="pi-row-item">
+                        <tr data-id="<%= item.id %>" class="pi-row-item">
                             <td>
                                 <span class="badge bg-black border border-secondary text-warning fw-bold fs-6">
                                     #<%= item.parasha_number || '-' %>

@@ -74,7 +74,7 @@ class ReunionShabatNinos {
                 (r.parasha_infantil_id IS NOT NULL AND r.parasha_infantil_id = pi.id)
                 OR (r.parasha_infantil_id IS NULL AND r.parasha_id IS NOT NULL AND (pi.parasha_id = r.parasha_id OR pi.parasha_number = p.parasha_number))
             )
-            ORDER BY COALESCE(r.meeting_date, r.created_at) DESC, r.id DESC
+            ORDER BY CASE WHEN r.sort_order > 0 THEN r.sort_order ELSE 999999 END ASC, COALESCE(r.meeting_date, r.created_at) DESC, r.id DESC
         `);
         return rows || [];
     }
@@ -98,7 +98,7 @@ class ReunionShabatNinos {
                 OR (r.parasha_infantil_id IS NULL AND r.parasha_id IS NOT NULL AND (pi.parasha_id = r.parasha_id OR pi.parasha_number = p.parasha_number))
             )
             WHERE r.is_published = 1 OR r.is_published = TRUE
-            ORDER BY COALESCE(r.meeting_date, r.created_at) DESC, r.id DESC
+            ORDER BY CASE WHEN r.sort_order > 0 THEN r.sort_order ELSE 999999 END ASC, COALESCE(r.meeting_date, r.created_at) DESC, r.id DESC
         `);
         return rows || [];
     }

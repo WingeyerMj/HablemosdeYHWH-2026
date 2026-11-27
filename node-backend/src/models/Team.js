@@ -21,13 +21,13 @@ class Team {
 
     static async getAll() {
         await this.ensureColumns();
-        const [rows] = await db.query('SELECT * FROM team ORDER BY created_at DESC');
+        const [rows] = await db.query('SELECT * FROM team ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, created_at DESC');
         return rows;
     }
 
     static async getActive() {
         await this.ensureColumns();
-        const [rows] = await db.query('SELECT * FROM team WHERE is_active = 1 ORDER BY created_at DESC');
+        const [rows] = await db.query('SELECT * FROM team WHERE is_active = 1 ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, created_at DESC');
         return rows;
     }
 

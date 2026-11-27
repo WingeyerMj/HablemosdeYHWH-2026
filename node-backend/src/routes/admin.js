@@ -129,6 +129,17 @@ router.post('/aliyot/update_item', isAuthenticated, isAdmin, upload.fields([
 ]), adminController.updateAliyahSingle);
 router.post('/aliyot/link', isAuthenticated, isAdmin, adminController.linkAliyahToParasha);
 router.post('/aliyot/reorder', isAuthenticated, isAdmin, adminController.reorderAliyot);
+// Orden manual genérico (arrastrar y soltar) para todas las secciones del panel
+router.post('/reorder/:key', isAuthenticated, async (req, res) => {
+    try {
+        const { saveOrder } = require('../utils/sortOrder');
+        const count = await saveOrder(req.params.key, req.body && req.body.order);
+        res.json({ success: true, count });
+    } catch (error) {
+        console.error('Error reorder genérico:', error.message);
+        res.status(400).json({ success: false, message: error.message });
+    }
+});
 router.post('/aliyot/move-single', isAuthenticated, isAdmin, adminController.moveAliyahSingle);
 router.post('/aliyot/move-to-position', isAuthenticated, isAdmin, adminController.moveAliyahToPosition);
 router.post('/aliyot/auto-organize', isAuthenticated, isAdmin, adminController.autoOrganizeAliyot);

@@ -67,7 +67,7 @@ class SemillasArticulo {
     static async getAll() {
         try {
             await SemillasArticulo.ensureTable();
-            const [rows] = await db.query('SELECT * FROM semillas_articulos ORDER BY id DESC');
+            const [rows] = await db.query('SELECT * FROM semillas_articulos ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, id DESC');
             return rows || [];
         } catch (e) {
             console.warn('Aviso en SemillasArticulo.getAll:', e.message);
@@ -78,7 +78,7 @@ class SemillasArticulo {
     static async getPublished() {
         try {
             await SemillasArticulo.ensureTable();
-            const [rows] = await db.query('SELECT * FROM semillas_articulos WHERE is_published = 1 OR is_published = TRUE OR is_published IS NULL ORDER BY id DESC');
+            const [rows] = await db.query('SELECT * FROM semillas_articulos WHERE is_published = 1 OR is_published = TRUE OR is_published IS NULL ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, id DESC');
             return rows || [];
         } catch (e) {
             console.warn('Aviso en SemillasArticulo.getPublished:', e.message);
@@ -89,7 +89,7 @@ class SemillasArticulo {
     static async getLatest(limit = 6) {
         try {
             await SemillasArticulo.ensureTable();
-            const [rows] = await db.query('SELECT * FROM semillas_articulos WHERE is_published = TRUE ORDER BY id DESC LIMIT ?', [limit]);
+            const [rows] = await db.query('SELECT * FROM semillas_articulos WHERE is_published = TRUE ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, id DESC LIMIT ?', [limit]);
             return rows || [];
         } catch (e) {
             console.warn('Aviso en SemillasArticulo.getLatest:', e.message);

@@ -116,7 +116,7 @@
                         <th class="text-end" style="width: 140px;">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody data-sortable-table="semillas-articulos">
                     <% if (allItems && allItems.length > 0) { %>
                         <% allItems.forEach(art => { %>
                             <% 
@@ -128,7 +128,7 @@
                                     } catch(e) {}
                                 }
                             %>
-                            <tr class="crud-item-row" data-category="<%= art.category || 'Resumen Semanal de Parashá' %>">
+                            <tr data-id="<%= art.id %>" class="crud-item-row" data-category="<%= art.category || 'Resumen Semanal de Parashá' %>">
                                 <td>
                                     <% if (art.main_image) { %>
                                         <div style="width: 65px; height: 65px; border-radius: 8px; overflow: hidden; background: #000; border: 2px solid rgba(34,197,94,0.4); cursor: pointer;" onclick="previewModalImage('<%= art.main_image %>', '<%= art.title.replace(/'/g, "\\'") %>')">

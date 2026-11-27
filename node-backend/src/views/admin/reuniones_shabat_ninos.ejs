@@ -119,7 +119,7 @@
                         <th style="width: 140px;" class="text-center">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody data-sortable-table="reuniones-shabat-ninos">
                     <% if (allItems.length === 0) { %>
                         <tr>
                             <td colspan="7" class="text-center py-5 text-white-50">
@@ -132,7 +132,7 @@
                         <% allItems.forEach(item => { 
                             const pdfTarget = item.pdf_file || item.parasha_infantil_pdf;
                         %>
-                            <tr class="reunion-row" data-keywords="<%= (item.keywords || '').toLowerCase() %>">
+                            <tr data-id="<%= item.id %>" class="reunion-row" data-keywords="<%= (item.keywords || '').toLowerCase() %>">
                                 <td data-label="Fecha / Ciclo">
                                     <div class="fw-bold text-white">
                                         <% if (item.meeting_date) { %>

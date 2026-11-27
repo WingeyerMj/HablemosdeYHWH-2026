@@ -32,13 +32,13 @@ class Portfolio {
 
     static async getAll() {
         await Portfolio.ensureColumns();
-        const [rows] = await db.query('SELECT * FROM portfolio ORDER BY event_date DESC, created_at DESC');
+        const [rows] = await db.query('SELECT * FROM portfolio ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, event_date DESC, created_at DESC');
         return rows;
     }
 
     static async getLatest(limit = 4) {
         await Portfolio.ensureColumns();
-        const [rows] = await db.query('SELECT * FROM portfolio ORDER BY event_date DESC, created_at DESC LIMIT ?', [limit]);
+        const [rows] = await db.query('SELECT * FROM portfolio ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, event_date DESC, created_at DESC LIMIT ?', [limit]);
         return rows;
     }
 
@@ -60,7 +60,7 @@ class Portfolio {
 
     static async getPublished() {
         await Portfolio.ensureColumns();
-        const [rows] = await db.query('SELECT * FROM portfolio WHERE is_published = TRUE ORDER BY event_date DESC, created_at DESC');
+        const [rows] = await db.query('SELECT * FROM portfolio WHERE is_published = TRUE ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, event_date DESC, created_at DESC');
         return rows;
     }
 

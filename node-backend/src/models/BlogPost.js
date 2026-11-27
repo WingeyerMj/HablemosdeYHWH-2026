@@ -3,14 +3,14 @@ const db = require('../config/db');
 class BlogPost {
     // Obtener todos los artículos (para admin)
     static async getAll() {
-        const [rows] = await db.query('SELECT * FROM blog_posts ORDER BY id DESC');
+        const [rows] = await db.query('SELECT * FROM blog_posts ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, id DESC');
         return rows;
     }
 
     // Obtener últimos artículos publicados (para home u otras secciones)
     static async getLatest(limit = 3) {
         const [rows] = await db.query(
-            'SELECT * FROM blog_posts WHERE is_published = TRUE ORDER BY published_at DESC, id DESC LIMIT ?',
+            'SELECT * FROM blog_posts WHERE is_published = TRUE ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, published_at DESC, id DESC LIMIT ?',
             [limit]
         );
         return rows;
@@ -32,7 +32,7 @@ class BlogPost {
             params.push(term, term, term, term);
         }
 
-        sql += ' ORDER BY published_at DESC, id DESC LIMIT ? OFFSET ?';
+        sql += ' ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, published_at DESC, id DESC LIMIT ? OFFSET ?';
         params.push(limit, offset);
 
         const [rows] = await db.query(sql, params);

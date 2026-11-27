@@ -143,7 +143,7 @@
                         <th class="text-end pe-3">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody data-sortable-table="musica">
                     <% if (allTracks.length === 0) { %>
                         <tr>
                             <td colspan="9" class="text-center py-5 text-white-50">
@@ -156,7 +156,7 @@
                             const sec = track.target_section || 'general';
                             const isAuto = track.in_auto_playlist !== 0 && track.in_auto_playlist !== false;
                         %>
-                            <tr class="music-admin-row"
+                            <tr data-id="<%= track.id %>" class="music-admin-row"
                                 data-search="<%= ((track.title || '') + ' ' + (track.artist || '') + ' ' + (track.description || '') + ' ' + (track.category || '')).toLowerCase() %>"
                                 data-cat="<%= track.category || 'Alabanza' %>"
                                 data-section="<%= sec %>">

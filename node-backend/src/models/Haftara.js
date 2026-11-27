@@ -264,7 +264,7 @@ class Haftara {
                     OR p_match.title LIKE CONCAT('%', REPLACE(REPLACE(h.title, 'Haftará', ''), 'Parashá', ''), '%')
                 )
             )
-            ORDER BY COALESCE(p.parasha_number, p_match.parasha_number, 999) ASC, h.id ASC
+            ORDER BY CASE WHEN h.sort_order > 0 THEN h.sort_order ELSE 999999 END ASC, COALESCE(p.parasha_number, p_match.parasha_number, 999) ASC, h.id ASC
         `);
         return (rows || []).map(r => Haftara.normalize(r));
     }
@@ -289,7 +289,7 @@ class Haftara {
                 )
             )
             WHERE h.is_published = TRUE 
-            ORDER BY 
+            ORDER BY CASE WHEN h.sort_order > 0 THEN h.sort_order ELSE 999999 END ASC, 
                 (COALESCE(h.cycle_name, p.cycle_name, p_match.cycle_name, '') LIKE '%2026 - 2027%') DESC,
                 h.created_at DESC, 
                 h.id DESC 
@@ -318,7 +318,7 @@ class Haftara {
                 )
             )
             WHERE h.is_published = TRUE 
-            ORDER BY COALESCE(p.parasha_number, p_match.parasha_number, 999) ASC, h.id ASC
+            ORDER BY CASE WHEN h.sort_order > 0 THEN h.sort_order ELSE 999999 END ASC, COALESCE(p.parasha_number, p_match.parasha_number, 999) ASC, h.id ASC
         `);
         return (rows || []).map(r => Haftara.normalize(r));
     }

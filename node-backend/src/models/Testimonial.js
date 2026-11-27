@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 class Testimonial {
     static async getAll() {
-        const [rows] = await db.query('SELECT * FROM testimonials ORDER BY created_at DESC');
+        const [rows] = await db.query('SELECT * FROM testimonials ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, created_at DESC');
         return rows;
     }
 

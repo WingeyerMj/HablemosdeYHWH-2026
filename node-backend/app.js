@@ -212,6 +212,12 @@ async function startServer() {
         console.warn('⚠️ El servidor continuará sin base de datos.');
     }
 
+    try {
+        await require('./src/utils/sortOrder').ensureAllSortOrderColumns();
+    } catch (error) {
+        console.warn('⚠️ No se pudieron preparar las columnas sort_order:', error.message || error);
+    }
+
     require('./src/utils/roshJodesPublisher').start(db);
 
     app.listen(app.get('port'), () => {

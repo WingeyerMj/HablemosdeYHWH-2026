@@ -132,7 +132,7 @@
                         <th class="text-end" style="min-width: 120px;">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody data-sortable-table="semillas-manualidades">
                     <% if (allItems.length === 0) { %>
                         <tr>
                             <td colspan="9" class="text-center py-5 text-white-50">
@@ -144,7 +144,7 @@
                     <% } %>
 
                     <% allItems.forEach((item) => { %>
-                        <tr class="manualidad-row-item" data-category="<%= item.category %>">
+                        <tr data-id="<%= item.id %>" class="manualidad-row-item" data-category="<%= item.category %>">
                             <td>
                                 <div style="width: 60px; height: 60px; border-radius: 10px; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center;">
                                     <% if (item.image_url) { %>

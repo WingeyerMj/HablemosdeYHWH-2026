@@ -88,19 +88,19 @@ class Ensenanza {
 
     static async getAll() {
         await Ensenanza.ensureAuthorsColumn();
-        const [rows] = await db.query('SELECT * FROM ensenanzas ORDER BY COALESCE(teaching_date, DATE(created_at)) DESC, id DESC');
+        const [rows] = await db.query('SELECT * FROM ensenanzas ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, COALESCE(teaching_date, DATE(created_at)) DESC, id DESC');
         return (rows || []).map(r => Ensenanza.normalize(r));
     }
 
     static async getLatest(limit = 4) {
         await Ensenanza.ensureAuthorsColumn();
-        const [rows] = await db.query('SELECT * FROM ensenanzas WHERE is_published = TRUE ORDER BY COALESCE(teaching_date, DATE(created_at)) DESC, id DESC LIMIT ?', [limit]);
+        const [rows] = await db.query('SELECT * FROM ensenanzas WHERE is_published = TRUE ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, COALESCE(teaching_date, DATE(created_at)) DESC, id DESC LIMIT ?', [limit]);
         return (rows || []).map(r => Ensenanza.normalize(r));
     }
 
     static async getPublished() {
         await Ensenanza.ensureAuthorsColumn();
-        const [rows] = await db.query('SELECT * FROM ensenanzas WHERE is_published = TRUE ORDER BY COALESCE(teaching_date, DATE(created_at)) DESC, id DESC');
+        const [rows] = await db.query('SELECT * FROM ensenanzas WHERE is_published = TRUE ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, COALESCE(teaching_date, DATE(created_at)) DESC, id DESC');
         return (rows || []).map(r => Ensenanza.normalize(r));
     }
 

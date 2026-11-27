@@ -198,7 +198,7 @@ class SemillasShort {
     static async getAll() {
         try {
             await SemillasShort.ensureTable();
-            const [rows] = await db.query('SELECT * FROM semillas_shorts ORDER BY is_highlight DESC, COALESCE(DATE(reading_date), DATE(created_at)) DESC, CASE WHEN aliyah_number IS NULL THEN 0 ELSE aliyah_number END DESC, id DESC');
+            const [rows] = await db.query('SELECT * FROM semillas_shorts ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, is_highlight DESC, COALESCE(DATE(reading_date), DATE(created_at)) DESC, CASE WHEN aliyah_number IS NULL THEN 0 ELSE aliyah_number END DESC, id DESC');
             return SemillasShort.sortList(rows || []);
         } catch (e) {
             console.warn('Aviso en SemillasShort.getAll:', e.message);
@@ -209,7 +209,7 @@ class SemillasShort {
     static async getPublished() {
         try {
             await SemillasShort.ensureTable();
-            const [rows] = await db.query('SELECT * FROM semillas_shorts WHERE is_published = 1 OR is_published = TRUE OR is_published IS NULL ORDER BY COALESCE(DATE(reading_date), DATE(created_at)) DESC, CASE WHEN aliyah_number IS NULL THEN 0 ELSE aliyah_number END DESC, id DESC');
+            const [rows] = await db.query('SELECT * FROM semillas_shorts WHERE is_published = 1 OR is_published = TRUE OR is_published IS NULL ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, COALESCE(DATE(reading_date), DATE(created_at)) DESC, CASE WHEN aliyah_number IS NULL THEN 0 ELSE aliyah_number END DESC, id DESC');
             return SemillasShort.sortList(rows || []);
         } catch (e) {
             console.warn('Aviso en SemillasShort.getPublished:', e.message);
@@ -220,7 +220,7 @@ class SemillasShort {
     static async getLatest(limit = 6) {
         try {
             await SemillasShort.ensureTable();
-            const [rows] = await db.query('SELECT * FROM semillas_shorts WHERE is_published = TRUE ORDER BY COALESCE(DATE(reading_date), DATE(created_at)) DESC, CASE WHEN aliyah_number IS NULL THEN 0 ELSE aliyah_number END DESC, id DESC');
+            const [rows] = await db.query('SELECT * FROM semillas_shorts WHERE is_published = TRUE ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, COALESCE(DATE(reading_date), DATE(created_at)) DESC, CASE WHEN aliyah_number IS NULL THEN 0 ELSE aliyah_number END DESC, id DESC');
             const sorted = SemillasShort.sortList(rows || []);
             return sorted.slice(0, limit);
         } catch (e) {

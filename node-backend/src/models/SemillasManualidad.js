@@ -310,7 +310,7 @@ class SemillasManualidad {
                    p.subtitle AS canonical_parasha_subtitle
             FROM semillas_manualidades sm
             LEFT JOIN parashot p ON (sm.parasha_id = p.id OR (sm.parasha_number IS NOT NULL AND sm.parasha_number = p.parasha_number))
-            ORDER BY sm.is_featured DESC, sm.id DESC
+            ORDER BY CASE WHEN sm.sort_order > 0 THEN sm.sort_order ELSE 999999 END ASC, sm.is_featured DESC, sm.id DESC
         `);
         return rows || [];
     }
@@ -324,7 +324,7 @@ class SemillasManualidad {
             FROM semillas_manualidades sm
             LEFT JOIN parashot p ON (sm.parasha_id = p.id OR (sm.parasha_number IS NOT NULL AND sm.parasha_number = p.parasha_number))
             WHERE sm.is_approved = 1 OR sm.is_approved = TRUE
-            ORDER BY sm.is_featured DESC, sm.id DESC
+            ORDER BY CASE WHEN sm.sort_order > 0 THEN sm.sort_order ELSE 999999 END ASC, sm.is_featured DESC, sm.id DESC
         `);
         return rows || [];
     }
@@ -339,7 +339,7 @@ class SemillasManualidad {
             LEFT JOIN parashot p ON (sm.parasha_id = p.id OR (sm.parasha_number IS NOT NULL AND sm.parasha_number = p.parasha_number))
             WHERE (sm.is_approved = 1 OR sm.is_approved = TRUE)
               AND sm.category = 'Porción Semanal'
-            ORDER BY COALESCE(sm.parasha_number, 999) ASC, sm.id DESC
+            ORDER BY CASE WHEN sm.sort_order > 0 THEN sm.sort_order ELSE 999999 END ASC, COALESCE(sm.parasha_number, 999) ASC, sm.id DESC
         `);
         return rows || [];
     }
@@ -351,7 +351,7 @@ class SemillasManualidad {
             FROM semillas_manualidades sm
             WHERE (sm.is_approved = 1 OR sm.is_approved = TRUE)
               AND sm.category = 'Santas Convocaciones'
-            ORDER BY sm.is_featured DESC, sm.id DESC
+            ORDER BY CASE WHEN sm.sort_order > 0 THEN sm.sort_order ELSE 999999 END ASC, sm.is_featured DESC, sm.id DESC
         `);
         return rows || [];
     }

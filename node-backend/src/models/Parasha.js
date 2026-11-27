@@ -16,7 +16,7 @@ class Parasha {
 
     static async getAll() {
         await this.ensureColumns();
-        const [rows] = await db.query('SELECT * FROM parashot ORDER BY parasha_number DESC, id DESC');
+        const [rows] = await db.query('SELECT * FROM parashot ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, parasha_number DESC, id DESC');
         return rows;
     }
 
@@ -27,7 +27,7 @@ class Parasha {
     }
 
     static async getPublished() {
-        const [rows] = await db.query('SELECT * FROM parashot WHERE is_published = TRUE ORDER BY parasha_number DESC, id DESC');
+        const [rows] = await db.query('SELECT * FROM parashot WHERE is_published = TRUE ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, parasha_number DESC, id DESC');
         return rows;
     }
 

@@ -189,14 +189,14 @@ class Noticia {
     // ==================== NOTICIAS ====================
     static async getAll() {
         await Noticia.ensureTable();
-        const [rows] = await db.query('SELECT * FROM noticias ORDER BY published_at DESC, id DESC');
+        const [rows] = await db.query('SELECT * FROM noticias ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, published_at DESC, id DESC');
         return rows || [];
     }
 
     static async getLatest(limit = 4) {
         await Noticia.ensureTable();
         const [rows] = await db.query(
-            'SELECT * FROM noticias WHERE is_published = TRUE ORDER BY is_breaking DESC, published_at DESC, id DESC LIMIT ?',
+            'SELECT * FROM noticias WHERE is_published = TRUE ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, is_breaking DESC, published_at DESC, id DESC LIMIT ?',
             [limit]
         );
         return rows || [];
@@ -218,7 +218,7 @@ class Noticia {
             params.push(term, term, term, term);
         }
 
-        sql += ' ORDER BY is_breaking DESC, published_at DESC, id DESC LIMIT ? OFFSET ?';
+        sql += ' ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, is_breaking DESC, published_at DESC, id DESC LIMIT ? OFFSET ?';
         params.push(limit, offset);
 
         const [rows] = await db.query(sql, params);
@@ -349,14 +349,14 @@ class Noticia {
     // ==================== SHORTS DE NOTICIAS ====================
     static async getAllShorts() {
         await Noticia.ensureTable();
-        const [rows] = await db.query('SELECT *, COALESCE(views_count, views, 0) as views_count FROM noticias_shorts ORDER BY id DESC');
+        const [rows] = await db.query('SELECT *, COALESCE(views_count, views, 0) as views_count FROM noticias_shorts ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, id DESC');
         return rows || [];
     }
 
     static async getPublishedShorts(limit = 8) {
         await Noticia.ensureTable();
         const [rows] = await db.query(
-            'SELECT *, COALESCE(views_count, views, 0) as views_count FROM noticias_shorts WHERE is_published = TRUE ORDER BY is_highlight DESC, published_at DESC, id DESC LIMIT ?',
+            'SELECT *, COALESCE(views_count, views, 0) as views_count FROM noticias_shorts WHERE is_published = TRUE ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, is_highlight DESC, published_at DESC, id DESC LIMIT ?',
             [limit]
         );
         return rows || [];

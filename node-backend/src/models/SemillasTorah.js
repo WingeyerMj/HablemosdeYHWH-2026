@@ -16,7 +16,7 @@ class SemillasTorah {
     static async getAll() {
         try {
             await SemillasTorah.ensureVideoColumn();
-            const [rows] = await db.query('SELECT * FROM semillas_torah ORDER BY id DESC');
+            const [rows] = await db.query('SELECT * FROM semillas_torah ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, id DESC');
             return rows || [];
         } catch (e) {
             console.warn('Aviso en SemillasTorah.getAll:', e.message);
@@ -26,7 +26,7 @@ class SemillasTorah {
 
     static async getPublished() {
         try {
-            const [rows] = await db.query('SELECT * FROM semillas_torah WHERE is_published = TRUE ORDER BY id DESC');
+            const [rows] = await db.query('SELECT * FROM semillas_torah WHERE is_published = TRUE ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, id DESC');
             return rows || [];
         } catch (e) {
             console.warn('Aviso en SemillasTorah.getPublished:', e.message);
@@ -36,7 +36,7 @@ class SemillasTorah {
 
     static async getLatest(limit = 6) {
         try {
-            const [rows] = await db.query('SELECT * FROM semillas_torah WHERE is_published = TRUE ORDER BY id DESC LIMIT ?', [limit]);
+            const [rows] = await db.query('SELECT * FROM semillas_torah WHERE is_published = TRUE ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, id DESC LIMIT ?', [limit]);
             return rows || [];
         } catch (e) {
             console.warn('Aviso en SemillasTorah.getLatest:', e.message);
@@ -46,7 +46,7 @@ class SemillasTorah {
 
     static async getByCategory(category) {
         try {
-            const [rows] = await db.query('SELECT * FROM semillas_torah WHERE is_published = TRUE AND category = ? ORDER BY id DESC', [category]);
+            const [rows] = await db.query('SELECT * FROM semillas_torah WHERE is_published = TRUE AND category = ? ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, id DESC', [category]);
             return rows || [];
         } catch (e) {
             return [];

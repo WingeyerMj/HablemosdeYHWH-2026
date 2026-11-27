@@ -51,19 +51,19 @@ class Seder {
 
     static async getAll() {
         await Seder.ensureTable();
-        const [rows] = await db.query('SELECT * FROM seder ORDER BY COALESCE(festival_date, DATE(created_at)) DESC, id DESC');
+        const [rows] = await db.query('SELECT * FROM seder ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, COALESCE(festival_date, DATE(created_at)) DESC, id DESC');
         return (rows || []).map(r => Seder.normalize(r));
     }
 
     static async getLatest(limit = 4) {
         await Seder.ensureTable();
-        const [rows] = await db.query('SELECT * FROM seder WHERE is_published = TRUE ORDER BY COALESCE(festival_date, DATE(created_at)) DESC, id DESC LIMIT ?', [limit]);
+        const [rows] = await db.query('SELECT * FROM seder WHERE is_published = TRUE ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, COALESCE(festival_date, DATE(created_at)) DESC, id DESC LIMIT ?', [limit]);
         return (rows || []).map(r => Seder.normalize(r));
     }
 
     static async getPublished() {
         await Seder.ensureTable();
-        const [rows] = await db.query('SELECT * FROM seder WHERE is_published = TRUE ORDER BY COALESCE(festival_date, DATE(created_at)) DESC, id DESC');
+        const [rows] = await db.query('SELECT * FROM seder WHERE is_published = TRUE ORDER BY CASE WHEN sort_order > 0 THEN sort_order ELSE 999999 END ASC, COALESCE(festival_date, DATE(created_at)) DESC, id DESC');
         return (rows || []).map(r => Seder.normalize(r));
     }
 
